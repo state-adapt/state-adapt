@@ -1,0 +1,150 @@
+{
+  "version": 1,
+  "cli": {
+    "defaultCollection": "@nrwl/angular"
+  },
+  "defaultProject": "ng-demo",
+  "schematics": {
+    "@nrwl/angular": {
+      "application": {
+        "linter": "eslint"
+      },
+      "library": {
+        "linter": "eslint"
+      },
+      "storybook-configuration": {
+        "linter": "eslint"
+      }
+    },
+    "@nrwl/angular:application": {
+      "style": "scss",
+      "linter": "eslint",
+      "unitTestRunner": "jest",
+      "e2eTestRunner": "cypress"
+    },
+    "@nrwl/angular:library": {
+      "style": "scss",
+      "linter": "eslint",
+      "unitTestRunner": "jest"
+    },
+    "@nrwl/angular:component": {
+      "style": "scss"
+    }
+  },
+  "projects": {
+    "ng-demo": {
+      "projectType": "application",
+      "root": "apps/ng-demo",
+      "sourceRoot": "apps/ng-demo/src",
+      "prefix": "state-adapt",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/apps/ng-demo",
+            "index": "apps/ng-demo/src/index.html",
+            "main": "apps/ng-demo/src/main.ts",
+            "polyfills": "apps/ng-demo/src/polyfills.ts",
+            "tsConfig": "apps/ng-demo/tsconfig.app.json",
+            "aot": true,
+            "assets": [
+              "apps/ng-demo/src/favicon.ico",
+              "apps/ng-demo/src/assets"
+            ],
+            "styles": ["apps/ng-demo/src/styles.scss"],
+            "scripts": []
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/ng-demo/src/environments/environment.ts",
+                  "with": "apps/ng-demo/src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "10kb"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "ng-demo:build"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "ng-demo:build:production"
+            }
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "ng-demo:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "apps/ng-demo/src/**/*.ts",
+              "apps/ng-demo/src/**/*.html"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/apps/ng-demo"],
+          "options": {
+            "jestConfig": "apps/ng-demo/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "ng-demo-e2e": {
+      "root": "apps/ng-demo-e2e",
+      "sourceRoot": "apps/ng-demo-e2e/src",
+      "projectType": "application",
+      "architect": {
+        "e2e": {
+          "builder": "@nrwl/cypress:cypress",
+          "options": {
+            "cypressConfig": "apps/ng-demo-e2e/cypress.json",
+            "tsConfig": "apps/ng-demo-e2e/tsconfig.e2e.json",
+            "devServerTarget": "ng-demo:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "ng-demo:serve:production"
+            }
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["apps/ng-demo-e2e/**/*.{js,ts}"]
+          }
+        }
+      }
+    }
+  }
+}
