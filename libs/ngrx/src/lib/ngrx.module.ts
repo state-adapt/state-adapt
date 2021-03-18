@@ -4,4 +4,4 @@ import { CommonModule } from '@angular/common';
 @NgModule({
   imports: [CommonModule],
 })
-export class CoreModule {}
+export class NgrxModule {}

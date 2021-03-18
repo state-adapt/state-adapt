@@ -18,6 +18,8 @@
   "projects": {
     "ng-demo": { "tags": [] },
     "ng-demo-e2e": { "tags": [], "implicitDependencies": ["ng-demo"] },
-    "core": { "tags": [] }
+    "core": { "tags": [] },
+    "ngrx": { "tags": [] },
+    "ngxs": { "tags": [] }
   }
 }
