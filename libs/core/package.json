@@ -1,0 +1,43 @@
+{
+  "name": "@state-adapt/core",
+  "description": "State management library built with RxJS and inspired by the adapter pattern introduced in NgRx/Entity.",
+  "version": "0.0.1",
+  "homepage": "https://github.com/state-adapt/state-adapt",
+  "author": "Mike Pearson",
+  "license": "MIT",
+  "keywords": [
+    "rxjs",
+    "redux",
+    "state management",
+    "state adapters",
+    "ngrx",
+    "ngrx/entity"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/state-adapt/state-adapt"
+  },
+  "bugs": {
+    "url": "https://github.com/state-adapt/state-adapt/issues"
+  },
+  "peerDependencies": {
+    "@angular/common": "^11.2.6",
+    "@angular/core": "^11.2.6"
+  },
+  "dependencies": {
+    "tslib": "^2.0.0"
+  },
+  "scripts": {
+    "copy-readme": "copy .\\README.md .\\dist\\libs\\core",
+    "copy-changelog": "copy .\\Changelog.md .\\dist\\libs\\core",
+    "copy-files": "run-s copy-readme copy-license",
+    "bump-version:major": "npm version major --force && cd libs/core && npm version major --force",
+    "bump-version:minor": "npm version minor --force && cd libs/core && npm version minor --force",
+    "bump-version:patch": "npm version patch --force && cd libs/core && npm version patch --force",
+    "build:lib-pack": "ng build core && npm run copy-files &&  cd dist/libs/core && npm pack",
+    "commit-git": "git commit -m \"build: adds new release\" && git push origin && git push origin --tags",
+    "pre-publish:minor": "run-s bump-version:minor build:lib-pack commit-git",
+    "pre-publish:major": "run-s bump-version:major build:lib-pack commit-git",
+    "pre-publish:patch": "run-s bump-version:patch build:lib-pack commit-git"
+  }
+}
