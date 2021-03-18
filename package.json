@@ -1,6 +1,6 @@
 {
   "name": "state-adapt",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "license": "MIT",
   "scripts": {
     "ng": "nx",
@@ -28,7 +28,7 @@
     "help": "nx help",
     "copy-readme": "copy .\\README.md .\\dist\\libs\\core",
     "copy-changelog": "copy .\\Changelog.md .\\dist\\libs\\core",
-    "copy-files": "run-s copy-readme copy-license",
+    "copy-files": "run-s copy-readme",
     "bump-version:major": "npm version major --force && cd libs/core && npm version major --force",
     "bump-version:minor": "npm version minor --force && cd libs/core && npm version minor --force",
     "bump-version:patch": "npm version patch --force && cd libs/core && npm version patch --force",
