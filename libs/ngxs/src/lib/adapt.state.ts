@@ -6,12 +6,10 @@ export interface AdaptModel {
   [index: string]: any;
 }
 
-const getAdaptModel = (): AdaptModel => ({});
-
 @Injectable()
 @State<AdaptModel>({
   name: 'adapt',
-  defaults: getAdaptModel(),
+  defaults: {} as AdaptModel,
 })
 export class AdaptState {
   @Action(PatchState)
