@@ -1,5 +1,5 @@
-import { createSelector, MemoizedSelector } from '@ngrx/store';
-import { merge, Observable, using } from 'rxjs';
+import { createSelector } from '@ngrx/store';
+import { merge, using } from 'rxjs';
 import { AnySelectors } from './any-selectors.interface';
 import { JoinedMiniStore } from './joined-mini-store.interface';
 import { MiniStore } from './mini-store.interface';
