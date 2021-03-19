@@ -21,3 +21,5 @@ export * from './lib/create-reactions.function';
 export * from './lib/create-adapter.function';
 export * from './lib/source';
 export * from './lib/join.function';
+
+export * from './lib/adapt';
