@@ -1,6 +1,6 @@
 {
   "name": "state-adapt",
-  "version": "0.17.0",
+  "version": "0.18.0",
   "license": "MIT",
   "scripts": {
     "ng": "nx",
@@ -27,7 +27,7 @@
     "workspace-generator": "nx workspace-generator",
     "dep-graph": "nx dep-graph",
     "help": "nx help",
-    "copy-readme": "cp ./README.md ./dist/libs/core && cp ./README.md ./dist/libs/ngxs && cp ./README.md ./dist/libs/ngxs",
+    "copy-readme": "cp ./README.md ./dist/libs/core && cp ./README.md ./dist/libs/ngxs && cp ./README.md ./dist/libs/ngrx",
     "copy-changelog": "cp ./Changelog.md ./dist/libs/core && cp ./Changelog.md ./dist/libs/ngxs && cp ./Changelog.md ./dist/libs/ngrx",
     "copy-files": "run-s copy-readme",
     "bump-version:major": "npm version major --force && cd libs/core && npm version major --force && cd ../ngxs && npm version major --force && cd ../ngrx && npm version major --force",
