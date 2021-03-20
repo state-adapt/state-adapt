@@ -1,10 +1,10 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { StoreModule } from '@ngrx/store';
-import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
+import { NgxsModule } from '@ngxs/store';
 import { actionSanitizer } from '@state-adapt/core';
 import { ADAPT_SERVICE, DemoUiModule } from '@state-adapt/demo-ui';
-import { Adapt, adaptReducer } from '@state-adapt/ngrx';
+import { Adapt, AdaptState } from '@state-adapt/ngxs';
 import { environment } from '../environments/environment';
 import { AppComponent } from './app.component';
 
@@ -12,10 +12,11 @@ import { AppComponent } from './app.component';
   declarations: [AppComponent],
   imports: [
     BrowserModule,
-    StoreModule.forRoot({ adapt: adaptReducer }),
-    StoreDevtoolsModule.instrument({
-      maxAge: 25,
-      logOnly: environment.production,
+    NgxsModule.forRoot([AdaptState], {
+      developmentMode: !environment.production,
+    }),
+    NgxsReduxDevtoolsPluginModule.forRoot({
+      disabled: environment.production,
       actionSanitizer,
     }),
     DemoUiModule,

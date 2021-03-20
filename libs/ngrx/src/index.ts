@@ -1,1 +1,2 @@
-export * from './lib/ngrx.module';
+export * from './lib/adapt.reducer';
+export * from './lib/adapt.service';

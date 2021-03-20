@@ -17,7 +17,8 @@
     "paths": {
       "@state-adapt/core": ["libs/core/src/index.ts"],
       "@state-adapt/ngrx": ["libs/ngrx/src/index.ts"],
-      "@state-adapt/ngxs": ["libs/ngxs/src/index.ts"]
+      "@state-adapt/ngxs": ["libs/ngxs/src/index.ts"],
+      "@state-adapt/demo-ui": ["libs/demo-ui/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

@@ -20,6 +20,9 @@
     "ng-demo-e2e": { "tags": [], "implicitDependencies": ["ng-demo"] },
     "core": { "tags": [] },
     "ngrx": { "tags": [] },
-    "ngxs": { "tags": [] }
+    "ngxs": { "tags": [] },
+    "ngxs-demo": { "tags": [] },
+    "ngxs-demo-e2e": { "tags": [], "implicitDependencies": ["ngxs-demo"] },
+    "demo-ui": { "tags": [] }
   }
 }

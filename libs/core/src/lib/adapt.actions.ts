@@ -1,6 +1,8 @@
 export type Update = [string[], any];
 
+export const adaptType = 'Adapt';
+
 export class PatchState {
-  static readonly type = 'Adapt';
+  readonly type = adaptType;
   constructor(public actionType: string, public payload: Update[]) {}
 }

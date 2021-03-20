@@ -6,6 +6,7 @@
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
       "rules": {
+        "arrow-parens": 0,
         "@nrwl/nx/enforce-module-boundaries": [
           "error",
           {
