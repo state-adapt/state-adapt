@@ -19,7 +19,7 @@ import { Sources } from './sources.type';
 
 const filterDefined = <T>(sel$: Observable<T>) =>
   sel$.pipe(
-    filter((a) => a !== undefined),
+    filter(a => a !== undefined),
     distinctUntilChanged()
   );
 
@@ -143,7 +143,7 @@ export class AdaptCommon<CommonStore extends StoreMethods> {
     const allSourcesWithReactions = flatten(
       reactionEntries.map(([reactionName, reaction]) => {
         const reactionSources = sources[reactionName] || [];
-        return reactionSources.map((source$) => ({ source$, reaction }));
+        return reactionSources.map(source$ => ({ source$, reaction }));
       })
     );
 
@@ -155,11 +155,9 @@ export class AdaptCommon<CommonStore extends StoreMethods> {
           const requireSources$ = updaterStream
             ? updaterStream.requireSources$
             : source$.pipe(
-                tap((action) => {
+                tap(action => {
                   const updates = this.getAllSourceUpdates(source$, action);
-                  this.commonStore.dispatch(
-                    new PatchState(action.type, updates)
-                  );
+                  this.commonStore.dispatch(new PatchState(action, updates));
                 }),
                 finalize(() => {
                   this.updaterStreams.splice(
@@ -193,7 +191,9 @@ export class AdaptCommon<CommonStore extends StoreMethods> {
       if (parentPathStates.length) {
         throw this.getChildPathError(path, parentPathStates[0]);
       }
-      this.commonStore.dispatch(new PatchState('INIT', [[path, initialState]]));
+      this.commonStore.dispatch(
+        new PatchState({ type: 'INIT' }, [[path, initialState]])
+      );
       this.pathStates.push({
         path,
         lastState: initialState,
@@ -221,7 +221,7 @@ export class AdaptCommon<CommonStore extends StoreMethods> {
           1
         );
         this.commonStore.dispatch(
-          new PatchState('DESTROY', [[path, undefined]])
+          new PatchState({ type: 'DESTROY' }, [[path, undefined]])
         );
       }),
       share()

@@ -8,7 +8,7 @@ import { countAdapter } from './count.adapter';
   selector: 'state-adapt-increment',
   template: `
     <div style="width: 500px; margin: auto">
-      <button (click)="increment$.next()">Increment</button>
+      <button (click)="increment$.next(3)">Increment by 3</button>
       <button (click)="decrement$.next()">Decrement</button>
       <button (click)="reset$.next()">Reset</button>
       <h1>{{ count$ | async | json }}</h1>
@@ -16,7 +16,7 @@ import { countAdapter } from './count.adapter';
   `,
 })
 export class IncrementComponent {
-  increment$ = new Source<void>('increment$');
+  increment$ = new Source<number>('increment$');
   decrement$ = new Source<void>('decrement$');
   reset$ = new Source<void>('reset$');
   count$ = this.adapt.initGet(
