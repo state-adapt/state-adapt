@@ -59,7 +59,7 @@ import { Adapt } from '@state-adapt/ngrx';
   });
   stringStore = this.adapt.init(
     this.stringAdapter,
-    ['string'],
+    'string',
     { append: [this.newStr$] },
     '',
   );
@@ -115,7 +115,7 @@ import { Adapt } from '@state-adapt/ngxs';
   });
   stringStore = this.adapt.init(
     this.stringAdapter,
-    ['string'],
+    'string',
     { append: [this.newStr$] },
     '',
   );
