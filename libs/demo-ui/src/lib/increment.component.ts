@@ -21,13 +21,13 @@ export class IncrementComponent {
   reset$ = new Source<void>('reset$');
   count$ = this.adapt.initGet(
     countAdapter,
-    ['count'],
+    'count',
     {
       increment: [this.increment$],
       decrement: [this.decrement$],
       reset: [this.reset$],
     },
-    0
+    0,
   );
   constructor(@Inject(ADAPT_SERVICE) private adapt: Adapt) {}
 }

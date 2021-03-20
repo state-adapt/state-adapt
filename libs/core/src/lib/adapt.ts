@@ -20,7 +20,7 @@ import { Sources } from './sources.type';
 const filterDefined = <T>(sel$: Observable<T>) =>
   sel$.pipe(
     filter(a => a !== undefined),
-    distinctUntilChanged()
+    distinctUntilChanged(),
   );
 
 interface StoreMethods {
@@ -29,12 +29,12 @@ interface StoreMethods {
 }
 
 export class AdaptCommon<CommonStore extends StoreMethods> {
-  pathStates: { path: string[]; lastState: any; initialState: any }[] = [];
+  pathStates: { [index: string]: { lastState: any; initialState: any } } = {};
   updaterStreams: {
     source$: Observable<Action<any>>;
     requireSources$: Observable<any>;
     reactions: {
-      path: string[];
+      path: string;
       reaction: (...args: any[]) => any;
     }[];
   }[] = [];
@@ -47,9 +47,9 @@ export class AdaptCommon<CommonStore extends StoreMethods> {
     R extends ReactionsWithGetSelectors<State, S>
   >(
     adapter: Adapter<State, S, R>,
-    path: string[],
+    path: string,
     sources: Sources<State, S, R>,
-    initialState: State
+    initialState: State,
   ): MiniStore<State, S & { getState: (state: any) => State }> {
     // type S = ReturnType<R['getSelectors']>;
     const selectors = adapter.getSelectors ? adapter.getSelectors() : ({} as S);
@@ -59,14 +59,14 @@ export class AdaptCommon<CommonStore extends StoreMethods> {
       reactions,
       path,
       sources,
-      initialState
+      initialState,
     );
 
     const getState = this.getStateSelector<State>(path);
     const { fullSelectors, selections } = this.getSelections<State, S>(
       selectors,
       getState,
-      requireSources$
+      requireSources$,
     );
 
     return {
@@ -83,9 +83,9 @@ export class AdaptCommon<CommonStore extends StoreMethods> {
     R extends ReactionsWithGetSelectors<State, S>
   >(
     adapter: Adapter<State, S, R>,
-    path: string[],
+    path: string,
     sources: Sources<State, S, R>,
-    initialState: State
+    initialState: State,
   ): Observable<State> {
     const reactions = { ...adapter } as Reactions<State>;
     delete reactions.getSelectors;
@@ -93,14 +93,14 @@ export class AdaptCommon<CommonStore extends StoreMethods> {
       reactions,
       path,
       sources,
-      initialState
+      initialState,
     );
 
     const getState = this.getStateSelector<State>(path);
 
     return using(
       () => requireSources$.subscribe(),
-      () => filterDefined(this.commonStore.select(getState))
+      () => filterDefined(this.commonStore.select(getState)),
     );
   }
 
@@ -109,8 +109,8 @@ export class AdaptCommon<CommonStore extends StoreMethods> {
     S extends Selectors<State>,
     R extends ReactionsWithGetSelectors<State, S>
   >(
-    path: string[],
-    adapter: Adapter<State, S, R>
+    path: string,
+    adapter: Adapter<State, S, R>,
     // Returns a detached store; doesn't chain off of sources.
   ): MiniStore<State, S & { getState: (state: any) => State }> {
     const selectors = adapter.getSelectors ? adapter.getSelectors() : ({} as S);
@@ -119,7 +119,7 @@ export class AdaptCommon<CommonStore extends StoreMethods> {
     const { fullSelectors, selections } = this.getSelections<State, S>(
       selectors,
       getState,
-      requireSources$
+      requireSources$,
     );
     return {
       ...selections,
@@ -135,16 +135,16 @@ export class AdaptCommon<CommonStore extends StoreMethods> {
     R extends ReactionsWithGetSelectors<State, S>
   >(
     reactions: Reactions<State>,
-    path: string[],
+    path: string,
     sources: Sources<State, S, R>,
-    initialState: State
+    initialState: State,
   ): Observable<any> {
     const reactionEntries = Object.entries(reactions);
     const allSourcesWithReactions = flatten(
       reactionEntries.map(([reactionName, reaction]) => {
         const reactionSources = sources[reactionName] || [];
         return reactionSources.map(source$ => ({ source$, reaction }));
-      })
+      }),
     );
 
     const allUpdatesFromSources$ = allSourcesWithReactions.map(
@@ -163,12 +163,12 @@ export class AdaptCommon<CommonStore extends StoreMethods> {
                   this.updaterStreams.splice(
                     this.updaterStreams.findIndex(
                       ({ source$: updaterSource$ }) =>
-                        source$ === updaterSource$
+                        source$ === updaterSource$,
                     ),
-                    1
+                    1,
                   );
                 }),
-                share()
+                share(),
               );
           if (!updaterStream) {
             this.updaterStreams.push({
@@ -182,23 +182,19 @@ export class AdaptCommon<CommonStore extends StoreMethods> {
           updateStream?.reactions.push({ path, reaction });
           return requireSources$;
         }).pipe(share());
-      }
+      },
     );
 
     const requireSources$ = defer(() => {
       // Runs First. If any of the sources emits immediately, this needs to have been set up first.
-      const parentPathStates = this.getParentPathStates(path);
-      if (parentPathStates.length) {
-        throw this.getChildPathError(path, parentPathStates[0]);
+      const colllisionPath = this.getPathCollisions(path);
+      if (colllisionPath) {
+        throw this.getPathCollisionError(path, colllisionPath);
       }
       this.commonStore.dispatch(
-        new PatchState({ type: 'INIT' }, [[path, initialState]])
+        new PatchState({ type: 'INIT' }, [[path.split('.'), initialState]]),
       );
-      this.pathStates.push({
-        path,
-        lastState: initialState,
-        initialState,
-      });
+      this.pathStates[path] = { lastState: initialState, initialState };
       return merge(...allUpdatesFromSources$, NEVER); // If sources all complete, keep state in the store
     }).pipe(
       finalize(() => {
@@ -208,23 +204,17 @@ export class AdaptCommon<CommonStore extends StoreMethods> {
           const updateReactions = updateStream?.reactions || [];
           updateReactions.splice(
             updateReactions.findIndex(
-              ({ path: reactionPath }) =>
-                reactionPath.join('.') === path.join('.')
+              ({ path: reactionPath }) => reactionPath === path,
             ),
-            1
+            1,
           );
         });
-        this.pathStates.splice(
-          this.pathStates.findIndex(
-            ({ path: statePath }) => statePath.join('.') === path.join('.')
-          ),
-          1
-        );
+        delete this.pathStates[path];
         this.commonStore.dispatch(
-          new PatchState({ type: 'DESTROY' }, [[path, undefined]])
+          new PatchState({ type: 'DESTROY' }, [[path.split('.'), undefined]]),
         );
       }),
-      share()
+      share(),
     );
 
     return requireSources$;
@@ -236,48 +226,45 @@ export class AdaptCommon<CommonStore extends StoreMethods> {
 
   private getAllSourceUpdates(
     source$: Observable<Action<any>>,
-    { payload }: Action<any>
+    { payload }: Action<any>,
   ): [string[], any][] {
     return this.getSourceUpdateStream(source$).reactions.map(
       ({ path, reaction }) => {
-        const pathState = this.pathStates.find(
-          ({ path: statePath }) => statePath.join('.') === path.join('.')
-        );
+        const pathState = this.pathStates[path];
         const { lastState, initialState } = pathState;
         const newState = reaction(lastState, payload, initialState);
         pathState.lastState = newState;
-        return [path, newState];
-      }
+        return [path.split('.'), newState];
+      },
     );
   }
 
-  private getStateSelector<State>(path: string[]): ({ adapt: any }) => State {
+  private getStateSelector<State>(path: string): ({ adapt: any }) => State {
     return ({ adapt }) =>
-      path.reduce((state, segment) => state && state[segment], adapt);
+      path
+        .split('.')
+        .reduce((state, segment) => state && state[segment], adapt);
   }
 
-  private getParentPathStates(path: string[]) {
-    return this.pathStates
-      .filter(
-        ({ path: parentPath }) =>
-          parentPath.length <= path.length &&
-          path.slice(0, parentPath.length).join('.') === parentPath.join('.')
-      )
-      .map(({ path: parentPath }) => parentPath);
+  private getPathCollisions(path: string) {
+    return Object.keys(this.pathStates).find(
+      existingPath =>
+        path === existingPath ||
+        existingPath + '.' === path.substr(0, existingPath.length + 1) ||
+        path + '.' === existingPath.substr(0, path.length + 1),
+    );
   }
 
-  private getChildPathError(path: string[], parentPath: string[]) {
-    const str = JSON.stringify(path);
-    const parentStr = JSON.stringify(parentPath);
+  private getPathCollisionError(path: string, existingPath: string) {
     return new Error(
-      `Path ${str} is attempting to extend path ${parentStr}, which has already been initialized as a state path.`
+      `Path '${path}' collides with '${existingPath}', which has already been initialized as a state path.`,
     );
   }
 
   private getSelections<State, S extends Selectors<State>>(
     selectors: S,
     getState: ({ adapt: any }) => State,
-    requireSources$: Observable<any>
+    requireSources$: Observable<any>,
   ): {
     fullSelectors: S & { getState: () => State };
     selections: Selections<State, S>;
@@ -285,7 +272,7 @@ export class AdaptCommon<CommonStore extends StoreMethods> {
     const getUsing = <T>(selection$: Observable<T>) =>
       using(
         () => requireSources$.subscribe(),
-        () => filterDefined(selection$)
+        () => filterDefined(selection$),
       );
     const selections: {
       fullSelectors: S & { getState: () => State };
@@ -295,7 +282,7 @@ export class AdaptCommon<CommonStore extends StoreMethods> {
         const fullSelector = createSelector(
           getState,
           (state: State, props: any) =>
-            state !== undefined ? selectors[key](state, props) : state
+            state !== undefined ? selectors[key](state, props) : state,
         );
         return {
           fullSelectors: { ...selected.fullSelectors, [key]: fullSelector },
@@ -314,7 +301,7 @@ export class AdaptCommon<CommonStore extends StoreMethods> {
       } as {
         fullSelectors: S & { getState: () => State };
         selections: Selections<State, S>;
-      }
+      },
     );
 
     return selections;
