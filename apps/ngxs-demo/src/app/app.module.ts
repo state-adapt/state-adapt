@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
 import { NgxsModule } from '@ngxs/store';
+import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
 import { actionSanitizer } from '@state-adapt/core';
 import { ADAPT_SERVICE, DemoUiModule } from '@state-adapt/demo-ui';
 import { Adapt, AdaptState } from '@state-adapt/ngxs';
