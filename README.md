@@ -23,8 +23,7 @@ You can also play with StateAdapt in these StackBlitz demos:
 First, `npm install`:
 
 ```
-npm install --save @ngrx/store @state-adapt/core @state-adapt/ngrx
-npm install --save-dev @ngrx/store-devtools
+npm install --save @ngrx/store @ngrx/store-devtools @state-adapt/core @state-adapt/ngrx
 ```
 
 Include in your app.module.ts like so:
@@ -78,8 +77,7 @@ Open up Redux Devtools and you should see the state update after 3 seconds.
 First, `npm install`:
 
 ```
-npm install --save @ngrx/store @ngxs/store @state-adapt/core @state-adapt/ngxs
-npm install --save-dev @ngxs/devtools-plugin
+npm install --save @ngrx/store @ngxs/store @ngxs/devtools-plugin @state-adapt/core @state-adapt/ngxs
 ```
 
 Include in your app.module.ts like so:
