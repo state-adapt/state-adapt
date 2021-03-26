@@ -9,5 +9,7 @@ export type Sources<
   S extends Selectors<State>,
   R extends ReactionsWithGetSelectors<State, S>
 > = {
-  [K in keyof R]?: Observable<Action<SecondParameter<Parameters<R[K]>>>>[];
+  [K in keyof R]?:
+    | Observable<Action<SecondParameter<Parameters<R[K]>>>>[]
+    | Observable<Action<SecondParameter<Parameters<R[K]>>>>;
 };

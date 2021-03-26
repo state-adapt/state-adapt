@@ -57,7 +57,7 @@ import { Adapt } from '@state-adapt/ngrx';
     append: (state, newStr: string) => `${state}${newStr}`,
   });
   stringStore = this.adapt.init(['string', this.stringAdapter, ''], {
-    append: [this.newStr$],
+    append: this.newStr$,
   });
   str$ = this.stringStore.getState();
   constructor(private adapt: Adapt) {
@@ -109,7 +109,7 @@ import { Adapt } from '@state-adapt/ngxs';
     append: (state, newStr: string) => `${state}${newStr}`,
   });
   stringStore = this.adapt.init(['string', this.stringAdapter, ''], {
-    append: [this.newStr$],
+    append: this.newStr$,
   });
   str$ = this.stringStore.getState();
   constructor(private adapt: Adapt) {

@@ -20,9 +20,9 @@ export class IncrementComponent {
   decrement$ = new Source<void>('decrement$');
   reset$ = new Source<void>('reset$');
   store = this.adapt.init(['count', countAdapter, 0], {
-    increment: [this.increment$],
-    decrement: [this.decrement$],
-    reset: [this.reset$],
+    increment: this.increment$,
+    decrement: this.decrement$,
+    reset: this.reset$,
   });
   count$ = this.store.getState();
   constructor(@Inject(ADAPT_SERVICE) private adapt: Adapt) {}

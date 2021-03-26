@@ -138,7 +138,10 @@ export class AdaptCommon<CommonStore extends StoreMethods> {
     const reactionEntries = Object.entries(reactions);
     const allSourcesWithReactions = flatten(
       reactionEntries.map(([reactionName, reaction]) => {
-        const reactionSources = sources[reactionName] || [];
+        const reactionSource = sources[reactionName] || [];
+        const reactionSources = Array.isArray(reactionSource)
+          ? reactionSource
+          : [reactionSource];
         return reactionSources.map(source$ => ({ source$, reaction }));
       }),
     );
