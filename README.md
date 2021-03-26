@@ -28,16 +28,16 @@ npm install --save @ngrx/store @ngrx/store-devtools @state-adapt/core @state-ada
 
 Include in your app.module.ts like so:
 
-```
-import { StoreModule } from "@ngrx/store";
-import { StoreDevtoolsModule } from "@ngrx/store-devtools";
-import { actionSanitizer } from "@state-adapt/core";
-import { adaptReducer } from "@state-adapt/ngrx";
+```typescript
+import { StoreModule } from '@ngrx/store';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { actionSanitizer } from '@state-adapt/core';
+import { adaptReducer } from '@state-adapt/ngrx';
 ```
 
 In your module imports array:
 
-```
+```typescript
     StoreModule.forRoot({ adapt: adaptReducer }),
     StoreDevtoolsModule.instrument({
       maxAge: 25,
@@ -48,12 +48,12 @@ In your module imports array:
 
 Now you can use it in a component or service. Here's an example in a component:
 
-```
+```typescript
 import { Source, createAdapter } from '@state-adapt/core';
 import { Adapt } from '@state-adapt/ngrx';
 ...
   newStr$ = new Source<string>('newStr$');
-  stringAdapter = createAdapter<string>()({ // TS quirk
+  stringAdapter = createAdapter<string>()({
     append: (state, newStr: string) => `${state}${newStr}`,
   });
   stringStore = this.adapt.init(['string', this.stringAdapter, ''], {
@@ -79,16 +79,16 @@ npm install --save @ngrx/store @ngxs/store @ngxs/devtools-plugin @state-adapt/co
 
 Include in your app.module.ts like so:
 
-```
-import { NgxsModule } from "@ngxs/store";
-import { NgxsReduxDevtoolsPluginModule } from "@ngxs/devtools-plugin";
-import { actionSanitizer } from "@state-adapt/core";
-import { AdaptState } from "@state-adapt/ngxs";
+```typescript
+import { NgxsModule } from '@ngxs/store';
+import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
+import { actionSanitizer } from '@state-adapt/core';
+import { AdaptState } from '@state-adapt/ngxs';
 ```
 
 In your module imports array:
 
-```
+```typescript
     NgxsModule.forRoot([AdaptState], {
       developmentMode: !environment.production
     }),
@@ -100,12 +100,12 @@ In your module imports array:
 
 Now you can use it in a component or service. Here's an example in a component:
 
-```
+```typescript
 import { Source, createAdapter } from '@state-adapt/core';
 import { Adapt } from '@state-adapt/ngxs';
 ...
   newStr$ = new Source<string>('newStr$');
-  stringAdapter = createAdapter<string>()({ // TS quirk
+  stringAdapter = createAdapter<string>()({
     append: (state, newStr: string) => `${state}${newStr}`,
   });
   stringStore = this.adapt.init(['string', this.stringAdapter, ''], {
