@@ -56,12 +56,9 @@ import { Adapt } from '@state-adapt/ngrx';
   stringAdapter = createAdapter<string>()({ // TS quirk
     append: (state, newStr: string) => `${state}${newStr}`,
   });
-  stringStore = this.adapt.init(
-    this.stringAdapter,
-    'string',
-    { append: [this.newStr$] },
-    '',
-  );
+  stringStore = this.adapt.init(['string', this.stringAdapter, ''], {
+    append: [this.newStr$],
+  });
   str$ = this.stringStore.getState();
   constructor(private adapt: Adapt) {
     this.str$.subscribe();
@@ -111,12 +108,9 @@ import { Adapt } from '@state-adapt/ngxs';
   stringAdapter = createAdapter<string>()({ // TS quirk
     append: (state, newStr: string) => `${state}${newStr}`,
   });
-  stringStore = this.adapt.init(
-    this.stringAdapter,
-    'string',
-    { append: [this.newStr$] },
-    '',
-  );
+  stringStore = this.adapt.init(['string', this.stringAdapter, ''], {
+    append: [this.newStr$],
+  });
   str$ = this.stringStore.getState();
   constructor(private adapt: Adapt) {
     this.str$.subscribe();

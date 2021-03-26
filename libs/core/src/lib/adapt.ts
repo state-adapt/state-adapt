@@ -46,10 +46,8 @@ export class AdaptCommon<CommonStore extends StoreMethods> {
     S extends Selectors<State>,
     R extends ReactionsWithGetSelectors<State, S>
   >(
-    adapter: Adapter<State, S, R>,
-    path: string,
+    [path, adapter, initialState]: [string, Adapter<State, S, R>, State],
     sources: Sources<State, S, R>,
-    initialState: State,
   ): MiniStore<State, S & { getState: (state: any) => State }> {
     // type S = ReturnType<R['getSelectors']>;
     const selectors = adapter.getSelectors ? adapter.getSelectors() : ({} as S);
@@ -82,10 +80,8 @@ export class AdaptCommon<CommonStore extends StoreMethods> {
     S extends Selectors<State>,
     R extends ReactionsWithGetSelectors<State, S>
   >(
-    adapter: Adapter<State, S, R>,
-    path: string,
+    [path, adapter, initialState]: [string, Adapter<State, S, R>, State],
     sources: Sources<State, S, R>,
-    initialState: State,
   ): Observable<State> {
     const reactions = { ...adapter } as Reactions<State>;
     delete reactions.getSelectors;
