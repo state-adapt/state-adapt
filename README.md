@@ -31,7 +31,7 @@ Include in your app.module.ts like so:
 ```typescript
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
-import { actionSanitizer } from '@state-adapt/core';
+import { actionSanitizer, stateSanitizer } from '@state-adapt/core';
 import { adaptReducer } from '@state-adapt/ngrx';
 ```
 
@@ -42,7 +42,8 @@ In your module imports array:
     StoreDevtoolsModule.instrument({
       maxAge: 25,
       logOnly: environment.production,
-      actionSanitizer
+      actionSanitizer,
+      stateSanitizer,
     }),
 ```
 
@@ -82,7 +83,7 @@ Include in your app.module.ts like so:
 ```typescript
 import { NgxsModule } from '@ngxs/store';
 import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
-import { actionSanitizer } from '@state-adapt/core';
+import { actionSanitizer, stateSanitizer } from '@state-adapt/core';
 import { AdaptState } from '@state-adapt/ngxs';
 ```
 
@@ -94,7 +95,8 @@ In your module imports array:
     }),
     NgxsReduxDevtoolsPluginModule.forRoot({
       disabled: environment.production,
-      actionSanitizer
+      actionSanitizer,
+      stateSanitizer,
     }),
 ```
 
