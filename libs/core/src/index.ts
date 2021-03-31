@@ -1,6 +1,7 @@
 export * from './lib/update-paths.function';
 export * from './lib/adapt.actions';
 export * from './lib/action-sanitizer.function';
+export * from './lib/state-sanitizer.function';
 export * from './lib/action.interface';
 export * from './lib/split-sources.function';
 export * from './lib/get-action.function';
