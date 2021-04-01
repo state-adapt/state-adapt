@@ -3,11 +3,6 @@ import { Routes, RouterModule } from '@angular/router';
 import { IntroComponent } from './intro/intro.component';
 
 @Component({
-  selector: 'state-adapt-dashboards',
-  template: 'Dashboards Demo App coming soon!',
-})
-class DashboardsComponent {}
-@Component({
   selector: 'state-adapt-adapters',
   template: 'Adapters coming soon!',
 })
@@ -21,8 +16,10 @@ const routes: Routes = [
   },
   {
     path: 'dashboards',
-    component: DashboardsComponent,
-    // loadChildren: () => import('./login/login.module').then(m => m.LoginModule),
+    loadChildren: () =>
+      import('@state-adapt/dashboards-feature').then(
+        m => m.DashboardsFeatureRoutingModule,
+      ),
   },
   {
     path: 'adapters/core',
