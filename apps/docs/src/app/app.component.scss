@@ -2,25 +2,75 @@
 /*
  * Remove template code below
  */
+$ui-01: map-get($carbon--theme, ui-01);
+$text-01: map-get($carbon--theme, text-01);
+$hover-ui: map-get($carbon--theme, hover-ui);
+$brand-01: map-get($carbon--theme, brand-01);
+
 :host {
   display: block;
   font-family: sans-serif;
   margin: 50px auto;
 }
 
-::ng-deep .bx--header {
-  border-bottom: 0;
-}
 
-::ng-deep a.bx--side-nav__link[aria-current=page]::before {
-  background-color: map-get($carbon--theme, brand-01);
-}
-
+// Apparently most of this will be fixed in June (2021). https://github.com/carbon-design-system/carbon/issues/4839
 .bx--side-nav--ux {
   width: 0px;
 }
 .bx--side-nav--expanded.bx--side-nav--ux {
   width: 16rem;
+}
+::ng-deep {
+  .bx--header {
+    border-bottom: 0;
+  }
+  a.bx--side-nav__link[aria-current=page]::before {
+    background-color: $brand-01;
+  }
+  .bx--side-nav__item--active .bx--side-nav__submenu[aria-expanded=false]::before {
+    background-color: $brand-01;
+  }
+  .bx--side-nav {
+    background-color: $ui-01;
+    color: $text-01 !important;
+  }
+  .bx--side-nav__submenu, .bx--side-nav__link-text {
+    color: $text-01 !important;
+  }
+  .bx--side-nav__link--current, .bx--side-nav__link[aria-current=page] {
+    background-color: $hover-ui !important;
+  }
+  .bx--side-nav__item--active .bx--side-nav__submenu:hover {
+    background-color: $hover-ui !important;
+  }
+  .bx--side-nav__item:not(.bx--side-nav__item--active) > .bx--side-nav__link:hover {
+    background-color: $hover-ui;
+  }
+  .bx--side-nav__submenu:hover {
+    background-color: $hover-ui;
+  }
+  .bx--side-nav__item--active .bx--side-nav__submenu-title {
+    color: $text-01 !important;
+  }
+  .bx--side-nav__menu a.bx--side-nav__link:not(.bx--side-nav__link--current):not([aria-current=page]):hover {
+    background-color: $hover-ui;
+  }
+  .bx--side-nav__item--active .bx--side-nav__submenu[aria-expanded=false] {
+    background-color: $hover-ui;
+  }
+  .bx--side-nav__item:not(.bx--side-nav__item--active) > .bx--side-nav__link:hover {
+    color: $text-01;
+  }
+  .bx--side-nav__menu a.bx--side-nav__link[aria-current=page]:hover {
+    color: $text-01;
+  }
+  .bx--side-nav__menu a.bx--side-nav__link:not(.bx--side-nav__link--current):not([aria-current=page]):hover {
+    color: $text-01;
+  }
+  .bx--side-nav__footer {
+    background-color: $ui-01;
+  }
 }
 
 .flex {
