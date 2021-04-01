@@ -31,7 +31,7 @@ export class AppComponent {
       {
         route: '/dashboards',
         name: 'Demo App',
-        active: url === '/dashboards',
+        active: url.includes('/dashboards'),
       },
       {
         route: '/adapters',
