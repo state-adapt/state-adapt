@@ -25,9 +25,7 @@
     "ngxs-demo-e2e": { "tags": [], "implicitDependencies": ["ngxs-demo"] },
     "demo-ui": { "tags": [] },
     "docs": { "tags": [] },
-    "docs-e2e": {
-      "tags": [],
-      "implicitDependencies": ["docs"]
-    }
+    "docs-e2e": { "tags": [], "implicitDependencies": ["docs"] },
+    "dashboards-feature": { "tags": ["feature"] }
   }
 }

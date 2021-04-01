@@ -411,10 +411,7 @@
             "polyfills": "apps/docs/src/polyfills.ts",
             "tsConfig": "apps/docs/tsconfig.app.json",
             "aot": true,
-            "assets": [
-              "apps/docs/src/favicon.ico",
-              "apps/docs/src/assets"
-            ],
+            "assets": ["apps/docs/src/favicon.ico", "apps/docs/src/assets"],
             "styles": ["apps/docs/src/styles.scss"],
             "scripts": [
               "node_modules/marked/lib/marked.js",
@@ -510,6 +507,31 @@
           "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": ["apps/docs-e2e/**/*.{js,ts}"]
+          }
+        }
+      }
+    },
+    "dashboards-feature": {
+      "projectType": "library",
+      "root": "libs/dashboards-feature",
+      "sourceRoot": "libs/dashboards-feature/src",
+      "prefix": "state-adapt",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/dashboards-feature/src/**/*.ts",
+              "libs/dashboards-feature/src/**/*.html"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/dashboards-feature"],
+          "options": {
+            "jestConfig": "libs/dashboards-feature/jest.config.js",
+            "passWithNoTests": true
           }
         }
       }
