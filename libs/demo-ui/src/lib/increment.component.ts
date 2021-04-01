@@ -11,7 +11,7 @@ import { countAdapter } from './count.adapter';
       <button (click)="increment$.next(3)">Increment by 3</button>
       <button (click)="decrement$.next()">Decrement</button>
       <button (click)="reset$.next()">Reset</button>
-      <h1>{{ count$ | async | json }}</h1>
+      <h1>{{ count$ | async }}</h1>
     </div>
   `,
 })
