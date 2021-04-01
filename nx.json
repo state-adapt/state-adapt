@@ -23,6 +23,11 @@
     "ngxs": { "tags": [] },
     "ngxs-demo": { "tags": [] },
     "ngxs-demo-e2e": { "tags": [], "implicitDependencies": ["ngxs-demo"] },
-    "demo-ui": { "tags": [] }
+    "demo-ui": { "tags": [] },
+    "docs": { "tags": [] },
+    "docs-e2e": {
+      "tags": [],
+      "implicitDependencies": ["docs"]
+    }
   }
 }

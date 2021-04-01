@@ -1,0 +1,48 @@
+@import '../theme';
+/*
+ * Remove template code below
+ */
+:host {
+  display: block;
+  font-family: sans-serif;
+  margin: 50px auto;
+}
+
+::ng-deep .bx--header {
+  border-bottom: 0;
+}
+
+::ng-deep a.bx--side-nav__link[aria-current=page]::before {
+  background-color: map-get($carbon--theme, brand-01);
+}
+
+.bx--side-nav--ux {
+  width: 0px;
+}
+.bx--side-nav--expanded.bx--side-nav--ux {
+  width: 16rem;
+}
+
+.flex {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+main {
+  display: block;
+  position: relative;
+  padding: 0 0px;
+  width: 100%;
+  margin-left: 0;
+  margin-top: -2px;
+  @media screen and (min-width: 800px) {
+    &.squished {
+      width: calc(100% - 16rem);
+      margin-left: 16rem;
+    }
+  }
+
+}
+
+

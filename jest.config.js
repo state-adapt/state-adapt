@@ -6,5 +6,6 @@ module.exports = {
     '<rootDir>/libs/ngxs',
     '<rootDir>/apps/ngxs-demo',
     '<rootDir>/libs/demo-ui',
+    '<rootDir>/apps/docs',
   ],
 };
