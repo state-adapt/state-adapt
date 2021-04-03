@@ -14,7 +14,7 @@ export function splitSources<
   return Object.entries(partitions).reduce(
     (sources, [name, type]) => ({
       ...sources,
-      [name]: obs$.pipe(filter((val) => val.type === type)),
+      [name]: obs$.pipe(filter(val => val.type === type)),
     }),
     {} as PartitionedSources,
   );

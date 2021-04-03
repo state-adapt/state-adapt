@@ -12,7 +12,7 @@ export function getHttpSources<Res extends { status: number }, Body, Err>(
   const httpWithSources$ = concat(
     of(getAction('Request')),
     http$.pipe(
-      map((res) => {
+      map(res => {
         const [succeeded, body, err] = getResponse(res);
         return succeeded ? getAction('Success', body) : getAction('Error', err);
       }),
