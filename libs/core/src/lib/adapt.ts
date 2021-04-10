@@ -11,6 +11,7 @@ import {
 import type { Action } from './action.interface';
 import { PatchState } from './adapt.actions';
 import { Adapter, ReactionsWithGetSelectors } from './adapter.type';
+import { createBasicAdapter } from './create-basic-adapter.function';
 import { MiniStore } from './mini-store.interface';
 import { Reactions } from './reactions.interface';
 import { Selections } from './selections.type';
@@ -29,8 +30,10 @@ interface StoreMethods {
 }
 
 export class AdaptCommon<CommonStore extends StoreMethods> {
-  pathStates: { [index: string]: { lastState: any; initialState: any } } = {};
-  updaterStreams: {
+  private pathStates: {
+    [index: string]: { lastState: any; initialState: any };
+  } = {};
+  private updaterStreams: {
     source$: Observable<Action<any>>;
     requireSources$: Observable<any>;
     reactions: {
@@ -98,6 +101,27 @@ export class AdaptCommon<CommonStore extends StoreMethods> {
       () => requireSources$.subscribe(),
       () => filterDefined(this.commonStore.select(getState)),
     );
+  }
+
+  setter<State>(
+    path: string,
+    initialState: State,
+    source$: Observable<Action<State>> | Observable<Action<State>>[],
+  ) {
+    return this.initGet([path, createBasicAdapter<State>(), initialState], {
+      set: source$,
+    });
+  }
+  updater<State>(
+    path: string,
+    initialState: State,
+    source$:
+      | Observable<Action<Partial<State>>>
+      | Observable<Action<Partial<State>>>[],
+  ) {
+    return this.initGet([path, createBasicAdapter<State>(), initialState], {
+      update: source$,
+    });
   }
 
   select<

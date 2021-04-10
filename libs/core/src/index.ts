@@ -20,6 +20,7 @@ export * from './lib/adapter.type';
 export * from './lib/create-selectors.function';
 export * from './lib/create-reactions.function';
 export * from './lib/create-adapter.function';
+export * from './lib/create-basic-adapter.function';
 export * from './lib/source';
 export * from './lib/join.function';
 
