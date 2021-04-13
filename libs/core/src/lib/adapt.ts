@@ -215,7 +215,9 @@ export class AdaptCommon<CommonStore extends StoreMethods> {
         throw this.getPathCollisionError(path, colllisionPath);
       }
       this.commonStore.dispatch(
-        new PatchState({ type: 'INIT' }, [[path.split('.'), initialState]]),
+        new PatchState({ type: `INIT ${path}` }, [
+          [path.split('.'), initialState],
+        ]),
       );
       this.pathStates[path] = { lastState: initialState, initialState };
       return merge(...allUpdatesFromSources$, NEVER); // If sources all complete, keep state in the store
@@ -234,7 +236,9 @@ export class AdaptCommon<CommonStore extends StoreMethods> {
         });
         delete this.pathStates[path];
         this.commonStore.dispatch(
-          new PatchState({ type: 'DESTROY' }, [[path.split('.'), undefined]]),
+          new PatchState({ type: `DESTROY ${path}` }, [
+            [path.split('.'), undefined],
+          ]),
         );
       }),
       share(),
