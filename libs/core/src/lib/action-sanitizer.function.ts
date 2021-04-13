@@ -9,10 +9,7 @@ export function actionSanitizer(action: Action & PatchState) {
         actionType: undefined,
         source: undefined,
         payload: action.source.payload,
-        type:
-          action.type === adaptType
-            ? `[${action.type}] ${action.source.type}`
-            : action.type,
+        type: action.source.type,
       }
     : action;
 }
