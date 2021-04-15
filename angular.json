@@ -673,6 +673,11 @@
                 "output": "."
               }
             ]
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "libs/react/tsconfig.lib.prod.json"
+            }
           }
         },
         "lint": {
