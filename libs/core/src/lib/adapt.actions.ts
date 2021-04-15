@@ -1,4 +1,4 @@
-export interface Action {
+export interface CommonAction {
   type: string;
 }
 
@@ -8,12 +8,12 @@ export const adaptType = 'Adapt';
 
 export interface PatchState {
   type: string;
-  source: Action & { payload?: any };
+  source: CommonAction & { payload?: any };
   payload: Update[];
 }
 
 export function createPatchState(
-  source: Action & { payload?: any },
+  source: CommonAction & { payload?: any },
   payload: Update[],
 ): PatchState {
   return {
