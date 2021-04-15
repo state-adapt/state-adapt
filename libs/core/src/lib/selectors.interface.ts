@@ -1,8 +1,5 @@
-import { MemoizedSelector } from '@ngrx/store';
+import { Selector } from 'reselect';
 
 export interface Selectors<State> {
-  [index: string]: (
-    state: State,
-    props?: any,
-  ) => any | MemoizedSelector<State, any>;
+  [index: string]: (state: State, props?: any) => any | Selector<State, any>;
 }

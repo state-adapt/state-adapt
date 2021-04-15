@@ -9,9 +9,7 @@
     "rxjs",
     "redux",
     "state management",
-    "state adapters",
-    "ngrx",
-    "ngrx/entity"
+    "state adapters"
   ],
   "repository": {
     "type": "git",
