@@ -1,4 +1,5 @@
-import { adaptType, PatchState, updatePaths } from '@state-adapt/core';
+import { adaptType, PatchState } from './adapt.actions';
+import { updatePaths } from './update-paths.function';
 
 export interface AdaptModel {
   [index: string]: any;
