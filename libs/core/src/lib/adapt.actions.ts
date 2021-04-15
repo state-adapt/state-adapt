@@ -1,4 +1,6 @@
-import { Action } from '@ngrx/store';
+export interface Action {
+  type: string;
+}
 
 export type Update = [string[], any];
 

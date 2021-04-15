@@ -1,5 +1,4 @@
-import { Action } from '@ngrx/store';
-import { adaptType, PatchState } from './adapt.actions';
+import { adaptType, PatchState, Action } from './adapt.actions';
 
 export function actionSanitizer(action: Action & PatchState) {
   return action.type === adaptType
