@@ -1,6 +1,6 @@
 # StateAdapt
 
-Minimal, reactive and reusable state management for Angular (soon React and Svelte too)
+Minimal, reactive and reusable state management for Angular and React (Svelte too)
 
 ## Documentation
 
