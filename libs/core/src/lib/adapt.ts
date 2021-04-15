@@ -1,4 +1,4 @@
-import { createSelector } from '@ngrx/store';
+import { createSelector } from 'reselect';
 import { flatten } from 'lodash';
 import { defer, merge, NEVER, Observable, of, using } from 'rxjs';
 import {
@@ -299,7 +299,7 @@ export class AdaptCommon<CommonStore extends StoreMethods> {
     } = Object.keys(selectors).reduce(
       (selected, key) => {
         const fullSelector = createSelector(
-          getState,
+          [getState],
           (state: State, props: any) =>
             state !== undefined ? selectors[key](state, props) : state,
         );

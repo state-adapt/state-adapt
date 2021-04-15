@@ -1,4 +1,4 @@
-import { createSelector } from '@ngrx/store';
+import { createSelector } from 'reselect';
 import { merge, using } from 'rxjs';
 import { AnySelectors } from './any-selectors.interface';
 import { JoinedMiniStore } from './joined-mini-store.interface';
@@ -21,7 +21,7 @@ export function join<
   NewS extends AnySelectors
 >(
   stores: StoreLike<State1, S1, AS1>[],
-  getSelectors: (...s1: S1[]) => NewS
+  getSelectors: (...s1: S1[]) => NewS,
 ): JoinedMiniStore<any, JoinedSelectors<NewS, State1[]>>;
 export function join<
   State1,
@@ -34,7 +34,7 @@ export function join<
 >(
   store1: StoreLike<State1, S1, AS1>,
   store2: StoreLike<State2, S2, AS2>,
-  getSelectors: (s1: S1, s2: S2) => NewS
+  getSelectors: (s1: S1, s2: S2) => NewS,
 ): JoinedMiniStore<any, JoinedSelectors<NewS, [State1, State2]>>;
 export function join<
   State1,
@@ -51,7 +51,7 @@ export function join<
   store1: StoreLike<State1, S1, AS1>,
   store2: StoreLike<State2, S2, AS2>,
   store3: StoreLike<State3, S3, AS3>,
-  getSelectors: (s1: S1, s2: S2, s3: S3) => NewS
+  getSelectors: (s1: S1, s2: S2, s3: S3) => NewS,
 ): JoinedMiniStore<any, JoinedSelectors<NewS, [State1, State2, State3]>>;
 export function join<
   State1,
@@ -72,7 +72,7 @@ export function join<
   store2: StoreLike<State2, S2, AS2>,
   store3: StoreLike<State3, S3, AS3>,
   store4: StoreLike<State4, S4, AS4>,
-  getSelectors: (s1: S1, s2: S2, s3: S3, s4: S4) => NewS
+  getSelectors: (s1: S1, s2: S2, s3: S3, s4: S4) => NewS,
 ): JoinedMiniStore<
   any,
   JoinedSelectors<NewS, [State1, State2, State3, State4]>
@@ -100,7 +100,7 @@ export function join<
   store3: StoreLike<State3, S3, AS3>,
   store4: StoreLike<State4, S4, AS4>,
   store5: StoreLike<State5, S5, AS5>,
-  getSelectors: (s1: S1, s2: S2, s3: S3, s4: S4, s5: S5) => NewS
+  getSelectors: (s1: S1, s2: S2, s3: S3, s4: S4, s5: S5) => NewS,
 ): JoinedMiniStore<
   any,
   JoinedSelectors<NewS, [State1, State2, State3, State4, State5]>
@@ -114,8 +114,8 @@ export function join<NewS extends Selectors<any>>(
   const getSelectors = inputs[inputs.length - 1];
 
   const getState: ({ adapt: any }) => any = (createSelector as any)(
-    ...miniStores.map(({ _fullSelectors }) => _fullSelectors.getState),
-    (...results: any[]) => results.slice(0, -1) // Returns number of times it's been called at the end
+    [...miniStores.map(({ _fullSelectors }) => _fullSelectors.getState)],
+    (...results: any[]) => results,
   );
 
   const fullSelectors: NewS = {
@@ -123,7 +123,7 @@ export function join<NewS extends Selectors<any>>(
     getState,
   };
   const requireAllSources$ = merge(
-    ...miniStores.map(({ _requireSources$ }) => _requireSources$)
+    ...miniStores.map(({ _requireSources$ }) => _requireSources$),
   );
 
   const selections = Object.keys(fullSelectors).reduce(
@@ -132,10 +132,10 @@ export function join<NewS extends Selectors<any>>(
       [key]: () =>
         using(
           () => requireAllSources$.subscribe(),
-          () => select(fullSelectors[key])
+          () => select(fullSelectors[key]),
         ),
     }),
-    {} as Selections<any, NewS>
+    {} as Selections<any, NewS>,
   );
 
   return {

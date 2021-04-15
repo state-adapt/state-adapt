@@ -22,7 +22,7 @@
   },
   "peerDependencies": {
     "rxjs": "6.6.6",
-    "@ngrx/store": "^11.0.1"
+    "reselect": "^4.0.0"
   },
   "dependencies": {
     "tslib": "^2.0.0"
