@@ -20,7 +20,7 @@ export function updatePaths<T>(oldState: T, updates: Update[]): T {
           : [[remainingPath.slice(1), newVal]],
       };
     },
-    {} as { [K in keyof T]: [string[], T[K]][] }
+    {} as { [K in keyof T]: [string[], T[K]][] },
   );
 
   // const isObject = newValEntry && getIsObject(newValEntry[1]);
@@ -33,7 +33,7 @@ export function updatePaths<T>(oldState: T, updates: Update[]): T {
           ...(state || {}),
           [prop]: updatePaths((state || {})[prop] || {}, childUpdates),
         }),
-        (wasObject ? oldState : {}) as T
+        (wasObject ? oldState : {}) as T,
       );
 }
 

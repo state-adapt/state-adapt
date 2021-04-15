@@ -21,7 +21,8 @@
       "@state-adapt/demo-ui": ["libs/demo-ui/src/index.ts"],
       "@state-adapt/dashboards-feature": [
         "libs/dashboards-feature/src/index.ts"
-      ]
+      ],
+      "@state-adapt/react": ["libs/react/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

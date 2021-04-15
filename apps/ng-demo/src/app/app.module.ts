@@ -2,9 +2,13 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
-import { actionSanitizer, stateSanitizer } from '@state-adapt/core';
+import {
+  actionSanitizer,
+  stateSanitizer,
+  adaptReducer,
+} from '@state-adapt/core';
 import { ADAPT_SERVICE, DemoUiModule } from '@state-adapt/demo-ui';
-import { Adapt, adaptReducer } from '@state-adapt/ngrx';
+import { Adapt } from '@state-adapt/ngrx';
 import { environment } from '../environments/environment';
 import { AppComponent } from './app.component';
 

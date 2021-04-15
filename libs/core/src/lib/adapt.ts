@@ -9,7 +9,7 @@ import {
   tap,
 } from 'rxjs/operators';
 import type { Action } from './action.interface';
-import { PatchState } from './adapt.actions';
+import { createDestroy, createInit, createPatchState } from './adapt.actions';
 import { Adapter, ReactionsWithGetSelectors } from './adapter.type';
 import { createBasicAdapter } from './create-basic-adapter.function';
 import { MiniStore } from './mini-store.interface';
@@ -180,7 +180,7 @@ export class AdaptCommon<CommonStore extends StoreMethods> {
             : source$.pipe(
                 tap(action => {
                   const updates = this.getAllSourceUpdates(source$, action);
-                  this.commonStore.dispatch(new PatchState(action, updates));
+                  this.commonStore.dispatch(createPatchState(action, updates));
                 }),
                 finalize(() => {
                   this.updaterStreams.splice(
@@ -214,11 +214,7 @@ export class AdaptCommon<CommonStore extends StoreMethods> {
       if (colllisionPath) {
         throw this.getPathCollisionError(path, colllisionPath);
       }
-      this.commonStore.dispatch(
-        new PatchState({ type: `INIT ${path}` }, [
-          [path.split('.'), initialState],
-        ]),
-      );
+      this.commonStore.dispatch(createInit(path, initialState));
       this.pathStates[path] = { lastState: initialState, initialState };
       return merge(...allUpdatesFromSources$, NEVER); // If sources all complete, keep state in the store
     }).pipe(
@@ -235,11 +231,7 @@ export class AdaptCommon<CommonStore extends StoreMethods> {
           );
         });
         delete this.pathStates[path];
-        this.commonStore.dispatch(
-          new PatchState({ type: `DESTROY ${path}` }, [
-            [path.split('.'), undefined],
-          ]),
-        );
+        this.commonStore.dispatch(createDestroy(path));
       }),
       share(),
     );

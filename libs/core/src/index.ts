@@ -24,4 +24,7 @@ export * from './lib/create-basic-adapter.function';
 export * from './lib/source';
 export * from './lib/join.function';
 
+export * from './lib/adapt.reducer';
+export * from './lib/adapt.store';
+export * from './lib/create-state-adapt.funciton';
 export * from './lib/adapt';
