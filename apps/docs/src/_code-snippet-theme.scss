@@ -68,7 +68,8 @@ pre[class*="language-"] {
 .token.constant,
 .token.symbol,
 .token.deleted {
-  color: #f92672;
+  color: map-get($carbon--theme, accent-01);
+  font-weight: bold;
 }
 
 .token.boolean,

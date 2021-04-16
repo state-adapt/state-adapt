@@ -12,8 +12,11 @@ import {
 import { MarkdownModule, MarkedOptions } from 'ngx-markdown';
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
-import { actionSanitizer, stateSanitizer } from '@state-adapt/core';
-import { adaptReducer } from '@state-adapt/ngrx';
+import {
+  adaptReducer,
+  actionSanitizer,
+  stateSanitizer,
+} from '@state-adapt/core';
 
 import { environment } from '../environments/environment';
 import { AppRoutingModule } from './app-routing.module';

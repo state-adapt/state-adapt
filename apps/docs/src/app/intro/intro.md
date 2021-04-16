@@ -29,17 +29,18 @@ StateAdapt uses state adapters to maximize reusability in state management.
 
 # Getting Started
 
-Jump to:
+Set up StateAdapt with
 
 - [NgRx](#ngrx)
 - [NGXS](#ngxs)
+- [React & Redux](#react--redux)
 
 ## NgRx
 
 First, `npm install`:
 
 ```
-npm install -S @ngrx/store @ngrx/store-devtools @state-adapt/core @state-adapt/ngrx
+npm i -s @state-adapt/core @state-adapt/ngrx reselect
 ```
 
 Include in your app.module.ts like so:
@@ -47,8 +48,11 @@ Include in your app.module.ts like so:
 ```typescript
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
-import { actionSanitizer, stateSanitizer } from '@state-adapt/core';
-import { adaptReducer } from '@state-adapt/ngrx';
+import {
+  adaptReducer,
+  actionSanitizer,
+  stateSanitizer,
+} from '@state-adapt/core';
 ```
 
 In your module imports array:
@@ -91,7 +95,7 @@ Open up Redux Devtools and you should see the state update after 3 seconds.
 First, `npm install`:
 
 ```
-npm install -S @ngrx/store @ngxs/store @ngxs/devtools-plugin @state-adapt/core @state-adapt/ngxs
+npm i -s @state-adapt/core @state-adapt/ngxs reselect
 ```
 
 Include in your app.module.ts like so:
@@ -138,6 +142,80 @@ import { Adapt } from '@state-adapt/ngxs';
 ```
 
 Open up Redux Devtools and you should see the state update after 3 seconds.
+
+# React & Redux
+
+First, `npm install`:
+
+```
+npm i -s @state-adapt/core @state-adapt/react
+```
+
+Define your Redux store:
+
+```typescript
+import {
+  adaptReducer,
+  actionSanitizer,
+  stateSanitizer,
+  createStateAdapt,
+} from '@state-adapt/core';
+import { combineReducers, createStore } from 'redux';
+
+const enableReduxDevTools = (window as any).__REDUX_DEVTOOLS_EXTENSION__?.({
+  actionSanitizer,
+  stateSanitizer,
+});
+
+export const store = createStore(
+  combineReducers({
+    adapt: adaptReducer,
+    // Any other reducers you have with Redux
+  }),
+  enableReduxDevTools,
+);
+export const adapt = createStateAdapt(store);
+```
+
+Provide StateAdapt in your app context:
+
+```tsx
+import { Provider } from 'react-redux';
+import { adapt, store } from './store';
+// ...
+  <AdaptContext.Provider value={adapt}>
+    <Provider store={store}>
+      <React.StrictMode>
+        <App />
+      </React.StrictMode>
+    </Provider>
+  </AdaptContext.Provider>,
+```
+
+And now you can use it in your components:
+
+```tsx
+import { createAdapter } from '@state-adapt/core';
+import { useSource, useAdapter, useObservable } from '@state-adapt/react';
+
+const stringAdapter = createAdapter<string>()({
+  append: (state, newStr: string) => state + newStr,
+});
+
+export function App() {
+  const newStr$ = useSource<string>('newStr$');
+  const stringStore = useAdapter(['string', stringAdapter, ''], {
+    append: this.newStr$,
+  });
+  cost str$ = stringStore.getState();
+  const str = useObservable(str$);
+
+  return (
+    <h1>{str}</h1>
+    <button onClick={() => newStr$.next('new string ')}>New String</button>
+  )
+}
+```
 
 # GitHub
 
