@@ -25,6 +25,7 @@ StateAdapt uses state adapters to maximize reusability in state management.
 
 - [StackBlitz: NgRx](https://stackblitz.com/edit/state-adapt-ngrx?file=src/app/app.component.ts)
 - [StackBlitz: NGXS](https://stackblitz.com/edit/state-adapt-ngxs?file=src/app/app.component.ts)
+- [StackBlitz: React & Redux](https://stackblitz.com/edit/state-adapt-react)
 - [Dashboards Demo App](/dashboards)
 
 # Getting Started
