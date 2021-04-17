@@ -24,17 +24,20 @@ StateAdapt uses state adapters to maximize reusability in state management.
 # Demos
 
 - [StackBlitz: NgRx](https://stackblitz.com/edit/state-adapt-ngrx?file=src/app/app.component.ts)
+- [StackBlitz: NgRx and State Adapt with Angular Reactive Forms](https://stackblitz.com/edit/angular-reactive-forms-state-management?file=src%2Fapp%2Fform%2Fstate-adapt-form.component.ts)
 - [StackBlitz: NGXS](https://stackblitz.com/edit/state-adapt-ngxs?file=src/app/app.component.ts)
-- [StackBlitz: React & Redux](https://stackblitz.com/edit/state-adapt-react)
+- [StackBlitz: React](https://stackblitz.com/edit/state-adapt-react)
+- [StackBlitz: React & Redux](https://stackblitz.com/edit/state-adapt-react-with-redux)
 - [Dashboards Demo App](/dashboards)
 
 # Getting Started
 
 Set up StateAdapt with
 
-- [NgRx](#ngrx)
-- [NGXS](#ngxs)
-- [React & Redux](#react--redux)
+- [Angular with NgRx](#ngrx)
+- [Angular with NGXS](#ngxs)
+- [React](#react)
+- [React with Redux](#react-with-redux)
 
 ## NgRx
 
@@ -144,7 +147,69 @@ import { Adapt } from '@state-adapt/ngxs';
 
 Open up Redux Devtools and you should see the state update after 3 seconds.
 
-# React & Redux
+# React with Redux
+
+First, `npm install`:
+
+```
+npm i -s @state-adapt/core @state-adapt/react
+```
+
+Define your adapt store:
+
+```typescript
+import {
+  actionSanitizer,
+  stateSanitizer,
+  createStore,
+} from '@state-adapt/core';
+
+const enableReduxDevTools = (window as any).__REDUX_DEVTOOLS_EXTENSION__?.({
+  actionSanitizer,
+  stateSanitizer,
+});
+export const adapt = createStore(enableReduxDevTools);
+```
+
+Provide StateAdapt in your app context:
+
+```tsx
+import { AdaptContext } from '@state-adapt/react';
+import { adapt, store } from './store';
+// ...
+  <AdaptContext.Provider value={adapt}>
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>
+  </AdaptContext.Provider>,
+```
+
+And now you can use it in your components:
+
+```tsx
+import { createAdapter } from '@state-adapt/core';
+import { useSource, useAdapter, useObservable } from '@state-adapt/react';
+
+const stringAdapter = createAdapter<string>()({
+  append: (state, newStr: string) => state + newStr,
+});
+
+export function App() {
+  const newStr$ = useSource<string>('newStr$');
+  const stringStore = useAdapter(['string', stringAdapter, ''], {
+    append: this.newStr$,
+  });
+  cost str$ = stringStore.getState();
+  const str = useObservable(str$);
+
+  return (
+    <h1>{str}</h1>
+    <button onClick={() => newStr$.next('new string ')}>New String</button>
+  )
+}
+```
+
+# React with Redux
 
 First, `npm install`:
 
@@ -182,6 +247,7 @@ Provide StateAdapt in your app context:
 
 ```tsx
 import { Provider } from 'react-redux';
+import { AdaptContext } from '@state-adapt/react';
 import { adapt, store } from './store';
 // ...
   <AdaptContext.Provider value={adapt}>
