@@ -1,7 +1,6 @@
 import React from 'react';
 import { createAdapter } from '@state-adapt/core';
 import { useAdapter, useObservable, useSource, useUpdater } from '@state-adapt/react';
-import styles from './app.module.scss';
 
 const abAdapter = createAdapter<string>()({
   concat: (state, newStr: string) => state + newStr,
