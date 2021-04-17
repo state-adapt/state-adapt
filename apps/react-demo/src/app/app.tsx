@@ -8,8 +8,8 @@ const abAdapter = createAdapter<string>()({
 })
 
 export function App() {
-  const clicko$ = useSource<{test: boolean}>('[App] clicko$');
-  const test$ = useUpdater('test', {test: false}, clicko$);
+  const click$ = useSource<{test: boolean}>('[App] click$');
+  const test$ = useUpdater('test', {test: false}, click$);
   const test = useObservable(test$);
 
   const a$ = useSource<string>('[App] a$');
@@ -18,11 +18,11 @@ export function App() {
   const ab = useObservable(store.getState());
 
   return (
-    <div className={styles.app}>
+    <div>
       <main>
-        <h1>React is a {test?.test.toString()}!</h1>
-        <button onClick={() => clicko$.next({test: true})}>Clicko</button>
-        <h1>ab stuff: {ab}</h1>
+        <h1>{test?.test.toString()}!</h1>
+        <button onClick={() => click$.next({test: true})}>Click</button>
+        <h1>ab: {ab}</h1>
         <button onClick={() => a$.next('a')}>a</button>
         <button onClick={() => b$.next('b')}>b</button>
       </main>
