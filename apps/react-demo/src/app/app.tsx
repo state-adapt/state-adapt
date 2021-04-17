@@ -15,8 +15,7 @@ export function App() {
   const a$ = useSource<string>('[App] a$');
   const b$ = useSource<string>('[App] b$');
   const store = useAdapter(['ab', abAdapter, ''], {concat: [a$, b$]})
-  const ab$ = store.getState();
-  const ab = useObservable(ab$);
+  const ab = useObservable(store.getState());
 
   return (
     <div className={styles.app}>
@@ -25,7 +24,7 @@ export function App() {
         <button onClick={() => clicko$.next({test: true})}>Clicko</button>
         <h1>ab stuff: {ab}</h1>
         <button onClick={() => a$.next('a')}>a</button>
-        <button onClick={() => a$.next('b')}>b</button>
+        <button onClick={() => b$.next('b')}>b</button>
       </main>
     </div>
   );
