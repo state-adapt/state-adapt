@@ -5,7 +5,7 @@ export * from './lib/state-sanitizer.function';
 export * from './lib/action.interface';
 export * from './lib/split-sources.function';
 export * from './lib/get-action.function';
-export * from './lib/map-to-action.operator';
+export * from './lib/to-source.operator';
 export * from './lib/http/get-http-error.function';
 export * from './lib/http/get-catch-http-error.function';
 export * from './lib/http/get-http-sources.function';
