@@ -1,6 +1,5 @@
 import { Component, Inject } from '@angular/core';
-import { Source } from '@state-adapt/core';
-import { Adapt } from '@state-adapt/ngrx';
+import { Source, AdaptCommon } from '@state-adapt/core';
 import { ADAPT_SERVICE } from './adapt.token';
 import { countAdapter } from './count.adapter';
 
@@ -25,5 +24,5 @@ export class IncrementComponent {
     reset: this.reset$,
   });
   count$ = this.store.getState();
-  constructor(@Inject(ADAPT_SERVICE) private adapt: Adapt) {}
+  constructor(@Inject(ADAPT_SERVICE) private adapt: AdaptCommon<any>) {}
 }

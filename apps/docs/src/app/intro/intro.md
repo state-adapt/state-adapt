@@ -23,23 +23,75 @@ StateAdapt uses state adapters to maximize reusability in state management.
 
 # Demos
 
-- [StackBlitz: NgRx](https://stackblitz.com/edit/state-adapt-ngrx?file=src/app/app.component.ts)
+- [StackBlitz: Angular](https://stackblitz.com/edit/state-adapt-angular?file=src/app/app.component.ts)
+- [StackBlitz: Angular with NgRx](https://stackblitz.com/edit/state-adapt-angular-with-ngrx?file=src/app/app.component.ts)
 - [StackBlitz: NgRx and StateAdapt with Angular Reactive Forms](https://stackblitz.com/edit/angular-reactive-forms-state-management?file=src%2Fapp%2Fform%2Fstate-adapt-form.component.ts)
-- [StackBlitz: NGXS](https://stackblitz.com/edit/state-adapt-ngxs?file=src/app/app.component.ts)
+- [StackBlitz: Angular with NGXS](https://stackblitz.com/edit/state-adapt-angular-with-ngxs?file=src/app/app.component.ts)
 - [StackBlitz: React](https://stackblitz.com/edit/state-adapt-react)
-- [StackBlitz: React & Redux](https://stackblitz.com/edit/state-adapt-react-with-redux)
+- [StackBlitz: React with Redux](https://stackblitz.com/edit/state-adapt-react-with-redux)
 - [Dashboards Demo App](/dashboards)
 
 # Getting Started
 
 Set up StateAdapt with
 
-- [Angular with NgRx](#ngrx)
-- [Angular with NGXS](#ngxs)
+- [Angular](#angular)
+- [Angular with NgRx](#angular-with-ngrx)
+- [Angular with NGXS](#angular-with-ngxs)
 - [React](#react)
 - [React with Redux](#react-with-redux)
 
-## NgRx
+## Angular
+
+First, `npm install`:
+
+```
+npm i -s @state-adapt/core reselect
+```
+
+Include in app.module.ts like so:
+
+```typescript
+import {
+  createStore,
+  actionSanitizer,
+  stateSanitizer,
+  AdaptCommon,
+} from '@state-adapt/core';
+// ...
+// Create the Adapt store:
+const enableReduxDevTools = (window as any).__REDUX_DEVTOOLS_EXTENSION__?.({
+  actionSanitizer,
+  stateSanitizer,
+});
+// ...
+// Provide it:
+    providers: [{provide: AdaptCommon, useValue: createStore(enableReduxDevTools)}],
+```
+
+Now you can use it in a component or service. Here's an example in a component:
+
+```typescript
+import { Source, createAdapter, AdaptCommon } from '@state-adapt/core';
+...
+  newStr$ = new Source<string>('newStr$');
+  stringAdapter = createAdapter<string>()({
+    append: (state, newStr: string) => state + newStr,
+  });
+  stringStore = this.adapt.init(['string', this.stringAdapter, ''], {
+    append: this.newStr$,
+  });
+  str$ = this.stringStore.getState();
+  constructor(private adapt: AdaptCommon<any>) {
+    this.str$.subscribe();
+    setTimeout(() => this.newStr$.next('Hello World!'), 3000);
+  }
+...
+```
+
+Open up Redux Devtools and you should see the state update after 3 seconds.
+
+## Angular with NgRx
 
 First, `npm install`:
 
@@ -57,11 +109,8 @@ import {
   actionSanitizer,
   stateSanitizer,
 } from '@state-adapt/core';
-```
-
-In your module imports array:
-
-```typescript
+// ...
+// In your module imports array:
     StoreModule.forRoot({ adapt: adaptReducer }),
     StoreDevtoolsModule.instrument({
       maxAge: 25,
@@ -94,7 +143,7 @@ import { Adapt } from '@state-adapt/ngrx';
 
 Open up Redux Devtools and you should see the state update after 3 seconds.
 
-## NGXS
+## Angular with NGXS
 
 First, `npm install`:
 
@@ -109,11 +158,8 @@ import { NgxsModule } from '@ngxs/store';
 import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
 import { actionSanitizer, stateSanitizer } from '@state-adapt/core';
 import { AdaptState } from '@state-adapt/ngxs';
-```
-
-In your module imports array:
-
-```typescript
+// ...
+// In your module imports array:
     NgxsModule.forRoot([AdaptState], {
       developmentMode: !environment.production
     }),

@@ -9,6 +9,6 @@ module.exports = {
     '<rootDir>/apps/docs',
     '<rootDir>/libs/dashboards-feature',
     '<rootDir>/apps/react-demo',
-    '<rootDir>/libs/react',
+    '<rootDir>/libs/react'
   ],
 };
