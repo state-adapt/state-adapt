@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { AdaptCommon } from '@state-adapt/core';
+import { AdaptCommon } from '../../../../libs/core/src';
 
 @Injectable({ providedIn: 'root' })
 export class Adapt extends AdaptCommon<Store> {

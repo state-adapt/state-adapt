@@ -16,7 +16,7 @@ import {
   adaptReducer,
   actionSanitizer,
   stateSanitizer,
-} from '@state-adapt/core';
+} from '../../../../libs/core/src';
 
 import { environment } from '../environments/environment';
 import { AppRoutingModule } from './app-routing.module';

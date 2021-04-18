@@ -3,7 +3,7 @@ import {
   ReactionsWithGetSelectors,
   Selectors,
   Sources,
-} from '@state-adapt/core';
+} from '../../../../libs/core/src';
 import { useContext, useMemo } from 'react';
 import { AdaptContext } from './adapt.context';
 

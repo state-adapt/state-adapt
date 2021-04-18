@@ -17,7 +17,7 @@ const routes: Routes = [
   {
     path: 'dashboards',
     loadChildren: () =>
-      import('@state-adapt/dashboards-feature').then(
+      import('../../../../libs/dashboards-feature/src').then(
         m => m.DashboardsFeatureRoutingModule,
       ),
   },

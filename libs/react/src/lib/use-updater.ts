@@ -1,4 +1,4 @@
-import { Source } from '@state-adapt/core';
+import { Source } from '../../../../libs/core/src';
 import { useContext, useMemo } from 'react';
 import { Observable } from 'rxjs';
 import { AdaptContext } from './adapt.context';
