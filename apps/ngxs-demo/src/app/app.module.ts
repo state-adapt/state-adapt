@@ -2,9 +2,9 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgxsModule } from '@ngxs/store';
 import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
-import { actionSanitizer, stateSanitizer } from '../../../../libs/core/src';
-import { ADAPT_SERVICE, DemoUiModule } from '../../../../libs/demo-ui/src';
-import { Adapt, AdaptState } from '../../../../libs/ngxs/src';
+import { actionSanitizer, stateSanitizer } from '@state-adapt/core';
+import { ADAPT_SERVICE, DemoUiModule } from '@state-adapt/demo-ui';
+import { Adapt, AdaptState } from '@state-adapt/ngxs';
 import { environment } from '../environments/environment';
 import { AppComponent } from './app.component';
 
