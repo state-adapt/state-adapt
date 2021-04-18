@@ -1,6 +1,6 @@
 import React from 'react';
-import { createAdapter } from '@state-adapt/core';
-import { useAdapter, useObservable, useSource, useUpdater } from '@state-adapt/react';
+import { createAdapter } from '../../../../libs/core/src';
+import { useAdapter, useObservable, useSource, useUpdater } from '../../../../libs/react/src';
 
 const abAdapter = createAdapter<string>()({
   concat: (state, newStr: string) => state + newStr,

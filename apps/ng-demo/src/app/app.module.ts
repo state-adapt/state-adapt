@@ -7,9 +7,9 @@ import {
   stateSanitizer,
   adaptReducer,
   createStore,
-} from '@state-adapt/core';
-import { ADAPT_SERVICE, DemoUiModule } from '@state-adapt/demo-ui';
-import { Adapt } from '@state-adapt/ngrx';
+} from '../../../../libs/core/src';
+import { ADAPT_SERVICE, DemoUiModule } from '../../../../libs/demo-ui/src';
+import { Adapt } from '../../../../libs/ngrx/src';
 import { environment } from '../environments/environment';
 import { AppComponent } from './app.component';
 
