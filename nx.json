@@ -29,6 +29,11 @@
     "dashboards-feature": { "tags": ["feature"] },
     "react-demo": { "tags": [] },
     "react-demo-e2e": { "tags": [], "implicitDependencies": ["react-demo"] },
-    "react": { "tags": [] }
+    "react": { "tags": [] },
+    "ng-sa-counter": { "tags": [] },
+    "ng-sa-counter-e2e": {
+      "tags": [],
+      "implicitDependencies": ["ng-sa-counter"]
+    }
   }
 }

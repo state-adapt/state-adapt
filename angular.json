@@ -697,6 +697,120 @@
           }
         }
       }
+    },
+    "ng-sa-counter": {
+      "projectType": "application",
+      "root": "apps/ng-sa-counter",
+      "sourceRoot": "apps/ng-sa-counter/src",
+      "prefix": "state-adapt",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/apps/ng-sa-counter",
+            "index": "apps/ng-sa-counter/src/index.html",
+            "main": "apps/ng-sa-counter/src/main.ts",
+            "polyfills": "apps/ng-sa-counter/src/polyfills.ts",
+            "tsConfig": "apps/ng-sa-counter/tsconfig.app.json",
+            "aot": true,
+            "assets": [
+              "apps/ng-sa-counter/src/favicon.ico",
+              "apps/ng-sa-counter/src/assets"
+            ],
+            "styles": ["apps/ng-sa-counter/src/styles.scss"],
+            "scripts": []
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/ng-sa-counter/src/environments/environment.ts",
+                  "with": "apps/ng-sa-counter/src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "10kb"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "ng-sa-counter:build"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "ng-sa-counter:build:production"
+            }
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "ng-sa-counter:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "apps/ng-sa-counter/src/**/*.ts",
+              "apps/ng-sa-counter/src/**/*.html"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/apps/ng-sa-counter"],
+          "options": {
+            "jestConfig": "apps/ng-sa-counter/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "ng-sa-counter-e2e": {
+      "root": "apps/ng-sa-counter-e2e",
+      "sourceRoot": "apps/ng-sa-counter-e2e/src",
+      "projectType": "application",
+      "architect": {
+        "e2e": {
+          "builder": "@nrwl/cypress:cypress",
+          "options": {
+            "cypressConfig": "apps/ng-sa-counter-e2e/cypress.json",
+            "tsConfig": "apps/ng-sa-counter-e2e/tsconfig.e2e.json",
+            "devServerTarget": "ng-sa-counter:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "ng-sa-counter:serve:production"
+            }
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["apps/ng-sa-counter-e2e/**/*.{js,ts}"]
+          }
+        }
+      }
     }
   }
 }
