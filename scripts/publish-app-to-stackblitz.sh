@@ -1,3 +1,4 @@
+# Run from this folder: sh publish-app-to-stackblitz.sh ngxs-demo
 git checkout main;
 git branch -d $1;
 git checkout -b $1;
