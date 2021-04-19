@@ -4,7 +4,7 @@ git branch -D stackblitz-$1;
 git checkout -b stackblitz-$1;
 # Prepare for Stackblitz
 npm run ng build $1;
-node copy-built-styles-into-app.js;
+node copy-built-styles-into-app.js $1;
 node remove-dependencies.js;
 node make-app-alone-in-angular-json.js $1;
 node remove-other-apps.js $1;
