@@ -10,13 +10,13 @@ libNames.forEach(libName => {
   replaceGlobalImports(mainLibFolderName, fileNames, 4)
 });
 
-const appSrc = `../apps/${appName}/src`;
-const appSrcFileNames = getChildFileNames(appSrc);
-replaceGlobalImports(appSrc, appSrcFileNames, 3);
+// const appSrc = `../apps/${appName}/src`;
+// const appSrcFileNames = getChildFileNames(appSrc);
+// replaceGlobalImports(appSrc, appSrcFileNames, 3);
 
-const appSrcApp = `${appSrc}/app`;
-const appSrcAppFileNames = getChildFileNames(appSrcApp);
-replaceGlobalImports(appSrcApp, appSrcAppFileNames, 4);
+// const appSrcApp = `${appSrc}/app`;
+// const appSrcAppFileNames = getChildFileNames(appSrcApp);
+// replaceGlobalImports(appSrcApp, appSrcAppFileNames, 4);
 
 function replaceGlobalImports(basePath, fileNames, importDepth) {
   fileNames.forEach(fileName => {
