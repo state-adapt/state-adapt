@@ -6,7 +6,7 @@ import {
   stateSanitizer,
   createStore,
   AdaptCommon,
-} from '../../../../libs/core/src';
+} from '@state-adapt/core';
 
 import { AppComponent } from './app.component';
 
