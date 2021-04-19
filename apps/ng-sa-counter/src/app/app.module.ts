@@ -6,7 +6,7 @@ import {
   createStore,
   AdaptCommon,
 } from '@state-adapt/core';
-import { CounterDemoModule } from '@state-adapt/counter-demo';
+import { CounterDemoModule } from '../../../../libs/counter-demo/src';
 
 import { AppComponent } from './app.component';
 
