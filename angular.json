@@ -811,6 +811,31 @@
           }
         }
       }
+    },
+    "counter-demo": {
+      "projectType": "library",
+      "root": "libs/counter-demo",
+      "sourceRoot": "libs/counter-demo/src",
+      "prefix": "state-adapt",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/counter-demo/src/**/*.ts",
+              "libs/counter-demo/src/**/*.html"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/counter-demo"],
+          "options": {
+            "jestConfig": "libs/counter-demo/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   }
 }

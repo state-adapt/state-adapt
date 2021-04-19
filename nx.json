@@ -34,6 +34,7 @@
     "ng-sa-counter-e2e": {
       "tags": [],
       "implicitDependencies": ["ng-sa-counter"]
-    }
+    },
+    "counter-demo": { "tags": [] }
   }
 }

@@ -4,7 +4,14 @@ import { countAdapter } from './count.adapter';
 
 @Component({
   selector: 'state-adapt-root',
-  templateUrl: './app.component.html',
+  template: `
+    <state-adapt-counter
+      (increment)="increment$.next($event)"
+      (double)="double$.next()"
+      (resetCount)="reset$.next()"
+      [count]="count$ | async"
+    ></state-adapt-counter>
+  `,
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {

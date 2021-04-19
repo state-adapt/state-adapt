@@ -22,7 +22,8 @@
       "@state-adapt/dashboards-feature": [
         "libs/dashboards-feature/src/index.ts"
       ],
-      "@state-adapt/react": ["libs/react/src/index.ts"]
+      "@state-adapt/react": ["libs/react/src/index.ts"],
+      "@state-adapt/counter-demo": ["libs/counter-demo/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

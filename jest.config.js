@@ -11,5 +11,6 @@ module.exports = {
     '<rootDir>/apps/react-demo',
     '<rootDir>/libs/react',
     '<rootDir>/apps/ng-sa-counter',
+    '<rootDir>/libs/counter-demo',
   ],
 };
