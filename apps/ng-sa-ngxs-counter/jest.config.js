@@ -1,5 +1,5 @@
 module.exports = {
-  displayName: 'ngxs-demo',
+  displayName: 'ng-sa-ngxs-counter',
   preset: '../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   globals: {
@@ -14,7 +14,7 @@ module.exports = {
       },
     },
   },
-  coverageDirectory: '../../coverage/apps/ngxs-demo',
+  coverageDirectory: '../../coverage/apps/ng-sa-ngxs-counter',
   snapshotSerializers: [
     'jest-preset-angular/build/AngularNoNgAttributesSnapshotSerializer.js',
     'jest-preset-angular/build/AngularSnapshotSerializer.js',

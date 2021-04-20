@@ -3,7 +3,6 @@ module.exports = {
     '<rootDir>/libs/core',
     '<rootDir>/libs/ngrx',
     '<rootDir>/libs/ngxs',
-    '<rootDir>/apps/ngxs-demo',
     '<rootDir>/libs/demo-ui',
     '<rootDir>/apps/docs',
     '<rootDir>/libs/dashboards-feature',
@@ -12,5 +11,6 @@ module.exports = {
     '<rootDir>/apps/ng-sa-counter',
     '<rootDir>/libs/counter-demo',
     '<rootDir>/apps/ng-sa-ngrx-counter',
+    '<rootDir>/apps/ng-sa-ngxs-counter',
   ],
 };

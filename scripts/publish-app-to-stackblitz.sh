@@ -1,4 +1,4 @@
-# Run from this folder: sh publish-app-to-stackblitz.sh ngxs-demo
+# Run from this folder: sh publish-app-to-stackblitz.sh ng-sa-counter
 git checkout main;
 git branch -D stackblitz-$1;
 git checkout -b stackblitz-$1;

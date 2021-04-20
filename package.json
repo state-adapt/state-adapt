@@ -7,7 +7,6 @@
     "postinstall": "node ./decorate-angular-cli.js && ngcc --properties es2015 browser module main",
     "nx": "nx",
     "start": "ng serve",
-    "serve:ngxs": "ng serve ngxs-demo",
     "serve:docs": "ng serve docs",
     "build": "ng build",
     "test": "ng test",

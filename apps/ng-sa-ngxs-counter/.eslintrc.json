@@ -8,7 +8,9 @@
         "plugin:@nrwl/nx/angular",
         "plugin:@angular-eslint/template/process-inline-templates"
       ],
-      "parserOptions": { "project": ["apps/ngxs-demo/tsconfig.*?.json"] },
+      "parserOptions": {
+        "project": ["apps/ng-sa-ngxs-counter/tsconfig.*?.json"]
+      },
       "rules": {
         "@angular-eslint/directive-selector": [
           "error",
