@@ -5,7 +5,7 @@
     "@angular/platform-browser-dynamic": "^11.2.10",
     "@angular/platform-browser": "^11.2.10",
     "@ngxs/store": "^3.7.1",
-    "@ngrx/devtools-plugin": "^3.7.1",
+    "@ngxs/devtools-plugin": "^3.7.1",
     "@state-adapt/core": "^0.35.0",
     "@state-adapt/ngrx": "^0.35.0",
     "@angular/common": "^11.2.10",
