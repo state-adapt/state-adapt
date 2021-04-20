@@ -29,15 +29,7 @@
     "react-demo-e2e": { "tags": [], "implicitDependencies": ["react-demo"] },
     "react": { "tags": [] },
     "ng-sa-counter": { "tags": [] },
-    "ng-sa-counter-e2e": {
-      "tags": [],
-      "implicitDependencies": ["ng-sa-counter"]
-    },
     "counter-demo": { "tags": [] },
-    "ng-sa-ngrx-counter": { "tags": [] },
-    "ng-sa-ngrx-counter-e2e": {
-      "tags": [],
-      "implicitDependencies": ["ng-sa-ngrx-counter"]
-    }
+    "ng-sa-ngrx-counter": { "tags": [] }
   }
 }
