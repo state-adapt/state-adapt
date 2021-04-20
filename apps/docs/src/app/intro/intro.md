@@ -24,7 +24,7 @@ StateAdapt uses state adapters to maximize reusability in state management.
 # Demos
 
 - [StackBlitz: Angular](https://stackblitz.com/github/state-adapt/state-adapt/tree/stackblitz-ng-sa-counter?file=apps%2Fng-sa-counter%2Fsrc%2Fapp%2Fapp.module.ts)
-- [StackBlitz: Angular with NgRx](https://stackblitz.com/edit/state-adapt-angular-with-ngrx?file=src/app/app.component.ts)
+- [StackBlitz: Angular with NgRx](https://stackblitz.com/github/state-adapt/state-adapt/tree/stackblitz-ng-sa-ngrx-counter?file=apps%2Fng-sa-ngrx-counter%2Fsrc%2Fapp%2Fapp.module.ts)
 - [StackBlitz: NgRx and StateAdapt with Angular Reactive Forms](https://stackblitz.com/edit/angular-reactive-forms-state-management?file=src%2Fapp%2Fform%2Fstate-adapt-form.component.ts)
 - [StackBlitz: Angular with NGXS](https://stackblitz.com/edit/state-adapt-angular-with-ngxs?file=src/app/app.component.ts)
 - [StackBlitz: React](https://stackblitz.com/edit/state-adapt-react)
