@@ -24,7 +24,6 @@
     "docs-e2e": { "tags": [], "implicitDependencies": ["docs"] },
     "dashboards-feature": { "tags": ["feature"] },
     "react-demo": { "tags": [] },
-    "react-demo-e2e": { "tags": [], "implicitDependencies": ["react-demo"] },
     "react": { "tags": [] },
     "ng-sa-counter": { "tags": [] },
     "counter-demo": { "tags": [] },
