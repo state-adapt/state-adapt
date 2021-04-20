@@ -7,7 +7,7 @@
     "@ngxs/store": "^3.7.1",
     "@ngxs/devtools-plugin": "^3.7.1",
     "@state-adapt/core": "^0.35.0",
-    "@state-adapt/ngrx": "^0.35.0",
+    "@state-adapt/ngxs": "^0.35.0",
     "@angular/common": "^11.2.10",
     "carbon-components-angular": "^4.48.1",
     "rxjs": "^6.6.7",
