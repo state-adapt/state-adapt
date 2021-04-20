@@ -12,7 +12,6 @@ import { countAdapter } from './count.adapter';
       [count]="count$ | async"
     ></state-adapt-counter>
   `,
-  styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
   increment$ = new Source<number>('increment$');
