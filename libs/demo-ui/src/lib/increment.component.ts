@@ -1,5 +1,5 @@
 import { Component, Inject } from '@angular/core';
-import { Source, AdaptCommon } from '@state-adapt/core';
+import { Source, AdaptCommon } from '../../../../libs/core/src';
 import { ADAPT_SERVICE } from './adapt.token';
 import { countAdapter } from './count.adapter';
 
