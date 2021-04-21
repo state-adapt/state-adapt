@@ -157,31 +157,6 @@
         }
       }
     },
-    "demo-ui": {
-      "projectType": "library",
-      "root": "libs/demo-ui",
-      "sourceRoot": "libs/demo-ui/src",
-      "prefix": "state-adapt",
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": [
-              "libs/demo-ui/src/**/*.ts",
-              "libs/demo-ui/src/**/*.html"
-            ]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/demo-ui"],
-          "options": {
-            "jestConfig": "libs/demo-ui/jest.config.js",
-            "passWithNoTests": true
-          }
-        }
-      }
-    },
     "docs": {
       "projectType": "application",
       "root": "apps/docs",

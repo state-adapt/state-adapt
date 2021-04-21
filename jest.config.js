@@ -3,7 +3,6 @@ module.exports = {
     '<rootDir>/libs/core',
     '<rootDir>/libs/ngrx',
     '<rootDir>/libs/ngxs',
-    '<rootDir>/libs/demo-ui',
     '<rootDir>/apps/docs',
     '<rootDir>/libs/dashboards-feature',
     '<rootDir>/apps/react-demo',
