@@ -25,7 +25,7 @@
     "react-demo": { "tags": [] },
     "react": { "tags": [] },
     "ng-sa-counter": { "tags": [] },
-    "counter-demo": { "tags": [] },
+    "counter-ui": { "tags": [] },
     "ng-sa-ngrx-counter": { "tags": [] },
     "ng-sa-ngxs-counter": { "tags": [] }
   }

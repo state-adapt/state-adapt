@@ -4,7 +4,7 @@ import { NgxsModule } from '@ngxs/store';
 import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
 import { actionSanitizer, stateSanitizer } from '@state-adapt/core';
 import { AdaptState } from '@state-adapt/ngxs';
-import { CounterDemoModule } from '../../../../libs/counter-demo/src';
+import { CounterUiModule } from '../../../../libs/counter-ui/src';
 import { environment } from '../environments/environment';
 import { AppComponent } from './app.component';
 
@@ -12,7 +12,7 @@ import { AppComponent } from './app.component';
   declarations: [AppComponent],
   imports: [
     BrowserModule,
-    CounterDemoModule,
+    CounterUiModule,
     NgxsModule.forRoot([AdaptState], {
       developmentMode: !environment.production,
     }),

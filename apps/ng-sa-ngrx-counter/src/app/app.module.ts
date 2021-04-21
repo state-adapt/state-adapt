@@ -7,7 +7,7 @@ import {
   stateSanitizer,
   adaptReducer,
 } from '@state-adapt/core';
-import { CounterDemoModule } from '../../../../libs/counter-demo/src';
+import { CounterUiModule } from '../../../../libs/counter-ui/src';
 import { environment } from '../environments/environment';
 import { AppComponent } from './app.component';
 
@@ -15,7 +15,7 @@ import { AppComponent } from './app.component';
   declarations: [AppComponent],
   imports: [
     BrowserModule,
-    CounterDemoModule,
+    CounterUiModule,
     StoreModule.forRoot({ adapt: adaptReducer }),
     StoreDevtoolsModule.instrument({
       maxAge: 25,

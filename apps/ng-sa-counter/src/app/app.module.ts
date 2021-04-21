@@ -6,7 +6,7 @@ import {
   createStore,
   AdaptCommon,
 } from '@state-adapt/core';
-import { CounterDemoModule } from '../../../../libs/counter-demo/src';
+import { CounterUiModule } from '../../../../libs/counter-ui/src';
 
 import { AppComponent } from './app.component';
 
@@ -16,7 +16,7 @@ const enableReduxDevTools = (window as any).__REDUX_DEVTOOLS_EXTENSION__?.({
 });
 
 @NgModule({
-  imports: [BrowserModule, CounterDemoModule],
+  imports: [BrowserModule, CounterUiModule],
   declarations: [AppComponent],
   providers: [
     { provide: AdaptCommon, useValue: createStore(enableReduxDevTools) },

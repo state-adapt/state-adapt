@@ -8,4 +8,4 @@ import { CounterComponent } from './counter.component';
   declarations: [CounterComponent],
   exports: [CounterComponent],
 })
-export class CounterDemoModule {}
+export class CounterUiModule {}

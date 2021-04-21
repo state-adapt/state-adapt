@@ -8,7 +8,7 @@ module.exports = {
     '<rootDir>/apps/react-demo',
     '<rootDir>/libs/react',
     '<rootDir>/apps/ng-sa-counter',
-    '<rootDir>/libs/counter-demo',
+    '<rootDir>/libs/counter-ui',
     '<rootDir>/apps/ng-sa-ngrx-counter',
     '<rootDir>/apps/ng-sa-ngxs-counter',
   ],
