@@ -11,5 +11,8 @@ module.exports = {
     '<rootDir>/libs/counter-ui',
     '<rootDir>/apps/ng-sa-ngrx-counter',
     '<rootDir>/apps/ng-sa-ngxs-counter',
+    '<rootDir>/libs/shopping-ui',
+    '<rootDir>/libs/shopping-api',
+    '<rootDir>/apps/ng-sa-shopping',
   ],
 };
