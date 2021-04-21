@@ -1,7 +1,7 @@
-import { adaptType, PatchState, CommonAction } from './adapt.actions';
+import { PatchState, CommonAction, isPatchState } from './adapt.actions';
 
-export function actionSanitizer(action: CommonAction & PatchState) {
-  return action.type === adaptType
+export function actionSanitizer(action: CommonAction | PatchState) {
+  return isPatchState(action)
     ? {
         ...action,
         action: undefined,

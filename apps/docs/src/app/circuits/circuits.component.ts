@@ -44,7 +44,7 @@ const getNumbersBetween = (
   b: number,
   n: number,
   ar: number[] = [],
-  newN?: number,
+  newN: number = a - 1, // Start with invalid newN so at least it is always defined
 ): number[] => {
   if (!n) return ar;
   const nextNewN = getNumberBetween(a, b);
@@ -173,12 +173,14 @@ export class CircuitsComponent {
       pulse.className.baseVal += ' active';
       const sinkGroups = Array.from(
         sourceParent.querySelectorAll('.sink'),
-      ).map(child => child.querySelector('.connector-pulse path'));
+      ).map(child =>
+        child.querySelector('.connector-pulse path'),
+      ) as SVGAElement[];
 
       setTimeout(
         () =>
           sinkGroups.forEach(
-            (child: SVGAElement) =>
+            child =>
               (child.className.baseVal +=
                 Math.random() < 0.75 ? ' active' : ''),
           ),
@@ -195,7 +197,7 @@ export class CircuitsComponent {
       setTimeout(
         () =>
           sinkGroups.forEach(
-            (child: SVGAElement) =>
+            child =>
               (child.className.baseVal = child.className.baseVal.replace(
                 /(\s*)active/,
                 '',

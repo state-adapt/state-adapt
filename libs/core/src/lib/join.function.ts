@@ -113,7 +113,7 @@ export function join<NewS extends Selectors<any>>(
   const select = miniStores[0]._select;
   const getSelectors = inputs[inputs.length - 1];
 
-  const getState: ({ adapt: any }) => any = (createSelector as any)(
+  const getState: ({ adapt }: { adapt: any }) => any = (createSelector as any)(
     [...miniStores.map(({ _fullSelectors }) => _fullSelectors.getState)],
     (...results: any[]) => results,
   );

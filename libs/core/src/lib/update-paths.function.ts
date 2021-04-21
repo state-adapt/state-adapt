@@ -1,10 +1,10 @@
 import type { Update } from './adapt.actions';
 
 export function updatePaths<T>(oldState: T, updates: Update[]): T {
-  let newValEntry: Update;
+  let newValEntry: Update | undefined;
   const nextLevelUpdatedState = updates.reduce(
     (stateWithUpdates, [remainingPath, newVal]) => {
-      const nextSegment = remainingPath[0] || '';
+      const nextSegment = (remainingPath[0] || '') as keyof T;
       const otherUpdatesForSegment = stateWithUpdates[nextSegment];
       // There can only be one empty remaining path at each level. That gets assigned to the '' property.
 
@@ -20,18 +20,20 @@ export function updatePaths<T>(oldState: T, updates: Update[]): T {
           : [[remainingPath.slice(1), newVal]],
       };
     },
-    {} as { [K in keyof T]: [string[], T[K]][] },
+    {} as { [K in keyof T]: Update[] },
   );
 
-  // const isObject = newValEntry && getIsObject(newValEntry[1]);
   const wasObject = getIsObject(oldState);
 
   return newValEntry
     ? newValEntry[1]
     : Object.entries(nextLevelUpdatedState).reduce(
-        (state, [prop, childUpdates]: [string, Update[]]) => ({
-          ...(state || {}),
-          [prop]: updatePaths((state || {})[prop] || {}, childUpdates),
+        (state, [prop, childUpdates]) => ({
+          ...(state || ({} as T)),
+          [prop]: updatePaths(
+            (state || ({} as any))[prop] || {},
+            childUpdates as Update[],
+          ),
         }),
         (wasObject ? oldState : {}) as T,
       );

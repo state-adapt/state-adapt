@@ -7,9 +7,15 @@ export type Update = [string[], any];
 export const adaptType = 'Adapt';
 
 export interface PatchState {
-  type: string;
+  type: typeof adaptType;
   source: CommonAction & { payload?: any };
   payload: Update[];
+}
+
+export function isPatchState(
+  action: CommonAction | PatchState,
+): action is PatchState {
+  return action.type === adaptType;
 }
 
 export function createPatchState(

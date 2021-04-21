@@ -29,18 +29,22 @@ interface StoreMethods {
   dispatch: (action: any) => any;
 }
 
+interface PathState {
+  [index: string]: { lastState: any; initialState: any };
+}
+
+interface UpdaterStream {
+  source$: Observable<Action<any>>;
+  requireSources$: Observable<any>;
+  reactions: {
+    path: string;
+    reaction: (...args: any[]) => any;
+  }[];
+}
+
 export class AdaptCommon<CommonStore extends StoreMethods> {
-  private pathStates: {
-    [index: string]: { lastState: any; initialState: any };
-  } = {};
-  private updaterStreams: {
-    source$: Observable<Action<any>>;
-    requireSources$: Observable<any>;
-    reactions: {
-      path: string;
-      reaction: (...args: any[]) => any;
-    }[];
-  }[] = [];
+  private pathStates: PathState = {};
+  private updaterStreams: UpdaterStream[] = [];
 
   constructor(private commonStore: CommonStore) {}
 
@@ -240,7 +244,9 @@ export class AdaptCommon<CommonStore extends StoreMethods> {
   }
 
   private getSourceUpdateStream(searchSource$: Observable<Action<any>>) {
-    return this.updaterStreams.find(({ source$ }) => searchSource$ === source$);
+    return this.updaterStreams.find(
+      ({ source$ }) => searchSource$ === source$,
+    ) as UpdaterStream;
   }
 
   private getAllSourceUpdates(
@@ -258,7 +264,9 @@ export class AdaptCommon<CommonStore extends StoreMethods> {
     );
   }
 
-  private getStateSelector<State>(path: string): ({ adapt: any }) => State {
+  private getStateSelector<State>(
+    path: string,
+  ): ({ adapt }: { adapt: any }) => State {
     return ({ adapt }) =>
       path
         .split('.')
@@ -282,7 +290,7 @@ export class AdaptCommon<CommonStore extends StoreMethods> {
 
   private getSelections<State, S extends Selectors<State>>(
     selectors: S,
-    getState: ({ adapt: any }) => State,
+    getState: ({ adapt }: { adapt: any }) => State,
     requireSources$: Observable<any>,
   ): {
     fullSelectors: S & { getState: () => State };

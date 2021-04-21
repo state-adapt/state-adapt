@@ -6,7 +6,7 @@ import { debounceTime, filter, map, startWith } from 'rxjs/operators';
 
 const x = setInterval(() => {
   const ibm = document.querySelector('.bx--header__name--prefix');
-  if (ibm) {
+  if (ibm && ibm.parentNode) {
     ibm.parentNode.removeChild(ibm);
     clearInterval(x);
   }
