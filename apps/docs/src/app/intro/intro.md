@@ -21,27 +21,23 @@ StateAdapt uses state adapters to maximize reusability in state management.
 
 [Introducing StateAdapt](https://medium.com/weekly-webtips/introducing-stateadapt-reusable-reactive-state-management-9f0388f1850e)
 
-# Demos
+# Demo Apps
 
-- [StackBlitz: Angular](https://stackblitz.com/github/state-adapt/state-adapt/tree/stackblitz-ng-sa-counter?file=apps%2Fng-sa-counter%2Fsrc%2Fapp%2Fapp.module.ts)
-- [StackBlitz: Angular with NgRx](https://stackblitz.com/github/state-adapt/state-adapt/tree/stackblitz-ng-sa-ngrx-counter?file=apps%2Fng-sa-ngrx-counter%2Fsrc%2Fapp%2Fapp.module.ts)
-- [StackBlitz: NgRx and StateAdapt with Angular Reactive Forms](https://stackblitz.com/edit/angular-reactive-forms-state-management?file=src%2Fapp%2Fform%2Fstate-adapt-form.component.ts)
-- [StackBlitz: Angular with NGXS](https://stackblitz.com/github/state-adapt/state-adapt/tree/stackblitz-ng-sa-ngxs-counter?file=apps%2Fng-sa-ngxs-counter%2Fsrc%2Fapp%2Fapp.module.ts)
-- [StackBlitz: React](https://stackblitz.com/edit/state-adapt-react)
-- [StackBlitz: React with Redux](https://stackblitz.com/edit/state-adapt-react-with-redux)
-- [Dashboards Demo App](/dashboards)
+- [Angular Reactive Forms with NgRx and StateAdapt](https://stackblitz.com/edit/angular-reactive-forms-state-management?file=src%2Fapp%2Fform%2Fstate-adapt-form.component.ts)
 
 # Getting Started
 
 Set up StateAdapt with
 
 - [Angular](#angular)
-- [Angular with NgRx](#angular-with-ngrx)
-- [Angular with NGXS](#angular-with-ngxs)
+- [Angular and NgRx](#angular-and-ngrx)
+- [Angular and NGXS](#angular-and-ngxs)
 - [React](#react)
-- [React with Redux](#react-with-redux)
+- [React and Redux](#react-and-redux)
 
 ## Angular
+
+[StackBlitz Demo](https://stackblitz.com/github/state-adapt/state-adapt/tree/stackblitz-ng-sa-counter?file=apps%2Fng-sa-counter%2Fsrc%2Fapp%2Fapp.module.ts)
 
 First, `npm install`:
 
@@ -91,7 +87,9 @@ import { Source, createAdapter, AdaptCommon } from '@state-adapt/core';
 
 Open up Redux Devtools and you should see the state update after 3 seconds.
 
-## Angular with NgRx
+## Angular and NgRx
+
+[StackBlitz Demo](https://stackblitz.com/github/state-adapt/state-adapt/tree/stackblitz-ng-sa-ngrx-counter?file=apps%2Fng-sa-ngrx-counter%2Fsrc%2Fapp%2Fapp.module.ts)
 
 First, `npm install`:
 
@@ -143,7 +141,9 @@ import { Adapt } from '@state-adapt/ngrx';
 
 Open up Redux Devtools and you should see the state update after 3 seconds.
 
-## Angular with NGXS
+## Angular and NGXS
+
+[StackBlitz Demo](https://stackblitz.com/github/state-adapt/state-adapt/tree/stackblitz-ng-sa-ngxs-counter?file=apps%2Fng-sa-ngxs-counter%2Fsrc%2Fapp%2Fapp.module.ts)
 
 First, `npm install`:
 
@@ -193,7 +193,9 @@ import { Adapt } from '@state-adapt/ngxs';
 
 Open up Redux Devtools and you should see the state update after 3 seconds.
 
-# React with Redux
+# React
+
+[StackBlitz Demo](https://stackblitz.com/edit/state-adapt-react)
 
 First, `npm install`:
 
@@ -255,7 +257,9 @@ export function App() {
 }
 ```
 
-# React with Redux
+# React and Redux
+
+[StackBlitz Demo](https://stackblitz.com/edit/state-adapt-react-with-redux)
 
 First, `npm install`:
 
