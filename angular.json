@@ -708,51 +708,26 @@
         }
       }
     },
-    "shopping-ui": {
+    "shopping": {
       "projectType": "library",
-      "root": "libs/shopping-ui",
-      "sourceRoot": "libs/shopping-ui/src",
+      "root": "libs/shopping",
+      "sourceRoot": "libs/shopping/src",
       "prefix": "state-adapt",
       "architect": {
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
-              "libs/shopping-ui/src/**/*.ts",
-              "libs/shopping-ui/src/**/*.html"
+              "libs/shopping/src/**/*.ts",
+              "libs/shopping/src/**/*.html"
             ]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/shopping-ui"],
+          "outputs": ["coverage/libs/shopping"],
           "options": {
-            "jestConfig": "libs/shopping-ui/jest.config.js",
-            "passWithNoTests": true
-          }
-        }
-      }
-    },
-    "shopping-api": {
-      "projectType": "library",
-      "root": "libs/shopping-api",
-      "sourceRoot": "libs/shopping-api/src",
-      "prefix": "state-adapt",
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": [
-              "libs/shopping-api/src/**/*.ts",
-              "libs/shopping-api/src/**/*.html"
-            ]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/shopping-api"],
-          "options": {
-            "jestConfig": "libs/shopping-api/jest.config.js",
+            "jestConfig": "libs/shopping/jest.config.js",
             "passWithNoTests": true
           }
         }
@@ -775,7 +750,11 @@
             "aot": true,
             "assets": [
               "apps/ng-sa-shopping/src/favicon.ico",
-              "apps/ng-sa-shopping/src/assets"
+              {
+                "glob": "*",
+                "input": "libs/shopping/src/lib/assets",
+                "output": "./assets"
+              }
             ],
             "styles": ["apps/ng-sa-shopping/src/styles.scss"],
             "scripts": []

@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="74.835518mm"
+   height="78.916275mm"
+   viewBox="0 0 74.83552 78.916278"
+   version="1.1"
+   id="svg8"
+   sodipodi:docname="grannySmith.svg"
+   inkscape:version="0.92.2 5c3e80d, 2017-08-06"
+   inkscape:export-filename="/Users/jess/Desktop/grannySmith.png"
+   inkscape:export-xdpi="300"
+   inkscape:export-ydpi="300">
+  <title
+     id="title818">Granny Apple</title>
+  <defs
+     id="defs2" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.35716928"
+     inkscape:cx="-466.09419"
+     inkscape:cy="167.12708"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:snap-global="false"
+     inkscape:window-width="1280"
+     inkscape:window-height="778"
+     inkscape:window-x="-1"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-top="0"
+     fit-margin-bottom="0"
+     borderlayer="true" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>Granny Apple</dc:title>
+        <cc:license
+           rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/" />
+        <dc:rights>
+          <cc:Agent>
+            <dc:title>CC0</dc:title>
+          </cc:Agent>
+        </dc:rights>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>Cyanide Cupcake</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:date>12/3/19</dc:date>
+        <dc:subject>
+          <rdf:Bag>
+            <rdf:li>apple</rdf:li>
+            <rdf:li>green apple</rdf:li>
+            <rdf:li>fruit</rdf:li>
+            <rdf:li>food</rdf:li>
+            <rdf:li>granny smith</rdf:li>
+          </rdf:Bag>
+        </dc:subject>
+        <dc:description>A green apple with stem.</dc:description>
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/publicdomain/zero/1.0/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="border"
+     transform="translate(-87.130082,-63.067573)" />
+  <g
+     inkscape:label="apple"
+     inkscape:groupmode="layer"
+     id="layer1"
+     style="display:inline"
+     transform="translate(-87.130082,-63.067573)">
+    <path
+       style="opacity:1;fill:#744402;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:4.80000019;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       d="m 124.06095,63.067573 7.77485,2.490857 c -4.4665,6.21661 -10.47622,11.815935 -8.309,20.686035 l -1.48913,-3.53848 c -2.23882,-6.54614 -3.96497,-13.092276 2.02328,-19.638412 z"
+       id="rect827-7"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccc" />
+    <path
+       style="opacity:1;fill:#4e9a06;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:4.80000019;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       d="m 110.83281,78.217151 c -10.980839,0.37824 -23.702546,5.514588 -23.702728,23.227299 -5.6e-5,17.71292 11.96577,40.53885 26.726538,40.53913 3.67368,-0.0133 7.30565,-0.93527 10.66911,-2.70836 3.37686,1.78011 7.0242,2.70224 10.71253,2.70836 14.76096,7e-5 26.7271,-22.82597 26.72704,-40.53913 -1.8e-4,-17.712954 -11.96625,-23.605341 -26.72704,-23.605275 -3.67352,0.01336 -8.83066,1.903068 -13.31444,1.914612 -3.73231,0.0096 -7.40252,-1.530604 -11.09101,-1.536636 z"
+       id="path815"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccccccac" />
+    <path
+       style="opacity:1;fill:#00790f;fill-opacity:0.89099528;fill-rule:nonzero;stroke:none;stroke-width:4.80000019;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       d="m 135.23855,77.839397 c -1.09124,0.004 -2.31565,0.175162 -3.61218,0.411861 13.92381,0.471345 24.9337,6.582069 24.93388,23.571172 5e-5,16.24695 -10.0676,36.7924 -23.12469,40.08282 0.59924,0.0496 1.20056,0.0776 1.80299,0.0786 14.76096,6e-5 26.7271,-22.82597 26.72705,-40.53913 -1.8e-4,-17.712957 -11.96625,-23.605344 -26.72705,-23.605273 z m -24.40574,0.377754 c -1.4479,0.04987 -2.92602,0.185332 -4.40129,0.418578 3.35139,0.235599 6.69358,1.505125 10.08724,1.496034 1.36283,-0.0035 2.78806,-0.181748 4.21473,-0.426847 -3.32383,-0.254897 -6.60499,-1.482378 -9.90068,-1.487765 z m 11.48633,60.034879 c -0.85324,0.4498 -2.14487,1.41373 -3.67438,2.03539 -2.15202,0.87469 -4.64667,1.39256 -5.93403,1.64677 3.63826,0.21647 8.91752,-0.60833 11.815,-2.65897 -0.74624,-0.3021 -2.20659,-1.84124 -2.20659,-1.0232 z"
+       id="path822"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccccccccccccsccsc" />
+    <path
+       style="opacity:1;fill:#ffffff;fill-opacity:0.6255924;fill-rule:nonzero;stroke:none;stroke-width:2.90334034;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       d="m 104.5388,84.209383 -4.17206,8.591505 c -3.243819,4.269956 -7.033537,7.865512 -7.93072,15.034452 l 0.08502,-2.93858 c 0.382768,-5.371268 0.842323,-12.330079 4.819502,-16.664406 z"
+       id="rect827"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccccc" />
+  </g>
+</svg>

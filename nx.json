@@ -28,8 +28,7 @@
     "counter-ui": { "tags": [] },
     "ng-sa-ngrx-counter": { "tags": [] },
     "ng-sa-ngxs-counter": { "tags": [] },
-    "shopping-ui": { "tags": [] },
-    "shopping-api": { "tags": [] },
+    "shopping": { "tags": [] },
     "ng-sa-shopping": { "tags": [] }
   }
 }

@@ -83,3 +83,6 @@ a.bx--side-nav__link[aria-current=page]::before {
 .bx--side-nav__footer {
   background-color: $ui-01;
 }
+.bx--form-item.bx--checkbox-wrapper:first-of-type {
+  margin-top: 0;
+}
