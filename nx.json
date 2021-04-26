@@ -30,6 +30,7 @@
     "ng-sa-ngxs-counter": { "tags": [] },
     "shopping-ui": { "tags": [] },
     "shopping-api": { "tags": [] },
-    "ng-sa-shopping": { "tags": [] }
+    "ng-sa-shopping": { "tags": [] },
+    "ng-sa-store-services": { "tags": [] }
   }
 }

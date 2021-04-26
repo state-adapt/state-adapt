@@ -14,5 +14,6 @@ module.exports = {
     '<rootDir>/libs/shopping-ui',
     '<rootDir>/libs/shopping-api',
     '<rootDir>/apps/ng-sa-shopping',
+    '<rootDir>/apps/ng-sa-store-services',
   ],
 };
