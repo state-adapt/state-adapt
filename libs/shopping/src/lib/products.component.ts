@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Product } from './product.interface';
+import { QuantityChange } from './quantity-change.interface';
 
 @Component({
   selector: 'state-adapt-products',
@@ -7,7 +8,8 @@ import { Product } from './product.interface';
     <state-adapt-product
       *ngFor="let product of products"
       [product]="product"
-      (inCartChange)="itemAdded.emit(product.name)"
+      (inCartChange)="inCartChange.emit(product)"
+      (quantityChange)="quantityChange.emit($event)"
     ></state-adapt-product>
   `,
   styles: [
@@ -27,5 +29,6 @@ import { Product } from './product.interface';
 })
 export class ProductsComponent {
   @Input() products: Product[] = [];
-  @Output() itemAdded = new EventEmitter<string>();
+  @Output() inCartChange = new EventEmitter<Product>();
+  @Output() quantityChange = new EventEmitter<QuantityChange>();
 }

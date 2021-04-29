@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Product } from './product.interface';
+import { QuantityChange } from './quantity-change.interface';
 
 @Component({
   selector: 'state-adapt-cart',
@@ -9,7 +10,8 @@ import { Product } from './product.interface';
         *ngFor="let product of products"
         [inCart]="true"
         [product]="product"
-        (inCartChange)="itemRemoved.emit(product.name)"
+        (quantityChange)="quantityChange.emit($event)"
+        (inCartChange)="inCartChange.emit(product)"
       ></state-adapt-product>
     </div>
     <div class="container">Total: {{ total | currency }}</div>
@@ -32,5 +34,6 @@ import { Product } from './product.interface';
 export class CartComponent {
   @Input() products: Product[] = [];
   @Input() total = 0;
-  @Output() itemRemoved = new EventEmitter<string>();
+  @Output() inCartChange = new EventEmitter<Product>();
+  @Output() quantityChange = new EventEmitter<QuantityChange>();
 }

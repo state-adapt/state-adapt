@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Product } from './product.interface';
+import { QuantityChange } from './quantity-change.interface';
 
 @Component({
   selector: 'state-adapt-product',
@@ -9,20 +10,14 @@ import { Product } from './product.interface';
     <ibm-number
       [label]="product.price | currency | qtyLabel"
       [ngModel]="product.quantity"
-      (ngModelChange)="quantityChange.emit($event)"
+      (ngModelChange)="
+        quantityChange.emit({ name: product.name, quantity: $event })
+      "
     ></ibm-number>
-    <button
-      ibmButton="primary"
-      *ngIf="!inCart"
-      (click)="inCartChange.emit(true)"
-    >
+    <button ibmButton="primary" *ngIf="!inCart" (click)="inCartChange.emit()">
       Add to Cart
     </button>
-    <button
-      ibmButton="secondary"
-      *ngIf="inCart"
-      (click)="inCartChange.emit(false)"
-    >
+    <button ibmButton="secondary" *ngIf="inCart" (click)="inCartChange.emit()">
       Remove from Cart
     </button>
   </div>`,
@@ -65,6 +60,6 @@ export class ProductComponent {
     quantity: 1,
   };
   @Input() inCart = false;
-  @Output() quantityChange = new EventEmitter<number>();
-  @Output() inCartChange = new EventEmitter<boolean>();
+  @Output() quantityChange = new EventEmitter<QuantityChange>();
+  @Output() inCartChange = new EventEmitter<void>();
 }
