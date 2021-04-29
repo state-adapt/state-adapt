@@ -1,91 +1,43 @@
 import { Component } from '@angular/core';
-import { Product } from '../../../../libs/shopping/src';
+import { ProductService } from './products/product.service';
+import { FilterService } from './filters/filter.service';
 
 @Component({
   selector: 'state-adapt-root',
   template: `
     <state-adapt-shopping>
-      <state-adapt-product-filters></state-adapt-product-filters>
+      <state-adapt-product-filters
+        [filters]="filters$ | async"
+        (filterToggle)="filterToggle$.next($event)"
+      ></state-adapt-product-filters>
       <state-adapt-products
-        [products]="filteredProducts"
+        [products]="filteredProducts$ | async"
+        (quantityChange)="quantityChange$.next($event)"
+        (inCartChange)="addToCart$.next($event)"
       ></state-adapt-products>
-      <state-adapt-cart [products]="cartItems"></state-adapt-cart>
+      <state-adapt-cart
+        [products]="cartProducts$ | async"
+        [total]="cartTotal$ | async"
+        (inCartChange)="removeFromCart$.next($event)"
+        (quantityChange)="quantityChange$.next($event)"
+      ></state-adapt-cart>
     </state-adapt-shopping>
   `,
 })
 export class AppComponent {
-  filteredProducts: Product[] = [
-    {
-      name: 'Apples',
-      img: 'apple.svg',
-      price: 1.32,
-    },
-    {
-      name: 'Bananas',
-      img: 'bananas.svg',
-      price: 0.57,
-    },
-    {
-      name: 'Cherries',
-      img: 'cherries.svg',
-      price: 7.55,
-    },
-    {
-      name: 'Grapes',
-      img: 'grapes.svg',
-      price: 2.09,
-    },
-    {
-      name: 'Green Apples',
-      img: 'green-apple.svg',
-      price: 1.22,
-    },
-    {
-      name: 'Kiwis',
-      img: 'kiwi.svg',
-      price: 2.17,
-    },
-    {
-      name: 'Lemons',
-      img: 'lemon.svg',
-      price: 2.6,
-    },
-    {
-      name: 'Oranges',
-      img: 'orange.svg',
-      price: 1.33,
-    },
-    {
-      name: 'Peaches',
-      img: 'peach.svg',
-      price: 0.6,
-    },
-    {
-      name: 'Pears',
-      img: 'pear.svg',
-      price: 1.94,
-    },
-    {
-      name: 'Pineapples',
-      img: 'pineapple.svg',
-      price: 2.75,
-    },
-    // {
-    //   name: 'Pomegranates',
-    //   img: 'pomegranate.svg',
-    //   price: 3.4,
-    // },
-    {
-      name: 'Strawberries',
-      img: 'strawberries.svg',
-      price: 3.46,
-    },
-  ].map(product => ({ ...product, quantity: 1 }));
-  cartItems: Product[] = [
-    {
-      name: 'Pineapples',
-      img: 'pineapple.svg',
-      price: 2.75,
-    },
-  ].map(product => ({ ...product, quantity: 1 }));
+  quantityChange$ = this.productService.quantityChange$;
+  addToCart$ = this.productService.addToCart$;
+  removeFromCart$ = this.productService.removeFromCart$;
+  cartProducts$ = this.productService.cartStore.getState();
+  cartTotal$ = this.productService.cartStore.getTotalPrice();
+
+  filterToggle$ = this.filterService.filterToggle$;
+  filters$ = this.filterService.filterStore.getState();
+
+  filteredProducts$ = this.productService.filteredProductStore.getFilteredProducts();
+
+  constructor(
+    private productService: ProductService,
+    private filterService: FilterService,
+  ) {}
 }
