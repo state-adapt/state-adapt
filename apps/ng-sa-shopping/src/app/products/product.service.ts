@@ -1,15 +1,13 @@
 import { Injectable } from '@angular/core';
-import { AdaptCommon, join, Source } from '@state-adapt/core';
-import { createSelector } from 'reselect';
+import { AdaptCommon, joinSelectors, Source } from '@state-adapt/core';
 import {
-  filterFunctions,
-  Filters,
   Product,
   products,
   QuantityChange,
 } from '../../../../../libs/shopping/src';
 import { FilterService } from '../filters/filter.service';
 import { productAdapter } from './product.adapter';
+import { getFilteredProducts } from './filter-product.selectors';
 
 @Injectable({ providedIn: 'root' })
 export class ProductService {
@@ -30,27 +28,10 @@ export class ProductService {
   });
 
   filterStore = this.filterService.filterStore;
-  filteredProductStore = join(
+  filteredProductStore = joinSelectors(
     this.filterStore,
     this.productStore,
-    ({ getState: getFilters }, { getState: getProducts }) => ({
-      getFilteredProducts: createSelector(
-        getFilters,
-        getProducts,
-        (filters, products) => {
-          const activeFilters = Object.entries(filters).filter(
-            ([key, val]) => val,
-          ) as [keyof Filters, boolean][];
-          const filteredProducts = !activeFilters.length
-            ? products
-            : products.filter(({ price }) =>
-                activeFilters.some(([key]) => filterFunctions[key](price)),
-              );
-
-          return filteredProducts.sort((a, b) => (a.name > b.name ? 1 : -1));
-        },
-      ),
-    }),
+    getFilteredProducts,
   );
 
   constructor(

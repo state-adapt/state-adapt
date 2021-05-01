@@ -2,27 +2,12 @@ import { createSelector } from 'reselect';
 import { merge, using } from 'rxjs';
 import { AnySelectors } from './any-selectors.interface';
 import { JoinedMiniStore } from './joined-mini-store.interface';
+import { JoinedSelectors } from './joined-selectors.type';
 import { MiniStore } from './mini-store.interface';
 import { Selections } from './selections.type';
 import { Selectors } from './selectors.interface';
+import { StoreLike } from './store-like.type';
 
-type StoreLike<State, S extends Selectors<State>, AS extends AnySelectors> =
-  | MiniStore<State, S>
-  | JoinedMiniStore<State, AS>;
-
-type JoinedSelectors<AS extends AnySelectors, JoinedState> = AS & {
-  getState: (state: any) => JoinedState;
-};
-
-export function join<
-  State1,
-  S1 extends Selectors<State1>,
-  AS1 extends AnySelectors,
-  NewS extends AnySelectors
->(
-  stores: StoreLike<State1, S1, AS1>[],
-  getSelectors: (...s1: S1[]) => NewS,
-): JoinedMiniStore<any, JoinedSelectors<NewS, State1[]>>;
 export function join<
   State1,
   State2,
@@ -109,7 +94,7 @@ export function join<
 export function join<NewS extends Selectors<any>>(
   ...inputs: any[]
 ): MiniStore<any, NewS> {
-  const miniStores = Array.isArray(inputs[0]) ? inputs[0] : inputs.slice(0, -1);
+  const miniStores = inputs.slice(0, -1);
   const select = miniStores[0]._select;
   const getSelectors = inputs[inputs.length - 1];
 
