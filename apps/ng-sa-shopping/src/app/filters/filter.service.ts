@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AdaptCommon, Source } from '@state-adapt/core';
-import { Filters } from '../../../../../libs/shopping/src';
-import { filters } from 'libs/shopping/src/lib/filters';
+import { Filters, filters } from '../../../../../libs/shopping/src';
 import { filterAdapter } from './filter.adapter';
 
 @Injectable({ providedIn: 'root' })

@@ -1,4 +1,5 @@
 export * from './lib/filters.interface';
+export * from './lib/filters';
 export * from './lib/filter-functions';
 export * from './lib/quantity-change.interface';
 export * from './lib/product.interface';
