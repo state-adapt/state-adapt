@@ -6,7 +6,12 @@ import { QuantityChange } from './quantity-change.interface';
   selector: 'state-adapt-product',
   template: ` <div class="product">
     <div class="grow"></div>
-    <img [src]="'/assets/' + product.img" />
+    <img
+      [src]="
+        'https://raw.githubusercontent.com/state-adapt/state-adapt/2c9783e9f81dfe76d610671025d0ce3acf0fa0a3/libs/shopping/src/lib/assets/' +
+        product.img
+      "
+    />
     <ibm-number
       [label]="product.price | currency | qtyLabel"
       [ngModel]="product.quantity"
