@@ -24,6 +24,7 @@ StateAdapt uses state adapters to maximize reusability in state management.
 # Demo Apps
 
 - [Angular Reactive Forms with NgRx and StateAdapt](https://stackblitz.com/edit/angular-reactive-forms-state-management?file=src%2Fapp%2Fform%2Fstate-adapt-form.component.ts)
+- [Shopping Cart with StateAdapt](https://stackblitz.com/github/state-adapt/state-adapt/tree/stackblitz-ng-sa-shopping?file=apps%2Fng-sa-shopping%2Fsrc%2Fapp%2Fapp.component.ts) ([Live-code video](https://www.youtube.com/watch?v=idb2eE-AdQA))
 
 # Getting Started
 
