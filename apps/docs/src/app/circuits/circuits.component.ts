@@ -44,13 +44,13 @@ const getNumbersBetween = (
   b: number,
   n: number,
   ar: number[] = [],
-  newN: number = a - 1, // Start with invalid newN so at least it is always defined
+  newN?: number,
 ): number[] => {
   if (!n) return ar;
   const nextNewN = getNumberBetween(a, b);
-  const newNAlreadyChosen = ar.indexOf(newN) !== -1;
-  const newNValid = !isNaN(newN) && !newNAlreadyChosen;
-  return newNValid
+  const newNAlreadyChosen = newN != null && ar.indexOf(newN) !== -1;
+  const newNValid = newN != null && !isNaN(newN) && !newNAlreadyChosen;
+  return newN != null && newNValid
     ? getNumbersBetween(a, b, n - 1, [...ar, newN], nextNewN)
     : getNumbersBetween(a, b, n, ar, nextNewN);
 };
