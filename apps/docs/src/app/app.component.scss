@@ -6,6 +6,15 @@
   margin: 50px auto;
 }
 
+a.brand {
+  font-size: 16px;
+  img {
+    vertical-align: middle;
+    height: 30px;
+    margin: -3px 4px 0px;
+  }
+}
+
 .flex {
   display: flex;
   align-items: center;

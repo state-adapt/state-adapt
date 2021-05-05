@@ -1,5 +1,6 @@
 import { Component, NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+import { DemosComponent } from './demos/demos.component';
 import { IntroComponent } from './intro/intro.component';
 
 @Component({
@@ -13,6 +14,17 @@ const routes: Routes = [
     path: '',
     pathMatch: 'full',
     component: IntroComponent,
+  },
+  // {
+  //   path: 'dashboards',
+  //   loadChildren: () =>
+  //     import('@state-adapt/dashboards-feature').then(
+  //       m => m.DashboardsFeatureRoutingModule,
+  //     ),
+  // },
+  {
+    path: 'demos',
+    component: DemosComponent,
   },
   {
     path: 'dashboards',

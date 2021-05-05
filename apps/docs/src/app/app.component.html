@@ -1,6 +1,11 @@
-<ibm-header name="StateAdapt">
+<ibm-header name="StateAdapt" [brand]="brandTemplate">
   <ibm-hamburger (click)="expandSidenav()"></ibm-hamburger>
 </ibm-header>
+<ng-template #brandTemplate>
+  <a href="/" class="brand"
+    ><img src="../assets/sa-9-7.svg" />StateAdapt</a
+  ></ng-template
+>
 <ibm-sidenav [expanded]="sidenavExpanded">
   <ng-container *ngFor="let link of links$ | async; trackBy: trackByRoute">
     <ibm-sidenav-item

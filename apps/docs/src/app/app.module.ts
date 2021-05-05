@@ -25,6 +25,7 @@ import { ContentComponent } from './content.component';
 import { IntroComponent } from './intro/intro.component';
 import { getMarkedOptions } from './get-marked-options.function';
 import { CircuitsComponent } from './circuits/circuits.component';
+import { DemosComponent } from './demos/demos.component';
 
 @NgModule({
   imports: [
@@ -57,6 +58,7 @@ import { CircuitsComponent } from './circuits/circuits.component';
     ContentComponent,
     IntroComponent,
     CircuitsComponent,
+    DemosComponent,
   ],
   providers: [],
   bootstrap: [AppComponent],

@@ -2,15 +2,7 @@ import { Location } from '@angular/common';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
-import { debounceTime, filter, map, startWith } from 'rxjs/operators';
-
-const x = setInterval(() => {
-  const ibm = document.querySelector('.bx--header__name--prefix');
-  if (ibm && ibm.parentNode) {
-    ibm.parentNode.removeChild(ibm);
-    clearInterval(x);
-  }
-}, 100);
+import { map, startWith } from 'rxjs/operators';
 
 @Component({
   selector: 'state-adapt-root',
@@ -28,10 +20,20 @@ export class AppComponent {
         name: 'Introduction',
         active: url === '',
       },
+      // {
+      //   route: '/dashboards',
+      //   name: 'Demo App',
+      //   active: url.includes('/dashboards'),
+      // },
+      // {
+      //   route: '/documentation',
+      //   name: 'Documentation',
+      //   active: url.includes('/documentation'),
+      // },
       {
-        route: '/dashboards',
-        name: 'Demo App',
-        active: url.includes('/dashboards'),
+        route: '/demos',
+        name: 'Demos',
+        active: url.includes('/demos'),
       },
       {
         route: '/adapters',
