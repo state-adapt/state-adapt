@@ -1,8 +1,8 @@
 import { Location } from '@angular/common';
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
-import { Subject } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
+import { Event, Router, RouterEvent } from '@angular/router';
+import { merge, Subject } from 'rxjs';
+import { filter, map, startWith } from 'rxjs/operators';
 
 @Component({
   selector: 'state-adapt-root',
@@ -12,7 +12,13 @@ import { map, startWith } from 'rxjs/operators';
 export class AppComponent {
   sidenavExpanded = window.innerWidth > 800;
   urlChange$ = new Subject<string>();
-  links$ = this.urlChange$.pipe(
+  links$ = merge(
+    this.urlChange$,
+    this.router.events.pipe(
+      filter((e: Event): e is RouterEvent => e instanceof RouterEvent),
+      map((e: RouterEvent) => e.url),
+    ),
+  ).pipe(
     startWith(this.location.path()),
     map(url => [
       {
@@ -30,6 +36,11 @@ export class AppComponent {
       //   name: 'Documentation',
       //   active: url.includes('/documentation'),
       // },
+      {
+        route: '/getting-started',
+        name: 'Getting Started',
+        active: url.includes('/getting-started'),
+      },
       {
         route: '/demos',
         name: 'Demos',

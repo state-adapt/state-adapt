@@ -1,6 +1,7 @@
 import { Component, NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { DemosComponent } from './demos/demos.component';
+import { GettingStartedComponent } from './getting-started/getting-started.component';
 import { IntroComponent } from './intro/intro.component';
 
 @Component({
@@ -22,6 +23,10 @@ const routes: Routes = [
   //       m => m.DashboardsFeatureRoutingModule,
   //     ),
   // },
+  {
+    path: 'getting-started',
+    component: GettingStartedComponent,
+  },
   {
     path: 'demos',
     component: DemosComponent,
