@@ -1,0 +1,25 @@
+<div fxLayout="row" fxLayoutAlign="start" fxLayoutGap="0">
+  <div
+    fxFlex="auto"
+    fxFlexOrder="0"
+    fxLayout="column"
+    fxLayoutAlign="start center"
+  >
+    <h1>User1</h1>
+    <p>{{ (user1$ | async)?.displayName }}</p>
+    <button (click)="button1Click()">Request 1</button>
+    <img src='../assets/img/loading.gif' *ngIf="loading1$ | async">
+  </div>
+
+  <div
+    fxFlex="auto"
+    fxFlexOrder="1"
+    fxLayout="column"
+    fxLayoutAlign="start center"
+  >
+    <h1>User2</h1>
+    <p>{{ (user2$ | async)?.displayName }}</p>
+    <button (click)="button2Click()">Request 2</button>
+    <img src='../assets/img/loading.gif' *ngIf="loading2$ | async">
+  </div>
+</div>

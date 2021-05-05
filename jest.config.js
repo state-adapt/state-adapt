@@ -13,5 +13,6 @@ module.exports = {
     '<rootDir>/apps/ng-sa-ngxs-counter',
     '<rootDir>/libs/shopping',
     '<rootDir>/apps/ng-sa-shopping',
+    '<rootDir>/apps/ng-sa-async-state-demo',
   ],
 };
