@@ -16,7 +16,7 @@ export class AppComponent {
     this.urlChange$,
     this.router.events.pipe(
       filter((e: Event): e is RouterEvent => e instanceof RouterEvent),
-      map((e: RouterEvent) => e.url),
+      map(e => e.url),
     ),
   ).pipe(
     startWith(this.location.path()),
@@ -31,11 +31,6 @@ export class AppComponent {
       //   name: 'Demo App',
       //   active: url.includes('/dashboards'),
       // },
-      // {
-      //   route: '/documentation',
-      //   name: 'Documentation',
-      //   active: url.includes('/documentation'),
-      // },
       {
         route: '/getting-started',
         name: 'Getting Started',
@@ -47,16 +42,24 @@ export class AppComponent {
         active: url.includes('/demos'),
       },
       {
+        route: '/concepts',
+        name: 'Concepts',
+        children: [
+          ['overview', 'Overview'],
+          ['sources', 'Sources'],
+          ['adapters', 'Adapters'],
+          ['ministores', 'Mini-Stores'],
+          ['store-chaining', 'Store Chaining'],
+        ].map(child => this.mapToChildRoute(url, '/concepts/', child)),
+      },
+      {
         route: '/adapters',
         name: 'Adapters',
         children: [
           ['core', 'Core'],
           ['angular-router', 'Angular Router'],
           ['material', 'Material'],
-        ].map(([adapterUrl, name]) => {
-          const route = '/adapters/' + adapterUrl;
-          return { route, active: url === route, name };
-        }),
+        ].map(child => this.mapToChildRoute(url, '/adapters/', child)),
       },
     ]),
   );
@@ -78,5 +81,19 @@ export class AppComponent {
 
   expandSidenav() {
     this.sidenavExpanded = !this.sidenavExpanded;
+  }
+
+  private mapToChildRoute(
+    url: string,
+    baseUrl: string,
+    [childUrl, childName]: string[],
+  ) {
+    const route = baseUrl + childUrl;
+    const hashUrl = new RegExp(/#.*/);
+    return {
+      route,
+      active: url.replace(hashUrl, '') === route,
+      name: childName,
+    };
   }
 }

@@ -1,5 +1,7 @@
 import { Component, NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+import { ConceptsOverviewComponent } from './concepts/overview.component';
+import { SourcesComponent } from './concepts/sources.component';
 import { DemosComponent } from './demos/demos.component';
 import { GettingStartedComponent } from './getting-started/getting-started.component';
 import { IntroComponent } from './intro/intro.component';
@@ -37,6 +39,19 @@ const routes: Routes = [
       import('@state-adapt/dashboards-feature').then(
         m => m.DashboardsFeatureRoutingModule,
       ),
+  },
+  {
+    path: 'concepts',
+    children: [
+      {
+        path: 'overview',
+        component: ConceptsOverviewComponent,
+      },
+      {
+        path: 'sources',
+        component: SourcesComponent,
+      },
+    ],
   },
   {
     path: 'adapters/core',

@@ -11,7 +11,7 @@ h1, h2, h3 {
 
 p, ul {
   margin-top: .6em;
-  &.bx--list--nested {
+  &.bx--list--nested, &[role=menu] {
     margin-top: 0;
   }
 }
