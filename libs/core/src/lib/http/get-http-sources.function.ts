@@ -4,7 +4,7 @@ import { getAction } from '../get-action.function';
 import { splitSources } from '../split-sources.function';
 import { getCatchHttpError } from './get-catch-http-error.function';
 
-export function getHttpSources<Res extends { status: number }, Body, Err>(
+export function getHttpSources<Res, Body, Err>(
   feature: string,
   http$: Observable<Res>,
   getResponse: (res: Res) => [boolean, Body, Err],
