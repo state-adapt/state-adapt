@@ -16,9 +16,9 @@ Sources are where asynchronous data enters applications. Examples are
 - data arriving from a server
 - a timer completing
 
-Sources should be named after events, not commands. For example, rather than naming a source `changeName$`, consider naming it `nameChange$` or `nameChanged$`. In reactive programming, data flows in one direction, and giving a source the name of a command puts implicit knowledge about what happens _downstream_ from the source into the source itself. It is a subtle but important change of mindset from traditional, imperative programming.
-
 There are 2 types of sources: Sources created from existing observables, and sources created from the `Source` class (similar to RxJS `Subject`).
+
+Sources should be named after events, not commands. For example, rather than naming a source `changeName$`, consider naming it `nameChange$` or `nameChanged$`. In reactive programming, data flows in one direction, and giving a source the name of a command puts implicit knowledge about what happens _downstream_ from the source into the source itself. It is a subtle but important change of mindset from traditional, imperative programming.
 
 # `toSource`
 
