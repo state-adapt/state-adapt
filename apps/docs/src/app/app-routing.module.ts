@@ -2,15 +2,16 @@ import { Component, NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { ConceptsOverviewComponent } from './concepts/overview.component';
 import { SourcesComponent } from './concepts/sources.component';
+import { AdaptersComponent } from './concepts/adapters.component';
 import { DemosComponent } from './demos/demos.component';
 import { GettingStartedComponent } from './getting-started/getting-started.component';
 import { IntroComponent } from './intro/intro.component';
 
 @Component({
-  selector: 'state-adapt-adapters',
+  selector: 'state-adapt-adapters-core',
   template: 'Adapters coming soon!',
 })
-class AdaptersComponent {}
+class AdaptersCoreComponent {}
 
 const routes: Routes = [
   {
@@ -51,11 +52,15 @@ const routes: Routes = [
         path: 'sources',
         component: SourcesComponent,
       },
+      {
+        path: 'adapters',
+        component: AdaptersComponent,
+      },
     ],
   },
   {
     path: 'adapters/core',
-    component: AdaptersComponent,
+    component: AdaptersCoreComponent,
     // loadChildren: () => import('./login/login.module').then(m => m.LoginModule),
   },
   {
