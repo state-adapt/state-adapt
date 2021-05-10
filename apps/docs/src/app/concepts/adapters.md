@@ -1,12 +1,12 @@
 # Adapters
 
-- [Overview](overview)
-- [State Changes](state-changes)
-- [Selectors](selectors)
-- [`createAdapter`](createadapter)
-- [Extending adapters](extending-adapters)
-- [Basic adapter](basic-adapter)
-- [Adapter creator libraries](adapter-creator-libraries)
+- [Overview](/concepts/adapters#overview)
+- [State Changes](/concepts/adapters#state-changes)
+- [Selectors](/concepts/adapters#selectors)
+- [`createAdapter`](/concepts/adapters#createadapter)
+- [Extending adapters](/concepts/adapters#extending-adapters)
+- [Basic adapter](/concepts/adapters#basic-adapter)
+- [Adapter creator libraries](/concepts/adapters#adapter-creator-libraries)
 
 ## Overview
 
