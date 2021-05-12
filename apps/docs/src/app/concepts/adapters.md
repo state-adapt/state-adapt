@@ -4,9 +4,9 @@
 - [State Changes](/concepts/adapters#state-changes)
 - [Selectors](/concepts/adapters#selectors)
 - [`createAdapter`](/concepts/adapters#createadapter)
-- [Extending adapters](/concepts/adapters#extending-adapters)
-- [Basic adapter](/concepts/adapters#basic-adapter)
-- [Adapter creator libraries](/concepts/adapters#adapter-creator-libraries)
+- [Extending Adapters](/concepts/adapters#extending-adapters)
+- [Basic Adapter](/concepts/adapters#basic-adapter)
+- [Adapter Creator Libraries](/concepts/adapters#adapter-creator-libraries)
 
 ## Overview
 
@@ -50,7 +50,7 @@ const numberAdapter = createAdapter<number>()({
 
 StateAdapt creates a default selector called `getState` for every adapter when it is initialized into a store. Defining your own selectors is optional.
 
-## Extending adapters
+## Extending Adapters
 
 You can use extend the functionality of existing adapters when creating new adapters. Here is an example that extends the number adapter from above:
 
@@ -87,7 +87,7 @@ const numberStringAdapter = createAdapter<number>()({
 });
 ```
 
-## Basic adapter
+## Basic Adapter
 
 StateAdapt's core library exposes a function called `createBasicAdapter`. This function creates an adapter that has extremely common state changes. Here is the source code for that function:
 
@@ -109,6 +109,6 @@ export function createBasicAdapter<T>() {
 
 `reset` resets to the original state the adapter was initialized with
 
-## Adapter creator libraries
+## Adapter Creator Libraries
 
 Coming soon

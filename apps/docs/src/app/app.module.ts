@@ -7,6 +7,7 @@ import {
   DatePickerModule,
   ListModule,
   PanelModule,
+  TilesModule,
   UIShellModule,
 } from 'carbon-components-angular';
 import { MarkdownModule, MarkedOptions } from 'ngx-markdown';
@@ -27,8 +28,12 @@ import { getMarkedOptions } from './get-marked-options.function';
 import { CircuitsComponent } from './circuits/circuits.component';
 import { DemosComponent } from './demos/demos.component';
 import { GettingStartedComponent } from './getting-started/getting-started.component';
+import { NavTileComponent } from './concepts/nav-tile.component';
 import { ConceptsOverviewComponent } from './concepts/overview.component';
 import { SourcesComponent } from './concepts/sources.component';
+import { AdaptersComponent } from './concepts/adapters.component';
+import { StoresComponent } from './concepts/stores.component';
+import { ThinkingReactivelyComponent } from './concepts/thinking-reactively.component';
 
 @NgModule({
   imports: [
@@ -40,6 +45,8 @@ import { SourcesComponent } from './concepts/sources.component';
     CheckboxModule,
     DatePickerModule,
     PanelModule,
+    ListModule,
+    TilesModule,
     MarkdownModule.forRoot({
       markedOptions: {
         provide: MarkedOptions,
@@ -47,7 +54,6 @@ import { SourcesComponent } from './concepts/sources.component';
       },
       sanitize: SecurityContext.NONE,
     }),
-    ListModule,
     StoreModule.forRoot({ adapt: adaptReducer }),
     StoreDevtoolsModule.instrument({
       maxAge: 25,
@@ -63,8 +69,12 @@ import { SourcesComponent } from './concepts/sources.component';
     CircuitsComponent,
     DemosComponent,
     GettingStartedComponent,
+    NavTileComponent,
     ConceptsOverviewComponent,
     SourcesComponent,
+    AdaptersComponent,
+    StoresComponent,
+    ThinkingReactivelyComponent,
   ],
   providers: [],
   bootstrap: [AppComponent],

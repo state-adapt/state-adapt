@@ -6,6 +6,12 @@ import md from 'raw-loader!./sources.md';
   template: `
     <state-adapt-content>
       <markdown [data]="md"></markdown>
+      <state-adapt-nav-tile link="/concepts/overview">
+        Overview
+      </state-adapt-nav-tile>
+      <state-adapt-nav-tile [right]="true" link="/concepts/adapters">
+        Adapters
+      </state-adapt-nav-tile>
     </state-adapt-content>
   `,
 })

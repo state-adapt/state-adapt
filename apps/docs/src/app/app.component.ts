@@ -48,8 +48,8 @@ export class AppComponent {
           ['overview', 'Overview'],
           ['sources', 'Sources'],
           ['adapters', 'Adapters'],
-          ['ministores', 'Mini-Stores'],
-          ['store-chaining', 'Store Chaining'],
+          ['stores', 'Stores'],
+          ['thinking-reactively', 'Thinking Reactively'],
         ].map(child => this.mapToChildRoute(url, '/concepts/', child)),
       },
       {

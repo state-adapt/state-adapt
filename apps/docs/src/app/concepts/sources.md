@@ -6,9 +6,9 @@
 - [`splitSources`](/concepts/sources#splitsources)
 - [`getAction`](/concepts/sources#getaction)
 - [`getHttpSources`](/concepts/sources#gethttpsources)
-- [Reusing Sources](/concepts/sources#reusing-sources)
+- [One Source Per Event](/concepts/sources#one-source-per-event)
 
-# Overview
+## Overview
 
 Sources are where asynchronous data enters applications. Examples are
 
@@ -16,13 +16,13 @@ Sources are where asynchronous data enters applications. Examples are
 - data arriving from a server
 - a timer completing
 
-There are 2 types of sources: Sources created from existing observables, and sources created from the `Source` class (similar to RxJS `Subject`).
+There are 2 types of sources: Sources created from existing observables, and sources created from the [`Source`](/concepts/sources#source) class (similar to RxJS `Subject`).
 
 Sources should be named after events, not commands. For example, rather than naming a source `changeName$`, consider naming it `nameChange$` or `nameChanged$`. In reactive programming, data flows in one direction, and giving a source the name of a command puts implicit knowledge about what happens _downstream_ from the source into the source itself. It is a subtle but important change of mindset from traditional, imperative programming.
 
-# `toSource`
+## `toSource`
 
-`toSource` is an observable operator that converts an existing observable into a source. It takes one argument: the action type that will be displayed in Redux Devtools. The only purpose of the action type is to appear in Redux Devtools to help developers understand what is taking place in the application, so you can name it whatever you want.
+[`toSource`](/concepts/sources#tosource) is an observable operator that converts an existing observable into a source. It takes one argument: the action type that will be displayed in Redux Devtools. The only purpose of the action type is to appear in Redux Devtools to help developers understand what is taking place in the application, so you can name it whatever you want.
 
 Example:
 
@@ -39,9 +39,9 @@ const timer$ = timer(3000).pipe(toSource('timer$'));
 
 Internally, `toSource` just maps values to action objects that are similar to Redux actions. While you can technically interact with these objects, we discourage doing so, both to encourage reactive patterns and to avoid depending too much on the internal implementation of StateAdapt.
 
-# `Source`
+## `Source`
 
-When you don't have an observable already, you can use a `Source` the same way you would use an RxJS `Subject`. The most common use case for this is to represent user input in a component:
+When you don't have an observable already, you can use a [`Source`](/concepts/sources#source) the same way you would use an RxJS `Subject`. The most common use case for this is to represent user input in a component:
 
 ```html
 <button (click)="formSubmission$.next()">Submit</button>
@@ -55,11 +55,11 @@ formSubmission$ = new Source<void>('formSubmission$');
 
 The argument is the action type that will show up in Redux Devtools.
 
-Similar to `toSource`, `Source` wraps values pushed into it in objects similar to Redux actions.
+Similar to [`toSource`](/concepts/sources#tosource), [`Source`](/concepts/sources#source) wraps values pushed into it in objects similar to Redux actions.
 
-# `splitSources`
+## `splitSources`
 
-Some observables are actually several event types merged together. Although it will depend on how you write your state adapters, you will probably want only one event type per source. You could just `filter` for each event type and then use `toSource` on each filtered stream, but StateAdapt provides a `splitSources` function that might help. Here is how it can be used:
+Some observables are actually several event types merged together. Although it will depend on how you write your state adapters, you will probably want only one event type per source. You could just `filter` for each event type and then use [`toSource`](/concepts/sources#tosource) on each filtered stream, but StateAdapt provides a [`splitSources`](/concepts/sources#splitsources) function that might help. Here is how it can be used:
 
 ```typescript
 import { Observable } from 'rxjs';
@@ -96,9 +96,9 @@ const { message1$, message2$ } = splitSources(websocketMessages$, {
 // You can now apply toSource to each stream
 ```
 
-Since `splitSources` matches against the `type` property of the values emitted from the observable passed into it, you can easily pass in an observable of actual StateAdapt sources and they will come out the other side as sources still. However, when all the messages in the input observable do _not_ fit the StateAdapt/Redux `Action` interface, you will have to use `toSource` to convert them, as mentioned in that example.
+Since [`splitSources`](/concepts/sources#splitsources) matches against the `type` property of the values emitted from the observable passed into it, you can easily pass in an observable of actual StateAdapt sources and they will come out the other side as sources still. However, when all the messages in the input observable do _not_ fit the StateAdapt/Redux `Action` interface, you will have to use [`toSource`](/concepts/sources#tosource) to convert them, as mentioned in that example.
 
-# `getAction`
+## `getAction`
 
 This is a function that takes in 2 arguments (an `actionType` and an optional `payload`) and creates a StateAdapt `Action`. So, in this example `source1$` and `source2$` are equivalent:
 
@@ -114,9 +114,9 @@ const source2$ = obs$.pipe(map(n => getAction('source$2', n)));
 
 This can give you a little more flexibility when creating sources.
 
-# `getHttpSources`
+## `getHttpSources`
 
-Http requests are often just used for the single value they emit when they complete. However, if you want to handle the loading state and errors, http requests become a common example of an observable that contains multiple event types in a single observable: `request`, `error` and `success`. getHttpSources uses `getAction` and `splitSources` internally to split an http request observable into those 3 common sources. Example usage:
+Http requests are often just used for the single value they emit when they complete. However, if you want to handle the loading state and errors, http requests become a common example of an observable that contains multiple event types in a single observable: `request`, `error` and `success`. getHttpSources uses [`getAction`](/concepts/sources#getaction) and [`splitSources`](/concepts/sources#splitsources) internally to split an http request observable into those 3 common sources. Example usage:
 
 ```typescript
 import { getHttpSources } from '@state-adapt/core';
@@ -133,7 +133,7 @@ const { request$, success$, error$ } = getHttpSources(
 
 There is a lot going on here.
 
-The first argument is the scope. Whatever you pass in here, `getHttpSources` will append `' Request'`, `' Success'` or `' Error'` to the actions that it uses `getAction` to create. So if you pass in `'[Some Data]'`, the action types of the sources will be `'[Some Data] Request'`, `'[Some Data] Success'` and `'[Some Data] Error'`.
+The first argument is the scope. Whatever you pass in here, [`getHttpSources`](/concepts/sources#gethttpsources) will append `' Request'`, `' Success'` or `' Error'` to the actions that it uses [`getAction`](/concepts/sources#getaction) to create. So if you pass in `'[Some Data]'`, the action types of the sources will be `'[Some Data] Request'`, `'[Some Data] Success'` and `'[Some Data] Error'`.
 
 The 2nd argument is an observable (the http request).
 
@@ -143,9 +143,11 @@ The 3rd argument is a function you need to provide that takes in the value emitt
 2. The value you want as the payload of the `Success` action
 3. The error message from the response
 
-`getHttpSources` also applies a `catchError` RxJS operator and maps it to the `Error` source, so the type emitted by the `Error` source is `string | Err`, where `Err` is whatever you typed it as in your observable.
+[`getHttpSources`](/concepts/sources#gethttpsources) also applies a `catchError` RxJS operator and maps it to the `Error` source, so the type emitted by the `Error` source is `string | Err`, where `Err` is whatever you typed it as in your observable.
 
-# Reusing Sources
+## One Source Per Event
+
+### No Multiple Sources
 
 In reactive programming, data flows in one direction, so each source represents a single kind of event. Rather than handling an event in a callback function, you should directly push the event into a single source and handle downstream effects in the affected features themselves.
 
@@ -190,3 +192,13 @@ The benefit of doing it this way is that you only see one action dispatched in R
 The drawback is rare, but it does occur: Since we only subscribe to the first observable, cold observables like those created from `of` and `timer` that you would expect to fire for each individual store that uses them will actually only fire for the first store that uses that exact observable reference. The solution? Just create a new reference for each store that uses it. This can be achieved either through a factory function, such as `getTimer = () => timer(5000)`, or by wrapping the reference in a `defer()` when passing it into another store (simply calling `.pipe()` on an observable doesn't seem to create a new reference, so that doesn't work). There might be a more clever workaround, but these work.
 
 This situation is rare and the benefits from having 1 action in Redux Devtools per event is well worth this drawback. But it is good to know about so you can deal with it when you come across it.
+
+### No Multiple Events
+
+One of StateAdapt's core aims is to maximize reusability of state management patterns. This is good, but when it comes to sources, it can be easy to go a little too far. State adapters have no opinion on what sources are going to cause their state changes, and this is intentional. The responsibility to define these sources lies with the consumers of these adapters, because there may be multiple stores that need to react to those same sources. If sources were provided with each adapter, developers would be tempted to use them all and just call `.next()` on each of them for single events, which is the problem discussed in [No Multiple Sources](/concepts/sources#no-multiple-sources). In summary, providing sources that can be reused across multiple event types/origins can lead to imperatively updating multiple sources in response to single events.
+
+When looking at Redux Devtools you want to be able to understand exactly which sources actions are coming from. If you do end up creating utility methods for generating sources (like [`getHttpSources`](/concepts/sources#gethttpsources)) make sure you are able to accept a scope to prepend to each source type. Refer to [`getHttpSources`](/concepts/sources#gethttpsources) as an example.
+
+[Mike Ryan's talk on good action hygene](https://www.youtube.com/watch?v=JmnsEvoy-gY) applies to StateAdapt sources.
+
+It is generally safer to define sources as close as possible to where the events themselves are emitted from. For example, if you are creating a source for a button click, you should prefer defining it right in the same component as the button itself, or at least a service that is dedicated to that component.

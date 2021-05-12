@@ -6,6 +6,8 @@ import { AdaptersComponent } from './concepts/adapters.component';
 import { DemosComponent } from './demos/demos.component';
 import { GettingStartedComponent } from './getting-started/getting-started.component';
 import { IntroComponent } from './intro/intro.component';
+import { StoresComponent } from './concepts/stores.component';
+import { ThinkingReactivelyComponent } from './concepts/thinking-reactively.component';
 
 @Component({
   selector: 'state-adapt-adapters-core',
@@ -56,6 +58,14 @@ const routes: Routes = [
         path: 'adapters',
         component: AdaptersComponent,
       },
+      {
+        path: 'stores',
+        component: StoresComponent,
+      },
+      {
+        path: 'thinking-reactively',
+        component: ThinkingReactivelyComponent,
+      },
     ],
   },
   {
@@ -71,7 +81,9 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [
+    RouterModule.forRoot(routes, { scrollPositionRestoration: 'enabled' }),
+  ],
   exports: [RouterModule],
 })
 export class AppRoutingModule {}
