@@ -2,6 +2,10 @@
   "extends": "../../tsconfig.base.json",
   "files": [],
   "include": [],
+  "angularCompilerOptions": {
+    "strictTemplates": true,
+    "strictNullInputTypes": false
+  },
   "references": [
     {
       "path": "./tsconfig.app.json"
