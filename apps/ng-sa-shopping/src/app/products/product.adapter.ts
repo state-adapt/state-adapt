@@ -9,11 +9,11 @@ export const productAdapter = createAdapter<Product[]>()({
   addProduct: (state, product: Product) => [...state, product],
   removeProduct: (state, { name }: Product) =>
     state.filter(product => product.name !== name),
-  getSelectors: () => ({
+  selectors: {
     getTotalPrice: products =>
       products.reduce(
         (total, { price, quantity }) => total + price * quantity,
         0,
       ),
-  }),
+  },
 });

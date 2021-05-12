@@ -10,7 +10,7 @@ import {
 } from 'rxjs/operators';
 import type { Action } from './action.interface';
 import { createDestroy, createInit, createPatchState } from './adapt.actions';
-import { Adapter, ReactionsWithGetSelectors } from './adapter.type';
+import { Adapter, ReactionsWithSelectors } from './adapter.type';
 import { createBasicAdapter } from './create-basic-adapter.function';
 import { MiniStore } from './mini-store.interface';
 import { Reactions } from './reactions.interface';
@@ -51,15 +51,15 @@ export class AdaptCommon<CommonStore extends StoreMethods> {
   init<
     State,
     S extends Selectors<State>,
-    R extends ReactionsWithGetSelectors<State, S>
+    R extends ReactionsWithSelectors<State, S>
   >(
     [path, adapter, initialState]: [string, Adapter<State, S, R>, State],
     sources: Sources<State, S, R>,
   ): MiniStore<State, S & { getState: (state: any) => State }> {
-    // type S = ReturnType<R['getSelectors']>;
-    const selectors = adapter.getSelectors ? adapter.getSelectors() : ({} as S);
+    // type S = R['selectors'];
+    const selectors = adapter.selectors || ({} as S);
     const reactions = { ...adapter } as Reactions<State>;
-    delete reactions.getSelectors;
+    delete reactions.selectors;
     const requireSources$ = this.getRequireSources<State, S, R>(
       reactions,
       path,
@@ -85,13 +85,13 @@ export class AdaptCommon<CommonStore extends StoreMethods> {
   initGet<
     State,
     S extends Selectors<State>,
-    R extends ReactionsWithGetSelectors<State, S>
+    R extends ReactionsWithSelectors<State, S>
   >(
     [path, adapter, initialState]: [string, Adapter<State, S, R>, State],
     sources: Sources<State, S, R>,
   ): Observable<State> {
     const reactions = { ...adapter } as Reactions<State>;
-    delete reactions.getSelectors;
+    delete reactions.selectors;
     const requireSources$ = this.getRequireSources<State, S, R>(
       reactions,
       path,
@@ -131,13 +131,13 @@ export class AdaptCommon<CommonStore extends StoreMethods> {
   select<
     State,
     S extends Selectors<State>,
-    R extends ReactionsWithGetSelectors<State, S>
+    R extends ReactionsWithSelectors<State, S>
   >(
     path: string,
     adapter: Adapter<State, S, R>,
     // Returns a detached store; doesn't chain off of sources.
   ): MiniStore<State, S & { getState: (state: any) => State }> {
-    const selectors = adapter.getSelectors ? adapter.getSelectors() : ({} as S);
+    const selectors = adapter.selectors || ({} as S);
     const getState = this.getStateSelector<State>(path);
     const requireSources$ = of(null);
     const { fullSelectors, selections } = this.getSelections<State, S>(
@@ -156,7 +156,7 @@ export class AdaptCommon<CommonStore extends StoreMethods> {
   private getRequireSources<
     State,
     S extends Selectors<State>,
-    R extends ReactionsWithGetSelectors<State, S>
+    R extends ReactionsWithSelectors<State, S>
   >(
     reactions: Reactions<State>,
     path: string,
