@@ -12,7 +12,7 @@
       *ngIf="!link.children"
       [route]="[link.route]"
       [active]="link.active"
-      (navigation)="navigate()"
+      (navigation)="navigate(null)"
       >{{ link.name }}</ibm-sidenav-item
     >
     <ibm-sidenav-menu *ngIf="link.children" [title]="link.name">
@@ -20,7 +20,7 @@
         *ngFor="let childLink of link.children; trackBy: trackByRoute"
         [route]="[childLink.route]"
         [active]="childLink.active"
-        (navigation)="navigate()"
+        (navigation)="navigate(null)"
         >{{ childLink.name }}</ibm-sidenav-item
       >
     </ibm-sidenav-menu>
