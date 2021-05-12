@@ -4,7 +4,7 @@ import { Pipe, PipeTransform } from '@angular/core';
   name: 'qtyLabel',
 })
 export class QuantityLabelPipe implements PipeTransform {
-  transform(priceStr: string): string {
+  transform(priceStr: string | null): string {
     return `Qty. at ${priceStr} ea.`;
   }
 }
