@@ -36,5 +36,5 @@ import { Filters } from './filters.interface';
 })
 export class ProductFiltersComponent {
   @Input() filters: Filters = filters;
-  @Output() filterToggle = new EventEmitter<string>();
+  @Output() filterToggle = new EventEmitter<keyof Filters>();
 }
