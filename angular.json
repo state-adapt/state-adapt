@@ -824,6 +824,43 @@
           }
         }
       }
+    },
+    "adapter-docs": {
+      "projectType": "library",
+      "root": "libs/adapter-docs",
+      "sourceRoot": "libs/adapter-docs/src",
+      "prefix": "state-adapt",
+      "architect": {
+        "build": {
+          "builder": "@nrwl/angular:package",
+          "options": {
+            "tsConfig": "libs/adapter-docs/tsconfig.lib.json",
+            "project": "libs/adapter-docs/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "libs/adapter-docs/tsconfig.lib.prod.json"
+            }
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/adapter-docs/src/**/*.ts",
+              "libs/adapter-docs/src/**/*.html"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/adapter-docs"],
+          "options": {
+            "jestConfig": "libs/adapter-docs/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   }
 }
