@@ -1,12 +1,12 @@
 // @import "@carbon/themes/scss/themes";
-@import "../../../../../styles/theme";
+@import '../../../../../styles/theme';
 
 $logo-z: 1000;
 
 @mixin styling($logo-width) {
   $logo-top: $logo-width * 3/5;
   $logo-left: $logo-width/6;
-  $logo-shadow-width: 2*$logo-width/3;
+  $logo-shadow-width: 2 * $logo-width/3;
 
   $button-top: $logo-width * 2;
   $button-font-size: $logo-width / 7;
@@ -36,11 +36,10 @@ $logo-z: 1000;
 
       h1 {
         margin-top: $logo-width/12;
-        font-size: $logo-width*7/8;
+        font-size: $logo-width * 7/8;
         font-weight: 500;
         color: map-get($carbon--theme, brand-01);
         float: left;
-
       }
       #state {
         margin-left: $logo-left + $logo-width * 1.05;
@@ -59,8 +58,9 @@ $logo-z: 1000;
         width: $logo-shadow-width;
         padding-top: $logo-shadow-width;
         z-index: $logo-z - 1;
-        background-color: transparentize($color: #000, $amount: .75);
-        box-shadow: 0 .5vw 1.5vw 1.5vw transparentize($color: #000, $amount: .75);
+        background-color: transparentize($color: #000, $amount: 0.75);
+        box-shadow: 0 0.5vw 1.5vw 1.5vw
+          transparentize($color: #000, $amount: 0.75);
         border-radius: 50%;
       }
     }
@@ -100,7 +100,8 @@ $logo-z: 1000;
       right: 0;
     }
     a.getting-started {
-      &:link, &:visited  {
+      &:link,
+      &:visited {
         #get-started {
           background-color: map-get($carbon--theme, accent-01);
         }
