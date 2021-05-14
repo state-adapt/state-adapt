@@ -14,7 +14,7 @@
     "strictMetadataEmit": true,
     "enableResourceInlining": true,
     "strictTemplates": true,
-      "strictNullInputTypes": false
+    "strictNullInputTypes": false
   },
   "exclude": ["src/test-setup.ts", "**/*.spec.ts"],
   "include": ["**/*.ts"]
