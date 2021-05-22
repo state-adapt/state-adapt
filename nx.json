@@ -29,6 +29,7 @@
     "ng-sa-ngrx-counter": { "tags": [] },
     "ng-sa-ngxs-counter": { "tags": [] },
     "shopping": { "tags": [] },
-    "ng-sa-shopping": { "tags": [] }
+    "ng-sa-shopping": { "tags": [] },
+    "ng-sa-generic-async-state-adapt": { "tags": [] }
   }
 }
