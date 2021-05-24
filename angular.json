@@ -1,7 +1,8 @@
 {
   "version": 1,
   "cli": {
-    "defaultCollection": "@nrwl/angular"
+    "defaultCollection": "@nrwl/angular",
+    "analytics": "bf732bb3-da66-4093-b337-c817c228dc03"
   },
   "defaultProject": "ng-sa-counter",
   "schematics": {
@@ -75,7 +76,9 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/core"],
+          "outputs": [
+            "coverage/libs/core"
+          ],
           "options": {
             "jestConfig": "libs/core/jest.config.js",
             "passWithNoTests": true
@@ -112,7 +115,9 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/ngrx"],
+          "outputs": [
+            "coverage/libs/ngrx"
+          ],
           "options": {
             "jestConfig": "libs/ngrx/jest.config.js",
             "passWithNoTests": true
@@ -149,7 +154,9 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/ngxs"],
+          "outputs": [
+            "coverage/libs/ngxs"
+          ],
           "options": {
             "jestConfig": "libs/ngxs/jest.config.js",
             "passWithNoTests": true
@@ -172,8 +179,13 @@
             "polyfills": "apps/docs/src/polyfills.ts",
             "tsConfig": "apps/docs/tsconfig.app.json",
             "aot": true,
-            "assets": ["apps/docs/src/favicon.ico", "apps/docs/src/assets"],
-            "styles": ["apps/docs/src/styles.scss"],
+            "assets": [
+              "apps/docs/src/favicon.ico",
+              "apps/docs/src/assets"
+            ],
+            "styles": [
+              "apps/docs/src/styles.scss"
+            ],
             "scripts": [
               "node_modules/marked/lib/marked.js",
               "node_modules/prismjs/prism.js",
@@ -240,7 +252,9 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/apps/docs"],
+          "outputs": [
+            "coverage/apps/docs"
+          ],
           "options": {
             "jestConfig": "apps/docs/jest.config.js",
             "passWithNoTests": true
@@ -269,7 +283,9 @@
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["apps/docs-e2e/**/*.{js,ts}"]
+            "lintFilePatterns": [
+              "apps/docs-e2e/**/*.{js,ts}"
+            ]
           }
         }
       }
@@ -291,7 +307,9 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/dashboards-feature"],
+          "outputs": [
+            "coverage/libs/dashboards-feature"
+          ],
           "options": {
             "jestConfig": "libs/dashboards-feature/jest.config.js",
             "passWithNoTests": true
@@ -306,7 +324,9 @@
       "architect": {
         "build": {
           "builder": "@nrwl/web:build",
-          "outputs": ["{options.outputPath}"],
+          "outputs": [
+            "{options.outputPath}"
+          ],
           "options": {
             "outputPath": "dist/apps/react-demo",
             "index": "apps/react-demo/src/index.html",
@@ -317,7 +337,9 @@
               "apps/react-demo/src/favicon.ico",
               "apps/react-demo/src/assets"
             ],
-            "styles": ["apps/react-demo/src/styles.scss"],
+            "styles": [
+              "apps/react-demo/src/styles.scss"
+            ],
             "scripts": [],
             "webpackConfig": "@nrwl/react/plugins/webpack"
           },
@@ -360,12 +382,16 @@
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["apps/react-demo/**/*.{ts,tsx,js,jsx}"]
+            "lintFilePatterns": [
+              "apps/react-demo/**/*.{ts,tsx,js,jsx}"
+            ]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/apps/react-demo"],
+          "outputs": [
+            "coverage/apps/react-demo"
+          ],
           "options": {
             "jestConfig": "apps/react-demo/jest.config.js",
             "passWithNoTests": true
@@ -380,13 +406,18 @@
       "architect": {
         "build": {
           "builder": "@nrwl/web:package",
-          "outputs": ["{options.outputPath}"],
+          "outputs": [
+            "{options.outputPath}"
+          ],
           "options": {
             "outputPath": "dist/libs/react",
             "tsConfig": "libs/react/tsconfig.lib.json",
             "project": "libs/react/package.json",
             "entryFile": "libs/react/src/index.ts",
-            "external": ["react", "react-dom"],
+            "external": [
+              "react",
+              "react-dom"
+            ],
             "babelConfig": "@nrwl/react/plugins/bundle-babel",
             "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
             "assets": [
@@ -406,12 +437,16 @@
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["libs/react/**/*.{ts,tsx,js,jsx}"]
+            "lintFilePatterns": [
+              "libs/react/**/*.{ts,tsx,js,jsx}"
+            ]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/react"],
+          "outputs": [
+            "coverage/libs/react"
+          ],
           "options": {
             "jestConfig": "libs/react/jest.config.js",
             "passWithNoTests": true
@@ -438,7 +473,9 @@
               "apps/ng-sa-counter/src/favicon.ico",
               "apps/ng-sa-counter/src/assets"
             ],
-            "styles": ["apps/ng-sa-counter/src/styles.scss"],
+            "styles": [
+              "apps/ng-sa-counter/src/styles.scss"
+            ],
             "scripts": []
           },
           "configurations": {
@@ -499,7 +536,9 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/apps/ng-sa-counter"],
+          "outputs": [
+            "coverage/apps/ng-sa-counter"
+          ],
           "options": {
             "jestConfig": "apps/ng-sa-counter/jest.config.js",
             "passWithNoTests": true
@@ -524,7 +563,9 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/counter-ui"],
+          "outputs": [
+            "coverage/libs/counter-ui"
+          ],
           "options": {
             "jestConfig": "libs/counter-ui/jest.config.js",
             "passWithNoTests": true
@@ -551,7 +592,9 @@
               "apps/ng-sa-ngrx-counter/src/favicon.ico",
               "apps/ng-sa-ngrx-counter/src/assets"
             ],
-            "styles": ["apps/ng-sa-ngrx-counter/src/styles.scss"],
+            "styles": [
+              "apps/ng-sa-ngrx-counter/src/styles.scss"
+            ],
             "scripts": []
           },
           "configurations": {
@@ -612,7 +655,9 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/apps/ng-sa-ngrx-counter"],
+          "outputs": [
+            "coverage/apps/ng-sa-ngrx-counter"
+          ],
           "options": {
             "jestConfig": "apps/ng-sa-ngrx-counter/jest.config.js",
             "passWithNoTests": true
@@ -639,7 +684,9 @@
               "apps/ng-sa-ngxs-counter/src/favicon.ico",
               "apps/ng-sa-ngxs-counter/src/assets"
             ],
-            "styles": ["apps/ng-sa-ngxs-counter/src/styles.scss"],
+            "styles": [
+              "apps/ng-sa-ngxs-counter/src/styles.scss"
+            ],
             "scripts": []
           },
           "configurations": {
@@ -700,7 +747,9 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/apps/ng-sa-ngxs-counter"],
+          "outputs": [
+            "coverage/apps/ng-sa-ngxs-counter"
+          ],
           "options": {
             "jestConfig": "apps/ng-sa-ngxs-counter/jest.config.js",
             "passWithNoTests": true
@@ -725,7 +774,9 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/shopping"],
+          "outputs": [
+            "coverage/libs/shopping"
+          ],
           "options": {
             "jestConfig": "libs/shopping/jest.config.js",
             "passWithNoTests": true
@@ -756,7 +807,9 @@
                 "output": "./assets"
               }
             ],
-            "styles": ["apps/ng-sa-shopping/src/styles.scss"],
+            "styles": [
+              "apps/ng-sa-shopping/src/styles.scss"
+            ],
             "scripts": []
           },
           "configurations": {
@@ -817,9 +870,103 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/apps/ng-sa-shopping"],
+          "outputs": [
+            "coverage/apps/ng-sa-shopping"
+          ],
           "options": {
             "jestConfig": "apps/ng-sa-shopping/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "ng-sa-generic-async-state-adapt": {
+      "projectType": "application",
+      "root": "apps/ng-sa-generic-async-state-adapt",
+      "sourceRoot": "apps/ng-sa-generic-async-state-adapt/src",
+      "prefix": "state-adapt",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/apps/ng-sa-generic-async-state-adapt",
+            "index": "apps/ng-sa-generic-async-state-adapt/src/index.html",
+            "main": "apps/ng-sa-generic-async-state-adapt/src/main.ts",
+            "polyfills": "apps/ng-sa-generic-async-state-adapt/src/polyfills.ts",
+            "tsConfig": "apps/ng-sa-generic-async-state-adapt/tsconfig.app.json",
+            "aot": true,
+            "assets": [
+              "apps/ng-sa-generic-async-state-adapt/src/favicon.ico",
+              "apps/ng-sa-generic-async-state-adapt/src/assets"
+            ],
+            "styles": [
+              "apps/ng-sa-generic-async-state-adapt/src/styles.scss"
+            ],
+            "scripts": []
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/ng-sa-generic-async-state-adapt/src/environments/environment.ts",
+                  "with": "apps/ng-sa-generic-async-state-adapt/src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "10kb"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "ng-sa-generic-async-state-adapt:build"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "ng-sa-generic-async-state-adapt:build:production"
+            }
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "ng-sa-generic-async-state-adapt:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "apps/ng-sa-generic-async-state-adapt/src/**/*.ts",
+              "apps/ng-sa-generic-async-state-adapt/src/**/*.html"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": [
+            "coverage/apps/ng-sa-generic-async-state-adapt"
+          ],
+          "options": {
+            "jestConfig": "apps/ng-sa-generic-async-state-adapt/jest.config.js",
             "passWithNoTests": true
           }
         }

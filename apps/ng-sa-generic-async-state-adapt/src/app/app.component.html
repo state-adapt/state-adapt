@@ -1,0 +1,35 @@
+<div fxLayout="row" fxLayoutAlign="start" fxLayoutGap="0">
+  <div
+    fxFlex="auto"
+    fxFlexOrder="0"
+    fxLayout="column"
+    fxLayoutAlign="start center"
+  >
+    <h1>User1</h1>
+    <div fxLayout="row" fxLayoutGap="16px" fxLayoutAlign="start center">
+      <button (click)="button1Click()">Request 1</button>
+      <button (click)="user1Service.adapter.reset$.next()">Reset 1</button>
+    </div>
+    <h2>{{ (user1$ | async)?.displayName }}</h2>
+    <h3 *ngIf="error1$ | async">Error: {{ (error1$ | async)?.message }}</h3>
+    <h3 *ngIf="accepted1$ | async">Command Accepted</h3>
+    <img src="../assets/img/loading.gif" *ngIf="waiting1$ | async" />
+  </div>
+
+  <div
+    fxFlex="auto"
+    fxFlexOrder="1"
+    fxLayout="column"
+    fxLayoutAlign="start center"
+  >
+    <h1>User2</h1>
+    <div fxLayout="row" fxLayoutGap="16px" fxLayoutAlign="start center">
+      <button (click)="button2Click()">Request 2</button>
+      <button (click)="user2Service.adapter.reset$.next()">Reset 2</button>
+    </div>
+    <h2>{{ (user2$ | async)?.displayName }}</h2>
+    <h3 *ngIf="error2$ | async">Error: {{ (error2$ | async)?.message }}</h3>
+    <h3 *ngIf="accepted2$ | async">Command Accepted</h3>
+    <img src="../assets/img/loading.gif" *ngIf="waiting2$ | async" />
+  </div>
+</div>
