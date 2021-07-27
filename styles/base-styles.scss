@@ -2,16 +2,21 @@
 
 @import './theme';
 @include carbon--theme();
-@import "~carbon-components/scss/globals/scss/styles.scss";
+@import '~carbon-components/scss/globals/scss/styles.scss';
 @import './code-snippet-theme';
 
-h1, h2, h3 {
+h1,
+h2,
+h3,
+h4 {
   margin-top: 1em;
 }
 
-p, ul {
-  margin-top: .6em;
-  &.bx--list--nested, &[role=menu] {
+p,
+ul {
+  margin-top: 0.6em;
+  &.bx--list--nested,
+  &[role='menu'] {
     margin-top: 0;
   }
 }
@@ -40,26 +45,30 @@ $brand-01: map-get($carbon--theme, brand-01);
 .bx--header {
   border-bottom: 0;
 }
-a.bx--side-nav__link[aria-current=page]::before {
+a.bx--side-nav__link[aria-current='page']::before {
   background-color: $brand-01;
 }
-.bx--side-nav__item--active .bx--side-nav__submenu[aria-expanded=false]::before {
+.bx--side-nav__item--active
+  .bx--side-nav__submenu[aria-expanded='false']::before {
   background-color: $brand-01;
 }
 .bx--side-nav {
   background-color: $ui-01;
   color: $text-01 !important;
 }
-.bx--side-nav__submenu, .bx--side-nav__link-text {
+.bx--side-nav__submenu,
+.bx--side-nav__link-text {
   color: $text-01 !important;
 }
-.bx--side-nav__link--current, .bx--side-nav__link[aria-current=page] {
+.bx--side-nav__link--current,
+.bx--side-nav__link[aria-current='page'] {
   background-color: $hover-ui !important;
 }
 .bx--side-nav__item--active .bx--side-nav__submenu:hover {
   background-color: $hover-ui !important;
 }
-.bx--side-nav__item:not(.bx--side-nav__item--active) > .bx--side-nav__link:hover {
+.bx--side-nav__item:not(.bx--side-nav__item--active)
+  > .bx--side-nav__link:hover {
   background-color: $hover-ui;
 }
 .bx--side-nav__submenu:hover {
@@ -68,19 +77,22 @@ a.bx--side-nav__link[aria-current=page]::before {
 .bx--side-nav__item--active .bx--side-nav__submenu-title {
   color: $text-01 !important;
 }
-.bx--side-nav__menu a.bx--side-nav__link:not(.bx--side-nav__link--current):not([aria-current=page]):hover {
+.bx--side-nav__menu
+  a.bx--side-nav__link:not(.bx--side-nav__link--current):not([aria-current='page']):hover {
   background-color: $hover-ui;
 }
-.bx--side-nav__item--active .bx--side-nav__submenu[aria-expanded=false] {
+.bx--side-nav__item--active .bx--side-nav__submenu[aria-expanded='false'] {
   background-color: $hover-ui;
 }
-.bx--side-nav__item:not(.bx--side-nav__item--active) > .bx--side-nav__link:hover {
+.bx--side-nav__item:not(.bx--side-nav__item--active)
+  > .bx--side-nav__link:hover {
   color: $text-01;
 }
-.bx--side-nav__menu a.bx--side-nav__link[aria-current=page]:hover {
+.bx--side-nav__menu a.bx--side-nav__link[aria-current='page']:hover {
   color: $text-01;
 }
-.bx--side-nav__menu a.bx--side-nav__link:not(.bx--side-nav__link--current):not([aria-current=page]):hover {
+.bx--side-nav__menu
+  a.bx--side-nav__link:not(.bx--side-nav__link--current):not([aria-current='page']):hover {
   color: $text-01;
 }
 .bx--side-nav__footer {
@@ -89,8 +101,23 @@ a.bx--side-nav__link[aria-current=page]::before {
 .bx--form-item.bx--checkbox-wrapper:first-of-type {
   margin-top: 0;
 }
+.bx--list-box__menu-icon {
+  stroke: $text-01;
+}
 
 hr {
   border: 2px solid $brand-01;
   margin-top: 2em;
+}
+
+pre {
+  .added {
+    color: map-get($carbon--theme, brand-01);
+    font-weight: bold;
+  }
+  .removed {
+    color: map-get($carbon--theme, accent-01);
+    text-decoration: line-through;
+    font-weight: bold;
+  }
 }

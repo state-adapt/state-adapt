@@ -1,4 +1,4 @@
-import { Component, NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { ConceptsOverviewComponent } from './concepts/overview.component';
 import { SourcesComponent } from './concepts/sources.component';
@@ -8,12 +8,7 @@ import { GettingStartedComponent } from './getting-started/getting-started.compo
 import { IntroComponent } from './intro/intro.component';
 import { StoresComponent } from './concepts/stores.component';
 import { ThinkingReactivelyComponent } from './concepts/thinking-reactively.component';
-
-@Component({
-  selector: 'state-adapt-adapters-core',
-  template: 'Adapters coming soon!',
-})
-class AdaptersCoreComponent {}
+import { AdaptersCoreComponent } from './adapters/adapters-core.component';
 
 const routes: Routes = [
   {
@@ -69,9 +64,8 @@ const routes: Routes = [
     ],
   },
   {
-    path: 'adapters/core',
+    path: 'adapters/:adapterName',
     component: AdaptersCoreComponent,
-    // loadChildren: () => import('./login/login.module').then(m => m.LoginModule),
   },
   {
     path: '**',

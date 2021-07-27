@@ -1,5 +1,5 @@
 @use "sass:map";
-@import "@carbon/themes/scss/themes";
+@import '@carbon/themes/scss/themes';
 
 $customizations: (
   accent-01: #e01d84,
@@ -7,7 +7,7 @@ $customizations: (
   interactive-01: #00b8a4,
   // interactive-02: #6f6f6f,
   // interactive-03: #ffffff,
-  // interactive-04: #4589ff,
+  interactive-04: #00b8a4,
   // ui-background: #262626,
   // ui-01: #393939,
   ui-01b: #1a1a1a,
@@ -337,7 +337,7 @@ $customizations: (
   // container-04: 3rem,
   // container-05: 4rem,
   // icon-size-01: 1rem,
-  // icon-size-02: 1.25rem
+  // icon-size-02: 1.25rem,,
 );
 
 $large-screen: 1100px;

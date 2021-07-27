@@ -3,7 +3,9 @@
   "version": "0.38.0",
   "peerDependencies": {
     "@angular/common": "^11.2.6",
-    "@angular/core": "^11.2.6"
+    "@angular/core": "^11.2.6",
+    "@angular/router": "^11.2.0",
+    "carbon-components-angular": "^4.46.0"
   },
   "dependencies": {
     "tslib": "^2.0.0",
