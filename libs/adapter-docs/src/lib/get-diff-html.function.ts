@@ -5,7 +5,7 @@ export function getDiffHtml(obj1: any, obj2: any) {
   return getDeltaJson(jdp.diff(obj1, obj2) as jdp.Delta);
 }
 
-function toJson(val: any): string {
+export function toJson(val: any): string {
   return JSON.stringify(val, null, '\t');
 }
 
@@ -14,8 +14,9 @@ function getTabs(n: number) {
 }
 
 function getDeltaJson(val: jdp.Delta, indent = 0): string {
+  if (val === undefined) return '';
   const isArray = Array.isArray(val);
-  const isDiffOfArray = val._t === 'a';
+  const isDiffOfArray = val?._t === 'a';
   const isDiff = isArray || isDiffOfArray;
   if (!isDiff) return getObjectDeltaJson(val, indent);
   return isDiffOfArray
