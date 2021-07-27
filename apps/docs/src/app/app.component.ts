@@ -55,11 +55,9 @@ export class AppComponent {
       {
         route: '/adapters',
         name: 'Adapters',
-        children: [
-          ['core', 'Core'],
-          ['angular-router', 'Angular Router'],
-          ['material', 'Material'],
-        ].map(child => this.mapToChildRoute(url, '/adapters/', child)),
+        children: [['core', 'Core']].map(child =>
+          this.mapToChildRoute(url, '/adapters/', child),
+        ),
       },
     ]),
   );
