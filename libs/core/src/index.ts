@@ -12,7 +12,8 @@ export * from './lib/http/get-http-sources.function';
 
 export * from './lib/selectors.interface';
 export * from './lib/reactions.interface';
-export * from './lib/second-parameter.type';
+export * from './lib/second-parameter-or-any.type';
+export * from './lib/second-parameter-or-void.type';
 export * from './lib/sources.type';
 export * from './lib/selections.type';
 export * from './lib/mini-store.interface';

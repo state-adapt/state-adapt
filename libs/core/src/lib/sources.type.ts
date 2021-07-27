@@ -1,13 +1,13 @@
 import { Observable } from 'rxjs';
 import { Action } from './action.interface';
-import { SecondParameter } from './second-parameter.type';
+import { SecondParameterOrAny } from './second-parameter-or-any.type';
 import { Selectors } from './selectors.interface';
 import { ReactionsWithSelectors } from './adapter.type';
 
-type ActionPayload<
+export type ActionPayload<
   R extends { [index: string]: any },
   K extends keyof R
-> = SecondParameter<Parameters<R[K]>>;
+> = SecondParameterOrAny<Parameters<R[K]>>;
 
 export type Sources<
   State,
