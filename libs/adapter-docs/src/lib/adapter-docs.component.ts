@@ -93,7 +93,9 @@ import { getDiffHtml, toJson } from './get-diff-html.function';
               (valueChanged)="payloadChanged$.next($event)"
             ></ngs-code-editor>
           </ibm-tab>
-          <ibm-tab heading="Documentation">Documentation!</ibm-tab>
+          <ibm-tab class="padded" heading="Documentation">
+            {{ (selectedStateChange$ | async)?.documentation }}
+          </ibm-tab>
         </ibm-tabs>
         <button
           ibmButton="primary"
@@ -129,7 +131,7 @@ import { getDiffHtml, toJson } from './get-diff-html.function';
               [innerHTML]="selectorDiff$ | async"
             ></pre>
           </ibm-tab>
-          <ibm-tab heading="Documentation">
+          <ibm-tab class="padded" heading="Documentation">
             {{ (selectedSelector$ | async)?.documentation }}
           </ibm-tab>
         </ibm-tabs>
@@ -228,6 +230,9 @@ import { getDiffHtml, toJson } from './get-diff-html.function';
         padding: 0;
         background-color: #1e1e1e;
         border-left: 2px solid #00b8a4;
+      }
+      ::ng-deep ibm-tab.padded .bx--tab-content {
+        padding: 1em !important;
       }
       ::ng-deep .bx--tabs--scrollable__nav,
       ::ng-deep .bx--tabs--scrollable__nav-item,
