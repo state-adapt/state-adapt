@@ -30,6 +30,11 @@
     "ng-sa-ngxs-counter": { "tags": [] },
     "shopping": { "tags": [] },
     "ng-sa-shopping": { "tags": [] },
-    "adapter-docs": { "tags": [] }
+    "adapter-docs": { "tags": [] },
+    "ng-sa-component-store": { "tags": [] },
+    "ng-sa-component-store-e2e": {
+      "tags": [],
+      "implicitDependencies": ["ng-sa-component-store"]
+    }
   }
 }

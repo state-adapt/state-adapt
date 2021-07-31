@@ -14,5 +14,6 @@ module.exports = {
     '<rootDir>/libs/shopping',
     '<rootDir>/apps/ng-sa-shopping',
     '<rootDir>/libs/adapter-docs',
+    '<rootDir>/apps/ng-sa-component-store',
   ],
 };
