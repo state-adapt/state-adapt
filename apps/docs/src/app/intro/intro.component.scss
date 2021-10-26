@@ -89,17 +89,15 @@ $logo-z: 1000;
       }
     }
     button {
-      position: absolute;
-      margin: auto;
       margin-top: $button-top;
       text-align: center;
       font-size: $button-font-size;
       padding: $button-padding;
       min-height: 0;
-      left: 0;
-      right: 0;
     }
     a.getting-started {
+      display: block;
+      text-align: center;
       &:link,
       &:visited {
         #get-started {
