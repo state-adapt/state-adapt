@@ -5,7 +5,7 @@
 - [Selectors](/concepts/adapters#selectors)
 - [`createAdapter`](/concepts/adapters#createadapter)
 - [Extending Adapters](/concepts/adapters#extending-adapters)
-- [Basic Adapter](/concepts/adapters#basic-adapter)
+- [`createSelectors`](/concepts/adapters#createselectors)
 - [Adapter Creator Libraries](/concepts/adapters#adapter-creator-libraries)
 
 ## Overview
@@ -32,6 +32,8 @@ Selectors are pure functions that calculate derived state or just return a speci
 state => state.property,
 ```
 
+Since these functions are only referenced and never called in your code, the convention is to name them nouns instead of verbs (e.g. `state` instead of `getState`). Another reason is explained in [`createSelectors`](/concepts/adapters#createselectors).
+
 ## `createAdapter`
 
 createAdapter provides type inference when creating state adapters, which is convenient because every state change and selector starts with the same type (`State`), and every state change returns that type as well. Here is an example using createAdapter:
@@ -43,16 +45,28 @@ const numberAdapter = createAdapter<number>()({
   add: (state, n: number) => state + n,
   subtract: (state, n: number) => state - n,
   selectors: {
-    getNegative: state => state * -1,
+    negative: state => state * -1,
   },
 });
 ```
 
-StateAdapt creates a default selector called `getState` for every adapter when it is initialized into a store. Defining your own selectors is optional.
+Defining selectors is optional.
+
+Every adapter comes with 3 default state reactions:
+
+`set` replaces the old state with a new one
+
+`update` replaces specific properties of the old state by spreading the object passed in
+
+`reset` resets to the original state the adapter was initialized with
+
+Every adapter also comes with a default selector:
+
+`state` returns the top-level state value
 
 ## Extending Adapters
 
-You can use extend the functionality of existing adapters when creating new adapters. Here is an example that extends the number adapter from above:
+You can extend the functionality of existing adapters when creating new adapters. Here is an example that extends the number adapter from above:
 
 ```typescript
 import { createAdapter } from '@state-adapt/core';
@@ -63,51 +77,47 @@ const numberStringAdapter = createAdapter<number>()({
   addFromStr: (state, str: string) => numberAdapter.add(state, +str),
   selectors: {
     ...numberAdapter.selectors,
-    getStateStr: state => state.toString(),
+    stateStr: state => state.toString(),
   },
 });
 ```
 
-StateAdapt will memoize selectors passed into adapters, but when composing selectors you will need to use Reselect's createSelector if you want memoization at every level:
+## `createSelectors`
+
+`createAdapter` memoizes selectors passed into the `selectors` property, but it only does so shallowly. `createSelectors` provides full selector memoization and a default `state` selector (after the first argument). It takes up to 7 selector objects as arguments, each one receiving all of the selectors from the previous selector objects.
 
 ```typescript
-import { createSelector } from 'reselect';
-import { createAdapter } from '@state-adapt/core';
+import { createSelectors, createAdapter } from '@state-adapt/core';
+
+const selectors = createSelectors<string>()(
+  {
+    reverse: s => s.split('').reverse().join(''),
+  },
+  {
+    isPalendrome: s => s.reverse === s.state,
+  },
+);
+
+const stringAdapter = createAdapter<string>()({ selectors });
+```
+
+Reuse selectors from anywhere:
+
+```typescript
+import { createAdapter, createSelectors } from '@state-adapt/core';
 import { numberAdapter } from './number.adapter';
 
 const numberStringAdapter = createAdapter<number>()({
   ...numberAdapter,
-  selectors: {
-    ...numberAdapter.selectors,
-    getNegativeStr: createSelector(
-      numberAdapter.selectors.getNegative,
-      negative => negative.toString(),
-    ),
-  },
+  selectors: createSelectors(numberAdapter.selectors, {
+    negative: s => s.negative.toString(),
+  }),
 });
 ```
 
-## Basic Adapter
+`s` is typed the same as the selectors object passed in as the first argument, except using the return type of each selector instead of the selector itself. Internally, `createSelectors` uses a `Proxy` to detect which selectors your new selector functions are accessing in order memoize them efficiently. You could think of `s` as referencing either the selectors object you passed in, or a derived state object created by calling those selectors for each object key. This dual reference is why the convention is to name it `s` instead of either `selectors` or `state`.
 
-StateAdapt's core library exposes a function called `createBasicAdapter`. This function creates an adapter that has extremely common state changes. Here is the source code for that function:
-
-```typescript
-import { createAdapter } from './create-adapter.function';
-
-export function createBasicAdapter<T>() {
-  return createAdapter<T>()({
-    set: (state, newState: T) => newState,
-    update: (state, update: Partial<T>) => ({ ...state, ...update }),
-    reset: (state, payload, initialState) => initialState,
-  });
-}
-```
-
-`set` replaces the old state with a new one
-
-`update` replaces specific properties of the old state by spreading the object passed in
-
-`reset` resets to the original state the adapter was initialized with
+`createSelectors` is another reason for naming selectors as nouns instead of verbs: Either it would need to do extra, unnecessary processing to add `'get'`s in the `Proxy` property accessor method to find the correct selectors, or developers would need to treat verbs as nouns in their selector functions, which would be awkward: `s => s.getNegative.toString()`.
 
 ## Adapter Creator Libraries
 

@@ -1,10 +1,6 @@
-import { createAdapter } from '@state-adapt/core';
+import { createAdapter, createSelectors } from '@state-adapt/core';
 import { ListItem, TileSelection } from 'carbon-components-angular';
-import { createSelector } from 'reselect';
-import {
-  AdapterDocsState,
-  INITIAL_STATE,
-} from './adapter-docs-state.interface';
+import { AdapterDocsState, INITIAL_STATE } from './adapter-docs-state.interface';
 import { AdapterDocs } from './adapter-docs.interface';
 import { DropdownSelectedEvent } from './dropdown-selection-event.interface';
 import { toJson } from './get-diff-html.function';
@@ -20,141 +16,84 @@ function getListItem(selectedName?: string) {
   });
 }
 
-function getAdapterStateChangeItems(state: AdapterDocsState): ListItem[] {
-  return state.docs.demoAdapter.value
-    ? Object.keys(state.docs.demoAdapter.value)
-        .filter(prop => prop !== 'selectors')
-        .map(getListItem(state.selectedStateChange))
-    : [];
-}
-function getAdapterSelectorItems(state: AdapterDocsState): ListItem[] {
-  return ['getState']
-    .concat(
-      state.docs.demoAdapter.value?.selectors
-        ? Object.keys(state.docs.demoAdapter.value.selectors)
+const selectors = createSelectors<AdapterDocsState>()(
+  {
+    adapterStateChangeItems: s =>
+      s.docs.demoAdapter.value
+        ? Object.keys(s.docs.demoAdapter.value)
+            .filter(prop => prop !== 'selectors')
+            .map(getListItem(s.selectedStateChange))
         : [],
-    )
-    .map(getListItem(state.selectedSelector));
-}
-
-function getAdapterStateChanges(state: AdapterDocsState) {
-  return state.docs.demoAdapter.stateChanges;
-}
-function getAdapterSelectors(state: AdapterDocsState) {
-  return state.docs.demoAdapter.selectors;
-}
-
-function getUserSelectedStateChangeName(state: AdapterDocsState) {
-  return state.selectedStateChange;
-}
-function getUserSelectedSelectorName(state: AdapterDocsState) {
-  return state.selectedSelector;
-}
-
-const getFirstStateChangeName = createSelector(
-  getAdapterStateChangeItems,
-  stateChangeItems => stateChangeItems[0]?.content,
-);
-const getFirstSelectorName = createSelector(
-  getAdapterSelectorItems,
-  selectorItems => selectorItems[0]?.content,
-);
-
-const getSelectedStateChangeName = createSelector(
-  [getUserSelectedStateChangeName, getFirstStateChangeName],
-  (userSelectedStateChangeName, firstStateChangeName) =>
-    userSelectedStateChangeName || firstStateChangeName,
-);
-const getSelectedSelectorName = createSelector(
-  [getUserSelectedSelectorName, getFirstSelectorName],
-  (userSelectedSelectorName, firstSelectorName) =>
-    userSelectedSelectorName || firstSelectorName,
-);
-
-const getSelectedStateChange = createSelector(
-  [getAdapterStateChanges, getSelectedStateChangeName],
-  (stateChanges, stateChangeName) => stateChanges[stateChangeName],
-);
-const getSelectedSelector = createSelector(
-  [getAdapterSelectors, getSelectedSelectorName],
-  (selectors, selectorName) =>
-    selectors[selectorName] || { documentation: 'Returns state' },
-);
-
-function getDemoHistory(state: AdapterDocsState) {
-  return state.demoHistory;
-}
-
-const getSelectedHistoryItem = createSelector(
-  getDemoHistory,
-  history => history.find(item => item.selected) || null,
-);
-const getLastHistoryItem = createSelector(
-  getDemoHistory,
-  history => history[history.length - 1],
-);
-const getSelectedOrLastHistoryItem = createSelector(
-  [getSelectedHistoryItem, getLastHistoryItem],
-  (selected, last) => selected || last,
-);
-
-function getDemoState(state: AdapterDocsState) {
-  return state.demoState;
-}
-
-function getInitialDemoState(state: AdapterDocsState) {
-  return state.docs.demoAdapter.initialState;
-}
-
-const getDemoStateOrInitial = createSelector(
-  getDemoState,
-  getInitialDemoState,
-  (state, initialState) => (state === INITIAL_STATE ? initialState : state),
-);
-
-const getDiffState = createSelector(
-  [getSelectedOrLastHistoryItem, getDemoStateOrInitial],
-  (item, state) => (!item ? [null, state] : [item.inputs.state, item.state]),
-);
-
-const getDiffStateAndSelectorName = createSelector(
-  [getDiffState, getSelectedSelectorName],
-  (diff, name) => [diff, name] as [any[], string],
-);
-
-function getUserPayload(state: AdapterDocsState) {
-  return state.payload;
-}
-
-const getSelectedHistoryItemPayload = createSelector(
-  getSelectedHistoryItem,
-  item => item?.inputs.payload,
-);
-
-const getPayload = createSelector(
-  [getSelectedHistoryItemPayload, getUserPayload, getSelectedStateChange],
-  (selectedHistoryItemPayload, userPayload, stateChange) =>
-    selectedHistoryItemPayload || userPayload || stateChange?.demoPayload,
-);
-
-const getDemoStateAndPayload = createSelector(
-  getDemoStateOrInitial,
-  getPayload,
-  getInitialDemoState,
-  getSelectedStateChangeName,
-  (state, payload, initialState, stateChangeName) => ({
-    state,
-    payload,
-    initialState,
-    stateChangeName,
-  }),
+    adapterSelectorItems: s =>
+      ['state']
+        .concat(
+          s.docs.demoAdapter.value?.selectors
+            ? Object.keys(s.docs.demoAdapter.value.selectors)
+            : [],
+        )
+        .map(getListItem(s.selectedSelector)),
+    adapterStateChanges: s => s.docs.demoAdapter.stateChanges,
+    adapterSelectors: s => s.docs.demoAdapter.selectors,
+    userSelectedStateChangeName: s => s.selectedStateChange,
+    userSelectedSelectorName: s => s.selectedSelector,
+    demoHistory: s => s.demoHistory,
+    demoState: s => s.demoState,
+    initialDemoState: s => s.docs.demoAdapter.initialState,
+    userPayload: s => s.payload,
+    docs: s => s.docs,
+    creatorSourceCodeMd: s => wrapInTs(s.docs.sourceCode),
+    demoSourceCodeMd: s => wrapInTs(s.docs.demoAdapter.sourceCode),
+    parameters: s => s.docs.parameters,
+    payloadEditorRefreshRequired: s => s.payloadEditorRefreshRequired,
+  },
+  {
+    firstStateChangeName: s => s.adapterStateChangeItems[0]?.content,
+    firstSelectorName: s => s.adapterSelectorItems[0]?.content,
+    selectedHistoryItem: s => s.demoHistory.find(item => item.selected) || null,
+    lastHistoryItem: s => s.demoHistory[s.demoHistory.length - 1],
+    demoStateOrInitial: s =>
+      s.demoState === INITIAL_STATE ? s.initialDemoState : s.demoState,
+  },
+  {
+    selectedStateChangeName: s => s.userSelectedStateChangeName || s.firstStateChangeName,
+    selectedSelectorName: s => s.userSelectedSelectorName || s.firstSelectorName,
+    selectedOrLastHistoryItem: s => s.selectedHistoryItem || s.lastHistoryItem,
+    selectedHistoryItemPayload: s => s.selectedHistoryItem?.inputs.payload,
+  },
+  {
+    selectedStateChange: s => s.adapterStateChanges[s.selectedStateChangeName],
+    selectedSelector: s =>
+      s.adapterSelectors[s.selectedSelectorName] || {
+        documentation: 'Returns state',
+      },
+    diffState: ({ selectedOrLastHistoryItem: item, demoStateOrInitial: state }) =>
+      !item ? [null, state] : [item.inputs.state, item.state],
+  },
+  {
+    diffStateAndSelectorName: s =>
+      [s.diffState, s.selectedSelectorName] as [any[], string],
+    payload: s =>
+      s.selectedHistoryItemPayload || s.userPayload || s.selectedStateChange?.demoPayload,
+  },
+  {
+    demoStateAndPayload: s => ({
+      state: s.demoStateOrInitial,
+      payload: s.payload,
+      initialState: s.initialDemoState,
+      stateChangeName: s.selectedStateChangeName,
+    }),
+    payloadCodeModel: s => ({
+      language: 'json',
+      uri: 'main.json',
+      value: s.payload && toJson(JSON.parse(s.payload)), // Format
+    }),
+  },
 );
 
 export const docsAdapter = createAdapter<AdapterDocsState>()({
   receiveDocs: (state, docs: AdapterDocs) => ({ ...state, docs }),
   selectStateChange: (state: AdapterDocsState, stateChangeName: string) => {
-    const selectionChanged =
-      getSelectedStateChangeName(state) !== stateChangeName;
+    const selectionChanged = selectors.selectedStateChangeName(state) !== stateChangeName;
     return {
       ...state,
       selectedStateChange: stateChangeName,
@@ -172,7 +111,7 @@ export const docsAdapter = createAdapter<AdapterDocsState>()({
     demoHistory: [
       ...state.demoHistory,
       {
-        inputs: getDemoStateAndPayload(state),
+        inputs: selectors.demoStateAndPayload(state),
         state: demoState,
         selected: false,
       },
@@ -190,27 +129,7 @@ export const docsAdapter = createAdapter<AdapterDocsState>()({
     ...state,
     selectedSelector,
   }),
-  selectors: {
-    getDocs: state => state.docs,
-    getCreatorSourceCodeMd: state => wrapInTs(state.docs.sourceCode),
-    getDemoSourceCodeMd: state => wrapInTs(state.docs.demoAdapter.sourceCode),
-    getParameters: state => state.docs.parameters,
-    getAdapterStateChangeItems,
-    getSelectedStateChange,
-    getPayloadCodeModel: createSelector(getPayload, payload => ({
-      language: 'json',
-      uri: 'main.json',
-      value: payload && toJson(JSON.parse(payload)), // Format
-    })),
-    getPayloadEditorRefreshRequired: state =>
-      state.payloadEditorRefreshRequired,
-    getDemoStateAndPayload,
-    getDemoHistory,
-    getSelectedHistoryItem,
-    getDiffStateAndSelectorName,
-    getAdapterSelectorItems,
-    getSelectedSelector,
-  },
+  selectors,
 });
 
 export const docsUiAdapter = createAdapter<AdapterDocsState>()({
@@ -218,9 +137,7 @@ export const docsUiAdapter = createAdapter<AdapterDocsState>()({
   selectStateChange: (state, { item }: DropdownSelectedEvent) =>
     docsAdapter.selectStateChange(state, item.content),
   selectStateChangeFromHistory: (state, selection: TileSelection) => {
-    const historyItem = state.demoHistory.find(
-      (item, i) => i === +selection.value,
-    );
+    const historyItem = state.demoHistory.find((item, i) => i === +selection.value);
     return docsAdapter.selectStateChange(
       state,
       historyItem?.inputs.stateChangeName || '',

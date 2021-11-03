@@ -23,7 +23,7 @@ export class AppComponent {
     double: this.double$,
     reset: this.reset$,
   });
-  count$ = this.store.getState();
+  count$ = this.store.state;
 
   constructor(private adapt: Adapt) {}
 }

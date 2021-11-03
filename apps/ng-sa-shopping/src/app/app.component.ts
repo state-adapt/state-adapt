@@ -28,13 +28,13 @@ export class AppComponent {
   quantityChange$ = this.productService.quantityChange$;
   addToCart$ = this.productService.addToCart$;
   removeFromCart$ = this.productService.removeFromCart$;
-  cartProducts$ = this.productService.cartStore.getState();
-  cartTotal$ = this.productService.cartStore.getTotalPrice();
+  cartProducts$ = this.productService.cartStore.state;
+  cartTotal$ = this.productService.cartStore.totalPrice;
 
   filterToggle$ = this.filterService.filterToggle$;
-  filters$ = this.filterService.filterStore.getState();
+  filters$ = this.filterService.filterStore.state;
 
-  filteredProducts$ = this.productService.filteredProductStore.getState();
+  filteredProducts$ = this.productService.filteredProductStore.state;
 
   constructor(
     private productService: ProductService,

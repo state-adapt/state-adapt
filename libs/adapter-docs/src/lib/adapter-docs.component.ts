@@ -126,10 +126,7 @@ import { getDiffHtml, toJson } from './get-diff-html.function';
             <!-- <pre class="language-json">{{ selectorResult$ | async }}</pre> -->
           </ibm-tab>
           <ibm-tab heading="Diff">
-            <pre
-              class="language-json"
-              [innerHTML]="selectorDiff$ | async"
-            ></pre>
+            <pre class="language-json" [innerHTML]="selectorDiff$ | async"></pre>
           </ibm-tab>
           <ibm-tab class="padded" heading="Documentation">
             {{ (selectedSelector$ | async)?.documentation }}
@@ -275,12 +272,12 @@ export class AdapterDocsComponent implements OnInit {
 
   docsInputValue$ = new Subject<AdapterDocs>();
   docsReceived$ = this.docsInputValue$.pipe(toSource('docsReceived$'));
-  stateChangeSelection$ = new Source<DropdownSelectedEvent>(
-    'stateChangeSelection$',
+  stateChangeSelection$ = new Source<DropdownSelectedEvent>('stateChangeSelection$');
+  stateChangePayloadDelay$ = this.detachedDocsStore.selectedStateChange.pipe(
+    delay(100),
+    mapTo(undefined),
+    toSource('stateChangePayloadDelay$'),
   );
-  stateChangePayloadDelay$ = this.detachedDocsStore
-    .getSelectedStateChange()
-    .pipe(delay(100), mapTo(undefined), toSource('stateChangePayloadDelay$'));
   selectorSelection$ = new Source<DropdownSelectedEvent>('selectorSelection$');
   payloadChanged$ = new Source<string>('payloadChanged$');
   // Editor emits when it receives a new value
@@ -291,13 +288,9 @@ export class AdapterDocsComponent implements OnInit {
     debounceTime(500),
   );
   executeClicked$ = new Subject<void>();
-  demoAdapterValue$ = this.docsInputValue$.pipe(
-    map(docs => docs.demoAdapter.value),
-  );
+  demoAdapterValue$ = this.docsInputValue$.pipe(map(docs => docs.demoAdapter.value));
   newStateCalculated$ = this.executeClicked$.pipe(
-    switchMap(() =>
-      this.detachedDocsStore.getDemoStateAndPayload().pipe(first()),
-    ),
+    switchMap(() => this.detachedDocsStore.demoStateAndPayload.pipe(first())),
     withLatestFrom(this.demoAdapterValue$),
     map(([{ state, payload, initialState, stateChangeName }, demoAdapter]) =>
       demoAdapter[stateChangeName](state, JSON.parse(payload), initialState),
@@ -321,23 +314,23 @@ export class AdapterDocsComponent implements OnInit {
     selectSelector: this.selectorSelection$,
   });
 
-  docs$ = this.docsStore.getDocs();
-  creatorSourceCodeMd$ = this.docsStore.getCreatorSourceCodeMd();
-  demoSourceCodeMd$ = this.docsStore.getDemoSourceCodeMd();
-  paramters$ = this.docsStore.getParameters();
-  stateChangeItems$ = this.docsStore.getAdapterStateChangeItems();
-  selectorItems$ = this.docsStore.getAdapterSelectorItems();
-  selectedStateChange$ = this.docsStore.getSelectedStateChange();
-  payloadEditorRefreshRequired$ = this.docsStore.getPayloadEditorRefreshRequired();
-  codeModel$ = this.docsStore.getPayloadCodeModel();
+  docs$ = this.docsStore.docs;
+  creatorSourceCodeMd$ = this.docsStore.creatorSourceCodeMd;
+  demoSourceCodeMd$ = this.docsStore.demoSourceCodeMd;
+  paramters$ = this.docsStore.parameters;
+  stateChangeItems$ = this.docsStore.adapterStateChangeItems;
+  selectorItems$ = this.docsStore.adapterSelectorItems;
+  selectedStateChange$ = this.docsStore.selectedStateChange;
+  payloadEditorRefreshRequired$ = this.docsStore.payloadEditorRefreshRequired;
+  codeModel$ = this.docsStore.payloadCodeModel;
   codeOptions = {
     contextMenu: true,
     scrollBeyondLastLine: false,
   };
-  demoHistory$ = this.docsStore.getDemoHistory();
-  selectedHistoryItem$ = this.docsStore.getSelectedHistoryItem();
-  diffStateAndSelectorName$ = this.docsStore.getDiffStateAndSelectorName();
-  selectedSelector$ = this.docsStore.getSelectedSelector();
+  demoHistory$ = this.docsStore.demoHistory;
+  selectedHistoryItem$ = this.docsStore.selectedHistoryItem;
+  diffStateAndSelectorName$ = this.docsStore.diffStateAndSelectorName;
+  selectedSelector$ = this.docsStore.selectedSelector;
   selectorResult$ = combineLatest([
     this.demoAdapterValue$,
     this.diffStateAndSelectorName$,
@@ -364,6 +357,7 @@ export class AdapterDocsComponent implements OnInit {
 
   ngOnInit() {
     setTimeout(() => this.docsInputValue$.next(this.adapterDocs));
+    this.payloadChanged$.subscribe(a => console.log('a', a));
   }
 
   getState(state: any) {
