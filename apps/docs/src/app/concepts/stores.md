@@ -8,7 +8,7 @@
 - [Selectors](/concepts/stores#selectors)
 - [`updater`](/concepts/stores#updater)
 - [`setter`](/concepts/stores#setter)
-- [`select`](/concepts/stores#select)
+- [`spy`](/concepts/stores#spy)
 - [Joining Stores](/concepts/stores#joining-stores)
 
 ## Overview
@@ -108,7 +108,7 @@ negativeNumber$ = this.numberStore.getNegative();
 
 Each selector's observable chains off of all the sources passed into the store. For example, if one of your sources is an observable of an HTTP request, that request will automatically be triggered as soon as you subscribe to any of the selector observables from the store. We recommend keeping your adapters and stores relatively small and focused on one concern so that accessing one part of state does not cause unrelated/unneeded data to be fetched.
 
-If necessary, you can also access store selectors that do not chain off of any sources by using the [`select`](/concepts/stores#select) method described below.
+If necessary, you can also access store selectors that do not chain off of any sources by using the [`spy`](/concepts/stores#spy) method described below.
 
 ## `updater`
 
@@ -137,23 +137,23 @@ formValues$ = this.adapt.initGet(['form', this.formAdapter, { name: '' }], {
 
 [`setter`](/concepts/stores#setter) is the same as [`updater`](/concepts/stores#updater), except instead of triggering the [`update`](/concepts/adapters#basic-adapter) state change it triggers the [`set`](/concepts/adapters#basic-adapter) state change. You can only use it for state that cannot be spread (non-objects), like `number` or `string`.
 
-## `select`
+## `spy`
 
-[`select`](/concepts/stores#select) is a method on `AdaptCommon` that returns a store that does not chain off of sources. It takes 2 arguments: The [path](/concepts/stores#state-paths) of the state you are interested in, and the adapter containing the selectors you want to use:
+[`spy`](/concepts/stores#spy) is a method on `AdaptCommon` that returns a store that does not chain off of sources. It takes 2 arguments: The [path](/concepts/stores#state-paths) of the state you are interested in, and the adapter containing the selectors you want to use:
 
 ```typescript
-negativeNumber$ = this.adapt.select('number', numberAdapter).getNegative();
+negativeNumber$ = this.adapt.spy('number', numberAdapter).getNegative();
 ```
 
-[`select`](/concepts/stores#select) is useful in 2 situations primarily: [Selecting without subscribing](/concepts/stores#selecting-without-subscribing) and [selecting for a source](/concepts/stores#selecting-for-a-source).
+[`spy`](/concepts/stores#spy) is useful in 2 situations primarily: [Selecting without subscribing](/concepts/stores#selecting-without-subscribing) and [selecting for a source](/concepts/stores#selecting-for-a-source).
 
-### 1. Selecting without Subscribing
+### 1. Accessing State without Subscribing
 
-[`select`](/concepts/stores#select) enables accessing state without subscribing to sources. For example, if your adapter manages the `loading` state for an HTTP request and you need to know if the request is loading _before_ the user is interested in the data, [`select`](/concepts/stores#select) can give you access to it without triggering the request. This is probably not common, but [`select`](/concepts/stores#select) makes it possible.
+[`spy`](/concepts/stores#spy) enables accessing state without subscribing to sources. For example, if your adapter manages the `loading` state for an HTTP request and you need to know if the request is loading _before_ the user is interested in the data, [`spy`](/concepts/stores#spy) can give you access to it without triggering the request. This is probably not common, but [`spy`](/concepts/stores#spy) makes it possible.
 
-### 2. Selecting for a Source
+### 2. Accessing State for a Source
 
-It would be impossible for a source itself to access state from the store without [`select`](/concepts/stores#select) because it would require using the store before it had been defined. The following example demonstrates this:
+It would be impossible for a source itself to access state from the store without [`spy`](/concepts/stores#spy) because it would require using the store before it had been defined. The following example demonstrates this:
 
 ```typescript
 dataReceived$ = this.dataStore.getDataNeeded().pipe(
@@ -172,10 +172,10 @@ In this example `getDataNeeded` is a selector that returns `true` if data needs 
 
 However, `dataReceived$` needs to reference `this.dataStore.getDataNeeded`, which is impossible because `dataStore` uses `dataReceived$`. It is a circular reference problem.
 
-[`select`](/concepts/stores#select) solves this:
+[`spy`](/concepts/stores#spy) solves this:
 
 ```typescript
-dataNeeded$ = this.adapt.select('data', dataAdapter).getDataNeeded();
+dataNeeded$ = this.adapt.spy('data', dataAdapter).getDataNeeded();
 
 dataReceived$ = this.dataNeeded$.pipe(
   filter(needed => needed),
@@ -206,9 +206,7 @@ number2$ = this.adapt.initGet(['number2', numberAdapter, 4000], {
   add: this.numberAdded$,
 });
 
-total$ = combineLatest([this.number1$, this.number2$]).pipe(
-  map((n1, n2) => n1 + n2),
-);
+total$ = combineLatest([this.number1$, this.number2$]).pipe(map((n1, n2) => n1 + n2));
 ```
 
 Initially, `total$` will emit `4000`, calculated from the initial inputs of `0` and `4000`. If you then call `numberAdded$.next(10)`, `total$` would first recalculate based on inputs of `10` and `4000`, so it would emit `4010`. After that it would get the update from `number2` and calculate from `10` and `4010` and emit the correct number, `4020`. It is a contrived example, but it illustrates the problem.
@@ -220,11 +218,7 @@ Initially, `total$` will emit `4000`, calculated from the initial inputs of `0` 
 ```typescript
 import { joinSelectors } from '@state-adapt/core';
 // ...
-total$ = joinSelectors(
-  this.number1Store,
-  this.number2Store,
-  (n1, n2) => n1 + n2,
-);
+total$ = joinSelectors(this.number1Store, this.number2Store, (n1, n2) => n1 + n2);
 ```
 
 The first arguments are stores or store selector arrays (see below), and the last argument is the function that calculates the result. When you pass stores as the first arguments, [`joinSelectors`](/concepts/stores#joinselectors) uses the [`getState`](/concepts/stores#getstate) selector from each store. If you want to use a different selector, you can specify it like this

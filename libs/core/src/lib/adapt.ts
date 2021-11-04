@@ -113,7 +113,7 @@ export class AdaptCommon<CommonStore extends StoreMethods> {
     });
   }
 
-  select<State, S extends Selectors<State>, R extends ReactionsWithSelectors<State, S>>(
+  spy<State, S extends Selectors<State>, R extends ReactionsWithSelectors<State, S>>(
     path: string,
     adapter: Adapter<State, S, R & BasicAdapterMethods<State>>,
     // Returns a detached store; doesn't chain off of sources.
