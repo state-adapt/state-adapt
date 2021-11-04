@@ -124,11 +124,11 @@ import { getHttpSources } from '@state-adapt/core';
 const fetchData = () =>
   timer(2000).pipe(mapTo({ body: 'Some data', status: 200, error: null }));
 
-const { request$, success$, error$ } = getHttpSources(
-  '[Some Data]',
-  fetchData(),
-  res => [res.status === 200, res.body, res.error],
-);
+const { request$, success$, error$ } = getHttpSources('[Some Data]', fetchData(), res => [
+  res.status === 200,
+  res.body,
+  res.error,
+]);
 ```
 
 There is a lot going on here.
@@ -195,7 +195,7 @@ This situation is rare and the benefits from having 1 action in Redux Devtools p
 
 ### No Multiple Events
 
-One of StateAdapt's core aims is to maximize reusability of state management patterns. This is good, but when it comes to sources, it can be easy to go a little too far. State adapters have no opinion on what sources are going to cause their state changes, and this is intentional. The responsibility to define these sources lies with the consumers of these adapters, because there may be multiple stores that need to react to those same sources. If sources were provided with each adapter, developers would be tempted to use them all and just call `.next()` on each of them for single events, which is the problem discussed in [No Multiple Sources](/concepts/sources#no-multiple-sources). In summary, providing sources that can be reused across multiple event types/origins can lead to imperatively updating multiple sources in response to single events.
+One of StateAdapt's core aims is to maximize reusability of state management patterns. This is good, but when it comes to sources, it can be easy to go a little too far. State adapters have no opinion on what sources are going to cause their state changes, and this is intentional. The responsibility to define these sources lies with the consumers of these adapters, because there may be multiple stores that need to react to those same sources. If sources were provided with each adapter, developers would be tempted to use them all and just call `.next()` on each of them for single events, which is the problem discussed in [No Multiple Sources](/concepts/sources#no-multiple-sources). In other words, providing sources that can be reused across multiple event types/origins can lead to imperatively updating multiple sources in response to single events.
 
 When looking at Redux Devtools you want to be able to understand exactly which sources actions are coming from. If you do end up creating utility methods for generating sources (like [`getHttpSources`](/concepts/sources#gethttpsources)) make sure you are able to accept a scope to prepend to each source type. Refer to [`getHttpSources`](/concepts/sources#gethttpsources) as an example.
 
