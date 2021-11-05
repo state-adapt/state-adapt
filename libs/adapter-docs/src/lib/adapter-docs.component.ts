@@ -273,7 +273,7 @@ export class AdapterDocsComponent implements OnInit {
   docsInputValue$ = new Subject<AdapterDocs>();
   docsReceived$ = this.docsInputValue$.pipe(toSource('docsReceived$'));
   stateChangeSelection$ = new Source<DropdownSelectedEvent>('stateChangeSelection$');
-  stateChangePayloadDelay$ = this.detachedDocsStore.selectedStateChange.pipe(
+  stateChangePayloadDelay$ = this.detachedDocsStore.selectedStateChange$.pipe(
     delay(100),
     mapTo(undefined),
     toSource('stateChangePayloadDelay$'),
@@ -290,7 +290,7 @@ export class AdapterDocsComponent implements OnInit {
   executeClicked$ = new Subject<void>();
   demoAdapterValue$ = this.docsInputValue$.pipe(map(docs => docs.demoAdapter.value));
   newStateCalculated$ = this.executeClicked$.pipe(
-    switchMap(() => this.detachedDocsStore.demoStateAndPayload.pipe(first())),
+    switchMap(() => this.detachedDocsStore.demoStateAndPayload$.pipe(first())),
     withLatestFrom(this.demoAdapterValue$),
     map(([{ state, payload, initialState, stateChangeName }, demoAdapter]) =>
       demoAdapter[stateChangeName](state, JSON.parse(payload), initialState),
@@ -314,23 +314,23 @@ export class AdapterDocsComponent implements OnInit {
     selectSelector: this.selectorSelection$,
   });
 
-  docs$ = this.docsStore.docs;
-  creatorSourceCodeMd$ = this.docsStore.creatorSourceCodeMd;
-  demoSourceCodeMd$ = this.docsStore.demoSourceCodeMd;
-  paramters$ = this.docsStore.parameters;
-  stateChangeItems$ = this.docsStore.adapterStateChangeItems;
-  selectorItems$ = this.docsStore.adapterSelectorItems;
-  selectedStateChange$ = this.docsStore.selectedStateChange;
-  payloadEditorRefreshRequired$ = this.docsStore.payloadEditorRefreshRequired;
-  codeModel$ = this.docsStore.payloadCodeModel;
+  docs$ = this.docsStore.docs$;
+  creatorSourceCodeMd$ = this.docsStore.creatorSourceCodeMd$;
+  demoSourceCodeMd$ = this.docsStore.demoSourceCodeMd$;
+  paramters$ = this.docsStore.parameters$;
+  stateChangeItems$ = this.docsStore.adapterStateChangeItems$;
+  selectorItems$ = this.docsStore.adapterSelectorItems$;
+  selectedStateChange$ = this.docsStore.selectedStateChange$;
+  payloadEditorRefreshRequired$ = this.docsStore.payloadEditorRefreshRequired$;
+  codeModel$ = this.docsStore.payloadCodeModel$;
   codeOptions = {
     contextMenu: true,
     scrollBeyondLastLine: false,
   };
-  demoHistory$ = this.docsStore.demoHistory;
-  selectedHistoryItem$ = this.docsStore.selectedHistoryItem;
-  diffStateAndSelectorName$ = this.docsStore.diffStateAndSelectorName;
-  selectedSelector$ = this.docsStore.selectedSelector;
+  demoHistory$ = this.docsStore.demoHistory$;
+  selectedHistoryItem$ = this.docsStore.selectedHistoryItem$;
+  diffStateAndSelectorName$ = this.docsStore.diffStateAndSelectorName$;
+  selectedSelector$ = this.docsStore.selectedSelector$;
   selectorResult$ = combineLatest([
     this.demoAdapterValue$,
     this.diffStateAndSelectorName$,

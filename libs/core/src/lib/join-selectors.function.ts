@@ -7,12 +7,18 @@ import { MiniStore } from './mini-store.interface';
 import { Selectors } from './selectors.interface';
 import { StoreLike } from './store-like.type';
 
+type SelectorKey<
+  State,
+  S extends Selectors<State>,
+  AS extends AnySelectors
+> = keyof StoreLike<State, S, AS>['_fullSelectors'];
+
 type StoreSelectorInput<
-  State1,
-  S1 extends Selectors<State1>,
-  AS1 extends AnySelectors,
-  SelectorKey1 extends keyof S1 = 'state'
-> = StoreLike<State1, S1, AS1> | [StoreLike<State1, S1, AS1>, SelectorKey1];
+  State,
+  S extends Selectors<State>,
+  AS extends AnySelectors,
+  SelectorKey1 extends SelectorKey<State, S, AS> = 'state'
+> = StoreLike<State, S, AS> | [StoreLike<State, S, AS>, SelectorKey1];
 
 export function joinSelectors<
   State1,
@@ -21,8 +27,8 @@ export function joinSelectors<
   S2 extends Selectors<State2>,
   AS1 extends AnySelectors,
   AS2 extends AnySelectors,
-  SelectorKey1 extends keyof StoreLike<State1, S1, AS1> = 'state',
-  SelectorKey2 extends keyof StoreLike<State2, S2, AS2> = 'state',
+  SelectorKey1 extends SelectorKey<State1, S1, AS1> = 'state',
+  SelectorKey2 extends SelectorKey<State2, S2, AS2> = 'state',
   ReturnState1 extends ReturnType<
     StoreLike<State1, S1, AS1>['_fullSelectors'][SelectorKey1]
   > = ReturnType<StoreLike<State1, S1, AS1>['_fullSelectors'][SelectorKey1]>,
@@ -47,9 +53,9 @@ export function joinSelectors<
   AS1 extends AnySelectors,
   AS2 extends AnySelectors,
   AS3 extends AnySelectors,
-  SelectorKey1 extends keyof StoreLike<State1, S1, AS1> = 'state',
-  SelectorKey2 extends keyof StoreLike<State2, S2, AS2> = 'state',
-  SelectorKey3 extends keyof StoreLike<State3, S3, AS3> = 'state',
+  SelectorKey1 extends SelectorKey<State1, S1, AS1> = 'state',
+  SelectorKey2 extends SelectorKey<State2, S2, AS2> = 'state',
+  SelectorKey3 extends SelectorKey<State3, S3, AS3> = 'state',
   ReturnState1 extends ReturnType<
     StoreLike<State1, S1, AS1>['_fullSelectors'][SelectorKey1]
   > = ReturnType<StoreLike<State1, S1, AS1>['_fullSelectors'][SelectorKey1]>,
@@ -81,10 +87,10 @@ export function joinSelectors<
   AS2 extends AnySelectors,
   AS3 extends AnySelectors,
   AS4 extends AnySelectors,
-  SelectorKey1 extends keyof StoreLike<State1, S1, AS1> = 'state',
-  SelectorKey2 extends keyof StoreLike<State2, S2, AS2> = 'state',
-  SelectorKey3 extends keyof StoreLike<State3, S3, AS3> = 'state',
-  SelectorKey4 extends keyof StoreLike<State4, S4, AS4> = 'state',
+  SelectorKey1 extends SelectorKey<State1, S1, AS1> = 'state',
+  SelectorKey2 extends SelectorKey<State2, S2, AS2> = 'state',
+  SelectorKey3 extends SelectorKey<State3, S3, AS3> = 'state',
+  SelectorKey4 extends SelectorKey<State4, S4, AS4> = 'state',
   ReturnState1 extends ReturnType<
     StoreLike<State1, S1, AS1>['_fullSelectors'][SelectorKey1]
   > = ReturnType<StoreLike<State1, S1, AS1>['_fullSelectors'][SelectorKey1]>,
@@ -128,11 +134,11 @@ export function joinSelectors<
   AS3 extends AnySelectors,
   AS4 extends AnySelectors,
   AS5 extends AnySelectors,
-  SelectorKey1 extends keyof StoreLike<State1, S1, AS1> = 'state',
-  SelectorKey2 extends keyof StoreLike<State2, S2, AS2> = 'state',
-  SelectorKey3 extends keyof StoreLike<State3, S3, AS3> = 'state',
-  SelectorKey4 extends keyof StoreLike<State4, S4, AS4> = 'state',
-  SelectorKey5 extends keyof StoreLike<State5, S5, AS5> = 'state',
+  SelectorKey1 extends SelectorKey<State1, S1, AS1> = 'state',
+  SelectorKey2 extends SelectorKey<State2, S2, AS2> = 'state',
+  SelectorKey3 extends SelectorKey<State3, S3, AS3> = 'state',
+  SelectorKey4 extends SelectorKey<State4, S4, AS4> = 'state',
+  SelectorKey5 extends SelectorKey<State5, S5, AS5> = 'state',
   ReturnState1 extends ReturnType<
     StoreLike<State1, S1, AS1>['_fullSelectors'][SelectorKey1]
   > = ReturnType<StoreLike<State1, S1, AS1>['_fullSelectors'][SelectorKey1]>,
@@ -188,8 +194,8 @@ export function joinSelectors(...inputs: any[]): MiniStore<any, { state: any }> 
     ...inputSelectors.map(([miniStore]) => miniStore._requireSources$),
   );
 
-  const selections: { state: any } = {
-    state: using(
+  const selections: { state$: any } = {
+    state$: using(
       () => requireAllSources$.subscribe(),
       () => select(fullSelectors.state),
     ),

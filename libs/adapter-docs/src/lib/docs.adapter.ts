@@ -25,13 +25,10 @@ const selectors = createSelectors<AdapterDocsState>()(
             .map(getListItem(s.selectedStateChange))
         : [],
     adapterSelectorItems: s =>
-      ['state']
-        .concat(
-          s.docs.demoAdapter.value?.selectors
-            ? Object.keys(s.docs.demoAdapter.value.selectors)
-            : [],
-        )
-        .map(getListItem(s.selectedSelector)),
+      (s.docs.demoAdapter.value?.selectors
+        ? Object.keys(s.docs.demoAdapter.value.selectors)
+        : []
+      ).map(getListItem(s.selectedSelector)),
     adapterStateChanges: s => s.docs.demoAdapter.stateChanges,
     adapterSelectors: s => s.docs.demoAdapter.selectors,
     userSelectedStateChangeName: s => s.selectedStateChange,

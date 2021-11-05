@@ -14,7 +14,7 @@ export function App() {
   const a$ = useSource<string>('[App] a$');
   const b$ = useSource<string>('[App] b$');
   const store = useAdapter(['ab', abAdapter, ''], {concat: [a$, b$]})
-  const ab = useObservable(store.state);
+  const ab = useObservable(store.state$);
 
   return (
     <div>

@@ -285,14 +285,14 @@ export class AdaptCommon<CommonStore extends StoreMethods> {
           fullSelectors: { ...selected.fullSelectors, [key]: fullSelector },
           selections: {
             ...selected.selections,
-            [key]: getUsing(this.commonStore.select(fullSelector)),
+            [key + '$']: getUsing(this.commonStore.select(fullSelector)),
           },
         };
       },
       {
         fullSelectors: { state },
         selections: {
-          state: getUsing(this.commonStore.select(state)),
+          state$: getUsing(this.commonStore.select(state)),
         },
       } as {
         fullSelectors: S & { state: () => State };

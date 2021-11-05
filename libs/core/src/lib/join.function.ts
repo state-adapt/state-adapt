@@ -108,7 +108,7 @@ export function join<NewS extends Selectors<any>>(
   const selections = Object.keys(fullSelectors).reduce(
     (selections, key) => ({
       ...selections,
-      [key]: using(
+      [key + '$']: using(
         () => requireAllSources$.subscribe(),
         () => select(fullSelectors[key]),
       ),
