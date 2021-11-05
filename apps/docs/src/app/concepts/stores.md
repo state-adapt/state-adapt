@@ -3,7 +3,7 @@
 - [Overview](/concepts/stores#overview)
 - [`init`](/concepts/stores#init)
 - [State Paths](/concepts/stores#state-paths)
-- [`getState`](/concepts/stores#getstate)
+- [`state$`](/concepts/stores#state)
 - [`initGet`](/concepts/stores#initget)
 - [Selectors](/concepts/stores#selectors)
 - [`updater`](/concepts/stores#updater)
@@ -38,7 +38,7 @@ constructor(private adapt: AdaptCommon<any>) {}
 
 The first argument is an array of 3 elements:
 
-- `path`: Object [path](/concepts/stores#state-paths) (a `string`) in the global store where this state will live
+- `path`: Object [path](/concepts/stores#state-paths) (`string`) in the global store where this state will live
 - `adapter`: The adapter that will manage the state in this store
 - `initialState`: The initial state for this store
 
@@ -68,22 +68,22 @@ Each store completely owns its own state. If more than one store tries to use th
 
 This applies both to paths that are identical as well as paths that are subtrings of another path. For example, if `'featureA'` is already being used by a state and then another store tried to initialize at `'featureA.number'`, that error would be thrown.
 
-## `getState`
+## `state$`
 
-[`getState`](/concepts/stores#getstate) is a method created for each store. It returns an observable of the store's state:
+[`state$`](/concepts/stores#state) is a default property created for each store. It is an observable of the store's state:
 
 ```typescript
 numberStore = this.adapt.init(['number', numberAdapter, 0], {});
-number$ = this.numberStore.getState();
+number$ = this.numberStore.state$;
 ```
 
 ## `initGet`
 
-[`initGet`](/concepts/stores#initget) is syntactic sugar for calling [`init`](/concepts/stores#init) and then calling the [`getState`](/concepts/stores#getstate) method of the returned store. For example,
+[`initGet`](/concepts/stores#initget) is syntactic sugar for calling [`init`](/concepts/stores#init) and then accessing the [`state$`](/concepts/stores#state) property of the returned store. For example,
 
 ```typescript
 numberStore = this.adapt.init(['number', numberAdapter, 0], {});
-number$ = this.numberStore.getState();
+number$ = this.numberStore.state$;
 ```
 
 is the same as
@@ -94,25 +94,21 @@ number$ = this.adapt.initGet(['number', numberAdapter, 0], {});
 
 ## Selectors
 
-If selectors are defined in an adapter they get assigned to methods on the store object. They return observables of the selected state:
+If selectors are defined in an adapter they get assigned to properties on the store object with an added `'$'` at the end of the property name. They are observables of the selected state:
 
 ```typescript
 numberAdapter = createAdapter<number>()({
-  selectors: {
-    getNegative: state => state * -1,
-  },
+  selectors: { negative: state => state * -1 },
 });
 numberStore = this.adapt.init(['number', this.numberAdapter, 0], {});
-negativeNumber$ = this.numberStore.getNegative();
+negativeNumber$ = this.numberStore.negative$;
 ```
 
-Each selector's observable chains off of all the sources passed into the store. For example, if one of your sources is an observable of an HTTP request, that request will automatically be triggered as soon as you subscribe to any of the selector observables from the store. We recommend keeping your adapters and stores relatively small and focused on one concern so that accessing one part of state does not cause unrelated/unneeded data to be fetched.
-
-If necessary, you can also access store selectors that do not chain off of any sources by using the [`spy`](/concepts/stores#spy) method described below.
+Each selector's observable chains off of all the sources passed into the store. For example, if one of your sources is an observable of an HTTP request, that request will automatically be triggered as soon as you subscribe to any of the selector observables from the store. We recommend keeping your adapters and stores relatively small and focused on one concern so that accessing one part of state does not cause unrelated/unneeded data to be fetched. If necessary, you can also access store selectors that do not chain off of any sources by using the [`spy`](/concepts/stores#spy) method described below.
 
 ## `updater`
 
-[`updater`](/concepts/stores#updater) is a method on `AdaptCommon` that is syntactic sugar for creating a store with the [basic adapter](/concepts/adapters#basic-adapter) in `@state-adapt/core`. It expects only one type of source, which can be a single source or an array of sources that trigger the basic adapter's [`update`](/concepts/adapters#basic-adapter) method. The [`update`](/concepts/adapters#basic-adapter) method requires the state to be an object so it can spread it in the updates. This usage of [`updater`](/concepts/stores#updater)
+[`updater`](/concepts/stores#updater) is a method on `AdaptCommon` that is syntactic sugar for creating a store with an adapter with only the default state reactions and selectors. It expects only one type of source, which can be a single source or an array of sources that trigger the adapter's [`update`](/concepts/adapters#createadapter) method. The [`update`](/concepts/adapters#createadapter) method requires the state to be an object so it can spread it in the updates. This usage of [`updater`](/concepts/stores#updater)
 
 ```typescript
 valueChanges$ = this.form.valueChanges.pipe(toSource('[Form] Value Change'));
@@ -122,30 +118,30 @@ formValues$ = this.adapt.updater('form', { name: '' }, this.valueChanges$);
 is equivalent to
 
 ```typescript
-import { createBasicAdapter } from '@state-adapt/core';
+import { createAdapter } from '@state-adapt/core';
 // ...
 valueChanges$ = this.form.valueChanges.pipe(toSource('[Form] Value Change'));
-formAdapter = createBasicAdapter<{ name: string }>();
+formAdapter = createAdapter<{ name: string }>()({});
 formValues$ = this.adapt.initGet(['form', this.formAdapter, { name: '' }], {
   update: this.valueChanges$,
 });
 ```
 
-[`updater`](/concepts/stores#updater) is like kind of like RxJS's `BehaviorSubject`, except you get to see its state in Redux Devtools. It is best to only use it for extremely trivial state. If you find yourself calculating future states in your source observables and only using [`updater`](/concepts/stores#updater) to store the results, your sources are concerned with too much and you should be using an adapter and [`init`](/concepts/stores#init) instead.
+[`updater`](/concepts/stores#updater) is like kind of like RxJS's `BehaviorSubject`, except you get to see its state in Redux Devtools. It is best to only use it for extremely trivial state. If you find yourself calculating future states in your source observables and only using [`updater`](/concepts/stores#updater) to store the results, your sources are concerned with too much and you should be using [`init`](/concepts/stores#init) and an adapter containing the state change logic.
 
 ## `setter`
 
-[`setter`](/concepts/stores#setter) is the same as [`updater`](/concepts/stores#updater), except instead of triggering the [`update`](/concepts/adapters#basic-adapter) state change it triggers the [`set`](/concepts/adapters#basic-adapter) state change. You can only use it for state that cannot be spread (non-objects), like `number` or `string`.
+[`setter`](/concepts/stores#setter) is the same as [`updater`](/concepts/stores#updater), except instead of triggering the [`update`](/concepts/adapters#createadapter) state change it triggers the [`set`](/concepts/adapters#createadapter) state change. You can only use it for state that cannot be spread (non-objects), like `number` or `string`.
 
 ## `spy`
 
 [`spy`](/concepts/stores#spy) is a method on `AdaptCommon` that returns a store that does not chain off of sources. It takes 2 arguments: The [path](/concepts/stores#state-paths) of the state you are interested in, and the adapter containing the selectors you want to use:
 
 ```typescript
-negativeNumber$ = this.adapt.spy('number', numberAdapter).getNegative();
+negativeNumber$ = this.adapt.spy('number', numberAdapter).negative$;
 ```
 
-[`spy`](/concepts/stores#spy) is useful in 2 situations primarily: [Selecting without subscribing](/concepts/stores#selecting-without-subscribing) and [selecting for a source](/concepts/stores#selecting-for-a-source).
+[`spy`](/concepts/stores#spy) is useful in 2 situations primarily: [Accessing state without subscribing](/concepts/stores#accessing-state-without-subscribing) and [accessing state for a source](/concepts/stores#accessing-state-for-a-source).
 
 ### 1. Accessing State without Subscribing
 
@@ -156,7 +152,7 @@ negativeNumber$ = this.adapt.spy('number', numberAdapter).getNegative();
 It would be impossible for a source itself to access state from the store without [`spy`](/concepts/stores#spy) because it would require using the store before it had been defined. The following example demonstrates this:
 
 ```typescript
-dataReceived$ = this.dataStore.getDataNeeded().pipe(
+dataReceived$ = this.dataStore.dataNeeded$.pipe(
   // Error: Property 'dataStore' is used before its initialization.
   filter(needed => needed),
   switchMap(() => this.dataService.fetchData()),
@@ -168,14 +164,14 @@ dataStore = this.adapt.init(['data', dataAdapter, initialState], {
 });
 ```
 
-In this example `getDataNeeded` is a selector that returns `true` if data needs to be fetched. This could be useful if the user is given a refresh button which triggers a state change back to the initial state. Since the `dataReceived$` source chains off of `dataNeeded$`, this reset would automatically trigger the request to be made again. Very reactive!
+In this example `dataNeeded$` comes from a selector that returns `true` if data needs to be fetched. This could be useful if the user is given a refresh button which triggers a state change back to the initial state. Since the `dataReceived$` source chains off of `dataNeeded$`, this reset would automatically trigger the request to be made again. Very reactive!
 
-However, `dataReceived$` needs to reference `this.dataStore.getDataNeeded`, which is impossible because `dataStore` uses `dataReceived$`. It is a circular reference problem.
+However, `dataReceived$` needs to reference `this.dataStore.dataNeeded$`, which is impossible because `dataStore` uses `dataReceived$`. It is a circular reference problem.
 
 [`spy`](/concepts/stores#spy) solves this:
 
 ```typescript
-dataNeeded$ = this.adapt.spy('data', dataAdapter).getDataNeeded();
+dataNeeded$ = this.adapt.spy('data', dataAdapter).dataNeeded$;
 
 dataReceived$ = this.dataNeeded$.pipe(
   filter(needed => needed),
@@ -209,7 +205,7 @@ number2$ = this.adapt.initGet(['number2', numberAdapter, 4000], {
 total$ = combineLatest([this.number1$, this.number2$]).pipe(map((n1, n2) => n1 + n2));
 ```
 
-Initially, `total$` will emit `4000`, calculated from the initial inputs of `0` and `4000`. If you then call `numberAdded$.next(10)`, `total$` would first recalculate based on inputs of `10` and `4000`, so it would emit `4010`. After that it would get the update from `number2` and calculate from `10` and `4010` and emit the correct number, `4020`. It is a contrived example, but it illustrates the problem.
+Initially, `total$` will emit `4000`, calculated from the initial inputs of `0` and `4000`. If you then call `numberAdded$.next(10)`, `total$` would first recalculate based on inputs of `10` and `4000`, so it would emit `4010`. After that it would get the update from `number2` and calculate from `10` and `4010` and emit the correct number, `4020`.
 
 ### `joinSelectors`
 
@@ -221,11 +217,11 @@ import { joinSelectors } from '@state-adapt/core';
 total$ = joinSelectors(this.number1Store, this.number2Store, (n1, n2) => n1 + n2);
 ```
 
-The first arguments are stores or store selector arrays (see below), and the last argument is the function that calculates the result. When you pass stores as the first arguments, [`joinSelectors`](/concepts/stores#joinselectors) uses the [`getState`](/concepts/stores#getstate) selector from each store. If you want to use a different selector, you can specify it like this
+The first arguments are stores or store selector arrays (see below), and the last argument is the function that calculates the result. When you pass stores as the first arguments, [`joinSelectors`](/concepts/stores#joinselectors) uses the [`state`](/concepts/stores#state) selector from each store. If you want to use a different selector, you can specify it like this
 
 ```typescript
 total$ = joinSelectors(
-  [this.number1Store, 'getNegative'],
+  [this.number1Store, 'negative'],
   this.number2Store,
   (n1, n2) => n1 + n2,
 );
@@ -245,18 +241,18 @@ number1Number2Store = join(
   this.number1Store,
   this.number2Store,
   (number1Selectors, number2Selectors) => ({
-    getTotalNegative1: createSelector(
-      number1Selectors.getNegative,
-      number2Selectors.getState,
+    totalNegative1: createSelector(
+      number1Selectors.negative,
+      number2Selectors.state,
       (n1, n2) => n1 + n2,
     ),
-    getTotalNegative2: createSelector(
-      number1Selectors.getState,
-      number2Selectors.getNegative,
+    totalNegative2: createSelector(
+      number1Selectors.state,
+      number2Selectors.negative,
       (n1, n2) => n1 + n2,
     ),
   }),
 );
-totalNegative1$ = this.number1Number2Store.getTotalNegative1();
-totalNegative2$ = this.number1Number2Store.getTotalNegative2();
+totalNegative1$ = this.number1Number2Store.totalNegative1$;
+totalNegative2$ = this.number1Number2Store.totalNegative2$;
 ```
