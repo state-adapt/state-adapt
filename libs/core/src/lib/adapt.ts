@@ -262,7 +262,7 @@ export class AdaptCommon<CommonStore extends StoreMethods> {
 
   private getSelections<State, S extends Selectors<State>>(
     selectors: S,
-    state: ({ adapt }: { adapt: any }) => State,
+    getState: ({ adapt }: { adapt: any }) => State,
     requireSources$: Observable<any>,
   ): {
     fullSelectors: S & { state: () => State };
@@ -278,7 +278,7 @@ export class AdaptCommon<CommonStore extends StoreMethods> {
       selections: Selections<State, S>;
     } = Object.keys(selectors).reduce(
       (selected, key) => {
-        const fullSelector = createSelector([state], (state: State, props: any) =>
+        const fullSelector = createSelector([getState], (state: State, props: any) =>
           state !== undefined ? selectors[key](state, props) : state,
         );
         return {
@@ -290,9 +290,9 @@ export class AdaptCommon<CommonStore extends StoreMethods> {
         };
       },
       {
-        fullSelectors: { state },
+        fullSelectors: { state: getState },
         selections: {
-          state$: getUsing(this.commonStore.select(state)),
+          state$: getUsing(this.commonStore.select(getState)),
         },
       } as {
         fullSelectors: S & { state: () => State };
