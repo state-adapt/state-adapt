@@ -1,10 +1,6 @@
 import { Injectable } from '@angular/core';
-import { AdaptCommon, joinSelectors, Source } from '@state-adapt/core';
-import {
-  Product,
-  products,
-  QuantityChange,
-} from '../../../../../libs/shopping/src';
+import { AdaptCommon, join, joinSelectors, Source } from '@state-adapt/core';
+import { Product, products, QuantityChange } from '../../../../../libs/shopping/src';
 import { FilterService } from '../filters/filter.service';
 import { productAdapter } from './product.adapter';
 import { getFilteredProducts } from './filter-product.selectors';
@@ -34,8 +30,5 @@ export class ProductService {
     getFilteredProducts,
   );
 
-  constructor(
-    private adapt: AdaptCommon<any>,
-    private filterService: FilterService,
-  ) {}
+  constructor(private adapt: AdaptCommon<any>, private filterService: FilterService) {}
 }

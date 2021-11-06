@@ -231,28 +231,16 @@ TypeScript will autocomplete the name of the selector as you type and correctly 
 
 ### `join`
 
-[`join`](/concepts/stores#join) is a much heavier solution than [`joinSelectors`](/concepts/stores#joinselectors). When you need to join many selectors from the same stores your code will sometimes be more DRY if you use [`join`](/concepts/stores#join) instead of [`joinSelectors`](/concepts/stores#joinselectors). [`join`](/concepts/stores#join) gives you access to all of each store's selectors and returns a new store-like object with new selectors you define using `createSelector` from _Reselect_:
+[`join`](/concepts/stores#join) is a heavier solution than [`joinSelectors`](/concepts/stores#joinselectors). When you need to join many selectors from the same stores your code will be more DRY if you use [`join`](/concepts/stores#join) instead of [`joinSelectors`](/concepts/stores#joinselectors). [`join`](/concepts/stores#join) gives you access to all of each store's selectors by allowing you to specify a prefix to prepend to all selector names from each individual store. It returns a new store-like object with new selectors you define using `createSelector` from _Reselect_:
 
 ```typescript
 import { createSelector } from 'reselect';
 import { join } from '@state-adapt/core';
 // ...
-number1Number2Store = join(
-  this.number1Store,
-  this.number2Store,
-  (number1Selectors, number2Selectors) => ({
-    totalNegative1: createSelector(
-      number1Selectors.negative,
-      number2Selectors.state,
-      (n1, n2) => n1 + n2,
-    ),
-    totalNegative2: createSelector(
-      number1Selectors.state,
-      number2Selectors.negative,
-      (n1, n2) => n1 + n2,
-    ),
-  }),
-);
-totalNegative1$ = this.number1Number2Store.totalNegative1$;
-totalNegative2$ = this.number1Number2Store.totalNegative2$;
+numbersStore = join(['one', this.number1Store], ['two', this.number2Store], {
+  totalNegative1: s => s.oneNegative + s.twoState,
+  totalNegative2: s => s.oneState + s.twoNegative,
+});
+totalNegative1$ = this.numbersStore.totalNegative1$;
+totalNegative2$ = this.numbersStore.totalNegative2$;
 ```

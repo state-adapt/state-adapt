@@ -2,18 +2,22 @@ interface Selectors<State> {
   [index: string]: (state: State, props?: any) => any;
 }
 
-type SelectorReturnTypes<State, S extends Selectors<State>> = {
+export type SelectorReturnTypes<State, S extends Selectors<State>> = {
   [Key in keyof S]: ReturnType<S[Key]>;
 };
 
-type ReturnTypeSelectors<State, S1States, NewSelectors extends Selectors<S1States>> = {
+export type ReturnTypeSelectors<
+  State,
+  S1States,
+  NewSelectors extends Selectors<S1States>
+> = {
   [Key in keyof NewSelectors]: (
     state: State,
     props?: any,
   ) => ReturnType<NewSelectors[Key]>;
 };
 
-type WithStateSelector<State, S extends Selectors<State>> = S & {
+export type WithStateSelector<State, S extends Selectors<State>> = S & {
   state: (state: State) => State;
 };
 
