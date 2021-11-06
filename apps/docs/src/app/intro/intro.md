@@ -17,10 +17,10 @@ StateAdapt simply reimplements them in RxJS.
 
 StateAdapt uses state adapters to maximize reusability in state management.
 
-## Learn More
+# Learn More
 
-Read the introductory blog post: [Introducing StateAdapt](https://medium.com/weekly-webtips/introducing-stateadapt-reusable-reactive-state-management-9f0388f1850e)
+Read: [Introducing StateAdapt](https://medium.com/weekly-webtips/introducing-stateadapt-reusable-reactive-state-management-9f0388f1850e)
 
-## Help Us
+# Contribute
 
-Want to help out? Check out our [GitHub repository](https://github.com/state-adapt/state-adapt)
+Want to help out? See our [GitHub repo](https://github.com/state-adapt/state-adapt)
