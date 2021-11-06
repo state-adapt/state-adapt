@@ -59,8 +59,7 @@ $logo-z: 1000;
         padding-top: $logo-shadow-width;
         z-index: $logo-z - 1;
         background-color: transparentize($color: #000, $amount: 0.75);
-        box-shadow: 0 0.5vw 1.5vw 1.5vw
-          transparentize($color: #000, $amount: 0.75);
+        box-shadow: 0 0.5vw 1.5vw 1.5vw transparentize($color: #000, $amount: 0.75);
         border-radius: 50%;
       }
     }
@@ -95,18 +94,22 @@ $logo-z: 1000;
       padding: $button-padding;
       min-height: 0;
     }
-    a.getting-started {
-      display: block;
-      text-align: center;
-      &:link,
-      &:visited {
-        #get-started {
-          background-color: map-get($carbon--theme, accent-01);
+    .getting-started-container {
+      display: flex;
+      justify-content: space-around;
+      a.getting-started {
+        text-align: center;
+        text-decoration: none;
+        &:link,
+        &:visited {
+          #get-started {
+            background-color: map-get($carbon--theme, accent-01);
+          }
         }
-      }
-      &:hover {
-        #get-started {
-          background-color: map-get($carbon--theme, accent-02);
+        &:hover {
+          #get-started {
+            background-color: map-get($carbon--theme, accent-02);
+          }
         }
       }
     }

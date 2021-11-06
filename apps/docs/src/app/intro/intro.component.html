@@ -14,17 +14,18 @@
       <svg class="bullet-adapter"><use xlink:href="#adapter" /></svg>
       <a href="#reusable">Reusable</a>
     </h3>
-
-    <a routerLink="/getting-started" class="getting-started">
-      <button
-        ibmButton="secondary"
-        id="get-started"
-        (mouseenter)="secondary = true"
-        (mouseleave)="secondary = false"
-      >
-        Get Started
-      </button>
-    </a>
+    <div class="getting-started-container">
+      <a routerLink="/getting-started" class="getting-started">
+        <button
+          ibmButton="secondary"
+          id="get-started"
+          (mouseenter)="secondary = true"
+          (mouseleave)="secondary = false"
+        >
+          Get Started
+        </button>
+      </a>
+    </div>
   </div>
 </div>
 <div class="content">
