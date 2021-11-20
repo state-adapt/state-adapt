@@ -77,8 +77,7 @@ const waitRandom = (min: number, n: number, fn: () => void) => {
   setTimeout(() => waitRandom(min, n, fn), Math.max(min, n * Math.random()));
 };
 
-const mapIndex = (i: number, l1: number, l2: number) =>
-  Math.floor((i * l2) / l1);
+const mapIndex = (i: number, l1: number, l2: number) => Math.floor((i * l2) / l1);
 
 const getTerminals = (gridWidth: number, n: number) =>
   getNumbersBetween(0, 2 * gridWidth - 1, n)
@@ -97,10 +96,7 @@ const getTerminals = (gridWidth: number, n: number) =>
         ? (position - 1.5 * gridWidth) * -1 + 1.5 * gridWidth // Shift to center at 0, reflect, shift back
         : position;
 
-      const height = Math.max(
-        0,
-        getNumberBetween(0, gridWidth - cornerPosition - 1),
-      );
+      const height = Math.max(0, getNumberBetween(0, gridWidth - cornerPosition - 1));
       const midY = (gridHeight / 2) * 60;
       const y = midY - (isBelow ? -(height + 0.5) : height + 0.5) * 60; // -0.5 to get to center. height of 4 => y of 30 (half down)
       const x = (gridWidth - (cornerPosition + height + 0.5)) * 60; // 45 degree, +0.5 to get to center
@@ -159,52 +155,44 @@ export class CircuitsComponent {
   }
 
   private makeCircuitsFire() {
+    const dashDt = 1500;
+    const startSource = 0;
+    const endSource = startSource + dashDt;
+    const startAdapter = 400;
+    const endAdapter = 600;
     const startSink = 500;
-    const endSource = 2000;
-    const endSink = startSink + endSource;
+    const endSink = startSink + dashDt;
     waitRandom(500, 3000, () => {
       const sourceGroups = Array.from(document.querySelectorAll('.source'));
       if (!sourceGroups.length) return;
       const sourceGroup = getRandomEl(sourceGroups).el;
       const sourceParent = sourceGroup.parentNode as SVGAElement;
-      const pulse = sourceGroup.querySelector(
+      const sourcePulse = sourceGroup.querySelector(
         '.connector-pulse path',
       ) as SVGAElement;
-      pulse.className.baseVal += ' active';
-      const sinkGroups = Array.from(
-        sourceParent.querySelectorAll('.sink'),
-      ).map(child =>
+      const adapter = sourceParent.querySelector('.adapter') as SVGAElement;
+      const sinkGroups = Array.from(sourceParent.querySelectorAll('.sink')).map(child =>
         child.querySelector('.connector-pulse path'),
       ) as SVGAElement[];
 
-      setTimeout(
-        () =>
-          sinkGroups.forEach(
-            child =>
-              (child.className.baseVal +=
-                Math.random() < 0.75 ? ' active' : ''),
-          ),
-        startSink,
-      );
-      setTimeout(
-        () =>
-          (pulse.className.baseVal = pulse.className.baseVal.replace(
-            /(\s*)active/,
-            '',
-          )),
-        endSource,
-      );
-      setTimeout(
-        () =>
-          sinkGroups.forEach(
-            child =>
-              (child.className.baseVal = child.className.baseVal.replace(
-                /(\s*)active/,
-                '',
-              )),
-          ),
-        endSink,
-      );
+      ([
+        [startSource, () => this.activate(sourcePulse)],
+        [endSource, () => this.deactivate(sourcePulse)],
+        [startAdapter, () => this.activate(adapter)],
+        [endAdapter, () => this.deactivate(adapter)],
+        [
+          startSink,
+          () => sinkGroups.forEach(child => Math.random() < 0.6 && this.activate(child)),
+        ],
+        [endSink, () => sinkGroups.forEach(child => this.deactivate(child))],
+      ] as [number, any][]).forEach(([t, fn]) => setTimeout(fn, t));
     });
+  }
+
+  private activate(el: SVGAElement) {
+    el.className.baseVal = el.className.baseVal + ' active';
+  }
+  private deactivate(el: SVGAElement) {
+    el.className.baseVal = el.className.baseVal.replace(/(\s*)active/, '');
   }
 }

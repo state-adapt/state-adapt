@@ -41,12 +41,7 @@
       <path [attr.d]="terminal.path" />
     </g>
   </g>
-  <use
-    xlink:href="#adapter"
-    class="adapter"
-    width="120"
-    transform="translate(360, 0), rotate(30, 60, 360)"
-  ></use>
+  <use xlink:href="#adapter" class="adapter" width="120"></use>
   <g
     class="sink"
     *ngFor="let terminal of circuit.sinks"

@@ -1,7 +1,9 @@
 @import '../../../../../styles/theme';
 
 $diagram-color: map-get($carbon--theme, ui-04);
-$pulse-color: map-get($carbon--theme, accent-02);
+$source-pulse-color: map-get($carbon--theme, accent-01);
+$adapter-color: map-get($carbon--theme, interactive-01);
+$sink-pulse-color: map-get($carbon--theme, accent-02);
 $diagram-opacity: 0.3;
 
 @mixin child-left-top($cq, $child, $left, $right) {
@@ -39,6 +41,8 @@ $diagram-opacity: 0.3;
     .adapter {
       stroke-width: 6px;
       opacity: $diagram-opacity;
+      transform: translate(360px, 0) rotate(30deg);
+      transform-origin: 60px 360px;
     }
   }
 }
@@ -78,9 +82,9 @@ $diagram-opacity: 0.3;
 $pulse-width: 450;
 .connector-pulse path {
   transform: translateZ(0); // 3d moves work to GPU
-  stroke: $pulse-color;
+  stroke: $source-pulse-color;
   fill: none;
-  stroke-width: 4;
+  stroke-width: 8;
   stroke-dasharray: $pulse-width;
   stroke-dashoffset: $pulse-width;
   &.active {
@@ -88,6 +92,7 @@ $pulse-width: 450;
   }
 }
 .sink .connector-pulse path {
+  stroke: $sink-pulse-color;
   stroke-dashoffset: -$pulse-width;
   &.active {
     animation: dash 0.4s linear reverse;
@@ -100,4 +105,14 @@ $pulse-width: 450;
   100% {
     stroke-dashoffset: -$pulse-width;
   }
+}
+path {
+  stroke-width: var(--stroke-width);
+}
+.adapter.active {
+  --stroke-width: 8;
+  stroke: $adapter-color;
+  opacity: 1 !important;
+  transition: transform 0.2s linear;
+  transform: translate(360px, 0) rotate(90deg) !important;
 }
