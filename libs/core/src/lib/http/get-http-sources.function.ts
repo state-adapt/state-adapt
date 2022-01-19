@@ -26,9 +26,7 @@ export function getHttpSources<Res, Body, Err>(
     error$: 'Error',
   });
   return {
-    request$: sources.request$.pipe(
-      map(({ type }) => ({ type: `${feature} ${type}` })),
-    ),
+    request$: sources.request$.pipe(map(({ type }) => ({ type: `${feature} ${type}` }))),
     success$: sources.success$.pipe(
       map(({ type, payload }) => ({ type: `${feature} ${type}`, payload })),
     ),

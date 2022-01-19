@@ -12,7 +12,6 @@
     "carbon-components-angular",
     "rxjs",
     "reselect",
-    "lodash-es",
     "@angular/compiler",
     "@angular/animations",
     "carbon-components",

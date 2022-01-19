@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import flatten from 'lodash-es/flatten';
+import { flatten } from './utils/flatten.function';
 import { defer, merge, NEVER, Observable, of, using } from 'rxjs';
 import { distinctUntilChanged, filter, finalize, share, tap } from 'rxjs/operators';
 import type { Action } from './action.interface';
