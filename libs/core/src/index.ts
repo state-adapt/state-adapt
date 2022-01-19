@@ -1,3 +1,4 @@
+export * from './lib/utils/patch.function';
 export * from './lib/update-paths.function';
 export * from './lib/adapt.actions';
 export * from './lib/action-sanitizer.function';
