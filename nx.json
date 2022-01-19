@@ -1,40 +1,78 @@
 {
   "implicitDependencies": {
     "angular.json": "*",
-    "package.json": { "dependencies": "*", "devDependencies": "*" },
+    "package.json": {
+      "dependencies": "*",
+      "devDependencies": "*"
+    },
     "tsconfig.base.json": "*",
     "tslint.json": "*",
     ".eslintrc.json": "*",
     "nx.json": "*"
   },
-  "affected": { "defaultBase": "master" },
+  "affected": {
+    "defaultBase": "master"
+  },
   "npmScope": "state-adapt",
   "tasksRunnerOptions": {
     "default": {
       "runner": "@nrwl/workspace/tasks-runners/default",
-      "options": { "cacheableOperations": ["build", "lint", "test", "e2e"] }
+      "options": {
+        "cacheableOperations": ["build", "lint", "test", "e2e"],
+        "parallel": 1
+      }
     }
   },
-  "projects": {
-    "core": { "tags": [] },
-    "ngrx": { "tags": [] },
-    "ngxs": { "tags": [] },
-    "docs": { "tags": [] },
-    "docs-e2e": { "tags": [], "implicitDependencies": ["docs"] },
-    "dashboards-feature": { "tags": ["feature"] },
-    "react-demo": { "tags": [] },
-    "react": { "tags": [] },
-    "ng-sa-counter": { "tags": [] },
-    "counter-ui": { "tags": [] },
-    "ng-sa-ngrx-counter": { "tags": [] },
-    "ng-sa-ngxs-counter": { "tags": [] },
-    "shopping": { "tags": [] },
-    "ng-sa-shopping": { "tags": [] },
-    "adapter-docs": { "tags": [] },
-    "ng-sa-component-store": { "tags": [] },
-    "ng-sa-component-store-e2e": {
-      "tags": [],
-      "implicitDependencies": ["ng-sa-component-store"]
+  "targetDependencies": {
+    "build": [
+      {
+        "target": "build",
+        "projects": "dependencies"
+      }
+    ]
+  },
+  "cli": {
+    "defaultCollection": "@nrwl/angular"
+  },
+  "defaultProject": "ng-sa-counter",
+  "generators": {
+    "@nrwl/angular": {
+      "application": {
+        "linter": "eslint"
+      },
+      "library": {
+        "linter": "eslint"
+      },
+      "storybook-configuration": {
+        "linter": "eslint"
+      }
+    },
+    "@nrwl/angular:application": {
+      "style": "scss",
+      "linter": "eslint",
+      "unitTestRunner": "jest",
+      "e2eTestRunner": "cypress"
+    },
+    "@nrwl/angular:library": {
+      "linter": "eslint",
+      "unitTestRunner": "jest"
+    },
+    "@nrwl/angular:component": {
+      "style": "scss"
+    },
+    "@nrwl/react": {
+      "application": {
+        "style": "scss",
+        "linter": "eslint",
+        "babel": true
+      },
+      "component": {
+        "style": "scss"
+      },
+      "library": {
+        "style": "scss",
+        "linter": "eslint"
+      }
     }
   }
 }
