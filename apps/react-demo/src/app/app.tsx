@@ -20,7 +20,7 @@ export function App() {
     <div>
       <main>
         <h1>{test?.test.toString()}!</h1>
-        <button onClick={() => click$.next({test: true})}>Click</button>
+        <button onClick={() => click$.next({test: true})}>Make True</button>
         <h1>ab: {ab}</h1>
         <button onClick={() => a$.next('a')}>a</button>
         <button onClick={() => b$.next('b')}>b</button>
