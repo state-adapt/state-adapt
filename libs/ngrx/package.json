@@ -1,7 +1,7 @@
 {
   "name": "@state-adapt/ngrx",
   "description": "State management library built with RxJS and inspired by the adapter pattern introduced in NgRx/Entity.",
-  "version": "0.38.0",
+  "version": "0.39.0",
   "homepage": "https://github.com/state-adapt/state-adapt",
   "author": "Mike Pearson",
   "license": "MIT",
