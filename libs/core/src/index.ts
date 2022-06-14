@@ -9,6 +9,8 @@ export * from './lib/get-action.function';
 export * from './lib/to-source.operator';
 export * from './lib/http/get-http-error.function';
 export * from './lib/http/get-catch-http-error.function';
+export * from './lib/http/get-http-actions.function';
+export * from './lib/http/split-http-sources.function';
 export * from './lib/http/get-http-sources.function';
 
 export * from './lib/selectors.interface';
