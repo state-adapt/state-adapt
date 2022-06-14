@@ -6,8 +6,8 @@ export interface AdaptModel {
 }
 
 export function adaptReducer(
-  state: AdaptModel | null = null,
+  state: AdaptModel = {},
   action: PatchState | CommonAction,
-) {
-  return isPatchState(action) ? updatePaths(state, action.payload) : action;
+): AdaptModel {
+  return isPatchState(action) ? updatePaths(state, action.payload) : state;
 }
