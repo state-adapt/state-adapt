@@ -137,7 +137,7 @@ export class AdaptCommon<CommonStore extends StoreMethods> {
   private getRequireSources<
     State,
     S extends Selectors<State>,
-    R extends ReactionsWithSelectors<State, S>
+    R extends ReactionsWithSelectors<State, S>,
   >(
     reactions: Reactions<State>,
     path: string,
@@ -146,13 +146,15 @@ export class AdaptCommon<CommonStore extends StoreMethods> {
   ): Observable<any> {
     const reactionEntries = Object.entries(reactions);
     const allSourcesWithReactions = flatten(
-      reactionEntries.map(([reactionName, reaction]) => {
-        const reactionSource = sources[reactionName] || [];
-        const reactionSources = Array.isArray(reactionSource)
-          ? reactionSource
-          : [reactionSource];
-        return reactionSources.map(source$ => ({ source$, reaction }));
-      }),
+      reactionEntries
+        .filter(([, val]) => !!val)
+        .map(([reactionName, reaction]) => {
+          const reactionSource = sources[reactionName] || [];
+          const reactionSources = Array.isArray(reactionSource)
+            ? reactionSource
+            : [reactionSource];
+          return reactionSources.map(source$ => ({ source$, reaction }));
+        }),
     );
 
     const allUpdatesFromSources$ = allSourcesWithReactions.map(
