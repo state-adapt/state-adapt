@@ -2,6 +2,7 @@ import { Adapter, ReactionsWithSelectors } from './adapter.type';
 import { Selectors } from './selectors.interface';
 
 export interface BasicAdapterMethods<State> {
+  noop: (s: State) => State;
   set: (s: State, p: State) => State;
   update: (s: State, u: Partial<State>) => State;
   reset: (s: State, p: any, i: State) => State;
@@ -15,6 +16,7 @@ export function createAdapter<State>() {
     S,
     R & BasicAdapterMethods<State> & ReactionsWithSelectors<State, S>
   > => ({
+    noop: state => state,
     set: (state, payload) => payload,
     update: (state, update) => ({ ...state, ...update }),
     reset: (state, payload, initialState) => initialState,
