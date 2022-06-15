@@ -9,6 +9,7 @@ export interface GetHttpActions<Res, Body, Err> {
   (http$: Observable<Res>, getResponse: (res: Res) => [boolean, Body, Err]): Observable<
     | {
         type: 'request$';
+        payload: void;
       }
     | {
         type: 'success$';
