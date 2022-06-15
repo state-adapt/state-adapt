@@ -37,7 +37,6 @@ export function getHttpActions<Res, Body, Err>(
         return succeeded ? getAction(`success$`, body) : getAction(`error$`, err);
       }),
       getCatchHttpError('error$'),
-      share(),
     ),
   );
 }
