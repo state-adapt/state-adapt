@@ -6,13 +6,13 @@ import { ReactionsWithSelectors } from './adapter.type';
 
 export type ActionPayload<
   R extends { [index: string]: any },
-  K extends keyof R
+  K extends keyof R,
 > = SecondParameterOrAny<Parameters<R[K]>>;
 
 export type Sources<
   State,
   S extends Selectors<State>,
-  R extends ReactionsWithSelectors<State, S>
+  R extends ReactionsWithSelectors<State, S>,
 > = {
   [K in keyof R]?:
     | Observable<Action<ActionPayload<R, K>>>[]
