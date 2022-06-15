@@ -11,13 +11,11 @@ export function splitSources<
     >;
   },
 >(obs$: Observable<Message>, partitions: PartitionKeys) {
+  const shared$ = obs$.pipe(share()); // Each and every filtered source would cause everything upstream to run for iteslf
   return Object.entries(partitions).reduce(
     (sources, [name, type]) => ({
       ...sources,
-      [name]: obs$.pipe(
-        share(), // Each and every filtered source would cause everything upstream to run for iteslf
-        filter(val => val.type === type),
-      ),
+      [name]: shared$.pipe(filter(val => val.type === type)),
     }),
     {} as PartitionedSources,
   );
