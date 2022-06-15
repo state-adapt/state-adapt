@@ -11,9 +11,10 @@ export class AdaptStore<
   State,
   AnyAction,
   Action extends AnyAction,
-  Store extends ObservableStore<State, AnyAction>
+  Store extends ObservableStore<State, AnyAction>,
 > extends BehaviorSubject<State> {
   store: Store;
+  actionQueue = [] as any[]; // First is currently dispatching
 
   constructor(store: Store) {
     super(store.getState());
@@ -31,6 +32,19 @@ export class AdaptStore<
   }
 
   dispatch(action: Action) {
-    return this.store.dispatch(action);
+    if (!this.actionQueue[0]) {
+      this.actionQueue.push(action);
+      this.dispatchNext();
+    } else {
+      this.actionQueue.push(action);
+    }
+  }
+
+  dispatchNext() {
+    if (this.actionQueue[0]) {
+      this.store.dispatch(this.actionQueue[0]);
+      this.actionQueue.shift();
+      this.dispatchNext();
+    }
   }
 }
