@@ -1,7 +1,17 @@
 import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { getHttpError } from './get-http-error.function';
+import { ErrorAction, ErrorActionWithReq, getHttpError } from './get-http-error.function';
 
-export function getCatchHttpError<Type extends string>(type: Type) {
-  return <T>(obs$: Observable<T>) => obs$.pipe(catchError(getHttpError(type)));
+export function getCatchHttpError<Type extends string>(
+  type: Type,
+): <T>(obs$: Observable<T>) => Observable<T | ErrorAction<string>>;
+export function getCatchHttpError<Type extends string, Req = any>(
+  type: Type,
+  req: Req,
+): <T>(obs$: Observable<T>) => Observable<T | ErrorActionWithReq<Req, string>>;
+export function getCatchHttpError<Type extends string, Req = any>(type: Type, req?: Req) {
+  return <T>(obs$: Observable<T>) =>
+    req !== undefined
+      ? obs$.pipe(catchError(getHttpError(type, req))) // catchError doesn't like union types
+      : obs$.pipe(catchError(getHttpError(type)));
 }
