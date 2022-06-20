@@ -34,3 +34,5 @@ export * from './lib/adapt.store';
 export * from './lib/create-state-adapt.funciton';
 export * from './lib/adapt';
 export * from './lib/create-store.function';
+export * from './lib/provide-store.function';
+export * from './lib/default-store-provider.const';
