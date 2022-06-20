@@ -37,7 +37,7 @@ interface UpdaterStream {
   }[];
 }
 
-export class AdaptCommon<CommonStore extends StoreMethods> {
+export class AdaptCommon<CommonStore extends StoreMethods = any> {
   private pathStates: PathState = {};
   private updaterStreams: UpdaterStream[] = [];
 
@@ -146,14 +146,13 @@ export class AdaptCommon<CommonStore extends StoreMethods> {
   ): Observable<any> {
     const reactionEntries = Object.entries(reactions);
     const allSourcesWithReactions = flatten(
-      reactionEntries
-        .map(([reactionName, reaction]) => {
-          const reactionSource = sources[reactionName] || [];
-          const reactionSources = Array.isArray(reactionSource)
-            ? reactionSource
-            : [reactionSource];
-          return reactionSources.map(source$ => ({ source$, reaction }));
-        }),
+      reactionEntries.map(([reactionName, reaction]) => {
+        const reactionSource = sources[reactionName] || [];
+        const reactionSources = Array.isArray(reactionSource)
+          ? reactionSource
+          : [reactionSource];
+        return reactionSources.map(source$ => ({ source$, reaction }));
+      }),
     );
 
     const allUpdatesFromSources$ = allSourcesWithReactions.map(
