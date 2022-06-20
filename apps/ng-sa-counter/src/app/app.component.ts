@@ -24,5 +24,5 @@ export class AppComponent {
     reset: this.reset$,
   });
 
-  constructor(private adapt: AdaptCommon<any>) {}
+  constructor(private adapt: AdaptCommon) {}
 }
