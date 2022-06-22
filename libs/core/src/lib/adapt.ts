@@ -12,6 +12,9 @@ import { Selections } from './selections.type';
 import { Selectors } from './selectors.interface';
 import { Sources } from './sources.type';
 import { BasicAdapterMethods } from './create-adapter.function';
+import { getAction } from './get-action.function';
+import { SyntheticSources } from './synthetic-sources.type';
+import { WithGetState } from './with-get-state.type';
 
 const filterDefined = <T>(sel$: Observable<T>) =>
   sel$.pipe(
@@ -45,18 +48,18 @@ export class AdaptCommon<CommonStore extends StoreMethods = any> {
 
   init<State, S extends Selectors<State>, R extends ReactionsWithSelectors<State, S>>(
     [path, adapter, initialState]: [string, Adapter<State, S, R>, State],
-    sources: Sources<State, S, R>,
-  ): MiniStore<State, S & { state: (state: any) => State }> {
+    sources: Sources<State, S, R> = {},
+  ): MiniStore<State, S & WithGetState<State>> & SyntheticSources<R> {
     // type S = R['selectors'];
     const selectors = adapter.selectors || ({} as S);
     const reactions = { ...adapter } as Reactions<State>;
     delete reactions.selectors;
-    const requireSources$ = this.getRequireSources<State, S, R>(
-      reactions,
-      path,
-      sources,
-      initialState,
-    );
+    const [requireSources$, syntheticSources] = this.getRequireSources<
+      State,
+      S,
+      R,
+      SyntheticSources<R>
+    >(reactions, path, sources, initialState);
 
     const getState = this.getStateSelector<State>(path);
     const { fullSelectors, selections } = this.getSelections<State, S>(
@@ -66,6 +69,7 @@ export class AdaptCommon<CommonStore extends StoreMethods = any> {
     );
 
     return {
+      ...syntheticSources,
       ...selections,
       _requireSources$: requireSources$,
       _fullSelectors: fullSelectors,
@@ -79,7 +83,7 @@ export class AdaptCommon<CommonStore extends StoreMethods = any> {
   ): Observable<State> {
     const reactions = { ...adapter } as Reactions<State>;
     delete reactions.selectors;
-    const requireSources$ = this.getRequireSources<State, S, R>(
+    const [requireSources$] = this.getRequireSources<State, S, R, SyntheticSources<R>>(
       reactions,
       path,
       sources,
@@ -138,12 +142,13 @@ export class AdaptCommon<CommonStore extends StoreMethods = any> {
     State,
     S extends Selectors<State>,
     R extends ReactionsWithSelectors<State, S>,
+    RSS extends SyntheticSources<R>,
   >(
     reactions: Reactions<State>,
     path: string,
     sources: Sources<State, S, R>,
     initialState: State,
-  ): Observable<any> {
+  ): [Observable<any>, RSS] {
     const reactionEntries = Object.entries(reactions);
     const allSourcesWithReactions = flatten(
       reactionEntries.map(([reactionName, reaction]) => {
@@ -218,7 +223,21 @@ export class AdaptCommon<CommonStore extends StoreMethods = any> {
       share(),
     );
 
-    return requireSources$;
+    const syntheticSources = reactionEntries.reduce((acc, [reactionName, reaction]) => {
+      return {
+        ...acc,
+        [reactionName]: (payload: any) => {
+          const update = this.getUpdate(path, reaction, payload);
+          const action = getAction(
+            `[${path.split('.').join('] [')}] ${reactionName}`,
+            payload,
+          );
+          this.commonStore.dispatch(createPatchState(action, [update]));
+        },
+      };
+    }, {} as RSS);
+
+    return [requireSources$, syntheticSources];
   }
 
   private getSourceUpdateStream(searchSource$: Observable<Action<any>>) {
@@ -231,13 +250,21 @@ export class AdaptCommon<CommonStore extends StoreMethods = any> {
     source$: Observable<Action<any>>,
     { payload }: Action<any>,
   ): [string[], any][] {
-    return this.getSourceUpdateStream(source$).reactions.map(({ path, reaction }) => {
-      const pathState = this.pathStates[path];
-      const { lastState, initialState } = pathState;
-      const newState = reaction(lastState, payload, initialState);
-      pathState.lastState = newState;
-      return [path.split('.'), newState];
-    });
+    return this.getSourceUpdateStream(source$).reactions.map(({ path, reaction }) =>
+      this.getUpdate(path, reaction, payload),
+    );
+  }
+
+  private getUpdate(
+    path: string,
+    reaction: (...args: any[]) => any,
+    payload: any,
+  ): [string[], any] {
+    const pathState = this.pathStates[path];
+    const { lastState, initialState } = pathState;
+    const newState = reaction(lastState, payload, initialState);
+    pathState.lastState = newState;
+    return [path.split('.'), newState];
   }
 
   private getStateSelector<State>(path: string): ({ adapt }: { adapt: any }) => State {
