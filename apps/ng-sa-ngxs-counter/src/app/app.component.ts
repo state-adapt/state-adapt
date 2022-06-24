@@ -7,22 +7,30 @@ import { countAdapter } from './count.adapter';
   selector: 'state-adapt-root',
   template: `
     <state-adapt-counter
-      (increment)="increment$.next($event)"
-      (double)="double$.next()"
-      (resetCount)="reset$.next()"
-      [count]="store.state$ | async"
+      (increment)="store1.increment($event)"
+      (double)="store1.double()"
+      (resetCount)="store1.reset(0)"
+      [count]="store1.state$ | async"
     ></state-adapt-counter>
+
+    <state-adapt-counter
+      (increment)="store2.increment($event)"
+      (double)="store2.double()"
+      (resetCount)="store2.reset(0)"
+      [count]="store2.state$ | async"
+    ></state-adapt-counter>
+
+    <state-adapt-reset-both (resetBoth)="resetBoth$.next()"></state-adapt-reset-both>
   `,
 })
 export class AppComponent {
-  increment$ = new Source<number>('increment$');
-  double$ = new Source<void>('double$');
-  reset$ = new Source<void>('reset$');
+  resetBoth$ = new Source<void>('[counts] resetBoth$');
 
-  store = this.adapt.init(['count', countAdapter, 0], {
-    increment: this.increment$,
-    double: this.double$,
-    reset: this.reset$,
+  store1 = this.adapt.init(['count1', countAdapter, 0], {
+    reset: this.resetBoth$,
+  });
+  store2 = this.adapt.init(['count2', countAdapter, 0], {
+    reset: this.resetBoth$,
   });
 
   constructor(private adapt: Adapt) {}
