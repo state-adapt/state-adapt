@@ -16,6 +16,16 @@ import { getAction } from './get-action.function';
 import { SyntheticSources } from './synthetic-sources.type';
 import { WithGetState } from './with-get-state.type';
 
+let pathId = 0;
+function getUniquePath(path: string) {
+  return `${path}|${pathId++}`;
+}
+
+interface ParsedPath {
+  path: string;
+  pathAr: string[];
+}
+
 const filterDefined = <T>(sel$: Observable<T>) =>
   sel$.pipe(
     filter(a => a !== undefined),
@@ -28,7 +38,13 @@ interface StoreMethods {
 }
 
 interface PathState {
-  [index: string]: { lastState: any; initialState: any };
+  lastState: any;
+  initialState: any;
+  arr: string[];
+}
+
+interface PathStates {
+  [index: string]: undefined | PathState;
 }
 
 interface UpdaterStream {
@@ -41,7 +57,7 @@ interface UpdaterStream {
 }
 
 export class AdaptCommon<CommonStore extends StoreMethods = any> {
-  private pathStates: PathState = {};
+  private pathStates: PathStates = {};
   private updaterStreams: UpdaterStream[] = [];
 
   constructor(private commonStore: CommonStore) {}
@@ -50,6 +66,7 @@ export class AdaptCommon<CommonStore extends StoreMethods = any> {
     [path, adapter, initialState]: [string, Adapter<State, S, R>, State],
     sources: Sources<State, S, R> = {},
   ): MiniStore<State, S & WithGetState<State>> & SyntheticSources<R> {
+    const pathObj = this.parsePath(path);
     // type S = R['selectors'];
     const selectors = adapter.selectors || ({} as S);
     const reactions = { ...adapter } as Reactions<State>;
@@ -59,9 +76,9 @@ export class AdaptCommon<CommonStore extends StoreMethods = any> {
       S,
       R,
       SyntheticSources<R>
-    >(reactions, path, sources, initialState);
+    >(reactions, pathObj, sources, initialState);
 
-    const getState = this.getStateSelector<State>(path);
+    const getState = this.getStateSelector<State>(pathObj.pathAr);
     const { fullSelectors, selections } = this.getSelections<State, S>(
       selectors,
       getState,
@@ -81,16 +98,17 @@ export class AdaptCommon<CommonStore extends StoreMethods = any> {
     [path, adapter, initialState]: [string, Adapter<State, S, R>, State],
     sources: Sources<State, S, R>,
   ): Observable<State> {
+    const pathObj = this.parsePath(path);
     const reactions = { ...adapter } as Reactions<State>;
     delete reactions.selectors;
     const [requireSources$] = this.getRequireSources<State, S, R, SyntheticSources<R>>(
       reactions,
-      path,
+      pathObj,
       sources,
       initialState,
     );
 
-    const getState = this.getStateSelector<State>(path);
+    const getState = this.getStateSelector<State>(pathObj.pathAr);
 
     return using(
       () => requireSources$.subscribe(),
@@ -117,13 +135,17 @@ export class AdaptCommon<CommonStore extends StoreMethods = any> {
     });
   }
 
+  /**
+   * Returns a detached store; doesn't chain off of sources.
+   * Path must be correct.
+   */
   spy<State, S extends Selectors<State>, R extends ReactionsWithSelectors<State, S>>(
     path: string,
     adapter: Adapter<State, S, R & BasicAdapterMethods<State>>,
-    // Returns a detached store; doesn't chain off of sources.
+    //
   ): MiniStore<State, S & { state: (state: any) => State }> {
     const selectors = adapter.selectors || ({} as S);
-    const getState = this.getStateSelector<State>(path);
+    const getState = this.getStateSelector<State>(path.split('.'));
     const requireSources$ = of(null);
     const { fullSelectors, selections } = this.getSelections<State, S>(
       selectors,
@@ -138,6 +160,32 @@ export class AdaptCommon<CommonStore extends StoreMethods = any> {
     };
   }
 
+  private parsePath(path: string): ParsedPath {
+    let collisionFreePath: string | undefined;
+    Object.keys(this.pathStates).find(existingPath => {
+      if (path === existingPath) {
+        return (collisionFreePath = getUniquePath(path));
+      }
+
+      if (existingPath + '.' === path.substr(0, existingPath.length + 1)) {
+        const oldPathStem = path.substr(0, existingPath.length);
+        return (collisionFreePath =
+          getUniquePath(oldPathStem) + path.substr(existingPath.length));
+      }
+
+      if (path + '.' === existingPath.substr(0, path.length + 1)) {
+        return (collisionFreePath = getUniquePath(path));
+      }
+    });
+
+    const goodPath = collisionFreePath || path;
+    if (path !== goodPath) {
+      this.warnPathCollision(path, goodPath);
+    }
+    this.pathStates[goodPath] = undefined;
+    return { path: goodPath, pathAr: goodPath.split('.') };
+  }
+
   private getRequireSources<
     State,
     S extends Selectors<State>,
@@ -145,7 +193,7 @@ export class AdaptCommon<CommonStore extends StoreMethods = any> {
     RSS extends SyntheticSources<R>,
   >(
     reactions: Reactions<State>,
-    path: string,
+    { path, pathAr }: ParsedPath,
     sources: Sources<State, S, R>,
     initialState: State,
   ): [Observable<any>, RSS] {
@@ -198,13 +246,14 @@ export class AdaptCommon<CommonStore extends StoreMethods = any> {
     );
 
     const requireSources$ = defer(() => {
-      // Runs First. If any of the sources emits immediately, this needs to have been set up first.
-      const colllisionPath = this.getPathCollisions(path);
-      if (colllisionPath) {
-        throw this.getPathCollisionError(path, colllisionPath);
-      }
+      // Runs first upon subscription.
+      // If any of the sources emits immediately, this needs to have been set up first.
       this.commonStore.dispatch(createInit(path, initialState));
-      this.pathStates[path] = { lastState: initialState, initialState };
+      this.pathStates[path] = {
+        lastState: initialState,
+        initialState,
+        arr: pathAr,
+      };
       return merge(...allUpdatesFromSources$, NEVER); // If sources all complete, keep state in the store
     }).pipe(
       finalize(() => {
@@ -228,10 +277,7 @@ export class AdaptCommon<CommonStore extends StoreMethods = any> {
         ...acc,
         [reactionName]: (payload: any) => {
           const update = this.getUpdate(path, reaction, payload);
-          const action = getAction(
-            `[${path.split('.').join('] [')}] ${reactionName}`,
-            payload,
-          );
+          const action = getAction(`[${pathAr.join('] [')}] ${reactionName}`, payload);
           this.commonStore.dispatch(createPatchState(action, [update]));
         },
       };
@@ -264,28 +310,22 @@ export class AdaptCommon<CommonStore extends StoreMethods = any> {
     if (pathState === undefined) {
       throw `Cannot apply update before store "${path}" is initialized.`;
     }
+    const { lastState, initialState, arr } = pathState;
     const newState = reaction(lastState, payload, initialState);
     pathState.lastState = newState;
-    return [path.split('.'), newState];
+    return [arr, newState];
   }
 
-  private getStateSelector<State>(path: string): ({ adapt }: { adapt: any }) => State {
+  private getStateSelector<State>(
+    pathAr: string[],
+  ): ({ adapt }: { adapt: any }) => State {
     return ({ adapt }) =>
-      path.split('.').reduce((state, segment) => state && state[segment], adapt);
+      pathAr.reduce((state, segment) => state && state[segment], adapt);
   }
 
-  private getPathCollisions(path: string) {
-    return Object.keys(this.pathStates).find(
-      existingPath =>
-        path === existingPath ||
-        existingPath + '.' === path.substr(0, existingPath.length + 1) ||
-        path + '.' === existingPath.substr(0, path.length + 1),
-    );
-  }
-
-  private getPathCollisionError(path: string, existingPath: string) {
-    return new Error(
-      `Path '${path}' collides with '${existingPath}', which has already been initialized as a state path.`,
+  private warnPathCollision(path: string, collisionFreePath: string) {
+    console.warn(
+      `Path '${path}' collides with an already instantiated path, so it has been modified to '${collisionFreePath}'`,
     );
   }
 
