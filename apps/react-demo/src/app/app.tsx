@@ -1,11 +1,6 @@
 import React from 'react';
 import { createAdapter } from '../../../../libs/core/src';
-import {
-  useAdapter,
-  useObservable,
-  useSource,
-  useUpdater,
-} from '../../../../libs/react/src';
+import { useAdapter, useObservable, useSource } from '../../../../libs/react/src';
 
 const abAdapter = createAdapter<string>()({
   concat: (state, newStr: string) => state + newStr,
@@ -13,8 +8,6 @@ const abAdapter = createAdapter<string>()({
 
 export function App() {
   const click$ = useSource<{ test: boolean }>('[App] click$');
-  const test$ = useUpdater('test', { test: false }, click$);
-  const test = useObservable(test$);
 
   const resetBoth$ = useSource<void>('[App] resetBoth$');
 
@@ -27,7 +20,6 @@ export function App() {
   return (
     <div>
       <main>
-        <h1>{test?.test.toString()}!</h1>
         <button onClick={() => click$.next({ test: true })}>Make True</button>
         <h1>ab1: {ab1}</h1>
         <button onClick={() => store1.concat('a')}>a</button>

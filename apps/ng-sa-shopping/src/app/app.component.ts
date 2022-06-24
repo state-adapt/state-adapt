@@ -8,7 +8,7 @@ import { FilterService } from './filters/filter.service';
     <state-adapt-shopping>
       <state-adapt-product-filters
         [filters]="filters$ | async"
-        (filterToggle)="filterToggle$.next($event)"
+        (filterToggle)="toggleFilter($event)"
       ></state-adapt-product-filters>
       <state-adapt-products
         [products]="filteredProducts$ | async"
@@ -31,7 +31,7 @@ export class AppComponent {
   cartProducts$ = this.productService.cartStore.state$;
   cartTotal$ = this.productService.cartStore.totalPrice$;
 
-  filterToggle$ = this.filterService.filterToggle$;
+  toggleFilter = this.filterService.filterStore.toggleFilter;
   filters$ = this.filterService.filterStore.state$;
 
   filteredProducts$ = this.productService.filteredProductStore.state$;

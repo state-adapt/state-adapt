@@ -1,19 +1,18 @@
 import { createSelector } from 'reselect';
-import { flatten } from './utils/flatten.function';
-import { defer, merge, NEVER, Observable, of, using } from 'rxjs';
+import { defer, isObservable, merge, NEVER, Observable, of, using } from 'rxjs';
 import { distinctUntilChanged, filter, finalize, share, tap } from 'rxjs/operators';
 import type { Action } from './action.interface';
 import { createDestroy, createInit, createPatchState } from './adapt.actions';
 import { Adapter, ReactionsWithSelectors } from './adapter.type';
-import { createBasicAdapter } from './create-basic-adapter.function';
+import { BasicAdapterMethods, createAdapter } from './create-adapter.function';
+import { getAction } from './get-action.function';
 import { MiniStore } from './mini-store.interface';
 import { Reactions } from './reactions.interface';
 import { Selections } from './selections.type';
 import { Selectors } from './selectors.interface';
 import { Sources } from './sources.type';
-import { BasicAdapterMethods } from './create-adapter.function';
-import { getAction } from './get-action.function';
 import { SyntheticSources } from './synthetic-sources.type';
+import { flatten } from './utils/flatten.function';
 import { WithGetState } from './with-get-state.type';
 
 let pathId = 0;
@@ -62,13 +61,127 @@ export class AdaptCommon<CommonStore extends StoreMethods = any> {
 
   constructor(private commonStore: CommonStore) {}
 
+  /**
+   * Overloads:
+   * ```javascript
+   * init(path, initialState)
+   * init(path, initialState, setterSource$)
+   * init(path, initialState, adapter)
+   * init([path, initialState], adapter)
+   * init(path, initialState, adapter, setterSource$ or sources)
+   * init([path, initialState, adapter], setterSource$ or sources)
+   * ```
+   * @param path - Object path in Redux Devtools
+   * @param initialState - Initial state of the store when it gets initialized with a subscription to its state
+   * @param setterSource$ Single source for `set` state change
+   * @param adapter Object with state change functions and selectors
+   * @param sources Object specifying sources for state change functions
+   */
+  // init(path, initialState)
+  init<State>(
+    path: string,
+    initialState: State,
+  ): MiniStore<State, WithGetState<State>> & SyntheticSources<BasicAdapterMethods<State>>;
+
+  // init(path, initialState, setterSource$)
+  init<State>(
+    path: string,
+    initialState: State,
+    setterSource$: Observable<Action<State>>,
+  ): MiniStore<State, WithGetState<State>> & SyntheticSources<BasicAdapterMethods<State>>;
+
+  // init(path, initialState, adapter)
   init<State, S extends Selectors<State>, R extends ReactionsWithSelectors<State, S>>(
-    [path, adapter, initialState]: [string, Adapter<State, S, R>, State],
-    sources: Sources<State, S, R> = {},
+    path: string,
+    initialState: State,
+    adapter: R & { selectors?: S },
+  ): MiniStore<State, S & WithGetState<State>> &
+    SyntheticSources<R & BasicAdapterMethods<State>>;
+
+  // init([path, initialState], adapter)
+  init<State, S extends Selectors<State>, R extends ReactionsWithSelectors<State, S>>(
+    [path, initialState]: [string, State],
+    adapter: R & { selectors?: S },
+  ): MiniStore<State, S & WithGetState<State>> &
+    SyntheticSources<R & BasicAdapterMethods<State>>;
+
+  // init(path, initialState, adapter, sources)
+  init<State, S extends Selectors<State>, R extends ReactionsWithSelectors<State, S>>(
+    path: string,
+    initialState: State,
+    adapter: R & { selectors?: S },
+    sources: Sources<State, S, R> | Observable<Action<State>>,
+  ): MiniStore<State, S & WithGetState<State>> &
+    SyntheticSources<R & BasicAdapterMethods<State>>;
+
+  // init([path, initialState, adapter], sources);
+  init<State, S extends Selectors<State>, R extends ReactionsWithSelectors<State, S>>(
+    [path, initialState, adapter]: [string, State, R & { selectors?: S }],
+    sources: Sources<State, S, R> | Observable<Action<State>>,
+  ): MiniStore<State, S & WithGetState<State>> &
+    SyntheticSources<R & BasicAdapterMethods<State>>;
+
+  // 1. init(path, initialState)
+  // 2. init(path, initialState, setterSource$)
+  // 3. init(path, initialState, adapter)
+  // 4. init([path, initialState], adapter)
+  // 5. init(path, initialState, adapter, sources)
+  // 6. init([path, initialState, adapter], sources);
+  init<State, S extends Selectors<State>, R extends ReactionsWithSelectors<State, S>>(
+    first:
+      | string
+      | readonly [string, State]
+      | readonly [string, State, R & { selectors?: S }] = '_',
+    second:
+      | State
+      | (R & { selectors?: S })
+      | Sources<State, S, R>
+      | Observable<Action<State>>,
+    third?: (R & { selectors?: S }) | Sources<State, S, R> | Observable<Action<State>>,
+    fourth?: Sources<State, S, R> | Observable<Action<State>>,
   ): MiniStore<State, S & WithGetState<State>> & SyntheticSources<R> {
+    const arrayLength = Array.isArray(first) ? first.length : 0;
+
+    let path;
+    let initialState;
+    let adapter;
+    let sources;
+
+    if (!arrayLength) {
+      path = first;
+      initialState = second;
+      const thirdIsSource = isObservable(third);
+      adapter = thirdIsSource ? undefined : third;
+      sources = thirdIsSource ? third : fourth;
+    }
+
+    if (arrayLength === 2) {
+      path = first[0];
+      initialState = first[1];
+      adapter = second;
+      sources = third;
+    }
+
+    if (arrayLength === 3) {
+      path = first[0];
+      initialState = first[1];
+      adapter = first[2];
+      sources = second;
+    }
+
+    path = path as string;
+    initialState = initialState as State;
+    adapter = adapter
+      ? createAdapter<State>()(adapter as R & { selectors?: S })
+      : createAdapter<State>()();
+    const sourcesDefined = sources || ({} as any);
+    sources = isObservable(sourcesDefined) ? { set: sourcesDefined } : sourcesDefined;
+    sources = sources as Sources<State, S, R & BasicAdapterMethods<State>>;
+
+    // Parameters are all defined
+
     const pathObj = this.parsePath(path);
-    // type S = R['selectors'];
-    const selectors = adapter.selectors || ({} as S);
+    const selectors = (adapter.selectors || {}) as S;
     const reactions = { ...adapter } as Reactions<State>;
     delete reactions.selectors;
     const [requireSources$, syntheticSources] = this.getRequireSources<
@@ -92,47 +205,6 @@ export class AdaptCommon<CommonStore extends StoreMethods = any> {
       _fullSelectors: fullSelectors,
       _select: (sel: any) => filterDefined(this.commonStore.select(sel)),
     };
-  }
-
-  initGet<State, S extends Selectors<State>, R extends ReactionsWithSelectors<State, S>>(
-    [path, adapter, initialState]: [string, Adapter<State, S, R>, State],
-    sources: Sources<State, S, R>,
-  ): Observable<State> {
-    const pathObj = this.parsePath(path);
-    const reactions = { ...adapter } as Reactions<State>;
-    delete reactions.selectors;
-    const [requireSources$] = this.getRequireSources<State, S, R, SyntheticSources<R>>(
-      reactions,
-      pathObj,
-      sources,
-      initialState,
-    );
-
-    const getState = this.getStateSelector<State>(pathObj.pathAr);
-
-    return using(
-      () => requireSources$.subscribe(),
-      () => filterDefined(this.commonStore.select(getState)),
-    );
-  }
-
-  setter<State>(
-    path: string,
-    initialState: State,
-    source$: Observable<Action<State>> | Observable<Action<State>>[],
-  ) {
-    return this.initGet([path, createBasicAdapter<State>(), initialState], {
-      set: source$,
-    });
-  }
-  updater<State>(
-    path: string,
-    initialState: State,
-    source$: Observable<Action<Partial<State>>> | Observable<Action<Partial<State>>>[],
-  ) {
-    return this.initGet([path, createBasicAdapter<State>(), initialState], {
-      update: source$,
-    });
   }
 
   /**

@@ -5,11 +5,7 @@ import { filterAdapter } from './filter.adapter';
 
 @Injectable({ providedIn: 'root' })
 export class FilterService {
-  filterToggle$ = new Source<keyof Filters>('[products] filterToggle$');
-
-  filterStore = this.adapt.init(['filters', filterAdapter, filters], {
-    toggleFilter: this.filterToggle$,
-  });
+  filterStore = this.adapt.init('filters', filters, filterAdapter);
 
   constructor(private adapt: AdaptCommon<any>) {}
 }
