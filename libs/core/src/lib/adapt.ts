@@ -261,7 +261,9 @@ export class AdaptCommon<CommonStore extends StoreMethods = any> {
     payload: any,
   ): [string[], any] {
     const pathState = this.pathStates[path];
-    const { lastState, initialState } = pathState;
+    if (pathState === undefined) {
+      throw `Cannot apply update before store "${path}" is initialized.`;
+    }
     const newState = reaction(lastState, payload, initialState);
     pathState.lastState = newState;
     return [path.split('.'), newState];

@@ -32,7 +32,5 @@ export class AppComponent {
     reset: this.resetBoth$,
   });
 
-  constructor(private adapt: AdaptCommon) {
-    this.store1.double();
-  }
+  constructor(private adapt: AdaptCommon) {}
 }
