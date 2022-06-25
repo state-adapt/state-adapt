@@ -1,4 +1,4 @@
-import { Adapter, createAdapter } from '@state-adapt/core';
+import { Adapter, createAdapter } from '../../../../libs/core/src';
 
 export interface AdapterCreatorParam {
   text: string;

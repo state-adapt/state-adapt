@@ -1,4 +1,4 @@
-import { Source } from '@state-adapt/core';
+import { Source } from '../../../../libs/core/src';
 import { useState } from 'react';
 
 export function useSource<T>(type: string): Source<T> {
