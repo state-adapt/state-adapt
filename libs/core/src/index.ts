@@ -24,6 +24,7 @@ export * from './lib/sources.type';
 export * from './lib/selections.type';
 export * from './lib/mini-store.interface';
 export * from './lib/adapter.type';
+export * from './lib/create-selector.function';
 export * from './lib/create-selectors.function';
 export * from './lib/create-reactions.function';
 export * from './lib/create-adapter.function';
