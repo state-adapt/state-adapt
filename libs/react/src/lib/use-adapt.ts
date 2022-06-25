@@ -1,4 +1,4 @@
-import { AdaptCommon } from '@state-adapt/core';
+import { AdaptCommon } from '../../../../libs/core/src';
 import { useContext, useState } from 'react';
 import { AdaptContext } from './adapt.context';
 

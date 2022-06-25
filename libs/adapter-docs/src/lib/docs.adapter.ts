@@ -1,4 +1,4 @@
-import { createAdapter, createSelectors } from '@state-adapt/core';
+import { createAdapter, createSelectors } from '../../../../libs/core/src';
 import { ListItem, TileSelection } from 'carbon-components-angular';
 import { AdapterDocsState, INITIAL_STATE } from './adapter-docs-state.interface';
 import { AdapterDocs } from './adapter-docs.interface';

@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { AdaptCommon, Source, toSource } from '@state-adapt/core';
+import { AdaptCommon, Source, toSource } from '../../../../libs/core/src';
 import { TileSelection } from 'carbon-components-angular';
 import { combineLatest, Subject } from 'rxjs';
 import {
