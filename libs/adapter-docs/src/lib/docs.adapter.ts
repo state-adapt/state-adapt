@@ -1,5 +1,5 @@
-import { createAdapter, createSelectors } from '@state-adapt/core';
 import { ListItem, TileSelection } from 'carbon-components-angular';
+import { createAdapter, createSelectors } from '../../../../libs/core/src';
 import { AdapterDocsState, INITIAL_STATE } from './adapter-docs-state.interface';
 import { AdapterDocs } from './adapter-docs.interface';
 import { DropdownSelectedEvent } from './dropdown-selection-event.interface';
@@ -126,7 +126,7 @@ export const docsAdapter = createAdapter<AdapterDocsState>()({
     ...state,
     selectedSelector,
   }),
-  selectors,
+  selectors: { ...selectors },
 });
 
 export const docsUiAdapter = createAdapter<AdapterDocsState>()({

@@ -1,6 +1,4 @@
-interface Selectors<State> {
-  [index: string]: (state: State, props?: any) => any;
-}
+import { Selectors } from './selectors.interface';
 
 export type SelectorReturnTypes<State, S extends Selectors<State>> = {
   [Key in keyof S]: ReturnType<S[Key]>;
@@ -9,7 +7,7 @@ export type SelectorReturnTypes<State, S extends Selectors<State>> = {
 export type ReturnTypeSelectors<
   State,
   S1States,
-  NewSelectors extends Selectors<S1States>
+  NewSelectors extends Selectors<S1States>,
 > = {
   [Key in keyof NewSelectors]: (
     state: State,
@@ -29,7 +27,7 @@ type SelectorsCreator<State> = {
     S extends Selectors<State>,
     S1 extends WithStateSelector<State, S>,
     S1States extends SelectorReturnTypes<State, S1>,
-    S2 extends Selectors<S1States>
+    S2 extends Selectors<S1States>,
   >(
     selectors1: S,
     selectors2: S2,
@@ -41,12 +39,12 @@ type SelectorsCreator<State> = {
     S1States extends SelectorReturnTypes<State, S1>,
     S2 extends Selectors<S1States>,
     S2States extends SelectorReturnTypes<State, S1 & S2>,
-    S3 extends Selectors<S1States & S2States>
+    S3 extends Selectors<S2States>,
   >(
     selectors1: S,
     selectors2: S2,
     selectors3: S3,
-  ): S1 & ReturnTypeSelectors<State, S1States & S2States, S2 & S3>;
+  ): S1 & ReturnTypeSelectors<State, S2States, S2 & S3>;
   // ====================================================================================== 4
   <
     S extends Selectors<State>,
@@ -54,15 +52,15 @@ type SelectorsCreator<State> = {
     S1States extends SelectorReturnTypes<State, S1>,
     S2 extends Selectors<S1States>,
     S2States extends SelectorReturnTypes<State, S1 & S2>,
-    S3 extends Selectors<S1States & S2States>,
+    S3 extends Selectors<S2States>,
     S3States extends SelectorReturnTypes<State, S1 & S2 & S3>,
-    S4 extends Selectors<S1States & S2States & S3States>
+    S4 extends Selectors<S3States>,
   >(
     selectors1: S,
     selectors2: S2,
     selectors3: S3,
     selectors4: S4,
-  ): S1 & ReturnTypeSelectors<State, S1States & S2States & S3States, S2 & S3 & S4>;
+  ): S1 & ReturnTypeSelectors<State, S3States, S2 & S3 & S4>;
   // ====================================================================================== 5
   <
     S extends Selectors<State>,
@@ -70,23 +68,18 @@ type SelectorsCreator<State> = {
     S1States extends SelectorReturnTypes<State, S1>,
     S2 extends Selectors<S1States>,
     S2States extends SelectorReturnTypes<State, S1 & S2>,
-    S3 extends Selectors<S1States & S2States>,
+    S3 extends Selectors<S2States>,
     S3States extends SelectorReturnTypes<State, S1 & S2 & S3>,
-    S4 extends Selectors<S1States & S3States>,
+    S4 extends Selectors<S3States>,
     S4States extends SelectorReturnTypes<State, S1 & S2 & S3 & S4>,
-    S5 extends Selectors<S1States & S2States & S3States & S4States>
+    S5 extends Selectors<S4States>,
   >(
     selectors1: S,
     selectors2: S2,
     selectors3: S3,
     selectors4: S4,
     selectors5: S5,
-  ): S1 &
-    ReturnTypeSelectors<
-      State,
-      S1States & S2States & S3States & S4States,
-      S2 & S3 & S4 & S5
-    >;
+  ): S1 & ReturnTypeSelectors<State, S4States, S2 & S3 & S4 & S5>;
   // ====================================================================================== 6
   <
     S extends Selectors<State>,
@@ -94,13 +87,13 @@ type SelectorsCreator<State> = {
     S1States extends SelectorReturnTypes<State, S1>,
     S2 extends Selectors<S1States>,
     S2States extends SelectorReturnTypes<State, S1 & S2>,
-    S3 extends Selectors<S1States & S2States>,
+    S3 extends Selectors<S2States>,
     S3States extends SelectorReturnTypes<State, S1 & S2 & S3>,
-    S4 extends Selectors<S1States & S3States>,
+    S4 extends Selectors<S3States>,
     S4States extends SelectorReturnTypes<State, S1 & S2 & S3 & S4>,
-    S5 extends Selectors<S1States & S2States & S3States & S4States>,
+    S5 extends Selectors<S4States>,
     S5States extends SelectorReturnTypes<State, S1 & S2 & S3 & S4 & S5>,
-    S6 extends Selectors<S1States & S2States & S3States & S4States & S5States>
+    S6 extends Selectors<S5States>,
   >(
     selectors1: S,
     selectors2: S2,
@@ -108,12 +101,7 @@ type SelectorsCreator<State> = {
     selectors4: S4,
     selectors5: S5,
     selectors6: S6,
-  ): S1 &
-    ReturnTypeSelectors<
-      State,
-      S1States & S2States & S3States & S4States & S5States,
-      S2 & S3 & S4 & S5 & S6
-    >;
+  ): S1 & ReturnTypeSelectors<State, S5States, S2 & S3 & S4 & S5 & S6>;
   // ====================================================================================== 7
   <
     S extends Selectors<State>,
@@ -121,15 +109,15 @@ type SelectorsCreator<State> = {
     S1States extends SelectorReturnTypes<State, S1>,
     S2 extends Selectors<S1States>,
     S2States extends SelectorReturnTypes<State, S1 & S2>,
-    S3 extends Selectors<S1States & S2States>,
+    S3 extends Selectors<S2States>,
     S3States extends SelectorReturnTypes<State, S1 & S2 & S3>,
-    S4 extends Selectors<S1States & S3States>,
+    S4 extends Selectors<S3States>,
     S4States extends SelectorReturnTypes<State, S1 & S2 & S3 & S4>,
-    S5 extends Selectors<S1States & S2States & S3States & S4States>,
+    S5 extends Selectors<S4States>,
     S5States extends SelectorReturnTypes<State, S1 & S2 & S3 & S4 & S5>,
-    S6 extends Selectors<S1States & S2States & S3States & S4States & S5States>,
+    S6 extends Selectors<S5States>,
     S6States extends SelectorReturnTypes<State, S1 & S2 & S3 & S4 & S5 & S6>,
-    S7 extends Selectors<S1States & S2States & S3States & S4States & S5States & S6States>
+    S7 extends Selectors<S6States>,
   >(
     selectors1: S,
     selectors2: S2,
@@ -138,13 +126,14 @@ type SelectorsCreator<State> = {
     selectors5: S5,
     selectors6: S6,
     selectors7: S7,
-  ): S1 &
-    ReturnTypeSelectors<
-      State,
-      S1States & S2States & S3States & S4States & S5States & S6States,
-      S2 & S3 & S4 & S5 & S6 & S7
-    >;
+  ): S1 & ReturnTypeSelectors<State, S6States, S2 & S3 & S4 & S5 & S6 & S7>;
 };
+
+export function createSelectors<State>(): SelectorsCreator<State> {
+  return (...args: any) => {
+    return createSelectorsFn(args);
+  };
+}
 
 export function createSelectorsFn([selectors1, ...args]: any) {
   return args.reduce(
@@ -154,17 +143,11 @@ export function createSelectorsFn([selectors1, ...args]: any) {
   );
 }
 
-export function createSelectors<State>(): SelectorsCreator<State> {
-  return (...args: any) => {
-    return createSelectorsFn(args);
-  };
-}
-
-function combineSelectors<State>() {
+export function combineSelectors<State>() {
   return <
     S1 extends Selectors<State>,
     S1States extends SelectorReturnTypes<State, S1>,
-    S2 extends Selectors<S1States>
+    S2 extends Selectors<S1States>,
   >(
     selectors: S1,
     newSelectors: S2 = {} as S2,
