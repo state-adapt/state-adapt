@@ -2,7 +2,7 @@ import {
   actionSanitizer,
   stateSanitizer,
   createStore,
-} from '@state-adapt/core';
+} from '../../../../libs/core/src';
 import React from 'react';
 
 const enableReduxDevTools = (window as any).__REDUX_DEVTOOLS_EXTENSION__?.({
