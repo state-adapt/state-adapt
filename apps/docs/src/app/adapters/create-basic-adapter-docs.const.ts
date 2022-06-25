@@ -6,11 +6,16 @@ import { basicAdapter } from './basic.adapter';
 export const createBasicAdapterDocs: AdapterDocs = {
   name: 'createBasicAdapter',
   description: 'Adapter for basic operations: set, update and reset',
-  sourceCode: (createDemoAdapterCode as unknown) as string,
+  sourceCode: createDemoAdapterCode as unknown as string,
   parameters: [],
   demoAdapter: {
     value: basicAdapter,
     stateChanges: {
+      noop: {
+        demoPayload: 'null',
+        documentation:
+          'Returns previous state. Used to enable sources to dispatch for Redux Devtoos.',
+      },
       set: {
         demoPayload: '{ "prop1": "New state set", "prop2": "New State set" }',
         documentation: 'Sets state to value passed in payload.',

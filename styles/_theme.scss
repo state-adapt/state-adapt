@@ -1,4 +1,4 @@
-@use "sass:map";
+@use 'sass:map';
 @import '@carbon/themes/scss/themes';
 
 $customizations: (
@@ -337,7 +337,7 @@ $customizations: (
   // container-04: 3rem,
   // container-05: 4rem,
   // icon-size-01: 1rem,
-  // icon-size-02: 1.25rem,,
+  // icon-size-02: 1.25rem,,,
 );
 
 $large-screen: 1100px;

@@ -167,7 +167,7 @@ import { getDiffHtml, toJson } from './get-diff-html.function';
           width: 200px !important;
         }
         ::ng-deep .state-change-panel {
-          margin-left: calc(12px -200px) !important;
+          margin-left: calc(12px - 200px) !important;
           width: calc(100% + 0px - 12px) !important;
         }
         ::ng-deep .selector-panel {
@@ -299,7 +299,7 @@ export class AdapterDocsComponent implements OnInit {
   );
   historyItemSelected$ = new Source<TileSelection>('historyItemSelected$');
 
-  docsStore = this.adapt.init([this.path, docsUiAdapter, initialState], {
+  docsStore = this.adapt.init([this.path, initialState, docsUiAdapter], {
     receiveDocs: this.docsReceived$,
     selectStateChange: this.stateChangeSelection$,
     selectStateChangeFromHistory: this.historyItemSelected$,
