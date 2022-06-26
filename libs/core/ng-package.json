@@ -3,5 +3,6 @@
   "dest": "../../dist/libs/core",
   "lib": {
     "entryFile": "src/index.ts"
-  }
+  },
+  "allowedNonPeerDependencies": ["reselect"]
 }
