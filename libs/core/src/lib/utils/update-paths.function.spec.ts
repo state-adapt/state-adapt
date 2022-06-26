@@ -1,5 +1,5 @@
 import { updatePaths } from './update-paths.function';
-import { Update } from './adapt.actions';
+import { Update } from '../global-store/adapt.actions';
 
 const testCases: { inputs: [any, Update[]]; output: any }[] = [
   {
@@ -66,7 +66,7 @@ const testCases: { inputs: [any, Update[]]; output: any }[] = [
 describe('updatePaths', () => {
   it('should update paths correctly for all test cases', () => {
     testCases.forEach(({ inputs, output }) =>
-      expect(updatePaths(...inputs)).toEqual(output)
+      expect(updatePaths(...inputs)).toEqual(output),
     );
   });
 });

@@ -1,19 +1,23 @@
 import { createSelector } from 'reselect';
 import { defer, isObservable, merge, NEVER, Observable, of, using } from 'rxjs';
 import { distinctUntilChanged, filter, finalize, share, tap } from 'rxjs/operators';
-import type { Action } from './action.interface';
-import { createDestroy, createInit, createPatchState } from './adapt.actions';
-import { Adapter, ReactionsWithSelectors } from './adapter.type';
-import { BasicAdapterMethods, createAdapter } from './create-adapter.function';
-import { getAction } from './get-action.function';
-import { MiniStore } from './mini-store.interface';
-import { Reactions } from './reactions.interface';
-import { Selections } from './selections.type';
-import { Selectors } from './selectors.interface';
-import { Sources } from './sources.type';
-import { SyntheticSources } from './synthetic-sources.type';
-import { flatten } from './utils/flatten.function';
-import { WithGetState } from './with-get-state.type';
+import type { Action } from '../actions/action.interface';
+import { getAction } from '../actions/get-action.function';
+import { Adapter, ReactionsWithSelectors } from '../adapters/adapter.type';
+import { BasicAdapterMethods, createAdapter } from '../adapters/create-adapter.function';
+import { Reactions } from '../adapters/reactions.interface';
+import { SyntheticSources } from '../adapters/synthetic-sources.type';
+import {
+  createDestroy,
+  createInit,
+  createPatchState,
+} from '../global-store/adapt.actions';
+import { Selections } from '../selectors/selections.type';
+import { Selectors } from '../selectors/selectors.interface';
+import { WithGetState } from '../selectors/with-get-state.type';
+import { MiniStore } from '../stores/mini-store.interface';
+import { Sources } from '../stores/sources.type';
+import { flatten } from '../utils/flatten.function';
 
 let pathId = 0;
 function getUniquePath(path: string) {

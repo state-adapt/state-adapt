@@ -1,4 +1,4 @@
-import type { Update } from './adapt.actions';
+import type { Update } from '../global-store/adapt.actions';
 
 export function updatePaths<T>(oldState: T, updates: Update[]): T {
   let newValEntry: Update | undefined;

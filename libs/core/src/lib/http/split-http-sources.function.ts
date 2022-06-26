@@ -1,5 +1,6 @@
 import { Observable } from 'rxjs';
-import { splitSources } from '../split-sources.function';
+import { PrefixedAction } from '../actions/prefixed-action.type';
+import { splitSources } from '../sources/split-sources.function';
 import {
   GetHttpActions,
   GetHttpActionsWithReq,
@@ -9,7 +10,6 @@ import {
 } from './get-http-actions.function';
 import { ErrorAction, ErrorActionWithReq } from './get-http-error.function';
 import { prefixSource } from './prefix-source.function';
-import { PrefixedAction } from './prefixed-action.type';
 
 export type SeparatedHttpSources<Prefix extends string, Body, Err> = {
   request$: Observable<PrefixedAction<Prefix, RequestActionVoid>>;

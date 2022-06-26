@@ -1,5 +1,5 @@
+import { Selectors } from '../selectors/selectors.interface';
 import { Adapter, ReactionsWithSelectors } from './adapter.type';
-import { Selectors } from './selectors.interface';
 
 export type BasicAdapterMethods<State> = {
   noop: (s: State) => State;

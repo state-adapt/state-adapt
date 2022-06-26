@@ -1,8 +1,8 @@
 import { Observable } from 'rxjs';
-import { Action } from './action.interface';
-import { SecondParameterOrAny } from './second-parameter-or-any.type';
-import { Selectors } from './selectors.interface';
-import { ReactionsWithSelectors } from './adapter.type';
+import { Action } from '../actions/action.interface';
+import { ReactionsWithSelectors } from '../adapters/adapter.type';
+import { SecondParameterOrAny } from '../adapters/second-parameter-or-any.type';
+import { Selectors } from '../selectors/selectors.interface';
 
 export type ActionPayload<
   R extends { [index: string]: any },

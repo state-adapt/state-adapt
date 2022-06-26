@@ -1,6 +1,6 @@
 import { concat, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { getAction } from '../get-action.function';
+import { getAction } from '../actions/get-action.function';
 import { getCatchHttpError } from './get-catch-http-error.function';
 import { ErrorAction, ErrorActionWithReq } from './get-http-error.function';
 

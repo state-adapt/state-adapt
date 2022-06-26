@@ -1,23 +1,23 @@
 import { createSelector } from 'reselect';
 import { merge, using } from 'rxjs';
-import { AnySelectors } from './any-selectors.interface';
+import { AnySelectors } from '../selectors/any-selectors.interface';
+import { Selectors } from '../selectors/selectors.interface';
 import { JoinedMiniStore } from './joined-mini-store.interface';
 import { JoinedSelectors } from './joined-selectors.type';
 import { MiniStore } from './mini-store.interface';
-import { Selectors } from './selectors.interface';
 import { StoreLike } from './store-like.type';
 
 type SelectorKey<
   State,
   S extends Selectors<State>,
-  AS extends AnySelectors
+  AS extends AnySelectors,
 > = keyof StoreLike<State, S, AS>['_fullSelectors'];
 
 type StoreSelectorInput<
   State,
   S extends Selectors<State>,
   AS extends AnySelectors,
-  SelectorKey1 extends SelectorKey<State, S, AS> = 'state'
+  SelectorKey1 extends SelectorKey<State, S, AS> = 'state',
 > = StoreLike<State, S, AS> | [StoreLike<State, S, AS>, SelectorKey1];
 
 export function joinSelectors<
@@ -36,7 +36,7 @@ export function joinSelectors<
     StoreLike<State2, S2, AS2>['_fullSelectors'][SelectorKey2]
   > = ReturnType<StoreLike<State2, S2, AS2>['_fullSelectors'][SelectorKey2]>,
   NewS extends AnySelectors = AnySelectors,
-  NewState = any
+  NewState = any,
 >(
   selectorInput1: StoreSelectorInput<State1, S1, AS1, SelectorKey1>,
   selectorInput2: StoreSelectorInput<State2, S2, AS2, SelectorKey2>,
@@ -66,7 +66,7 @@ export function joinSelectors<
     StoreLike<State3, S3, AS3>['_fullSelectors'][SelectorKey3]
   > = ReturnType<StoreLike<State3, S3, AS3>['_fullSelectors'][SelectorKey3]>,
   NewS extends AnySelectors = AnySelectors,
-  NewState = any
+  NewState = any,
 >(
   selectorInput1: StoreSelectorInput<State1, S1, AS1, SelectorKey1>,
   selectorInput2: StoreSelectorInput<State2, S2, AS2, SelectorKey2>,
@@ -104,7 +104,7 @@ export function joinSelectors<
     StoreLike<State4, S4, AS4>['_fullSelectors'][SelectorKey4]
   > = ReturnType<StoreLike<State4, S4, AS4>['_fullSelectors'][SelectorKey4]>,
   NewS extends AnySelectors = AnySelectors,
-  NewState = any
+  NewState = any,
 >(
   selectorInput1: StoreSelectorInput<State1, S1, AS1, SelectorKey1>,
   selectorInput2: StoreSelectorInput<State2, S2, AS2, SelectorKey2>,
@@ -155,7 +155,7 @@ export function joinSelectors<
     StoreLike<State5, S5, AS5>['_fullSelectors'][SelectorKey5]
   > = ReturnType<StoreLike<State5, S5, AS5>['_fullSelectors'][SelectorKey5]>,
   NewS extends AnySelectors = AnySelectors,
-  NewState = any
+  NewState = any,
 >(
   selectorInput1: StoreSelectorInput<State1, S1, AS1, SelectorKey1>,
   selectorInput2: StoreSelectorInput<State2, S2, AS2, SelectorKey2>,

@@ -1,12 +1,15 @@
 import { createSelector } from 'reselect';
 import { merge, using } from 'rxjs';
-// import { AnySelectors } from './any-selectors.interface';
-import { createSelectors, SelectorReturnTypes } from './create-selectors.function';
+// import { AnySelectors } from '../selectors/any-selectors.interface';
+import {
+  createSelectors,
+  SelectorReturnTypes,
+} from '../selectors/create-selectors.function';
+import { Selections } from '../selectors/selections.type';
 import { JoinedMiniStore } from './joined-mini-store.interface';
 import { JoinedSelectors } from './joined-selectors.type';
 import { MiniStore } from './mini-store.interface';
-import { Selections } from './selections.type';
-// import { Selectors } from './selectors.interface';
+// import { Selectors } from '../selectors/selectors.interface';
 import { StoreLike } from './store-like.type';
 
 interface Selectors<State> {
@@ -36,7 +39,7 @@ export function join<
     PrefixedSelectors
   >,
   NewS extends Selectors<PrefixedState>,
-  CombinedS extends NewS & PrefixedSelectors
+  CombinedS extends NewS & PrefixedSelectors,
 >(
   store1: [Prefix1, StoreLike<State1, S1, AS1>],
   store2: [Prefix2, StoreLike<State2, S2, AS2>],
@@ -63,7 +66,7 @@ export function join<
     PrefixedSelectors
   >,
   NewS extends Selectors<PrefixedState>,
-  CombinedS extends NewS & PrefixedSelectors
+  CombinedS extends NewS & PrefixedSelectors,
 >(
   store1: [Prefix1, StoreLike<State1, S1, AS1>],
   store2: [Prefix2, StoreLike<State2, S2, AS2>],
@@ -99,7 +102,7 @@ export function join<
     PrefixedSelectors
   >,
   NewS extends Selectors<PrefixedState>,
-  CombinedS extends NewS & PrefixedSelectors
+  CombinedS extends NewS & PrefixedSelectors,
 >(
   store1: [Prefix1, StoreLike<State1, S1, AS1>],
   store2: [Prefix2, StoreLike<State2, S2, AS2>],
@@ -142,7 +145,7 @@ export function join<
     PrefixedSelectors
   >,
   NewS extends Selectors<PrefixedState>,
-  CombinedS extends NewS & PrefixedSelectors
+  CombinedS extends NewS & PrefixedSelectors,
 >(
   store1: [Prefix1, StoreLike<State1, S1, AS1>],
   store2: [Prefix2, StoreLike<State2, S2, AS2>],

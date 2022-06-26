@@ -1,12 +1,8 @@
-import { createStateAdapt } from './create-state-adapt.funciton';
-import { createAdaptNestedReducer } from './create-adapt-nested-reducer.function';
 import { adaptReducer } from './adapt.reducer';
+import { createAdaptNestedReducer } from './create-adapt-nested-reducer.function';
+import { createStateAdapt } from './create-state-adapt.funciton';
 
-function createReduxLikeStore(
-  reducer: any,
-  preloadedState: any,
-  enhancer: any,
-) {
+function createReduxLikeStore(reducer: any, preloadedState: any, enhancer: any) {
   let state = preloadedState ?? undefined;
   const listeners: any[] = [];
 

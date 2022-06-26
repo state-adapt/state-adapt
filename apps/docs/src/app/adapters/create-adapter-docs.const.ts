@@ -1,15 +1,15 @@
 import { AdapterDocs } from '@state-adapt/adapter-docs';
-import demoAdapterCode from '!!raw-loader!./basic.adapter';
-import createDemoAdapterCode from '!!raw-loader!./../../../../../libs/core/src/lib/create-basic-adapter.function';
-import { basicAdapter } from './basic.adapter';
+import demoAdapterCode from '!!raw-loader!./adapter';
+import createDemoAdapterCode from '!!raw-loader!./../../../../../libs/core/src/lib/adapters/create-adapter.function';
+import { adapter } from './adapter';
 
-export const createBasicAdapterDocs: AdapterDocs = {
-  name: 'createBasicAdapter',
-  description: 'Adapter for basic operations: set, update and reset',
+export const createAdapterDocs: AdapterDocs = {
+  name: 'createAdapter',
+  description: 'Base adapter with basic operations: noop, set, update and reset',
   sourceCode: createDemoAdapterCode as unknown as string,
   parameters: [],
   demoAdapter: {
-    value: basicAdapter,
+    value: adapter,
     stateChanges: {
       noop: {
         demoPayload: 'null',
@@ -31,8 +31,8 @@ export const createBasicAdapterDocs: AdapterDocs = {
     },
     selectors: {},
     initialState: {
-      prop1: 'Initial state for basic adapter demo',
-      prop2: 'Initial state for basic adapter demo',
+      prop1: 'Initial state for base adapter demo',
+      prop2: 'Initial state for base adapter demo',
     },
     sourceCode: demoAdapterCode,
   },

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { AdaptCommon, Source, toSource } from '@state-adapt/core';
-import { interval, timer } from 'rxjs';
+import { interval } from 'rxjs';
 import { countAdapter } from './count.adapter';
 
 @Component({

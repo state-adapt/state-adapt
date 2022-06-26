@@ -1,4 +1,4 @@
-import { Action } from '../action.interface';
+import { Action } from './action.interface';
 import { PrefixedAction } from './prefixed-action.type';
 
 export function prefixAction<

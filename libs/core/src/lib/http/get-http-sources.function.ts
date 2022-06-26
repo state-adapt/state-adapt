@@ -1,14 +1,14 @@
 import { Observable } from 'rxjs';
 import {
-  SeparatedHttpSources,
-  SeparatedHttpSourcesWithReq,
-  splitHttpSources,
-} from './split-http-sources.function';
-import {
   getHttpActions,
   GetHttpActionsWithReq,
   GetResponse,
 } from './get-http-actions.function';
+import {
+  SeparatedHttpSources,
+  SeparatedHttpSourcesWithReq,
+  splitHttpSources,
+} from './split-http-sources.function';
 
 export function getHttpSources<Prefix extends string, Res, Body, Err>(
   feature: Prefix,

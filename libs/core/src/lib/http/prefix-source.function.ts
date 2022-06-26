@@ -1,7 +1,7 @@
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Action } from '../action.interface';
-import { prefixAction } from './prefix-action.function';
+import { Action } from '../actions/action.interface';
+import { prefixAction } from '../actions/prefix-action.function';
 
 export function prefixSource<
   Type extends string = string,

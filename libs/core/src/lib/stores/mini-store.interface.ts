@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs';
-import { Selections } from './selections.type';
-import { Selectors } from './selectors.interface';
+import { Selections } from '../selectors/selections.type';
+import { Selectors } from '../selectors/selectors.interface';
 
 export type MiniStore<State, S extends Selectors<State>> = Selections<State, S> & {
   _requireSources$: Observable<any>;
