@@ -215,7 +215,7 @@ export class AdaptCommon<CommonStore extends StoreMethods = any> {
    * Returns a detached store; doesn't chain off of sources.
    * Path must be correct.
    */
-  spy<State, S extends Selectors<State>, R extends ReactionsWithSelectors<State, S>>(
+  watch<State, S extends Selectors<State>, R extends ReactionsWithSelectors<State, S>>(
     path: string,
     adapter: Adapter<State, S, R & BasicAdapterMethods<State>>,
     //

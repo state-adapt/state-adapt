@@ -268,7 +268,7 @@ export class AdapterDocsComponent implements OnInit {
   @Input() adapterDocs: AdapterDocs = defaultAdapterDocs;
   path = ('adapterDocs' + Math.random()).replace('.', '');
 
-  detachedDocsStore = this.adapt.spy(this.path, docsAdapter);
+  detachedDocsStore = this.adapt.watch(this.path, docsAdapter);
 
   docsInputValue$ = new Subject<AdapterDocs>();
   docsReceived$ = this.docsInputValue$.pipe(toSource('docsReceived$'));
