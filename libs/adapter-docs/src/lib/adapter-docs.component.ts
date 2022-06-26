@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { AdaptCommon, Source, toSource } from '@state-adapt/core';
+import { Source, toSource } from '@state-adapt/core';
 import { TileSelection } from 'carbon-components-angular';
+import { adapt, watch } from '@state-adapt/angular';
 import { combineLatest, Subject } from 'rxjs';
 import {
   debounceTime,
@@ -268,7 +269,7 @@ export class AdapterDocsComponent implements OnInit {
   @Input() adapterDocs: AdapterDocs = defaultAdapterDocs;
   path = ('adapterDocs' + Math.random()).replace('.', '');
 
-  detachedDocsStore = this.adapt.watch(this.path, docsAdapter);
+  detachedDocsStore = watch(this.path, docsAdapter);
 
   docsInputValue$ = new Subject<AdapterDocs>();
   docsReceived$ = this.docsInputValue$.pipe(toSource('docsReceived$'));
@@ -299,7 +300,7 @@ export class AdapterDocsComponent implements OnInit {
   );
   historyItemSelected$ = new Source<TileSelection>('historyItemSelected$');
 
-  docsStore = this.adapt.init([this.path, initialState, docsUiAdapter], {
+  docsStore = adapt([this.path, initialState, docsUiAdapter], {
     receiveDocs: this.docsReceived$,
     selectStateChange: this.stateChangeSelection$,
     selectStateChangeFromHistory: this.historyItemSelected$,
@@ -352,8 +353,6 @@ export class AdapterDocsComponent implements OnInit {
       return getDiffHtml(...selectorDiff);
     }),
   );
-
-  constructor(private adapt: AdaptCommon<any>) {}
 
   ngOnInit() {
     setTimeout(() => this.docsInputValue$.next(this.adapterDocs));
