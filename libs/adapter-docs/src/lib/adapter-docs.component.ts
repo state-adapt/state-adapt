@@ -1,7 +1,7 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
+import { adapt, watch } from '@state-adapt/angular';
 import { Source, toSource } from '@state-adapt/core';
 import { TileSelection } from 'carbon-components-angular';
-import { adapt, watch } from '@state-adapt/angular';
 import { combineLatest, Subject } from 'rxjs';
 import {
   debounceTime,
@@ -16,6 +16,7 @@ import { initialState } from './adapter-docs-state.interface';
 import { AdapterDocs, defaultAdapterDocs } from './adapter-docs.interface';
 import { docsAdapter, docsUiAdapter } from './docs.adapter';
 import { DropdownSelectedEvent } from './dropdown-selection-event.interface';
+import { EditorReadyService } from './editor-ready.service';
 import { getDiffHtml, toJson } from './get-diff-html.function';
 
 @Component({
@@ -81,18 +82,33 @@ import { getDiffHtml, toJson } from './get-diff-html.function';
         </div>
         <ibm-tabs>
           <ibm-tab heading="Payload">
-            <!-- <div
+            <div
               class="editor-placeholder"
-              *ngIf="payloadEditorRefreshRequired$ | async"
-            ></div> -->
-            <ngs-code-editor
+              *ngIf="
+                (payloadEditorRefreshRequired$ | async) ||
+                (editorReady$ | async) === false
+              "
+            ></div>
+            <!-- <wc-monaco-editor
+              [value]="(codeModel$ | async)?.value"
+              (keypress)="editorKeyPressed$.next($event)"
+            ></wc-monaco-editor> -->
+            <!--
+              language="json"
+              https://github.com/vanillawc/wc-monaco-editor/issues/13
+              [language]="(codeModel$ | async)?.language"
               *ngIf="(payloadEditorRefreshRequired$ | async) === false"
-              theme="vs-dark"
-              [codeModel]="codeModel$ | async"
-              [options]="codeOptions"
-              (keypress)="editorKeyPressed$.next()"
-              (valueChanged)="payloadChanged$.next($event)"
-            ></ngs-code-editor>
+            -->
+            <ng-container *ngIf="editorReady$ | async">
+              <ngs-code-editor
+                *ngIf="(payloadEditorRefreshRequired$ | async) === false"
+                theme="vs-dark"
+                [codeModel]="codeModel$ | async"
+                [options]="codeOptions"
+                (keypress)="editorKeyPressed$.next($event)"
+              ></ngs-code-editor>
+            </ng-container>
+            <!-- (valueChanged)="payloadChanged$.next($event)" -->
           </ibm-tab>
           <ibm-tab class="padded" heading="Documentation">
             {{ (selectedStateChange$ | async)?.documentation }}
@@ -267,6 +283,7 @@ import { getDiffHtml, toJson } from './get-diff-html.function';
 })
 export class AdapterDocsComponent implements OnInit {
   @Input() adapterDocs: AdapterDocs = defaultAdapterDocs;
+  editorReady$ = inject(EditorReadyService).ready$;
   path = ('adapterDocs' + Math.random()).replace('.', '');
 
   detachedDocsStore = watch(this.path, docsAdapter);
@@ -280,13 +297,11 @@ export class AdapterDocsComponent implements OnInit {
     toSource('stateChangePayloadDelay$'),
   );
   selectorSelection$ = new Source<DropdownSelectedEvent>('selectorSelection$');
-  payloadChanged$ = new Source<string>('payloadChanged$');
-  // Editor emits when it receives a new value
-  // So only listen to it right after a key press
-  editorKeyPressed$ = new Subject<void>();
+  editorKeyPressed$ = new Subject<KeyboardEvent>();
   payloadChangedDebounced$ = this.editorKeyPressed$.pipe(
-    switchMap(() => this.payloadChanged$.pipe(first())),
-    debounceTime(500),
+    debounceTime(200),
+    map(event => (event.target as HTMLInputElement).value),
+    toSource('editorKeyPressed$'),
   );
   executeClicked$ = new Subject<void>();
   demoAdapterValue$ = this.docsInputValue$.pipe(map(docs => docs.demoAdapter.value));
@@ -296,7 +311,7 @@ export class AdapterDocsComponent implements OnInit {
     map(([{ state, payload, initialState, stateChangeName }, demoAdapter]) =>
       demoAdapter[stateChangeName](state, JSON.parse(payload), initialState),
     ),
-    toSource('newStateCalculated$'),
+    toSource('executeClicked$'),
   );
   historyItemSelected$ = new Source<TileSelection>('historyItemSelected$');
 
@@ -356,7 +371,6 @@ export class AdapterDocsComponent implements OnInit {
 
   ngOnInit() {
     setTimeout(() => this.docsInputValue$.next(this.adapterDocs));
-    this.payloadChanged$.subscribe(a => console.log('a', a));
   }
 
   getState(state: any) {

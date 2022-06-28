@@ -7,13 +7,9 @@ export function getMarkedOptions(): MarkedOptions {
     const isNested = text.includes('[nested]');
     const orderedClassName = ordered ? 'ordered' : 'unordered';
     const className = isNested ? 'nested' : orderedClassName;
-    return `<ul class="bx--list--${className}">${text.replace(
-      '[nested]',
-      '',
-    )}</ul>`;
+    return `<ul class="bx--list--${className}">${text.replace('[nested]', '')}</ul>`;
   };
-  renderer.listitem = (text: string) =>
-    `<li class="bx--list__item">${text}</li>`;
+  renderer.listitem = (text: string) => `<li class="bx--list__item">${text}</li>`;
   // renderer.heading = (text: string, level: number) => text;
 
   return { renderer };

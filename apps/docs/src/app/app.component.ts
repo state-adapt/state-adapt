@@ -1,5 +1,5 @@
 import { Location } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, Injector } from '@angular/core';
 import { Event, Router, RouterEvent } from '@angular/router';
 import { merge, Subject } from 'rxjs';
 import { filter, map, startWith } from 'rxjs/operators';
@@ -61,12 +61,24 @@ export class AppComponent {
       },
     ]),
   );
-  constructor(private location: Location, private router: Router) {
+  constructor(
+    private location: Location,
+    private router: Router,
+    private injector: Injector,
+  ) {
     const path = localStorage.getItem('path');
     if (path) {
       localStorage.removeItem('path');
       this.router.navigate([path]);
     }
+
+    // https://github.com/ngstack/code-editor/issues/628
+    import('./adapters/adapters-core.component').then(m =>
+      this.injector
+        .get(m.CodeEditorService)
+        .loadEditor()
+        .then(() => this.injector.get(m.EditorReadyService).ready$.next(true)),
+    );
   }
 
   navigate(e: any) {
@@ -81,11 +93,7 @@ export class AppComponent {
     this.sidenavExpanded = !this.sidenavExpanded;
   }
 
-  private mapToChildRoute(
-    url: string,
-    baseUrl: string,
-    [childUrl, childName]: string[],
-  ) {
+  private mapToChildRoute(url: string, baseUrl: string, [childUrl, childName]: string[]) {
     const route = baseUrl + childUrl;
     const hashUrl = new RegExp(/#.*/);
     return {

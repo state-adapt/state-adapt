@@ -1,4 +1,7 @@
+import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { TilesModule } from 'carbon-components-angular/tiles';
+import { ContentComponent } from '../content.component';
 
 interface Demo {
   title: string;
@@ -8,16 +11,14 @@ interface Demo {
 }
 
 @Component({
+  standalone: true,
   selector: 'state-adapt-demos',
+  imports: [CommonModule, ContentComponent, TilesModule],
   template: `
     <state-adapt-content>
       <h1>Demos</h1>
       <div class="demo-tiles-container">
-        <ibm-clickable-tile
-          *ngFor="let demo of demos"
-          [href]="demo.href"
-          target="_blank"
-        >
+        <ibm-clickable-tile *ngFor="let demo of demos" [href]="demo.href" target="_blank">
           <div>
             <h3>{{ demo.title }}</h3>
             <ol>
@@ -63,15 +64,13 @@ export class DemosComponent {
   demos: Demo[] = [
     {
       title: 'Angular Reactive Forms with NgRx',
-      href:
-        'https://stackblitz.com/edit/angular-reactive-forms-state-management?file=src%2Fapp%2Fform%2Fstate-adapt-form.component.ts',
+      href: 'https://stackblitz.com/edit/angular-reactive-forms-state-management?file=src%2Fapp%2Fform%2Fstate-adapt-form.component.ts',
       img: '../../assets/ngrx-forms-screenshot.png',
       features: ['NgRx', 'Angular Reactive Forms'],
     },
     {
       title: 'Shopping Cart',
-      href:
-        'https://stackblitz.com/github/state-adapt/state-adapt/tree/stackblitz-ng-sa-shopping?file=apps%2Fng-sa-shopping%2Fsrc%2Fapp%2Fapp.component.ts',
+      href: 'https://stackblitz.com/github/state-adapt/state-adapt/tree/stackblitz-ng-sa-shopping?file=apps%2Fng-sa-shopping%2Fsrc%2Fapp%2Fapp.component.ts',
       img: '../../assets/shopping-screenshot.png',
       features: [
         '2 state adapters',

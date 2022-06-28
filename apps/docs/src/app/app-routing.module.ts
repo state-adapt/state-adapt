@@ -1,14 +1,6 @@
 import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
-import { ConceptsOverviewComponent } from './concepts/overview.component';
-import { SourcesComponent } from './concepts/sources.component';
-import { AdaptersComponent } from './concepts/adapters.component';
-import { DemosComponent } from './demos/demos.component';
-import { GettingStartedComponent } from './getting-started/getting-started.component';
+import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 import { IntroComponent } from './intro/intro.component';
-import { StoresComponent } from './concepts/stores.component';
-import { ThinkingReactivelyComponent } from './concepts/thinking-reactively.component';
-import { AdaptersCoreComponent } from './adapters/adapters-core.component';
 
 const routes: Routes = [
   {
@@ -25,11 +17,14 @@ const routes: Routes = [
   // },
   {
     path: 'getting-started',
-    component: GettingStartedComponent,
+    loadComponent: () =>
+      import('./getting-started/getting-started.component').then(
+        m => m.GettingStartedComponent,
+      ),
   },
   {
     path: 'demos',
-    component: DemosComponent,
+    loadComponent: () => import('./demos/demos.component').then(m => m.DemosComponent),
   },
   {
     path: 'dashboards',
@@ -43,29 +38,37 @@ const routes: Routes = [
     children: [
       {
         path: 'overview',
-        component: ConceptsOverviewComponent,
+        loadComponent: () =>
+          import('./concepts/overview.component').then(m => m.ConceptsOverviewComponent),
       },
       {
         path: 'sources',
-        component: SourcesComponent,
+        loadComponent: () =>
+          import('./concepts/sources.component').then(m => m.SourcesComponent),
       },
       {
         path: 'adapters',
-        component: AdaptersComponent,
+        loadComponent: () =>
+          import('./concepts/adapters.component').then(m => m.AdaptersComponent),
       },
       {
         path: 'stores',
-        component: StoresComponent,
+        loadComponent: () =>
+          import('./concepts/stores.component').then(m => m.StoresComponent),
       },
       {
         path: 'thinking-reactively',
-        component: ThinkingReactivelyComponent,
+        loadComponent: () =>
+          import('./concepts/thinking-reactively.component').then(
+            m => m.ThinkingReactivelyComponent,
+          ),
       },
     ],
   },
   {
     path: 'adapters/:adapterName',
-    component: AdaptersCoreComponent,
+    loadComponent: () =>
+      import('./adapters/adapters-core.component').then(m => m.AdaptersCoreComponent),
   },
   {
     path: '**',
@@ -80,6 +83,7 @@ const routes: Routes = [
       scrollPositionRestoration: 'enabled',
       anchorScrolling: 'enabled',
       scrollOffset: [0, 50],
+      preloadingStrategy: PreloadAllModules,
     }),
   ],
   exports: [RouterModule],
