@@ -36,11 +36,11 @@ export function joinSelectors<
     StoreLike<State2, S2, AS2>['_fullSelectors'][SelectorKey2]
   > = ReturnType<StoreLike<State2, S2, AS2>['_fullSelectors'][SelectorKey2]>,
   NewS extends AnySelectors = AnySelectors,
-  NewState = any,
+  NewState = [ReturnState1, ReturnState2],
 >(
   selectorInput1: StoreSelectorInput<State1, S1, AS1, SelectorKey1>,
   selectorInput2: StoreSelectorInput<State2, S2, AS2, SelectorKey2>,
-  newSelector: (s1: ReturnState1, s2: ReturnState2) => NewState,
+  newSelector?: (s1: ReturnState1, s2: ReturnState2) => NewState,
 ): JoinedMiniStore<any, JoinedSelectors<NewS, NewState>>;
 
 export function joinSelectors<
@@ -66,12 +66,12 @@ export function joinSelectors<
     StoreLike<State3, S3, AS3>['_fullSelectors'][SelectorKey3]
   > = ReturnType<StoreLike<State3, S3, AS3>['_fullSelectors'][SelectorKey3]>,
   NewS extends AnySelectors = AnySelectors,
-  NewState = any,
+  NewState = [ReturnState1, ReturnState2, ReturnState3],
 >(
   selectorInput1: StoreSelectorInput<State1, S1, AS1, SelectorKey1>,
   selectorInput2: StoreSelectorInput<State2, S2, AS2, SelectorKey2>,
   selectorInput3: StoreSelectorInput<State3, S3, AS3, SelectorKey3>,
-  newSelector: (s1: ReturnState1, s2: ReturnState2, s3: ReturnState3) => NewState,
+  newSelector?: (s1: ReturnState1, s2: ReturnState2, s3: ReturnState3) => NewState,
 ): JoinedMiniStore<any, JoinedSelectors<NewS, NewState>>;
 
 export function joinSelectors<
@@ -104,13 +104,13 @@ export function joinSelectors<
     StoreLike<State4, S4, AS4>['_fullSelectors'][SelectorKey4]
   > = ReturnType<StoreLike<State4, S4, AS4>['_fullSelectors'][SelectorKey4]>,
   NewS extends AnySelectors = AnySelectors,
-  NewState = any,
+  NewState = [ReturnState1, ReturnState2, ReturnState3, ReturnState4],
 >(
   selectorInput1: StoreSelectorInput<State1, S1, AS1, SelectorKey1>,
   selectorInput2: StoreSelectorInput<State2, S2, AS2, SelectorKey2>,
   selectorInput3: StoreSelectorInput<State3, S3, AS3, SelectorKey3>,
   selectorInput4: StoreSelectorInput<State4, S4, AS4, SelectorKey4>,
-  newSelector: (
+  newSelector?: (
     s1: ReturnState1,
     s2: ReturnState2,
     s3: ReturnState3,
@@ -155,14 +155,14 @@ export function joinSelectors<
     StoreLike<State5, S5, AS5>['_fullSelectors'][SelectorKey5]
   > = ReturnType<StoreLike<State5, S5, AS5>['_fullSelectors'][SelectorKey5]>,
   NewS extends AnySelectors = AnySelectors,
-  NewState = any,
+  NewState = [ReturnState1, ReturnState2, ReturnState3, ReturnState4, ReturnState5],
 >(
   selectorInput1: StoreSelectorInput<State1, S1, AS1, SelectorKey1>,
   selectorInput2: StoreSelectorInput<State2, S2, AS2, SelectorKey2>,
   selectorInput3: StoreSelectorInput<State3, S3, AS3, SelectorKey3>,
   selectorInput4: StoreSelectorInput<State4, S4, AS4, SelectorKey4>,
   selectorInput5: StoreSelectorInput<State5, S5, AS5, SelectorKey5>,
-  newSelector: (
+  newSelector?: (
     s1: ReturnState1,
     s2: ReturnState2,
     s3: ReturnState3,
@@ -172,16 +172,20 @@ export function joinSelectors<
 ): JoinedMiniStore<any, JoinedSelectors<NewS, NewState>>;
 
 export function joinSelectors(...inputs: any[]): MiniStore<any, { state: any }> {
+  const lastInput = inputs[inputs.length - 1];
+  const newSelectorProvided = typeof lastInput === 'function';
+  const newSelector = newSelectorProvided ? lastInput : (...states: any[]) => states;
   const defaultSelector = 'state';
-  const inputSelectors = inputs
-    .slice(0, -1)
-    .map(input => (Array.isArray(input) ? input : [input, defaultSelector]));
-  const select = inputSelectors[0][0]._select;
-  const newSelector = inputs[inputs.length - 1];
+  const inputSelectors = newSelectorProvided ? inputs.slice(0, -1) : inputs;
+  const inputSelectorArrays = inputSelectors.map(input =>
+    Array.isArray(input) ? input : [input, defaultSelector],
+  );
+
+  const select = inputSelectorArrays[0][0]._select;
 
   const state: ({ adapt }: { adapt: any }) => any = (createSelector as any)(
     [
-      ...inputSelectors.map(
+      ...inputSelectorArrays.map(
         ([miniStore, selectorName]) => miniStore._fullSelectors[selectorName],
       ),
     ],
@@ -191,7 +195,7 @@ export function joinSelectors(...inputs: any[]): MiniStore<any, { state: any }> 
   const fullSelectors: { state: any } = { state };
 
   const requireAllSources$ = merge(
-    ...inputSelectors.map(([miniStore]) => miniStore._requireSources$),
+    ...inputSelectorArrays.map(([miniStore]) => miniStore._requireSources$),
   );
 
   const selections: { state$: any } = {
