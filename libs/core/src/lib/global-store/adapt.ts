@@ -77,7 +77,7 @@ export class AdaptCommon<CommonStore extends StoreMethods = any> {
    * ```
    * @param path - Object path in Redux Devtools
    * @param initialState - Initial state of the store when it gets initialized with a subscription to its state
-   * @param setterSource$ Single source for `set` state change
+   * @param setterSource$ Single source (or array of sources) for `set` state change
    * @param adapter Object with state change functions and selectors
    * @param sources Object specifying sources for state change functions
    */
@@ -91,7 +91,7 @@ export class AdaptCommon<CommonStore extends StoreMethods = any> {
   init<State>(
     path: string,
     initialState: State,
-    setterSource$: Observable<Action<State>>,
+    setterSource$: Observable<Action<State>> | Observable<Action<State>>[],
   ): MiniStore<State, WithGetState<State>> & SyntheticSources<BasicAdapterMethods<State>>;
 
   // init(path, initialState, adapter)
@@ -114,14 +114,20 @@ export class AdaptCommon<CommonStore extends StoreMethods = any> {
     path: string,
     initialState: State,
     adapter: R & { selectors?: S },
-    sources: Sources<State, S, R> | Observable<Action<State>>,
+    sources:
+      | Sources<State, S, R>
+      | Observable<Action<State>>
+      | Observable<Action<State>>[],
   ): MiniStore<State, S & WithGetState<State>> &
     SyntheticSources<R & BasicAdapterMethods<State>>;
 
   // init([path, initialState, adapter], sources);
   init<State, S extends Selectors<State>, R extends ReactionsWithSelectors<State, S>>(
     [path, initialState, adapter]: [string, State, R & { selectors?: S }],
-    sources: Sources<State, S, R> | Observable<Action<State>>,
+    sources:
+      | Sources<State, S, R>
+      | Observable<Action<State>>
+      | Observable<Action<State>>[],
   ): MiniStore<State, S & WithGetState<State>> &
     SyntheticSources<R & BasicAdapterMethods<State>>;
 
@@ -140,9 +146,17 @@ export class AdaptCommon<CommonStore extends StoreMethods = any> {
       | State
       | (R & { selectors?: S })
       | Sources<State, S, R>
-      | Observable<Action<State>>,
-    third?: (R & { selectors?: S }) | Sources<State, S, R> | Observable<Action<State>>,
-    fourth?: Sources<State, S, R> | Observable<Action<State>>,
+      | Observable<Action<State>>
+      | Observable<Action<State>>[],
+    third?:
+      | (R & { selectors?: S })
+      | Sources<State, S, R>
+      | Observable<Action<State>>
+      | Observable<Action<State>>[],
+    fourth?:
+      | Sources<State, S, R>
+      | Observable<Action<State>>
+      | Observable<Action<State>>[],
   ): MiniStore<State, S & WithGetState<State>> & SyntheticSources<R> {
     const arrayLength = Array.isArray(first) ? first.length : 0;
 
@@ -154,7 +168,7 @@ export class AdaptCommon<CommonStore extends StoreMethods = any> {
     if (!arrayLength) {
       path = first;
       initialState = second;
-      const thirdIsSource = isObservable(third);
+      const thirdIsSource = Array.isArray(third) || isObservable(third);
       adapter = thirdIsSource ? undefined : third;
       sources = thirdIsSource ? third : fourth;
     }
@@ -179,7 +193,10 @@ export class AdaptCommon<CommonStore extends StoreMethods = any> {
       ? createAdapter<State>()(adapter as R & { selectors?: S })
       : createAdapter<State>()();
     const sourcesDefined = sources || ({} as any);
-    sources = isObservable(sourcesDefined) ? { set: sourcesDefined } : sourcesDefined;
+    sources =
+      Array.isArray(sourcesDefined) || isObservable(sourcesDefined)
+        ? { set: sourcesDefined }
+        : sourcesDefined;
     sources = sources as Sources<State, S, R & BasicAdapterMethods<State>>;
 
     // Parameters are all defined
