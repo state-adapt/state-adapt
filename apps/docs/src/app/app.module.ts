@@ -6,11 +6,11 @@ import {
   createStore,
   stateSanitizer,
 } from '@state-adapt/core';
-import { ButtonModule, UIShellModule } from 'carbon-components-angular';
+import { ButtonModule } from 'carbon-components-angular/button';
+import { UIShellModule } from 'carbon-components-angular/ui-shell';
 import { MarkdownModule, MarkedOptions } from 'ngx-markdown';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { CircuitsComponent } from './circuits/circuits.component';
 import { ContentComponent } from './content.component';
 import { getMarkedOptions } from './get-marked-options.function';
 import { IntroComponent } from './intro/intro.component';
@@ -35,7 +35,7 @@ const enableReduxDevTools = (window as any).__REDUX_DEVTOOLS_EXTENSION__?.({
     }),
     ContentComponent,
   ],
-  declarations: [AppComponent, IntroComponent, CircuitsComponent],
+  declarations: [AppComponent, IntroComponent],
   providers: [{ provide: AdaptCommon, useValue: createStore(enableReduxDevTools) }],
   bootstrap: [AppComponent],
 })

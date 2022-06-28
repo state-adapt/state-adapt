@@ -2,10 +2,11 @@
   <ibm-hamburger (click)="expandSidenav()"></ibm-hamburger>
 </ibm-header>
 <ng-template #brandTemplate>
-  <a href="/" class="brand"
-    ><img src="../assets/sa-9-7.svg" />StateAdapt</a
-  ></ng-template
->
+  <a href="/" class="brand">
+    <img src="../assets/sa-9-7.svg" />
+    StateAdapt
+  </a>
+</ng-template>
 <ibm-sidenav [expanded]="sidenavExpanded">
   <ng-container *ngFor="let link of links$ | async; trackBy: trackByRoute">
     <ibm-sidenav-item
@@ -13,16 +14,18 @@
       [route]="[link.route]"
       [active]="link.active"
       (navigation)="navigate(null)"
-      >{{ link.name }}</ibm-sidenav-item
     >
+      {{ link.name }}
+    </ibm-sidenav-item>
     <ibm-sidenav-menu *ngIf="link.children" [title]="link.name">
       <ibm-sidenav-item
         *ngFor="let childLink of link.children; trackBy: trackByRoute"
         [route]="[childLink.route]"
         [active]="childLink.active"
         (navigation)="navigate(null)"
-        >{{ childLink.name }}</ibm-sidenav-item
       >
+        {{ childLink.name }}
+      </ibm-sidenav-item>
     </ibm-sidenav-menu>
   </ng-container>
   <!-- I will manually decide which to import in app.component.ts and *NgFor each library here. -->

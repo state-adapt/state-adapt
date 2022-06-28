@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { Component, ChangeDetectionStrategy, NgZone } from '@angular/core';
 
 enum SourceType {
@@ -138,7 +139,9 @@ const getSinks = (n: number, gridWidth: number): Sink[] =>
   });
 
 @Component({
+  standalone: true,
   selector: 'state-adapt-circuits',
+  imports: [CommonModule],
   templateUrl: './circuits.component.html',
   styleUrls: ['./circuits.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -175,17 +178,20 @@ export class CircuitsComponent {
         child.querySelector('.connector-pulse path'),
       ) as SVGAElement[];
 
-      ([
-        [startSource, () => this.activate(sourcePulse)],
-        [endSource, () => this.deactivate(sourcePulse)],
-        [startAdapter, () => this.activate(adapter)],
-        [endAdapter, () => this.deactivate(adapter)],
+      (
         [
-          startSink,
-          () => sinkGroups.forEach(child => Math.random() < 0.6 && this.activate(child)),
-        ],
-        [endSink, () => sinkGroups.forEach(child => this.deactivate(child))],
-      ] as [number, any][]).forEach(([t, fn]) => setTimeout(fn, t));
+          [startSource, () => this.activate(sourcePulse)],
+          [endSource, () => this.deactivate(sourcePulse)],
+          [startAdapter, () => this.activate(adapter)],
+          [endAdapter, () => this.deactivate(adapter)],
+          [
+            startSink,
+            () =>
+              sinkGroups.forEach(child => Math.random() < 0.6 && this.activate(child)),
+          ],
+          [endSink, () => sinkGroups.forEach(child => this.deactivate(child))],
+        ] as [number, any][]
+      ).forEach(([t, fn]) => setTimeout(fn, t));
     });
   }
 

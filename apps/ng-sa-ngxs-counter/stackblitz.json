@@ -15,7 +15,7 @@
     "@angular/compiler",
     "@angular/animations",
     "carbon-components",
-    "@carbon/icons-angular",
+    "@carbon/icons",
     "@angular/router",
     "@angular/forms"
   ]
