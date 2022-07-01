@@ -1,7 +1,11 @@
 @import './theme';
 
-code[class*="language-"],
-pre[class*="language-"] {
+code[class*='language-diff-'] {
+  // > *:nth-child(1)
+}
+
+code[class*='language-'],
+pre[class*='language-'] {
   color: #f8f8f2;
   background: none;
   text-shadow: 0 1px rgba(0, 0, 0, 0.3);
@@ -25,26 +29,30 @@ pre[class*="language-"] {
 }
 
 /* Code blocks */
-pre[class*="language-"] {
+pre[class*='language-'] {
   padding: 1em;
-  margin: .5em 0;
+  margin: 0.5em 0;
   overflow: auto;
   border-radius: 0.3em;
 }
 
-:not(pre) > code[class*="language-"],
-pre[class*="language-"] {
+:not(pre) > code[class*='language-'],
+pre[class*='language-'] {
   background: map-get($carbon--theme, ui-01b);
   border-radius: 0;
-  border-left: 3px solid map-get($carbon--theme, brand-01);
+  // border-left: 3px solid map-get($carbon--theme, brand-01);
 
-  margin-bottom: 2.5em;
+  margin-bottom: 1.5em;
+
+  span.highlighted {
+    background-color: map-get($map: $carbon--theme, $key: brand-01);
+  }
 }
 
 /* Inline code */
-:not(pre) > code[class*="language-"] {
-  padding: .1em;
-  border-radius: .3em;
+:not(pre) > code[class*='language-'] {
+  padding: 0.1em;
+  border-radius: 0.3em;
   white-space: normal;
 }
 
@@ -60,16 +68,26 @@ pre[class*="language-"] {
 }
 
 .token.namespace {
-  opacity: .7;
+  opacity: 0.7;
 }
 
 .token.property,
 .token.tag,
 .token.constant,
-.token.symbol,
-.token.deleted {
+.token.symbol {
   color: map-get($carbon--theme, accent-01);
-  font-weight: bold;
+  // font-weight: bold;
+}
+
+.token.deleted {
+  background-color: #ff00001a;
+}
+
+.token.deleted,
+.token.inserted {
+  display: block;
+  // margin: 0 -1em;
+  // padding: 0 1em;
 }
 
 .token.boolean,
@@ -82,10 +100,18 @@ pre[class*="language-"] {
 .token.attr-name,
 .token.string,
 .token.char,
-.token.builtin,
-.token.inserted {
+.token.builtin {
   color: map-get($carbon--theme, brand-01);
-  font-weight: bold;
+  // font-weight: bold;
+}
+
+.token.inserted {
+  background-color: #00ff801a;
+}
+
+span.token.prefix.inserted,
+span.token.prefix.deleted {
+  display: none;
 }
 
 .token.operator,
@@ -99,15 +125,22 @@ pre[class*="language-"] {
 
 .token.atrule,
 .token.attr-value,
-.token.function,
 .token.class-name {
   color: map-get($carbon--theme, accent-01);
-  font-weight: bold;
+  // font-weight: bold;
+}
+
+.token.function {
+  color: orange;
+}
+
+.token.generic {
+  color: rgba(0, 81, 82, 0.7);
 }
 
 .token.keyword {
-  color: #66d9ef;
-  font-weight: bold;
+  color: #90f0ff;
+  // font-weight: bold;
 }
 
 .token.regex,

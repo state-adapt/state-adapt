@@ -3,5 +3,6 @@
   "dest": "../../dist/libs/adapter-docs",
   "lib": {
     "entryFile": "src/index.ts"
-  }
+  },
+  "allowedNonPeerDependencies": ["jsondiffpatch"]
 }

@@ -185,11 +185,16 @@
             "tsConfig": "apps/docs/tsconfig.app.json",
             "aot": true,
             "assets": ["apps/docs/src/favicon.ico", "apps/docs/src/assets"],
-            "styles": ["apps/docs/src/styles.scss"],
+            "styles": [
+              "apps/docs/src/styles.scss",
+              "node_modules/prismjs/plugins/diff-highlight/prism-diff-highlight.css"
+            ],
             "scripts": [
               "node_modules/marked/lib/marked.js",
               "node_modules/prismjs/prism.js",
               "node_modules/prismjs/components/prism-typescript.min.js",
+              "node_modules/prismjs/components/prism-diff.min.js",
+              "node_modules/prismjs/plugins/diff-highlight/prism-diff-highlight.min.js",
               "node_modules/prismjs/components/prism-jsx.min.js",
               "node_modules/prismjs/components/prism-tsx.min.js",
               "node_modules/prismjs/components/prism-json.min.js"

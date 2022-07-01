@@ -4,7 +4,7 @@ $diagram-color: map-get($carbon--theme, ui-04);
 $source-pulse-color: map-get($carbon--theme, accent-01);
 $adapter-color: map-get($carbon--theme, interactive-01);
 $sink-pulse-color: map-get($carbon--theme, accent-02);
-$diagram-opacity: 0.3;
+$diagram-opacity: 0.4;
 
 @mixin child-left-top($cq, $child, $left, $right) {
   &:nth-child(#{$child}) {
@@ -22,9 +22,9 @@ $diagram-opacity: 0.3;
     height: 2 * $circuit-quad;
     @include child-left-top($circuit-quad, 1, 0.5, -1.25);
     @include child-left-top($circuit-quad, 2, -0.5, 0.25);
-    @include child-left-top($circuit-quad, 3, 1.8, 2);
+    @include child-left-top($circuit-quad, 3, 3.6, 1.4);
     @include child-left-top($circuit-quad, 4, 0.9, 3);
-    @include child-left-top($circuit-quad, 5, -0.75, 4.5);
+    @include child-left-top($circuit-quad, 5, -0.75, 6.5);
     @include child-left-top($circuit-quad, 6, 3.6, 5);
     @include child-left-top($circuit-quad, 7, 6, 3);
     @include child-left-top($circuit-quad, 8, 8.4, 4);
@@ -34,26 +34,27 @@ $diagram-opacity: 0.3;
     @include child-left-top($circuit-quad, 12, 14.2, 0.75);
     @include child-left-top($circuit-quad, 13, 12, 2);
     @include child-left-top($circuit-quad, 14, 13.2, 3);
-    @include child-left-top($circuit-quad, 15, 15.6, 4.75);
+    @include child-left-top($circuit-quad, 15, 15.6, 5.75);
+    @include child-left-top($circuit-quad, 16, 18, 3.5);
+    @include child-left-top($circuit-quad, 17, 22, 2);
+    @include child-left-top($circuit-quad, 18, 21, 6);
+    @include child-left-top($circuit-quad, 19, 20.2, 1);
+    @include child-left-top($circuit-quad, 20, 17, 4.75);
+    @include child-left-top($circuit-quad, 21, 17.5, -0.25);
+    @include child-left-top($circuit-quad, 22, 18.5, 1.75);
 
     stroke: $diagram-color;
     fill: none;
     .adapter {
       stroke-width: 6px;
-      opacity: $diagram-opacity;
+      opacity: $diagram-opacity + 0.2;
       transform: translate(360px, 0) rotate(30deg);
       transform-origin: 60px 360px;
     }
   }
 }
 
-@include circuit-styles($base-width: 14vw);
-@media screen and (min-width: $medium-screen) {
-  @include circuit-styles($base-width: 11vw);
-}
-@media screen and (min-width: $large-screen) {
-  @include circuit-styles($base-width: 9vw);
-}
+@include circuit-styles($base-width: 150px);
 
 .clock {
   .clock-circle {
@@ -113,6 +114,6 @@ path {
   --stroke-width: 8;
   stroke: $adapter-color;
   opacity: 1 !important;
-  transition: transform 0.2s linear;
+  transition: transform 0.2s ease-out;
   transform: translate(360px, 0) rotate(90deg) !important;
 }

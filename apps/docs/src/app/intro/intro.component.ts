@@ -17,4 +17,8 @@ export class IntroComponent {
       this.circuitsContainer.createComponent(m.CircuitsComponent),
     );
   }
+
+  MOARRR() {
+    (window as any).MOARRR();
+  }
 }

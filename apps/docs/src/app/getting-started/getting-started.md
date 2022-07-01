@@ -2,11 +2,11 @@
 
 Set up StateAdapt with
 
-- [Angular](#angular)
-- [Angular and NgRx](#angular-and-ngrx)
-- [Angular and NGXS](#angular-and-ngxs)
-- [React](#react)
-- [React and Redux](#react-and-redux)
+- [Angular](getting-started#angular)
+- [Angular and NgRx](getting-started#angular-and-ngrx)
+- [Angular and NGXS](getting-started#angular-and-ngxs)
+- [React](getting-started#react)
+- [React and Redux](getting-started#react-and-redux)
 
 ## Angular
 
@@ -179,11 +179,7 @@ npm i -s @state-adapt/core @state-adapt/react
 Define your adapt store:
 
 ```typescript
-import {
-  actionSanitizer,
-  stateSanitizer,
-  createStore,
-} from '@state-adapt/core';
+import { actionSanitizer, stateSanitizer, createStore } from '@state-adapt/core';
 
 const enableReduxDevTools = (window as any).__REDUX_DEVTOOLS_EXTENSION__?.({
   actionSanitizer,

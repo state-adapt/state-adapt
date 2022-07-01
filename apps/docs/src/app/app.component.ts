@@ -10,7 +10,9 @@ import { filter, map, startWith } from 'rxjs/operators';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
+  mobile = window.innerWidth < 800;
   sidenavExpanded = window.innerWidth > 800;
+
   urlChange$ = new Subject<string>();
   links$ = merge(
     this.urlChange$,
@@ -87,10 +89,6 @@ export class AppComponent {
 
   trackByRoute(id: number, item: { route: string }) {
     return item.route;
-  }
-
-  expandSidenav() {
-    this.sidenavExpanded = !this.sidenavExpanded;
   }
 
   private mapToChildRoute(url: string, baseUrl: string, [childUrl, childName]: string[]) {

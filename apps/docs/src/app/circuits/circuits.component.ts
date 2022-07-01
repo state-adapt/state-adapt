@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ChangeDetectionStrategy, NgZone } from '@angular/core';
+import { Component, ChangeDetectionStrategy, NgZone, OnInit, Input } from '@angular/core';
 
 enum SourceType {
   WEBSOCKET = 'websocket',
@@ -146,15 +146,27 @@ const getSinks = (n: number, gridWidth: number): Sink[] =>
   styleUrls: ['./circuits.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CircuitsComponent {
-  circuits: Circuit[] = new Array(15).fill(0).map((z, i) => ({
-    i,
-    sources: getSources(4, 6),
-    sinks: getSinks(4, 6),
-  }));
+export class CircuitsComponent implements OnInit {
+  ww = (window as any).innerWidth;
+  @Input() n = this.ww < 550 ? 6 : this.ww < 1000 ? 10 : this.ww < 1900 ? 15 : 22;
+  circuits!: Circuit[];
 
-  constructor(private zone: NgZone) {
-    this.zone.runOutsideAngular(() => this.makeCircuitsFire());
+  constructor(private zone: NgZone) {}
+
+  ngOnInit() {
+    this.circuits = new Array(this.n).fill(0).map((z, i) => {
+      const nSources = getNumberBetween(2, 5);
+      const nSinks = getNumberBetween(2, 5);
+      return {
+        i,
+        sources: getSources(nSources, 6),
+        sinks: getSinks(nSinks, 6),
+      };
+    });
+
+    (window as any).MOARRR = () =>
+      this.zone.runOutsideAngular(() => this.makeCircuitsFire());
+    (window as any).MOARRR();
   }
 
   private makeCircuitsFire() {

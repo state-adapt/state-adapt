@@ -1,6 +1,6 @@
 import { ListItem } from 'carbon-components-angular';
 import { TileSelection } from 'carbon-components-angular/tiles';
-import { createAdapter, createSelectors } from '../../../../libs/core/src';
+import { createAdapter, createSelectors } from '@state-adapt/core';
 import { AdapterDocsState, INITIAL_STATE } from './adapter-docs-state.interface';
 import { AdapterDocs } from './adapter-docs.interface';
 import { DropdownSelectedEvent } from './dropdown-selection-event.interface';

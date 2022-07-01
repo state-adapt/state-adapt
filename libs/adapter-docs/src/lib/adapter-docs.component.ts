@@ -29,35 +29,13 @@ import { getDiffHtml, toJson } from './get-diff-html.function';
 
       <markdown [data]="docs.description"></markdown>
 
-      <ibm-structured-list [condensed]="true" *ngIf="docs.parameters.length">
-        <ibm-list-header>
-          <ibm-list-column>Parameter</ibm-list-column>
-          <ibm-list-column>Description</ibm-list-column>
-        </ibm-list-header>
-        <ibm-list-row *ngFor="let param of docs.parameters">
-          <ibm-list-column>
-            <code>{{ param.text }}</code>
-          </ibm-list-column>
-          <ibm-list-column>
-            <!-- {{ param.description }} -->
-            <markdown [data]="param.description"></markdown>
-          </ibm-list-column>
-        </ibm-list-row>
-      </ibm-structured-list>
-
-      <h2>Source Code</h2>
-      <markdown [data]="creatorSourceCodeMd$ | async"></markdown>
-
-      <h2>Demo</h2>
-      <markdown [data]="demoSourceCodeMd$ | async"></markdown>
-      <ng-template #codeTemplate let-item="item">
-        <code style="color: #f4f4f4">{{ item?.content }}</code>
-      </ng-template>
-
-      <div class="history">
-        <ibm-tile-group (selected)="historyItemSelected$.next($event)">
+      <div class="history" *ngIf="demoHistory$ | async as demoHistory">
+        <ibm-tile-group
+          *ngIf="demoHistory.length"
+          (selected)="historyItemSelected$.next($event)"
+        >
           <ibm-selection-tile
-            *ngFor="let item of demoHistory$ | async; let i = index"
+            *ngFor="let item of demoHistory; let i = index"
             [value]="i.toString()"
             [selected]="item.selected"
           >
@@ -150,6 +128,34 @@ import { getDiffHtml, toJson } from './get-diff-html.function';
           </ibm-tab>
         </ibm-tabs>
       </ibm-tile>
+
+      <h2 style="clear: both">Demo Code</h2>
+      <markdown [data]="demoSourceCodeMd$ | async"></markdown>
+      <ng-template #codeTemplate let-item="item">
+        <code style="color: #f4f4f4">{{ item?.content }}</code>
+      </ng-template>
+
+      <ibm-structured-list [condensed]="true" *ngIf="docs.parameters.length">
+        <ibm-list-header>
+          <ibm-list-column>Parameter</ibm-list-column>
+          <ibm-list-column>Description</ibm-list-column>
+        </ibm-list-header>
+        <ibm-list-row *ngFor="let param of docs.parameters">
+          <ibm-list-column>
+            <code>{{ param.text }}</code>
+          </ibm-list-column>
+          <ibm-list-column>
+            <!-- {{ param.description }} -->
+            <markdown [data]="param.description"></markdown>
+          </ibm-list-column>
+        </ibm-list-row>
+      </ibm-structured-list>
+
+      <h2>
+        <code>{{ docs.name }}</code>
+        Source Code
+      </h2>
+      <markdown [data]="creatorSourceCodeMd$ | async"></markdown>
     </ng-container>
   `,
   styles: [
@@ -172,11 +178,15 @@ import { getDiffHtml, toJson } from './get-diff-html.function';
       }
       .history,
       .state-change-panel {
-        margin-top: 0.5em !important;
+        margin-top: 4.5em !important;
       }
       .history {
         width: 100px;
         float: left !important;
+        min-height: 600px;
+      }
+      .history:empty {
+        background: linear-gradient(180deg, #393939, transparent);
       }
       @media screen and (min-width: 1500px) {
         ::ng-deep .history {
@@ -243,7 +253,7 @@ import { getDiffHtml, toJson } from './get-diff-html.function';
         height: 160px;
         padding: 0;
         background-color: #1e1e1e;
-        border-left: 2px solid #00b8a4;
+        border-left: 2px solid #00ced1;
       }
       ::ng-deep ibm-tab.padded .bx--tab-content {
         padding: 1em !important;
@@ -268,7 +278,7 @@ import { getDiffHtml, toJson } from './get-diff-html.function';
         height: 300px;
         padding: 0;
         background-color: #1e1e1e;
-        border-left: 2px solid #00b8a4;
+        border-left: 2px solid #00ced1;
       }
       ::ng-deep .selector-panel ibm-tab pre {
         height: 300px;

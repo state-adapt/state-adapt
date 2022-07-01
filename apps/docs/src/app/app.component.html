@@ -1,10 +1,11 @@
 <ibm-header name="StateAdapt" [brand]="brandTemplate">
-  <ibm-hamburger (click)="expandSidenav()"></ibm-hamburger>
+  <ibm-hamburger (click)="sidenavExpanded = !sidenavExpanded"></ibm-hamburger>
 </ibm-header>
 <ng-template #brandTemplate>
-  <a href="/" class="brand">
-    <img src="../assets/sa-9-7.svg" />
-    StateAdapt
+  <a href="/" class="brand" style="text-decoration: none">
+    <img src="../assets/sa3-3.svg" />
+    <span class="logo-state">State</span>
+    <span class="logo-adapt">Adapt</span>
   </a>
 </ng-template>
 <ibm-sidenav [expanded]="sidenavExpanded">
@@ -33,6 +34,9 @@
   <!-- There will be a core adapter demo library with components for demoing. That will be loaded by this router -->
   <!-- and metadata from libraries will be passed in through dependency injection or loaded some other way. -->
 </ibm-sidenav>
-<main [class.squished]="sidenavExpanded">
+<main
+  [class.squished]="sidenavExpanded"
+  (click)="(mobile && (sidenavExpanded = false)) || true"
+>
   <router-outlet></router-outlet>
 </main>

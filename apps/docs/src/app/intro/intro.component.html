@@ -1,30 +1,21 @@
 <div class="banner">
   <ng-container #circuitsContainer></ng-container>
   <div class="banner-content-container">
-    <div class="logo-line">
-      <img src="../assets/sa-9-7.svg" id="main-logo" />
-      <div id="main-logo-shadow"></div>
-      <h1 id="state">State</h1>
-      <h1 id="adapt">Adapt</h1>
-    </div>
-    <h3>
-      <a href="#minimal">Minimal</a>
-      <svg class="bullet-adapter"><use xlink:href="#adapter" /></svg>
-      <a href="#reactive">Reactive</a>
-      <svg class="bullet-adapter"><use xlink:href="#adapter" /></svg>
-      <a href="#reusable">Reusable</a>
+    <img src="../assets/sa3-3.svg" id="solo-logo" (click)="MOARRR()" />
+    <h1 id="stateadapt">
+      <div id="inline-logo-container">
+        <img src="../assets/sa3-3.svg" id="inline-logo" (click)="MOARRR()" />
+      </div>
+      <span id="state">State</span>
+      <span id="adapt">Adapt</span>
+    </h1>
+    <h3 id="tagline">
+      Progressively Reactive
+      <br id="tagline-break" />
+      State Management
     </h3>
     <div class="getting-started-container">
-      <a routerLink="/getting-started" class="getting-started">
-        <button
-          ibmButton="secondary"
-          id="get-started"
-          (mouseenter)="secondary = true"
-          (mouseleave)="secondary = false"
-        >
-          Get Started
-        </button>
-      </a>
+      <a routerLink="/getting-started" class="getting-started">Get Started</a>
     </div>
   </div>
 </div>

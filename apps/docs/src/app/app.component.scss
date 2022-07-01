@@ -10,8 +10,14 @@ a.brand {
   font-size: 16px;
   img {
     vertical-align: middle;
-    height: 30px;
-    margin: -3px 4px 0px;
+    height: 15px;
+    margin: -3px 3px 0px;
+  }
+  .logo-state {
+    color: map-get($map: $carbon--theme, $key: brand-01);
+  }
+  .logo-adapt {
+    color: map-get($map: $carbon--theme, $key: text-01);
   }
 }
 
@@ -34,7 +40,4 @@ main {
       margin-left: 16rem;
     }
   }
-
 }
-
-
