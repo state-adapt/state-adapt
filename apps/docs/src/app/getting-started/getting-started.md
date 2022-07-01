@@ -15,50 +15,31 @@ Set up StateAdapt with
 First, `npm install`:
 
 ```
-npm i -s @state-adapt/core reselect
+npm i -s @state-adapt/core @state-adapt/angular
 ```
 
 Include in app.module.ts like so:
 
 ```typescript
-import {
-  createStore,
-  actionSanitizer,
-  stateSanitizer,
-  AdaptCommon,
-} from '@state-adapt/core';
+import { defaultStoreProvider } from '@state-adapt/core';
 // ...
-// Create the Adapt store:
-const enableReduxDevTools = (window as any).__REDUX_DEVTOOLS_EXTENSION__?.({
-  actionSanitizer,
-  stateSanitizer,
-});
-// ...
-// Provide it:
-    providers: [{provide: AdaptCommon, useValue: createStore(enableReduxDevTools)}],
+    providers: [defaultStoreProvider],
 ```
 
-Now you can use it in a component or service. Here's an example in a component:
+Now in a component or service:
 
 ```typescript
-import { Source, createAdapter, AdaptCommon } from '@state-adapt/core';
-...
-  newStr$ = new Source<string>('newStr$');
-  stringAdapter = createAdapter<string>()({
-    append: (state, newStr: string) => state + newStr,
-  });
-  stringStore = this.adapt.init(['string', this.stringAdapter, ''], {
-    append: this.newStr$,
-  });
-  str$ = this.stringStore.getState();
-  constructor(private adapt: AdaptCommon<any>) {
-    this.str$.subscribe();
-    setTimeout(() => this.newStr$.next('Hello World!'), 3000);
+import { adapt } from '@state-adapt/angular';
+// ...
+  stringStore = adapt('string', '');
+  constructor() {
+    this.stringStore.state$.subscribe(console.log);
+    this.stringStore.set('Hello World!');
   }
-...
+// ...
 ```
 
-Open up Redux Devtools and you should see the state update after 3 seconds.
+Open up Redux Devtools and you should see the state update immediately to `'Hello World!'`.
 
 ## Angular and NgRx
 
@@ -67,7 +48,7 @@ Open up Redux Devtools and you should see the state update after 3 seconds.
 First, `npm install`:
 
 ```
-npm i -s @state-adapt/core @state-adapt/ngrx reselect
+npm i -s @state-adapt/core @state-adapt/ngrx
 ```
 
 Include in your app.module.ts like so:
@@ -75,11 +56,7 @@ Include in your app.module.ts like so:
 ```typescript
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
-import {
-  adaptReducer,
-  actionSanitizer,
-  stateSanitizer,
-} from '@state-adapt/core';
+import { adaptReducer, actionSanitizer, stateSanitizer } from '@state-adapt/core';
 // ...
 // In your module imports array:
     StoreModule.forRoot({ adapt: adaptReducer }),
@@ -91,28 +68,20 @@ import {
     }),
 ```
 
-Now you can use it in a component or service. Here's an example in a component:
+Now in a component or service:
 
 ```typescript
-import { Source, createAdapter } from '@state-adapt/core';
-import { Adapt } from '@state-adapt/ngrx';
-...
-  newStr$ = new Source<string>('newStr$');
-  stringAdapter = createAdapter<string>()({
-    append: (state, newStr: string) => state + newStr,
-  });
-  stringStore = this.adapt.init(['string', this.stringAdapter, ''], {
-    append: this.newStr$,
-  });
-  str$ = this.stringStore.getState();
-  constructor(private adapt: Adapt) {
-    this.str$.subscribe();
-    setTimeout(() => this.newStr$.next('Hello World!'), 3000);
+import { adapt } from '@state-adapt/ngrx';
+// ...
+  stringStore = adapt('string', '');
+  constructor() {
+    this.stringStore.state$.subscribe(console.log);
+    this.stringStore.set('Hello World!');
   }
-...
+// ...
 ```
 
-Open up Redux Devtools and you should see the state update after 3 seconds.
+Open up Redux Devtools and you should see the state update immediately to `'Hello World!'`.
 
 ## Angular and NGXS
 
@@ -121,7 +90,7 @@ Open up Redux Devtools and you should see the state update after 3 seconds.
 First, `npm install`:
 
 ```
-npm i -s @state-adapt/core @state-adapt/ngxs reselect
+npm i -s @state-adapt/core @state-adapt/ngxs
 ```
 
 Include in your app.module.ts like so:
@@ -143,28 +112,20 @@ import { AdaptState } from '@state-adapt/ngxs';
     }),
 ```
 
-Now you can use it in a component or service. Here's an example in a component:
+Now in a component or service:
 
 ```typescript
-import { Source, createAdapter } from '@state-adapt/core';
-import { Adapt } from '@state-adapt/ngxs';
-...
-  newStr$ = new Source<string>('newStr$');
-  stringAdapter = createAdapter<string>()({
-    append: (state, newStr: string) => state + newStr,
-  });
-  stringStore = this.adapt.init(['string', this.stringAdapter, ''], {
-    append: this.newStr$,
-  });
-  str$ = this.stringStore.getState();
-  constructor(private adapt: Adapt) {
-    this.str$.subscribe();
-    setTimeout(() => this.newStr$.next('Hello World!'), 3000);
+import { adapt } from '@state-adapt/ngxs';
+// ...
+  stringStore = adapt('string', '');
+  constructor() {
+    this.stringStore.state$.subscribe(console.log);
+    this.stringStore.set('Hello World!');
   }
-...
+// ...
 ```
 
-Open up Redux Devtools and you should see the state update after 3 seconds.
+Open up Redux Devtools and you should see the state update immediately to `'Hello World!'`.
 
 # React
 
@@ -204,27 +165,20 @@ import { adapt, store } from './store';
 And now you can use it in your components:
 
 ```tsx
-import { createAdapter } from '@state-adapt/core';
-import { useSource, useAdapter, useObservable } from '@state-adapt/react';
-
-const stringAdapter = createAdapter<string>()({
-  append: (state, newStr: string) => state + newStr,
-});
+import { useSource, useAdapt, useObservable } from '@state-adapt/react';
 
 export function App() {
-  const newStr$ = useSource<string>('newStr$');
-  const stringStore = useAdapter(['string', stringAdapter, ''], {
-    append: this.newStr$,
-  });
-  cost str$ = stringStore.getState();
-  const str = useObservable(str$);
+  const stringStore = useAdapt('string', '');
+  const str = useObservable(stringStore.state$);
 
   return (
     <h1>{str}</h1>
-    <button onClick={() => newStr$.next('new string ')}>New String</button>
+    <button onClick={() => stringStore.set('new string')}>New String</button>
   )
 }
 ```
+
+Open up Redux Devtools and you should see the state update immediately to `'new string'`.
 
 # React and Redux
 
@@ -281,24 +235,17 @@ import { adapt, store } from './store';
 And now you can use it in your components:
 
 ```tsx
-import { createAdapter } from '@state-adapt/core';
-import { useSource, useAdapter, useObservable } from '@state-adapt/react';
-
-const stringAdapter = createAdapter<string>()({
-  append: (state, newStr: string) => state + newStr,
-});
+import { useSource, useAdapt, useObservable } from '@state-adapt/react';
 
 export function App() {
-  const newStr$ = useSource<string>('newStr$');
-  const stringStore = useAdapter(['string', stringAdapter, ''], {
-    append: this.newStr$,
-  });
-  cost str$ = stringStore.getState();
-  const str = useObservable(str$);
+  const stringStore = useAdapt('string', '');
+  const str = useObservable(stringStore.state$);
 
   return (
     <h1>{str}</h1>
-    <button onClick={() => newStr$.next('new string ')}>New String</button>
+    <button onClick={() => stringStore.set('new string')}>New String</button>
   )
 }
 ```
+
+Open up Redux Devtools and you should see the state update immediately to `'new string'`.
