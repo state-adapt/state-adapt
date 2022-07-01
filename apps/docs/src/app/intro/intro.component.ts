@@ -1,4 +1,4 @@
-import { Component, ViewChild, ViewContainerRef } from '@angular/core';
+import { AfterViewInit, Component, ViewChild, ViewContainerRef } from '@angular/core';
 import md from 'raw-loader!./intro.md';
 
 @Component({
@@ -6,7 +6,7 @@ import md from 'raw-loader!./intro.md';
   templateUrl: `./intro.component.html`,
   styleUrls: ['./intro.component.scss'],
 })
-export class IntroComponent {
+export class IntroComponent implements AfterViewInit {
   @ViewChild('circuitsContainer', { static: true, read: ViewContainerRef })
   circuitsContainer!: ViewContainerRef;
   secondary = false;
@@ -16,6 +16,10 @@ export class IntroComponent {
     import('../circuits/circuits.component').then(m =>
       this.circuitsContainer.createComponent(m.CircuitsComponent),
     );
+  }
+
+  ngAfterViewInit() {
+    [...(document as any).querySelectorAll('video')].forEach(v => (v.playbackRate = 0.5));
   }
 
   MOARRR() {

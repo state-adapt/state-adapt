@@ -113,7 +113,7 @@ Soon we'll be publishing adapters for common patterns: Lists, async state, pagin
 
 ## 5. React to observable data sources
 
-Multiple stores might need to respond to the same observable, so it needs independent annotation.
+Multiple stores might need to react to the same observable, so it needs independent annotation.
 
 ```diff-typescript
 export class NameComponent {
