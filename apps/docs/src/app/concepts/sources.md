@@ -5,8 +5,11 @@
 - [`Source`](/concepts/sources#source)
 - [`splitSources`](/concepts/sources#splitsources)
 - [`getAction`](/concepts/sources#getaction)
+- [`getHttpActions`](/concepts/sources#gethttpactions)
+- [`splitHttpSources`](/concepts/sources#splithttpsources)
 - [`getHttpSources`](/concepts/sources#gethttpsources)
 - [One Source Per Event](/concepts/sources#one-source-per-event)
+- [Synthetic Sources](/concepts/sources#synthetic-sources)
 
 ## Overview
 
@@ -37,7 +40,7 @@ const timer$ = timer(3000).pipe(toSource('timer$'));
 
 (Note: This will not occur until you use the source in a store and subscribe to its state.)
 
-Internally, `toSource` just maps values to action objects that are similar to Redux actions. While you can technically interact with these objects, we discourage doing so, both to encourage reactive patterns and to avoid depending too much on the internal implementation of StateAdapt.
+Internally, `toSource` just maps values to action objects that are similar to Redux actions.
 
 ## `Source`
 
@@ -114,40 +117,79 @@ const source2$ = obs$.pipe(map(n => getAction('source$2', n)));
 
 This can give you a little more flexibility when creating sources.
 
-## `getHttpSources`
+## `getHttpActions`
 
-Http requests are often just used for the single value they emit when they complete. However, if you want to handle the loading state and errors, http requests become a common example of an observable that contains multiple event types in a single observable: `request`, `error` and `success`. getHttpSources uses [`getAction`](/concepts/sources#getaction) and [`splitSources`](/concepts/sources#splitsources) internally to split an http request observable into those 3 common sources. Example usage:
+Http requests are often just used for the single value they emit when they complete. However, if you want to handle the loading state and errors, http requests become a common example of observables that contain multiple event types in a single observable: `request`, `error` and `success`. `getHttpActions` uses [`getAction`](/concepts/sources#getaction) internally to convert an HTTP request observable into an observable of those 3 actions. Example usage:
 
 ```typescript
-import { getHttpSources } from '@state-adapt/core';
+import { getHttpActions } from '@state-adapt/core';
 
-const fetchData = () =>
+const fetchData = (filters: Filters) =>
   timer(2000).pipe(mapTo({ body: 'Some data', status: 200, error: null }));
 
-const { request$, success$, error$ } = getHttpSources('[Some Data]', fetchData(), res => [
-  res.status === 200,
-  res.body,
-  res.error,
-]);
+const httpActions$ = filters$.pipe(
+  // filters$ is just some observable of filters that triggers re-fetch
+  switchMap(filters =>
+    getHttpActions(
+      fetchData(filters),
+      res => [res.status === 200, res.body, res.error],
+      filters,
+    ),
+  ),
+);
 ```
 
 There is a lot going on here.
 
-The first argument is the scope. Whatever you pass in here, [`getHttpSources`](/concepts/sources#gethttpsources) will append `' Request'`, `' Success'` or `' Error'` to the actions that it uses [`getAction`](/concepts/sources#getaction) to create. So if you pass in `'[Some Data]'`, the action types of the sources will be `'[Some Data] Request'`, `'[Some Data] Success'` and `'[Some Data] Error'`.
+The 1st argument of [`getHttpActions`](/concepts/sources#gethttpactions) is an observable (the http request).
 
-The 2nd argument is an observable (the http request).
-
-The 3rd argument is a function you need to provide that takes in the value emitted by the observable passed in argument 2 and returns an array containing 3 elements:
+The 2nd argument is a function you need to provide that takes in the value emitted by the observable passed in the 1st argument and returns an array containing 3 elements:
 
 1. A boolean that is true if the request was successful
 2. The value you want as the payload of the `Success` action
 3. The error message from the response
 
-[`getHttpSources`](/concepts/sources#gethttpsources) also applies a `catchError` RxJS operator and maps it to the `Error` source, so the type emitted by the `Error` source is `string | Err`, where `Err` is whatever you typed it as in your observable.
+[`getHttpActions`](/concepts/sources#gethttpactions) also applies a `catchError` RxJS operator and maps it to the `Error` source, so the type emitted by the `Error` source is `string | Err`, where `Err` is whatever you typed it as in your observable.
+
+The 3rd argument is optional and will be part of the `request$` and `error$` actions. If you provide this argument, then whatever you provided for the error in the 2nd argument will end up getting wrapped in an array with it. So in this example, the error action payload would be of type `[string | typeof res.error, Filters]`, and the request action payload would be `Filters` instead of `void`. If you didn't provide a 3rd argument, the error action payload would be of type `string | typeof res.error` and the request action payload would be `void`.
+
+Typically you will call [`splitHttpSources`](/concepts/sources#splitsources) after [`getHttpActions`](/concepts/sources#gethttpactions) to split it into 3 separate sources: `request$`, `success$` and `error$`.
+
+But for many HTTP sources you will not have to use [`getHttpActions`](/concepts/sources#gethttpactions) directly. If you are creating an inner observable, you will probably use it, because each new request needs to start with a `request$` action. However, if you are not creating an inner observable, you can just use [`getHttpSources`](/concepts/sources#gethttpsources), which combines [`getHttpActions`](/concepts/sources#gethttpactions) and [`splitHttpSources`](/concepts/sources#splithttpsources).
+
+## `splitHttpSources`
+
+The 1st argument is the scope. Whatever you pass in here, [`splitHttpSources`](/concepts/sources#splithttpsources) will append `' request$'`, `' success$'` and `' error$'` to it in the actions that it creates with [`getAction`](/concepts/sources#getaction). So if you pass in `'[Some Data]'`, the action types of the sources will be `'[Some Data] request$'`, `'[Some Data] success$'` and `'[Some Data] error$'`.
+
+The 2nd argument is the observable of all HTTP actions, which is what [`getHttpActions`](/concepts/sources#gethttpactions) returns.
+
+## `getHttpSources`
+
+[`getHttpSources`](/concepts/sources#gethttpsources) is a combination of [`getHttpActions`](/concepts/sources#gethttpactions) and [`splitHttpSources`](/concepts/sources#splithttpsources). Here is an example of two ways that are equivalent:
+
+```typescript
+import { getHttpActions, splitSources, getHttpSources } from '@state-adapt/core';
+
+const fetchData = () =>
+  timer(2000).pipe(mapTo({ body: 'Some data', status: 200, error: null }));
+
+// 1. getHttpActions + splitSources
+const httpActions$ = getHttpActions(this.fetchData(), res => [
+  res.status === 200,
+  res.body,
+  res.error,
+]);
+const { request$, success$, error$ } = splitHttpSources('[Some Data]', httpActions$);
+
+// 2. getHttpSoures
+const { request$, success$, error$ } = getHttpSources(
+  '[Some Data]',
+  this.fetchData(),
+  res => [res.status === 200, res.body, res.error],
+);
+```
 
 ## One Source Per Event
-
-### No Multiple Sources
 
 In reactive programming, data flows in one direction, so each source represents a single kind of event. Rather than handling an event in a callback function, you should directly push the event into a single source and handle downstream effects in the affected features themselves.
 
@@ -191,14 +233,14 @@ The benefit of doing it this way is that you only see one action dispatched in R
 
 The drawback is rare, but it does occur: Since we only subscribe to the first observable, cold observables like those created from `of` and `timer` that you would expect to fire for each individual store that uses them will actually only fire for the first store that uses that exact observable reference. The solution? Just create a new reference for each store that uses it. This can be achieved either through a factory function, such as `getTimer = () => timer(5000)`, or by wrapping the reference in a `defer()` when passing it into another store (simply calling `.pipe()` on an observable doesn't seem to create a new reference, so that doesn't work). There might be a more clever workaround, but these work.
 
-This situation is rare and the benefits from having 1 action in Redux Devtools per event is well worth this drawback. But it is good to know about so you can deal with it when you come across it.
+This situation is rare and the benefit of having 1 action in Redux Devtools per event is well worth this drawback. But it is good to know about so you can deal with it when you come across it.
 
-### No Multiple Events
+## Synthetic Sources
 
-One of StateAdapt's core aims is to maximize reusability of state management patterns. This is good, but when it comes to sources, it can be easy to go a little too far. State adapters have no opinion on what sources are going to cause their state changes, and this is intentional. The responsibility to define these sources lies with the consumers of these adapters, because there may be multiple stores that need to react to those same sources. If sources were provided with each adapter, developers would be tempted to use them all and just call `.next()` on each of them for single events, which is the problem discussed in [No Multiple Sources](/concepts/sources#no-multiple-sources). In other words, providing sources that can be reused across multiple event types/origins can lead to imperatively updating multiple sources in response to single events.
+It is generally safer to define sources as close as possible to where the events themselves are emitted from. For example, if you are creating a source for a button click, you should prefer defining it right in the same component as the button itself, or at least in a service that is dedicated to that component.
 
-When looking at Redux Devtools you want to be able to understand exactly which sources actions are coming from. If you do end up creating utility methods for generating sources (like [`getHttpSources`](/concepts/sources#gethttpsources)) make sure you are able to accept a scope to prepend to each source type. Refer to [`getHttpSources`](/concepts/sources#gethttpsources) as an example.
+But we can't easily refer directly to the DOM nodes themselves in our TypeScript, which is what would really be ideal. So, there will always be a separate reference we use instead. It could be created with [`Source`](/concepts/sources#source). Or, if only one store is interested in our source, why not let the store provide some default sources our templates can refer to directly?
 
-[Mike Ryan's talk on good action hygene](https://www.youtube.com/watch?v=JmnsEvoy-gY) applies to StateAdapt sources.
+This is okay as long as we clearly understand that as soon as a 2nd store becomes interested in that DOM event, we create a dedicated source for that event, using [`Source`](/concepts/sources#source).
 
-It is generally safer to define sources as close as possible to where the events themselves are emitted from. For example, if you are creating a source for a button click, you should prefer defining it right in the same component as the button itself, or at least a service that is dedicated to that component.
+The simple rule to follow is this: Don't write callback functions (or event handlers). They are just containers for imperative code. Instead, push a minimal update from the template to a single place in TypeScript, and let everything downstream take responsibility for itself and react if necessary.

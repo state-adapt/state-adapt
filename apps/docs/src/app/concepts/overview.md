@@ -19,8 +19,9 @@ StateAdapt has 3 main concepts: Sources, adapters and stores.
 
 ## [Stores](/concepts/stores)
 
-[Stores](/concepts/stores) do 3 things:
+[Stores](/concepts/stores) do 4 things:
 
 - Define initial state and an adapter to manage it
 - Connect sources to adapter state changes
 - Use the adapter's selectors to create observables of the selectors' results. These observables chain off the sources so subscriptions are propagated
+- Use the adapter's state changes to create synthetic sources for simple, single-store state changes. These are made available as part of the store, so DOM event handlers can call them. See [Synthetic Sources](/concepts/sources#synthetic-sources).
