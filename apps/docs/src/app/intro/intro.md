@@ -133,7 +133,7 @@ export class NameComponent {
 -  name1Store = adapt('name1', 'Bob', this.nameAdapter);
 +  name1Store = adapt('name1', 'Bob', this.nameAdapter, this.nameFromServer$);//Set state
 -  name2Store = adapt('name2', 'Bob', this.nameAdapter);
-+  name2Store = adapt('name2', 'Bob', this.nameAdapter, {
++  name2Store = adapt(['name2', 'Bob', this.nameAdapter], {
 +    concatName: this.nameFromServer$, // Trigger a specific state reaction
 +  });
 }
@@ -176,11 +176,11 @@ export class NameComponent {
     toSource('[name] nameFromServer$'), // Annotate for Redux Devtools
   );
 
-  name1Store = adapt('name1', 'Bob', this.nameAdapter, {
+  name1Store = adapt(['name1', 'Bob', this.nameAdapter], {
 +    set: this.nameFromServer$, // `set` is provided with all adapters
 +    reset: this.resetBoth$, // `reset` is provided with all adapters
   });
-  name2Store = adapt('name2', 'Bob', this.nameAdapter, {
+  name2Store = adapt(['name2', 'Bob', this.nameAdapter], {
     concatName: this.nameFromServer$,
 +    reset: this.resetBoth$, // `reset` is provided with all adapters
   });
