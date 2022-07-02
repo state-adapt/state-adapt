@@ -1,3 +1,4 @@
+export * from './lib/utils/get-id.function';
 export * from './lib/utils/patch.function';
 export * from './lib/utils/update-paths.function';
 
