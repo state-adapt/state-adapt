@@ -19,11 +19,6 @@ import { MiniStore } from '../stores/mini-store.interface';
 import { Sources } from '../stores/sources.type';
 import { flatten } from '../utils/flatten.function';
 
-let pathId = 0;
-function getUniquePath(path: string) {
-  return `${path}|${pathId++}`;
-}
-
 interface ParsedPath {
   path: string;
   pathAr: string[];
@@ -47,7 +42,7 @@ interface PathState {
 }
 
 interface PathStates {
-  [index: string]: undefined | PathState;
+  [index: string]: PathState;
 }
 
 interface UpdaterStream {
@@ -229,14 +224,14 @@ export class AdaptCommon<CommonStore extends StoreMethods = any> {
   }
 
   /**
-   * Returns a detached store; doesn't chain off of sources.
+   * Returns a detached store (doesn't chain off of sources).
    * Path must be correct.
    */
   watch<State, S extends Selectors<State>, R extends ReactionsWithSelectors<State, S>>(
     path: string,
     adapter: Adapter<State, S, R & BasicAdapterMethods<State>>,
     //
-  ): MiniStore<State, S & { state: (state: any) => State }> {
+  ): MiniStore<State, S & WithGetState<State>> {
     const selectors = adapter.selectors || ({} as S);
     const getState = this.getStateSelector<State>(path.split('.'));
     const requireSources$ = of(null);
@@ -254,29 +249,7 @@ export class AdaptCommon<CommonStore extends StoreMethods = any> {
   }
 
   private parsePath(path: string): ParsedPath {
-    let collisionFreePath: string | undefined;
-    Object.keys(this.pathStates).find(existingPath => {
-      if (path === existingPath) {
-        return (collisionFreePath = getUniquePath(path));
-      }
-
-      if (existingPath + '.' === path.substr(0, existingPath.length + 1)) {
-        const oldPathStem = path.substr(0, existingPath.length);
-        return (collisionFreePath =
-          getUniquePath(oldPathStem) + path.substr(existingPath.length));
-      }
-
-      if (path + '.' === existingPath.substr(0, path.length + 1)) {
-        return (collisionFreePath = getUniquePath(path));
-      }
-    });
-
-    const goodPath = collisionFreePath || path;
-    if (path !== goodPath) {
-      this.warnPathCollision(path, goodPath);
-    }
-    this.pathStates[goodPath] = undefined;
-    return { path: goodPath, pathAr: goodPath.split('.') };
+    return { path, pathAr: path.split('.') };
   }
 
   private getRequireSources<
@@ -341,6 +314,10 @@ export class AdaptCommon<CommonStore extends StoreMethods = any> {
     const requireSources$ = defer(() => {
       // Runs first upon subscription.
       // If any of the sources emits immediately, this needs to have been set up first.
+      const colllisionPath = this.getPathCollisions(path);
+      if (colllisionPath) {
+        throw this.getPathCollisionError(path, colllisionPath);
+      }
       this.commonStore.dispatch(createInit(path, initialState));
       this.pathStates[path] = {
         lastState: initialState,
@@ -379,6 +356,21 @@ export class AdaptCommon<CommonStore extends StoreMethods = any> {
     return [requireSources$, syntheticSources];
   }
 
+  private getPathCollisions(path: string) {
+    return Object.keys(this.pathStates).find(
+      existingPath =>
+        path === existingPath ||
+        existingPath + '.' === path.substr(0, existingPath.length + 1) ||
+        path + '.' === existingPath.substr(0, path.length + 1),
+    );
+  }
+
+  private getPathCollisionError(path: string, existingPath: string) {
+    return new Error(
+      `Path '${path}' collides with '${existingPath}', which has already been initialized as a state path.`,
+    );
+  }
+
   private getSourceUpdateStream(searchSource$: Observable<Action<any>>) {
     return this.updaterStreams.find(
       ({ source$ }) => searchSource$ === source$,
@@ -414,12 +406,6 @@ export class AdaptCommon<CommonStore extends StoreMethods = any> {
   ): ({ adapt }: { adapt: any }) => State {
     return ({ adapt }) =>
       pathAr.reduce((state, segment) => state && state[segment], adapt);
-  }
-
-  private warnPathCollision(path: string, collisionFreePath: string) {
-    console.warn(
-      `Path '${path}' collides with an already instantiated path, so it has been modified to '${collisionFreePath}'`,
-    );
   }
 
   private getSelections<State, S extends Selectors<State>>(
