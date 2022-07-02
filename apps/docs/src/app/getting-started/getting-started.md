@@ -10,7 +10,7 @@ Set up StateAdapt with
 
 ## Angular
 
-[StackBlitz Demo](https://stackblitz.com/github/state-adapt/state-adapt/tree/stackblitz-ng-sa-counter?file=apps%2Fng-sa-counter%2Fsrc%2Fapp%2Fapp.module.ts)
+[StackBlitz Demo](https://stackblitz.com/edit/state-adapt-angular?file=src%2Fapp%2Fapp.module.ts)
 
 First, `npm install`:
 
@@ -43,7 +43,7 @@ Open up Redux Devtools and you should see the state update immediately to `'Hell
 
 ## Angular and NgRx
 
-[StackBlitz Demo](https://stackblitz.com/github/state-adapt/state-adapt/tree/stackblitz-ng-sa-ngrx-counter?file=apps%2Fng-sa-ngrx-counter%2Fsrc%2Fapp%2Fapp.module.ts)
+[StackBlitz Demo](https://stackblitz.com/edit/state-adapt-angular-with-ngrx?file=src%2Fapp%2Fapp.module.ts)
 
 First, `npm install`:
 
@@ -85,7 +85,7 @@ Open up Redux Devtools and you should see the state update immediately to `'Hell
 
 ## Angular and NGXS
 
-[StackBlitz Demo](https://stackblitz.com/github/state-adapt/state-adapt/tree/stackblitz-ng-sa-ngxs-counter?file=apps%2Fng-sa-ngxs-counter%2Fsrc%2Fapp%2Fapp.module.ts)
+[StackBlitz Demo](https://stackblitz.com/edit/state-adapt-angular-with-ngxs?file=src%2Fapp%2Fapp.module.ts)
 
 First, `npm install`:
 
@@ -129,7 +129,7 @@ Open up Redux Devtools and you should see the state update immediately to `'Hell
 
 # React
 
-[StackBlitz Demo](https://stackblitz.com/edit/state-adapt-react)
+[StackBlitz demo blocked by this issue](https://github.com/stackblitz/core/issues/1911)
 
 First, `npm install`:
 
@@ -153,7 +153,7 @@ Provide StateAdapt in your app context:
 
 ```tsx
 import { AdaptContext } from '@state-adapt/react';
-import { adapt, store } from './store';
+import { adapt } from './store';
 // ...
   <AdaptContext.Provider value={adapt}>
     <React.StrictMode>
@@ -182,7 +182,7 @@ Open up Redux Devtools and you should see the state update immediately to `'new 
 
 # React and Redux
 
-[StackBlitz Demo](https://stackblitz.com/edit/state-adapt-react-with-redux)
+[StackBlitz demo blocked by this issue](https://github.com/stackblitz/core/issues/1911)
 
 First, `npm install`:
 
