@@ -44,4 +44,4 @@ Repeat the process.
 
 Some sources require state from other stores. For example, if you are creating a filtered list, you need the filter state in order to make the request to the server for the filtered items. You will probably want to create a selector in the required filter adapter to get the data in the exact format you want.
 
-Some sources need to access state from the same store they will be used in. This creates a circular reference, so the solution is to use [`select`](/concepts/stores#select).
+Some sources need to access state from the same store they will be used in. This creates a circular reference, so the solution is to use [`watch`](/concepts/stores#watch).
