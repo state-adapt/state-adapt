@@ -74,6 +74,15 @@ export class AppComponent {
       this.router.navigate([path]);
     }
 
+    (window as any).document.addEventListener(
+      'routeTo',
+      (e: CustomEvent) => {
+        e.preventDefault();
+        router.navigateByUrl(e.detail);
+      },
+      false,
+    );
+
     // https://github.com/ngstack/code-editor/issues/628
     import('./adapters/adapters-core.component').then(m =>
       this.injector

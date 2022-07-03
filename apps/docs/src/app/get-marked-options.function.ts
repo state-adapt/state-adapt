@@ -12,5 +12,18 @@ export function getMarkedOptions(): MarkedOptions {
   renderer.listitem = (text: string) => `<li class="bx--list__item">${text}</li>`;
   // renderer.heading = (text: string, level: number) => text;
 
+  renderer.link = (href: string, title: string, text: string) => {
+    const isLocalLink = /^\//.test(href);
+
+    let hrefContent;
+    if (isLocalLink) {
+      hrefContent = `javascript:document.dispatchEvent(new CustomEvent('routeTo', {detail: '${href}'})); void(0)`;
+    } else {
+      hrefContent = href;
+    }
+
+    return `<a href="${hrefContent}">${text}</a>`;
+  };
+
   return { renderer };
 }
