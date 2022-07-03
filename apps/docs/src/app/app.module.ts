@@ -6,6 +6,7 @@ import {
   createStore,
   stateSanitizer,
 } from '@state-adapt/core';
+import { IconModule } from 'carbon-components-angular/icon';
 import { ButtonModule } from 'carbon-components-angular/button';
 import { UIShellModule } from 'carbon-components-angular/ui-shell';
 import { MarkdownModule, MarkedOptions } from 'ngx-markdown';
@@ -26,6 +27,7 @@ const enableReduxDevTools = (window as any).__REDUX_DEVTOOLS_EXTENSION__?.({
     AppRoutingModule,
     UIShellModule,
     ButtonModule,
+    IconModule,
     MarkdownModule.forRoot({
       markedOptions: {
         provide: MarkedOptions,

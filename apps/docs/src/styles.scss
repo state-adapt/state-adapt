@@ -1,24 +1,16 @@
 /* You can add global styles to this file, and also import other style files */
 
-// @import './theme';
-// @include carbon--theme();
-// @import "~carbon-components/scss/globals/scss/styles.scss";
-// @import './code-snippet-theme';
+@import '../../../styles/theme-css-vars';
+@import '../../../styles/carbon-sass-vars'; // Import every time before importing component styles from ~carbon-components
+// Components
+@import '~carbon-components/scss/components/button/button';
+// @import '~carbon-components/scss/components/code-snippet/code-snippet';
+// @import '~carbon-components/scss/components/link/link';
+@import '~carbon-components/scss/components/list/list';
+@import '~carbon-components/scss/components/tile/tile';
 
-// h1, h2, h3 {
-//   margin-top: 1em;
-// }
-
-// p {
-//   margin-top: .6em;
-// }
-
-// a {
-//   font-weight: bold;
-//   text-decoration: none;
-
-//   &:hover {
-//     text-decoration: underline;
-//   }
-// }
-@import '../../../styles/base-styles';
+@import '../../../styles/ui-shell';
+@import '../../../styles/code-snippet-theme';
+@import '../../../styles/spacing';
+@import '../../../styles/link';
+@import '../../../styles/divider';

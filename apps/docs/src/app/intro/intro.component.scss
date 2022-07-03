@@ -1,7 +1,7 @@
-// @import "@carbon/themes/scss/themes";
-@import '../../../../../styles/theme';
-
 ::ng-deep .content {
+  position: relative;
+  box-shadow: var(--card-shadows);
+
   h1,
   h2 {
     margin-top: 2em;
@@ -12,26 +12,21 @@
     display: block !important;
     margin: 2em auto !important;
     border: 1px solid #000;
-    opacity: 0.75;
   }
 }
 
 .banner {
-  background: linear-gradient(
-    -0deg,
-    map-get($carbon--theme, ui-01c),
-    map-get($carbon--theme, ui-01d)
-  );
+  background: linear-gradient(-0deg, var(--ui-01c), var(--ui-01d));
   min-height: 765px;
   position: relative;
   overflow: hidden;
-  border-bottom: 3px solid map-get($carbon--theme, accent-01);
+  border-bottom: var(--banner-border);
 
   .banner-content-container {
     position: absolute;
     width: 100%;
     margin-top: 112px;
-    @media screen and (min-width: $large-screen) {
+    @media screen and (min-width: 1100px) {
       margin-top: 200px;
     }
   }
@@ -41,7 +36,7 @@
     margin: auto;
     display: block;
 
-    @media screen and (min-width: $large-screen) {
+    @media screen and (min-width: 1100px) {
       display: none;
     }
   }
@@ -49,7 +44,7 @@
     display: none;
     width: 0.74em;
     margin-right: 0.1em;
-    @media screen and (min-width: $large-screen) {
+    @media screen and (min-width: 1100px) {
       display: inline-block;
     }
 
@@ -61,11 +56,11 @@
   }
 
   #stateadapt {
-    margin-top: 0px;
+    margin-top: 0px !important;
     font-size: 70px;
     text-align: center;
     font-weight: 400;
-    @media screen and (min-width: $large-screen) {
+    @media screen and (min-width: 1100px) {
       font-size: 130px;
     }
 
@@ -80,14 +75,13 @@
     text-align: center;
     font-size: 30px;
     line-height: 1.6em;
-    font-weight: 100;
     margin-top: 0.6em;
-    @media screen and (min-width: $large-screen) {
+    @media screen and (min-width: 1100px) {
       font-size: 46px;
     }
 
     #tagline-break {
-      @media screen and (min-width: $large-screen) {
+      @media screen and (min-width: 1100px) {
         display: none;
       }
     }
@@ -97,7 +91,7 @@
     display: flex;
     justify-content: space-around;
     margin-top: 100px;
-    @media screen and (min-width: $large-screen) {
+    @media screen and (min-width: 1100px) {
       margin-top: 110px;
     }
 
@@ -105,7 +99,7 @@
       height: 0;
       font-size: 29px;
       font-weight: 700;
-      @media screen and (min-width: $large-screen) {
+      @media screen and (min-width: 1100px) {
         font-size: 33px;
       }
     }

@@ -1,8 +1,28 @@
 <ibm-header name="StateAdapt" [brand]="brandTemplate">
   <ibm-hamburger (click)="sidenavExpanded = !sidenavExpanded"></ibm-hamburger>
+  <ibm-header-global>
+    <button
+      [iconOnly]="true"
+      ibmButton="secondary"
+      [innerHTML]="awakeIcon"
+      (click)="setColorScheme('light')"
+    ></button>
+    <button
+      [iconOnly]="true"
+      ibmButton="secondary"
+      [innerHTML]="fadeIcon"
+      (click)="setColorScheme('reset')"
+    ></button>
+    <button
+      [iconOnly]="true"
+      ibmButton="secondary"
+      [innerHTML]="asleepIcon"
+      (click)="setColorScheme('dark')"
+    ></button>
+  </ibm-header-global>
 </ibm-header>
 <ng-template #brandTemplate>
-  <a href="/" class="brand" style="text-decoration: none">
+  <a routerLink="/" class="brand" style="text-decoration: none">
     <img src="../assets/sa3-3.svg" />
     <span class="logo-state">State</span>
     <span class="logo-adapt">Adapt</span>

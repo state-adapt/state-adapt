@@ -1,9 +1,7 @@
-@import '../../../../../styles/theme';
-
-$diagram-color: map-get($carbon--theme, ui-04);
-$source-pulse-color: map-get($carbon--theme, accent-01);
-$adapter-color: map-get($carbon--theme, interactive-01);
-$sink-pulse-color: map-get($carbon--theme, accent-02);
+$diagram-color: var(--ui-04);
+$source-pulse-color: var(--accent-01);
+$adapter-color: var(--interactive-01);
+$sink-pulse-color: var(--accent-02);
 $diagram-opacity: 0.4;
 
 @mixin child-left-top($cq, $child, $left, $right) {

@@ -1,0 +1,22 @@
+h1,
+h2,
+h3,
+h4 {
+  margin-top: 1.5em !important;
+}
+
+// blockquote {
+//   quotes: none;
+//   margin: 2em;
+//   border-left: 6px solid #8884;
+//   padding-left: 1em;
+// }
+
+p,
+ul {
+  margin-top: 0.6em !important;
+  &.bx--list--nested,
+  &[role='menu'] {
+    margin-top: 0 !important;
+  }
+}

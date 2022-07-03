@@ -1,20 +1,18 @@
 import { Component } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { MarkdownModule } from 'ngx-markdown';
 import md from 'raw-loader!./sources.md';
 import { ContentComponent } from '../content.component';
-import { NavTileComponent } from './nav-tile.component';
 
 @Component({
   standalone: true,
   selector: 'state-adapt-sources',
-  imports: [ContentComponent, MarkdownModule, NavTileComponent],
+  imports: [RouterModule, ContentComponent, MarkdownModule],
   template: `
     <state-adapt-content>
       <markdown [data]="md"></markdown>
-      <state-adapt-nav-tile link="/concepts/overview">Overview</state-adapt-nav-tile>
-      <state-adapt-nav-tile [right]="true" link="/concepts/adapters">
-        Adapters
-      </state-adapt-nav-tile>
+      <h2><a routerLink="/concepts/adapters">Next: Adapters</a></h2>
+      <h2><a routerLink="/concepts/overview">Previous: Overview</a></h2>
     </state-adapt-content>
   `,
 })

@@ -1,0 +1,72 @@
+@import '~carbon-components/scss/components/ui-shell/ui-shell';
+
+// Apparently most of this will be fixed in June (2021). https://github.com/carbon-design-system/carbon/issues/4839
+.bx--side-nav--ux {
+  width: 0px;
+}
+.bx--side-nav--expanded.bx--side-nav--ux {
+  width: 16rem;
+  box-shadow: var(--card-shadows);
+}
+.bx--header {
+  border-bottom: 0;
+}
+a.bx--side-nav__link[aria-current='page']::before {
+  background-color: var(--brand-01);
+}
+.bx--side-nav__item--active .bx--side-nav__submenu[aria-expanded='false']::before {
+  background-color: var(--brand-01);
+}
+.bx--side-nav {
+  background-color: var(--ui-01);
+  color: var(--text-01) !important;
+}
+.bx--side-nav__submenu,
+.bx--side-nav__link-text {
+  color: var(--text-01) !important;
+}
+.bx--side-nav__icon > svg {
+  fill: var(--text-01);
+}
+.bx--side-nav__link--current,
+.bx--side-nav__link[aria-current='page'] {
+  background-color: var(--hover-ui) !important;
+}
+.bx--side-nav__item--active .bx--side-nav__submenu:hover {
+  background-color: var(--hover-ui) !important;
+}
+.bx--side-nav__item:not(.bx--side-nav__item--active) > .bx--side-nav__link:hover {
+  background-color: var(--hover-ui);
+}
+.bx--side-nav__submenu:hover {
+  background-color: var(--hover-ui);
+}
+.bx--side-nav__item--active .bx--side-nav__submenu-title {
+  color: var(--text-01) !important;
+}
+.bx--side-nav__menu
+  a.bx--side-nav__link:not(.bx--side-nav__link--current):not([aria-current='page']):hover {
+  background-color: var(--hover-ui);
+}
+.bx--side-nav__item--active .bx--side-nav__submenu[aria-expanded='false'] {
+  background-color: var(--hover-ui);
+}
+.bx--side-nav__item:not(.bx--side-nav__item--active) > .bx--side-nav__link:hover {
+  color: var(--text-01);
+}
+.bx--side-nav__menu a.bx--side-nav__link[aria-current='page']:hover {
+  color: var(--text-01);
+}
+.bx--side-nav__menu
+  a.bx--side-nav__link:not(.bx--side-nav__link--current):not([aria-current='page']):hover {
+  color: var(--text-01);
+}
+.bx--side-nav__footer {
+  background-color: var(--ui-01);
+}
+.bx--form-item.bx--checkbox-wrapper:first-of-type {
+  margin-top: 0;
+}
+.bx--list-box__menu-icon {
+  stroke: var(--text-01);
+}

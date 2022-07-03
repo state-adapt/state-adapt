@@ -3,6 +3,11 @@ import { Component, Injector } from '@angular/core';
 import { Event, Router, RouterEvent } from '@angular/router';
 import { merge, Subject } from 'rxjs';
 import { filter, map, startWith } from 'rxjs/operators';
+import { setColorScheme } from './set-color-scheme.function';
+import asleepIcon from 'raw-loader!../assets/asleep.svg';
+import awakeIcon from 'raw-loader!../assets/awake.svg';
+import fadeIcon from 'raw-loader!../assets/fade.svg';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'state-adapt-root',
@@ -12,6 +17,11 @@ import { filter, map, startWith } from 'rxjs/operators';
 export class AppComponent {
   mobile = window.innerWidth < 800;
   sidenavExpanded = window.innerWidth > 800;
+
+  asleepIcon = this.sanitizer.bypassSecurityTrustHtml(asleepIcon);
+  awakeIcon = this.sanitizer.bypassSecurityTrustHtml(awakeIcon);
+  fadeIcon = this.sanitizer.bypassSecurityTrustHtml(fadeIcon);
+  setColorScheme = ((window as any).setColorScheme = setColorScheme);
 
   urlChange$ = new Subject<string>();
   links$ = merge(
@@ -67,6 +77,7 @@ export class AppComponent {
     private location: Location,
     private router: Router,
     private injector: Injector,
+    private sanitizer: DomSanitizer,
   ) {
     const path = localStorage.getItem('path');
     if (path) {

@@ -2,8 +2,7 @@
 
 ```typescript
 export class NameComponent {
-  nameStore = adapt('name', 'Bob');
-  // 'name' will be the namespace in Redux Devtools
+  nameStore = adapt('name', 'Bob'); // 'name' is the namespace for Redux Devtools
 }
 ```
 
@@ -49,7 +48,7 @@ https://www.thisdot.co/blog/angular-custom-builders-markdown-angular
 https://github.com/flakolefluk/md-builder
  -->
 
-## 3. Define state changes declaratively in store
+## 3. Define state changes declaratively in stores
 
 Maintain separation of concerns by keeping state logic together instead of scattered.
 

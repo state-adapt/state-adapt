@@ -1,5 +1,3 @@
-@import '../../../../styles/theme';
-
 :host {
   display: block;
   font-family: sans-serif;
@@ -14,10 +12,10 @@ a.brand {
     margin: -3px 3px 0px;
   }
   .logo-state {
-    color: map-get($map: $carbon--theme, $key: brand-01);
+    // color: var(--theme-01);
   }
   .logo-adapt {
-    color: map-get($map: $carbon--theme, $key: text-01);
+    color: var(--text-04);
   }
 }
 
@@ -38,6 +36,16 @@ main {
     &.squished {
       width: calc(100% - 16rem);
       margin-left: 16rem;
+    }
+  }
+}
+
+ibm-header-global button {
+  background-color: transparent;
+
+  ::ng-deep {
+    svg {
+      fill: var(--text-04);
     }
   }
 }

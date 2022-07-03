@@ -66,21 +66,13 @@ import { getDiffHtml, toJson } from './get-diff-html.function';
                 (payloadEditorRefreshRequired$ | async) ||
                 (editorReady$ | async) === false
               "
-            ></div>
-            <!-- <wc-monaco-editor
-              [value]="(codeModel$ | async)?.value"
-              (keypress)="editorKeyPressed$.next($event)"
-            ></wc-monaco-editor> -->
-            <!--
-              language="json"
-              https://github.com/vanillawc/wc-monaco-editor/issues/13
-              [language]="(codeModel$ | async)?.language"
-              *ngIf="(payloadEditorRefreshRequired$ | async) === false"
-            -->
+            >
+              <code>Loading editor...</code>
+            </div>
             <ng-container *ngIf="editorReady$ | async">
               <ngs-code-editor
                 *ngIf="(payloadEditorRefreshRequired$ | async) === false"
-                theme="vs-dark"
+                [theme]="editorTheme"
                 [codeModel]="codeModel$ | async"
                 [options]="codeOptions"
                 (keypress)="editorKeyPressed$.next($event)"
@@ -88,7 +80,7 @@ import { getDiffHtml, toJson } from './get-diff-html.function';
             </ng-container>
             <!-- (valueChanged)="payloadChanged$.next($event)" -->
           </ibm-tab>
-          <ibm-tab class="padded" heading="Documentation">
+          <ibm-tab class="padded documentation" heading="Documentation">
             {{ (selectedStateChange$ | async)?.documentation }}
           </ibm-tab>
         </ibm-tabs>
@@ -118,12 +110,11 @@ import { getDiffHtml, toJson } from './get-diff-html.function';
         <ibm-tabs>
           <ibm-tab heading="Result">
             <markdown [data]="selectorResult$ | async"></markdown>
-            <!-- <pre class="language-json">{{ selectorResult$ | async }}</pre> -->
           </ibm-tab>
           <ibm-tab heading="Diff">
             <pre class="language-json" [innerHTML]="selectorDiff$ | async"></pre>
           </ibm-tab>
-          <ibm-tab class="padded" heading="Documentation">
+          <ibm-tab class="padded documentation" heading="Documentation">
             {{ (selectedSelector$ | async)?.documentation }}
           </ibm-tab>
         </ibm-tabs>
@@ -132,7 +123,7 @@ import { getDiffHtml, toJson } from './get-diff-html.function';
       <h2 style="clear: both">Demo Code</h2>
       <markdown [data]="demoSourceCodeMd$ | async"></markdown>
       <ng-template #codeTemplate let-item="item">
-        <code style="color: #f4f4f4">{{ item?.content }}</code>
+        <code>{{ item?.content }}</code>
       </ng-template>
 
       <ibm-structured-list [condensed]="true" *ngIf="docs.parameters.length">
@@ -186,7 +177,7 @@ import { getDiffHtml, toJson } from './get-diff-html.function';
         min-height: 600px;
       }
       .history:empty {
-        background: linear-gradient(180deg, #393939, transparent);
+        background: linear-gradient(180deg, var(--field-01), transparent);
       }
       @media screen and (min-width: 1500px) {
         ::ng-deep .history {
@@ -231,16 +222,9 @@ import { getDiffHtml, toJson } from './get-diff-html.function';
         display: flex;
         align-items: stretch;
       }
-      .dropdown-header-label {
-        width: 50%;
-        display: flex;
-        align-items: center;
-        margin-top: 0;
-        border-bottom: 1px solid #8d8d8d;
+      ::ng-deep .state-change-panel button.bx--list-box__field {
+        width: 100%;
       }
-      /* .dropdown {
-        width: 66.7%;
-      } */
       ibm-dropdown {
         display: block;
         width: 50%;
@@ -252,8 +236,8 @@ import { getDiffHtml, toJson } from './get-diff-html.function';
       ::ng-deep .state-change-panel ibm-tab .bx--tab-content {
         height: 160px;
         padding: 0;
-        background-color: #1e1e1e;
-        border-left: 2px solid #00ced1;
+        background-color: var(--ui-01b);
+        border-left: 2px solid var(--brand-01);
       }
       ::ng-deep ibm-tab.padded .bx--tab-content {
         padding: 1em !important;
@@ -269,7 +253,8 @@ import { getDiffHtml, toJson } from './get-diff-html.function';
       .editor-placeholder {
         min-height: 160px;
         width: 100%;
-        background-color: #1e1e1e;
+        padding: 0 1em;
+        background-color: var(--ui-01b);
       }
       ::ng-deep .state-change-panel button {
         width: 33.333%;
@@ -277,8 +262,8 @@ import { getDiffHtml, toJson } from './get-diff-html.function';
       ::ng-deep .selector-panel ibm-tab .bx--tab-content {
         height: 300px;
         padding: 0;
-        background-color: #1e1e1e;
-        border-left: 2px solid #00ced1;
+        background-color: var(--ui-01b);
+        border-left: 2px solid var(--brand-01);
       }
       ::ng-deep .selector-panel ibm-tab pre {
         height: 300px;
@@ -294,6 +279,9 @@ import { getDiffHtml, toJson } from './get-diff-html.function';
 export class AdapterDocsComponent implements OnInit {
   @Input() adapterDocs: AdapterDocs = defaultAdapterDocs;
   editorReady$ = inject(EditorReadyService).ready$;
+  editorTheme = (window as any).document.body.className.includes('light')
+    ? 'vs-light'
+    : 'vs-dark';
   path = ('adapterDocs' + Math.random()).replace('.', '');
 
   detachedDocsStore = watch(this.path, docsAdapter);
@@ -350,6 +338,11 @@ export class AdapterDocsComponent implements OnInit {
   payloadEditorRefreshRequired$ = this.docsStore.payloadEditorRefreshRequired$;
   codeModel$ = this.docsStore.payloadCodeModel$;
   codeOptions = {
+    glyphMargin: false,
+    // folding: false,
+    lineDecorationsWidth: 0,
+    lineNumbersMinChars: 0,
+    lineNumbers: false,
     contextMenu: true,
     scrollBeyondLastLine: false,
   };

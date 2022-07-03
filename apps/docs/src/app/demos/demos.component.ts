@@ -42,7 +42,8 @@ interface Demo {
         width: calc(50% - 10px);
       }
       ::ng-deep .demo-tiles-container ibm-clickable-tile a {
-        height: 360px;
+        height: 400px;
+        padding: 0 1em 1em;
         display: flex;
         justify-content: space-between;
         flex-direction: column;

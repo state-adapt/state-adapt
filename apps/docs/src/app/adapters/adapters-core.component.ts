@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewEncapsulation } from '@angular/core';
 import { AdapterDocsModule } from '@state-adapt/adapter-docs';
 import { ContentComponent } from '../content.component';
 import { createAdapterDocs } from './create-adapter-docs.const';
@@ -9,6 +9,7 @@ export { EditorReadyService } from '@state-adapt/adapter-docs';
 @Component({
   standalone: true,
   selector: 'state-adapt-adapters-core',
+  encapsulation: ViewEncapsulation.None,
   imports: [AdapterDocsModule, ContentComponent],
   template: `
     <state-adapt-content>
@@ -16,6 +17,7 @@ export { EditorReadyService } from '@state-adapt/adapter-docs';
       <state-adapt-adapter-docs [adapterDocs]="adapterDocs"></state-adapt-adapter-docs>
     </state-adapt-content>
   `,
+  styleUrls: ['styles.scss'],
 })
 export class AdaptersCoreComponent {
   adapterDocs = createAdapterDocs;
