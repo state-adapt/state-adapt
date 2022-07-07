@@ -1,5 +1,6 @@
-module.exports = {
-  displayName: 'docs',
+/* eslint-disable */
+export default {
+  displayName: 'adapter-docs',
   preset: '../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   globals: {
@@ -9,7 +10,7 @@ module.exports = {
       tsconfig: '<rootDir>/tsconfig.spec.json',
     },
   },
-  coverageDirectory: '../../coverage/apps/docs',
+  coverageDirectory: '../../coverage/libs/adapter-docs',
   snapshotSerializers: [
     'jest-preset-angular/build/serializers/no-ng-attributes',
     'jest-preset-angular/build/serializers/ng-snapshot',

@@ -1,5 +1,6 @@
-module.exports = {
-  displayName: 'shopping',
+/* eslint-disable */
+export default {
+  displayName: 'ng-sa-ngrx-counter',
   preset: '../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   globals: {
@@ -9,7 +10,7 @@ module.exports = {
       tsconfig: '<rootDir>/tsconfig.spec.json',
     },
   },
-  coverageDirectory: '../../coverage/libs/shopping',
+  coverageDirectory: '../../coverage/apps/ng-sa-ngrx-counter',
   snapshotSerializers: [
     'jest-preset-angular/build/serializers/no-ng-attributes',
     'jest-preset-angular/build/serializers/ng-snapshot',

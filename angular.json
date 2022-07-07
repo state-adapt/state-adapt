@@ -2,6 +2,7 @@
   "version": 1,
   "projects": {
     "adapter-docs": {
+      "$schema": "../../node_modules/nx/schemas/project-schema.json",
       "projectType": "library",
       "root": "libs/adapter-docs",
       "sourceRoot": "libs/adapter-docs/src",
@@ -33,7 +34,7 @@
           "builder": "@nrwl/jest:jest",
           "outputs": ["coverage/libs/adapter-docs"],
           "options": {
-            "jestConfig": "libs/adapter-docs/jest.config.js",
+            "jestConfig": "libs/adapter-docs/jest.config.ts",
             "passWithNoTests": true
           }
         }
@@ -41,6 +42,7 @@
       "tags": []
     },
     "angular": {
+      "$schema": "../../node_modules/nx/schemas/project-schema.json",
       "projectType": "library",
       "root": "libs/angular",
       "sourceRoot": "libs/angular/src",
@@ -80,6 +82,7 @@
       "tags": []
     },
     "core": {
+      "$schema": "../../node_modules/nx/schemas/project-schema.json",
       "projectType": "library",
       "root": "libs/core",
       "sourceRoot": "libs/core/src",
@@ -108,7 +111,7 @@
           "builder": "@nrwl/jest:jest",
           "outputs": ["coverage/libs/core"],
           "options": {
-            "jestConfig": "libs/core/jest.config.js",
+            "jestConfig": "libs/core/jest.config.ts",
             "passWithNoTests": true
           }
         }
@@ -116,6 +119,7 @@
       "tags": []
     },
     "counter-ui": {
+      "$schema": "../../node_modules/nx/schemas/project-schema.json",
       "projectType": "library",
       "root": "libs/counter-ui",
       "sourceRoot": "libs/counter-ui/src",
@@ -135,7 +139,7 @@
           "builder": "@nrwl/jest:jest",
           "outputs": ["coverage/libs/counter-ui"],
           "options": {
-            "jestConfig": "libs/counter-ui/jest.config.js",
+            "jestConfig": "libs/counter-ui/jest.config.ts",
             "passWithNoTests": true
           }
         }
@@ -143,6 +147,7 @@
       "tags": []
     },
     "dashboards-feature": {
+      "$schema": "../../node_modules/nx/schemas/project-schema.json",
       "projectType": "library",
       "root": "libs/dashboards-feature",
       "sourceRoot": "libs/dashboards-feature/src",
@@ -162,7 +167,7 @@
           "builder": "@nrwl/jest:jest",
           "outputs": ["coverage/libs/dashboards-feature"],
           "options": {
-            "jestConfig": "libs/dashboards-feature/jest.config.js",
+            "jestConfig": "libs/dashboards-feature/jest.config.ts",
             "passWithNoTests": true
           }
         }
@@ -170,6 +175,7 @@
       "tags": ["feature"]
     },
     "docs": {
+      "$schema": "../../node_modules/nx/schemas/project-schema.json",
       "projectType": "application",
       "root": "apps/docs",
       "sourceRoot": "apps/docs/src",
@@ -258,7 +264,7 @@
           "builder": "@nrwl/jest:jest",
           "outputs": ["coverage/apps/docs"],
           "options": {
-            "jestConfig": "apps/docs/jest.config.js",
+            "jestConfig": "apps/docs/jest.config.ts",
             "passWithNoTests": true
           }
         }
@@ -266,6 +272,7 @@
       "tags": []
     },
     "docs-e2e": {
+      "$schema": "../../node_modules/nx/schemas/project-schema.json",
       "root": "apps/docs-e2e",
       "sourceRoot": "apps/docs-e2e/src",
       "projectType": "application",
@@ -295,6 +302,7 @@
       "implicitDependencies": ["docs"]
     },
     "ng-sa-component-store": {
+      "$schema": "../../node_modules/nx/schemas/project-schema.json",
       "projectType": "application",
       "root": "apps/ng-sa-component-store",
       "sourceRoot": "apps/ng-sa-component-store/src",
@@ -377,7 +385,7 @@
           "builder": "@nrwl/jest:jest",
           "outputs": ["coverage/apps/ng-sa-component-store"],
           "options": {
-            "jestConfig": "apps/ng-sa-component-store/jest.config.js",
+            "jestConfig": "apps/ng-sa-component-store/jest.config.ts",
             "passWithNoTests": true
           }
         }
@@ -385,6 +393,7 @@
       "tags": []
     },
     "ng-sa-component-store-e2e": {
+      "$schema": "../../node_modules/nx/schemas/project-schema.json",
       "root": "apps/ng-sa-component-store-e2e",
       "sourceRoot": "apps/ng-sa-component-store-e2e/src",
       "projectType": "application",
@@ -414,6 +423,7 @@
       "implicitDependencies": ["ng-sa-component-store"]
     },
     "ng-sa-counter": {
+      "$schema": "../../node_modules/nx/schemas/project-schema.json",
       "projectType": "application",
       "root": "apps/ng-sa-counter",
       "sourceRoot": "apps/ng-sa-counter/src",
@@ -496,7 +506,7 @@
           "builder": "@nrwl/jest:jest",
           "outputs": ["coverage/apps/ng-sa-counter"],
           "options": {
-            "jestConfig": "apps/ng-sa-counter/jest.config.js",
+            "jestConfig": "apps/ng-sa-counter/jest.config.ts",
             "passWithNoTests": true
           }
         }
@@ -504,6 +514,7 @@
       "tags": []
     },
     "ng-sa-ngrx-counter": {
+      "$schema": "../../node_modules/nx/schemas/project-schema.json",
       "projectType": "application",
       "root": "apps/ng-sa-ngrx-counter",
       "sourceRoot": "apps/ng-sa-ngrx-counter/src",
@@ -586,7 +597,7 @@
           "builder": "@nrwl/jest:jest",
           "outputs": ["coverage/apps/ng-sa-ngrx-counter"],
           "options": {
-            "jestConfig": "apps/ng-sa-ngrx-counter/jest.config.js",
+            "jestConfig": "apps/ng-sa-ngrx-counter/jest.config.ts",
             "passWithNoTests": true
           }
         }
@@ -594,6 +605,7 @@
       "tags": []
     },
     "ng-sa-ngxs-counter": {
+      "$schema": "../../node_modules/nx/schemas/project-schema.json",
       "projectType": "application",
       "root": "apps/ng-sa-ngxs-counter",
       "sourceRoot": "apps/ng-sa-ngxs-counter/src",
@@ -676,7 +688,7 @@
           "builder": "@nrwl/jest:jest",
           "outputs": ["coverage/apps/ng-sa-ngxs-counter"],
           "options": {
-            "jestConfig": "apps/ng-sa-ngxs-counter/jest.config.js",
+            "jestConfig": "apps/ng-sa-ngxs-counter/jest.config.ts",
             "passWithNoTests": true
           }
         }
@@ -684,6 +696,7 @@
       "tags": []
     },
     "ng-sa-shopping": {
+      "$schema": "../../node_modules/nx/schemas/project-schema.json",
       "projectType": "application",
       "root": "apps/ng-sa-shopping",
       "sourceRoot": "apps/ng-sa-shopping/src",
@@ -770,7 +783,7 @@
           "builder": "@nrwl/jest:jest",
           "outputs": ["coverage/apps/ng-sa-shopping"],
           "options": {
-            "jestConfig": "apps/ng-sa-shopping/jest.config.js",
+            "jestConfig": "apps/ng-sa-shopping/jest.config.ts",
             "passWithNoTests": true
           }
         }
@@ -778,6 +791,7 @@
       "tags": []
     },
     "ngrx": {
+      "$schema": "../../node_modules/nx/schemas/project-schema.json",
       "projectType": "library",
       "root": "libs/ngrx",
       "sourceRoot": "libs/ngrx/src",
@@ -806,7 +820,7 @@
           "builder": "@nrwl/jest:jest",
           "outputs": ["coverage/libs/ngrx"],
           "options": {
-            "jestConfig": "libs/ngrx/jest.config.js",
+            "jestConfig": "libs/ngrx/jest.config.ts",
             "passWithNoTests": true
           }
         }
@@ -814,6 +828,7 @@
       "tags": []
     },
     "ngxs": {
+      "$schema": "../../node_modules/nx/schemas/project-schema.json",
       "projectType": "library",
       "root": "libs/ngxs",
       "sourceRoot": "libs/ngxs/src",
@@ -842,7 +857,7 @@
           "builder": "@nrwl/jest:jest",
           "outputs": ["coverage/libs/ngxs"],
           "options": {
-            "jestConfig": "libs/ngxs/jest.config.js",
+            "jestConfig": "libs/ngxs/jest.config.ts",
             "passWithNoTests": true
           }
         }
@@ -850,6 +865,7 @@
       "tags": []
     },
     "react": {
+      "$schema": "../../node_modules/nx/schemas/project-schema.json",
       "root": "libs/react",
       "sourceRoot": "libs/react/src",
       "projectType": "library",
@@ -890,7 +906,7 @@
           "builder": "@nrwl/jest:jest",
           "outputs": ["coverage/libs/react"],
           "options": {
-            "jestConfig": "libs/react/jest.config.js",
+            "jestConfig": "libs/react/jest.config.ts",
             "passWithNoTests": true
           }
         }
@@ -898,6 +914,7 @@
       "tags": []
     },
     "react-demo": {
+      "$schema": "../../node_modules/nx/schemas/project-schema.json",
       "root": "apps/react-demo",
       "sourceRoot": "apps/react-demo/src",
       "projectType": "application",
@@ -938,8 +955,15 @@
                   "maximumError": "5mb"
                 }
               ]
+            },
+            "development": {
+              "extractLicenses": false,
+              "optimization": false,
+              "sourceMap": true,
+              "vendorChunk": true
             }
-          }
+          },
+          "defaultConfiguration": "production"
         },
         "serve": {
           "builder": "@nrwl/web:dev-server",
@@ -949,8 +973,12 @@
           "configurations": {
             "production": {
               "buildTarget": "react-demo:build:production"
+            },
+            "development": {
+              "buildTarget": "react-demo:build:development"
             }
-          }
+          },
+          "defaultConfiguration": "development"
         },
         "lint": {
           "builder": "@nrwl/linter:eslint",
@@ -963,7 +991,7 @@
           "builder": "@nrwl/jest:jest",
           "outputs": ["coverage/apps/react-demo"],
           "options": {
-            "jestConfig": "apps/react-demo/jest.config.js",
+            "jestConfig": "apps/react-demo/jest.config.ts",
             "passWithNoTests": true
           }
         }
@@ -971,6 +999,7 @@
       "tags": []
     },
     "shopping": {
+      "$schema": "../../node_modules/nx/schemas/project-schema.json",
       "projectType": "library",
       "root": "libs/shopping",
       "sourceRoot": "libs/shopping/src",
@@ -990,7 +1019,7 @@
           "builder": "@nrwl/jest:jest",
           "outputs": ["coverage/libs/shopping"],
           "options": {
-            "jestConfig": "libs/shopping/jest.config.js",
+            "jestConfig": "libs/shopping/jest.config.ts",
             "passWithNoTests": true
           }
         }

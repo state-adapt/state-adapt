@@ -1,5 +1,6 @@
-module.exports = {
-  displayName: 'ng-sa-shopping',
+/* eslint-disable */
+export default {
+  displayName: 'dashboards-feature',
   preset: '../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   globals: {
@@ -9,7 +10,7 @@ module.exports = {
       tsconfig: '<rootDir>/tsconfig.spec.json',
     },
   },
-  coverageDirectory: '../../coverage/apps/ng-sa-shopping',
+  coverageDirectory: '../../coverage/libs/dashboards-feature',
   snapshotSerializers: [
     'jest-preset-angular/build/serializers/no-ng-attributes',
     'jest-preset-angular/build/serializers/ng-snapshot',
