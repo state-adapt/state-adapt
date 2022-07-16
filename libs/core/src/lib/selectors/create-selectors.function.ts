@@ -129,6 +129,9 @@ type SelectorsCreator<State> = {
   ): S1 & ReturnTypeSelectors<State, S6States, S2 & S3 & S4 & S5 & S6 & S7>;
 };
 
+/**
+ * @deprecated Use buildSelectors
+ */
 export function createSelectors<State>(): SelectorsCreator<State> {
   return (...args: any) => {
     return createSelectorsFn(args);

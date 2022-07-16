@@ -20,6 +20,9 @@ type StoreSelectorInput<
   SelectorKey1 extends SelectorKey<State, S, AS> = 'state',
 > = StoreLike<State, S, AS> | [StoreLike<State, S, AS>, SelectorKey1];
 
+/**
+ * @deprecated Use buildSelectors
+ */
 export function joinSelectors<
   State1,
   State2,

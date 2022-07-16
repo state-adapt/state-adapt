@@ -20,10 +20,15 @@ interface AnySelectors {
   [index: string]: (state: any) => any;
 }
 
-type Prefixed<Prefix extends string, S> = {
-  [Key in keyof S as `${Prefix}${Capitalize<Key extends string ? Key : never>}`]: S[Key];
+export type Prefixed<Prefix extends string, S> = {
+  [Key in keyof S as `${Prefix}${Capitalize<
+    Key extends string ? (Key extends 'state' ? '' : Key) : never
+  >}`]: S[Key];
 };
-
+/**
+ *
+ * @deprecated use joinStores
+ */
 export function join<
   State1,
   State2,
@@ -165,11 +170,6 @@ export function join<CombinedS extends Selectors<any>>(
   const select = miniStoreInputs[0][1]._select;
   const newSelectors = inputs[inputs.length - 1];
 
-  const getState: ({ adapt }: { adapt: any }) => any = (createSelector as any)(
-    [...miniStoreInputs.map(([prefix, miniStore]) => miniStore._fullSelectors.state)],
-    (...results: any[]) => results,
-  );
-
   const combinedStoreSelectors = miniStoreInputs.reduce(
     (combined, [prefix, miniStore]) => ({
       ...combined,
@@ -178,10 +178,15 @@ export function join<CombinedS extends Selectors<any>>(
     {} as any,
   );
 
+  const getState: ({ adapt }: { adapt: any }) => any = (createSelector as any)(
+    [...miniStoreInputs.map(([prefix, miniStore]) => miniStore._fullSelectors.state)],
+    (...results: any[]) => results,
+  );
   const fullSelectors: any = {
     ...createSelectors<any>()(combinedStoreSelectors, newSelectors),
     state: getState,
   };
+
   const requireAllSources$ = merge(
     ...miniStoreInputs.map(([prefix, miniStore]) => miniStore._requireSources$),
   );
@@ -210,7 +215,10 @@ function prefixObjectKeys<Prefix extends string, T>(
   obj: T,
 ): Prefixed<Prefix, T> {
   return Object.entries(obj).reduce(
-    (newObj, [key, value]) => ({ ...newObj, [`${prefix}${capitalize(key)}`]: value }),
+    (newObj, [key, value]) => ({
+      ...newObj,
+      [`${prefix}${key === 'state' ? '' : capitalize(key)}`]: value,
+    }),
     {} as Prefixed<Prefix, T>,
   );
 }
