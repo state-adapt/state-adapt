@@ -176,6 +176,8 @@ Initially, `total$` will emit `4000`, calculated from the initial inputs of `0` 
 
 ### `joinSelectors`
 
+[`joinSelectors`](/concepts/stores#joinselectors) has been deprecated in favor of [`joinStores`](/concepts/stores#joinstores).
+
 [`joinSelectors`](/concepts/stores#joinselectors) is the simplest way to use state from multiple stores:
 
 ```typescript
@@ -198,10 +200,11 @@ TypeScript will autocomplete the name of the selector as you type and correctly 
 
 ### `join`
 
+[`join`](/concepts/stores#join) has been deprecated in favor of [`joinStores`](/concepts/stores#joinstores).
+
 [`join`](/concepts/stores#join) is a heavier solution than [`joinSelectors`](/concepts/stores#joinselectors). When you need to join many selectors from the same stores your code will be more DRY if you use [`join`](/concepts/stores#join) instead of [`joinSelectors`](/concepts/stores#joinselectors). [`join`](/concepts/stores#join) gives you access to all of each store's selectors by allowing you to specify a prefix to prepend to all selector names from each individual store. It returns a new store-like object with new selectors you define using `createSelector` from _Reselect_:
 
 ```typescript
-import { createSelector } from 'reselect';
 import { join } from '@state-adapt/core';
 // ...
 numbersStore = join(['one', this.number1Store], ['two', this.number2Store], {
@@ -211,3 +214,46 @@ numbersStore = join(['one', this.number1Store], ['two', this.number2Store], {
 totalNegative1$ = this.numbersStore.totalNegative1$;
 totalNegative2$ = this.numbersStore.totalNegative2$;
 ```
+
+### `joinStores`
+
+[`joinStores`](/concepts/stores#joinstores) gives you access to all of each store's selectors by allowing you to specify a prefix to prepend to all selector names from each individual store. It returns a new store-like object with new selectors. It also has similar syntax to that of [`joinAdapters`](/concepts/adapters#joinadapters):
+
+```typescript
+import { joinStores } from '@state-adapt/core';
+// ...
+numbersStore = joinStores({
+  one: this.number1Store,
+  two: this.number2Store,
+})({
+  totalNegative1: s => s.oneNegative + s.twoState,
+  totalNegative2: s => s.oneState + s.twoNegative,
+})();
+
+totalNegative1$ = this.numbersStore.totalNegative1$;
+totalNegative2$ = this.numbersStore.totalNegative2$;
+```
+
+The reason for this is so you can define state logic in adapters instead of inside `joinStores`, which makes it simpler to test. This alternative syntax would be slightly preferrable:
+
+```typescript
+import { joinAdapters, joinStores } from '@state-adapt/core';
+
+const numbersStore = joinAdapters<NumbersState>()({
+  one: numberAdapter,
+  two: numberAdapter,
+})({
+  totalNegative1: s => s.oneNegative + s.twoState,
+  totalNegative2: s => s.oneState + s.twoNegative,
+})();
+// ...
+numbersStore = joinStores({
+  one: this.number1Store,
+  two: this.number2Store,
+})(numbersStore.selectors)();
+
+totalNegative1$ = this.numbersStore.totalNegative1$;
+totalNegative2$ = this.numbersStore.totalNegative2$;
+```
+
+But it's easy to move from one to the other.

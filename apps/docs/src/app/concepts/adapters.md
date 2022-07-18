@@ -6,6 +6,11 @@
 - [`createAdapter`](/concepts/adapters#createadapter)
 - [Extending Adapters](/concepts/adapters#extending-adapters)
 - [`createSelectors`](/concepts/adapters#createselectors)
+- [`buildSelectors`](/concepts/adapters#buildselectors)
+- [`buildAdapter`](/concepts/adapters#buildadapter)
+- [`joinAdapters`](/concepts/adapters#joinadapters)
+- [`mapPayloads`](/concepts/adapters#mappayloads)
+- [TypeScript Errors](/concepts/adapters#typescript-errors)
 - [Adapter Creator Libraries](/concepts/adapters#adapter-creator-libraries)
 
 ## Overview
@@ -87,7 +92,9 @@ const numberStringAdapter = createAdapter<number>()({
 
 ## `createSelectors`
 
-`createAdapter` memoizes selectors passed into the `selectors` property, but it only does so shallowly. `createSelectors` provides full selector memoization and a default `state` selector (after the first argument). It takes up to 7 selector objects as arguments, each one receiving all of the selectors from the previous selector objects.
+`createSelectors` has been deprecated in favor of [`buildSelectors`](/concepts/adapters#buildselectors)
+
+[`createAdapter`](/concepts/adapters#createadapter) memoizes selectors passed into the `selectors` property, but it only does so shallowly. `createSelectors` provides full selector memoization and a default `state` selector (after the first argument). It takes up to 7 selector objects as arguments, each one receiving all of the selectors from the previous selector objects.
 
 ```typescript
 import { createSelectors, createAdapter } from '@state-adapt/core';
@@ -146,6 +153,373 @@ const numberStringAdapter = createAdapter<number>()({
 ```
 
 This forces TypeScript to break the nested type references created in `createSelectors` and understand `selectors` as a flat object instead. If your selector chain is long enough, you might need to break it up into multiple calls to `createSelectors`.
+
+## `buildSelectors`
+
+[`createAdapter`](/concepts/adapters#createadapter) memoizes selectors passed into the `selectors` property, but it only does so shallowly. [`buildSelectors`](/concepts/adapters#buildselectors) provides full selector memoization and a default `state` selector (after the first call). It takes initial selectors in the first call, which receive a state object to select against, and it returns a function that can be called successively with more selectors, each selecting against the return values from all selectors previously passed in. To return all the selectors combined, call it a final time with no parameter:
+
+```typescript
+import { createSelectors, createAdapter } from '@state-adapt/core';
+
+const selectors = buildSelectors<string>()({
+  reverse: s => s.split('').reverse().join(''),
+})({
+  isPalendrome: s => s.reverse === s.state,
+})();
+
+const stringAdapter = createAdapter<string>()({ selectors });
+```
+
+Reuse selectors from anywhere:
+
+```typescript
+import { createAdapter, createSelectors } from '@state-adapt/core';
+import { numberAdapter } from './number.adapter';
+
+const selectors = buildSelectors<number>()(numberAdapter.selectors)({
+  negative: s => s.negative.toString(),
+})();
+
+const numberStringAdapter = createAdapter<number>()({
+  ...numberAdapter,
+  selectors,
+});
+```
+
+`s` is typed the same as the selectors object passed in as the first argument, except using the return type of each selector instead of the selector itself. Internally, [`buildSelectors`](/concepts/adapters#buildselectors) uses a `Proxy` to detect which selectors your new selector functions are accessing in order memoize them efficiently. You could think of `s` as referencing either the selectors object you passed in, or a derived state object created by calling those selectors for each object key. This dual reference is why the convention is to name it `s` instead of either `selectors` or `state`.
+
+[`buildSelectors`](/concepts/adapters#buildselectors) is another reason for naming selectors as nouns instead of verbs: Either it would need to do extra, unnecessary processing to add `'get'`s in the `Proxy` property accessor method to find the correct selectors, or developers would need to treat verbs as nouns in their selector functions, which would be awkward: `s => s.getNegative.toString()`.
+
+## `buildAdapter`
+
+`buildAdapter` uses similar syntax to that of [`buildSelectors`](/concepts/adapters#buildselectors): You call it with an initial adapter, then call it again and again with more objects inheriting from previous objects, until a final empty call `()` to get the final built adapter:
+
+```typescript
+import { buildAdapter } from '@state-adapt/core';
+import { numberAdapter } from './number.adapter';
+
+const numberStringAdapter = buildAdapter<number>()(numberAdapter)({
+  negative: s => s.negative.toString(),
+})();
+// Same result as the buildSelectors example above
+```
+
+[`buildAdapter`](/concepts/adapters#buildadapter) takes 3 possible arguments in each call: A selectors object, like in the example above or the example in [`buildselectors`](/concepts/adapters#buildselectors); a function taking in an array of selectors and reactions and returning new reactions; or a nested object defining grouped state reactions.
+
+The function returning new reactions can be used like this:
+
+```typescript
+import { buildAdapter } from '@state-adapt/core';
+import { numberAdapter } from './number.adapter';
+
+const numberStringAdapter = buildAdapter<number>()(numberAdapter)({
+  negativeStr: s => s.negative.toString(),
+})(([selectors, reactions]) => ({
+  setToNegative: state => selectors.negative(state),
+}))();
+```
+
+`setToNegative` becomes a reaction on `numberStringAdapter` that multiplies the state by `-1` (the return of `selectors.negative(state)`).
+
+The nested object defining grouped state reactions is for nested states. Let's say you had an adapter like this:
+
+```typescript
+import { buildAdapter } from '@state-adapt/core';
+import { numberAdapter } from './number.adapter';
+
+interface NumbersState {
+  coolNumber: number;
+  weirdNumber: number;
+}
+
+const numbersAdapter = buildAdapter<NumbersState>()({
+  setCoolNumber: (state, newCoolNumber: number) => ({
+    ...state,
+    coolNumber: newCoolNumber,
+  }),
+  setWeirdNumber: (state, newWeirdNumber: number) => ({
+    ...state,
+    weirdNumber: newWeirdNumber,
+  }),
+})();
+```
+
+You could define a group state change that sets both `coolNumber` and `weirdNumber` like this:
+
+```typescript
+const numbersAdapter = buildAdapter<NumbersState>()({
+  setCoolNumber: (state, newCoolNumber: number) => ({
+    ...state,
+    coolNumber: newCoolNumber,
+  }),
+  setWeirdNumber: (state, newWeirdNumber: number) => ({
+    ...state,
+    weirdNumber: newWeirdNumber,
+  }),
+})({
+  setBothNumbers: {
+    coolNumber: numberAdapter.set,
+    weirdNumber: numberAdapter.set,
+  },
+})();
+```
+
+`setBothNumbers` becomes a reaction on `numbersAdapter` that sets both `coolNumber` and `weirdNumber` to the same payload passed into `setBothNumbers`. Every reaction passed into the same grouped reaction must take the same payload type.
+
+The reason grouped reactions are useful is because if you tried to reuse `setCoolNumber` and `setWeirdNumber`, you would end up calculating a new state twice:
+
+```typescript
+const numbersAdapter = buildAdapter<NumbersState>()({
+  setCoolNumber: (state, newCoolNumber: number) => ({
+    ...state,
+    coolNumber: newCoolNumber,
+  }),
+  setWeirdNumber: (state, newWeirdNumber: number) => ({
+    ...state,
+    weirdNumber: newWeirdNumber,
+  }),
+})(([selectors, reactions]) => ({
+  setBothNumbers: (state, newNumber: number) =>
+    reactions.setWeirdNumber(reactions.setCoolNumber(state)),
+}))();
+```
+
+If you tried to calculate a single new state, you would override properties from the first change with the unchanged properties from the second change, so passing the result of one reaction to the other is the only way to ensure consistent state without duplicating state change logic in the new state reaction. But this is inefficient.
+
+State change groups are able to efficiently calculate a single new state.
+
+## `joinAdapters`
+
+Similar data types will have similar state management logic. Take this example from [`buildAdapter`](/concepts/adapters#buildadapter):
+
+```typescript
+import { buildAdapter } from '@state-adapt/core';
+import { numberAdapter } from './number.adapter';
+
+interface NumbersState {
+  coolNumber: number;
+  weirdNumber: number;
+}
+
+const numbersAdapter = buildAdapter<NumbersState>()({
+  setCoolNumber: (state, newCoolNumber: number) => ({
+    ...state,
+    coolNumber: newCoolNumber,
+  }),
+  setWeirdNumber: (state, newWeirdNumber: number) => ({
+    ...state,
+    weirdNumber: newWeirdNumber,
+  }),
+})();
+```
+
+See how both properties are numbers and end up with the same state change? What would be awesome is if we could define individual adapters for these properties and automatically inheret the state changes for those properties in our parent state adapter:
+
+```typescript
+import { joinAdapters } from '@state-adapt/core';
+import { numberAdapter } from './number.adapter';
+
+interface NumbersState {
+  coolNumber: number;
+  weirdNumber: number;
+}
+
+const numbersAdapter = joinAdapters<NumbersState>()({
+  coolNumber: numberAdapter,
+  weirdNumber: numberAdapter,
+})();
+```
+
+This will produce the same adapter as in the previous code snippet.
+
+[`joinAdapters`](/concepts/adapters#joinadapters) returns the same builder function as [`buildAdapter`](/concepts/adapters#buildadapter), so you can use it like this:
+
+```typescript
+import { joinAdapters } from '@state-adapt/core';
+import { numberAdapter } from './number.adapter';
+
+interface NumbersState {
+  coolNumber: number;
+  weirdNumber: number;
+}
+
+const numbersAdapter = joinAdapters<NumbersState>()({
+  coolNumber: numberAdapter,
+  weirdNumber: numberAdapter,
+})({
+  setBothNumbers: {
+    coolNumber: numberAdapter.set,
+    weirdNumber: numberAdapter.set,
+  },
+})();
+```
+
+All selectors from `number` adapter (see [`createAdapter`](/concepts/adapters#createadapter)) will get prepended with the namespace we've defined. So we get these selectors:
+
+```typescript
+{
+  negativeCoolNumber: state => state.coolNumber * -1,
+  negativeWeirdNumber: state => state.coolNumber * -1,
+}
+```
+
+All state reactions have the namespace inserted after the first word. So we get these reactions:
+
+```typescript
+{
+  addCoolNumber: (state, n: number) => ({...state, coolNumber: state.coolNumber + n}),
+  subtractCoolNumber: (state, n: number) => ({...state, coolNumber: state.coolNumber - n}),
+  addWeirdNumber: (state, n: number) => ({...state, weirdNumber: state.weirdNumber + n}),
+  subtractWeirdNumber: (state, n: number) => ({...state, weirdNumber: state.weirdNumber - n}),
+}
+```
+
+This may change in the future to simple prefixing like selectors, depending on what we find as we use this on real-world problems. Here are some example state change names and what they'd end up as with `joinAdapters`:
+
+- `set` => `setFeature`
+- `setLoadingToTrue` => `setFeatureLoadingToTrue`
+- `toggle` => `toggleFeature`
+- `decrementPopulation` => `decrementFeaturePopulation`
+- `setTo5` => `setFeatureTo5`
+
+## `mapPayloads`
+
+`mapPayloads` takes in an object with adapter reactions as the first argument, an object with payload mappers as the second argument, and returns the mapped reactions. For example, if you had this adapter:
+
+```typescript
+const numberAdapter = createAdapter<number>()({
+  add: (state, n: number) => state + n,
+  subtract: (state, n: number) => state - n,
+  selectors: {
+    negative: state => state * -1,
+  },
+});
+```
+
+You could change the payloads of any of the reactions with `mapPayloads`:
+
+```typescript
+const addFromStringAdapter = mapPayloads(numberAdapter, {
+  add: (nStr: string) => +nStr,
+});
+```
+
+That would would return an object like this:
+
+```typescript
+{
+  add: (state: number, nStr: string) => +nStr,
+}
+```
+
+This is useful with [`buildAdapter`](/concepts/adapters#buildadapter), because when defining new reactions you only return the new reactions. So you could do something like this:
+
+```typescript
+const numberAdapter = buildAdapter<number>()({
+  add: (state, n: number) => state + n,
+  subtract: (state, n: number) => state - n,
+  selectors: {
+    negative: state => state * -1,
+  },
+})(([selectors, reactions]) =>
+  mapPayloads(
+    {
+      add5: reactions.add, // add5 expects a payload still
+      add10: reactions.add, // add10 expects a payload still
+      add15: reactions.add, // add15 expects a payload still
+    },
+    {
+      add5: () => 5, // add5 is now a reaction that doesn't take a payload
+      add10: () => 10, // add10 is now a reaction that doesn't take a payload
+      add16: () => 15, // add15 is now a reaction that doesn't take a payload
+    },
+  ),
+)();
+```
+
+The result would be the same as defining an adapter like this:
+
+```typescript
+const numberAdapter = createAdapter<number>()({
+  add: (state, n: number) => state + n,
+  add5: state => state + 5,
+  add10: state => state + 10,
+  add15: state => state + 15,
+  subtract: (state, n: number) => state - n,
+  selectors: {
+    negative: state => state * -1,
+  },
+});
+```
+
+[`mapPayloads`](/concepts/adapters#mappayloads) is most useful when you want to define an adapter with ideal payloads, but actually need an adapter that takes in annoying payload types. For example, if you are receiving data from an API, you might want to write an adapter like this:
+
+```typescript
+const dataAdapter = createAdapter<WithData>()({
+  receiveData: (state, data: Data) => ({ ...state, data }),
+});
+```
+
+But then you might have an `HTTP` source like this:
+
+```typescript
+interface ApiData {
+  weirdly: {
+    nested: {
+      response: {
+        shape: {
+          with: {
+            data: Data;
+          };
+        };
+      };
+    };
+  };
+}
+```
+
+You would like to keep your `dataAdapter` defined how it is, so you can use `mapPayloads` here:
+
+```typescript
+const dataAdapter = createAdapter<WithData>()({
+  receiveData: (state, data: Data) => ({ ...state, data }),
+});
+
+const apiDataAdapter = buildAdapter<WithData>()(([s, reactions]) =>
+  mapPayloads(reactions, {
+    receiveData: (data: ApiData) => data.weirdly.nested.response.shape.with.data,
+  }),
+);
+```
+
+This is preferable over either modifying the simpler `dataAdapter` _or_ modifying the HTTP source observable with `.pipe(map(...))`. Sources should be as simple as possible. Adapters are the perfect place to put mapping logic.
+
+## TypeScript Errors
+
+If you get this TypeScript error:
+
+```
+The inferred type of this node exceeds the maximum length the compiler will serialize. An explicit type annotation is needed.
+```
+
+Or this error:
+
+```
+Type instantiation is excessively deep and possibly infinite.
+```
+
+You can try spreading adapters and selectors into a new object:
+
+```typescript
+const numberAdapter2 = createAdapter<number>()({
+  ...numberAdapter,
+  selectors: { ...selectors },
+});
+```
+
+This forces TypeScript to break the nested type references created in the various adapter builder functions and understand `selectors` as a flat object instead.
+
+However, sometimes even this isn't enough, and you may have to use explicit type annotations. StateAdapt relies heavily on type inference, and that comes at a cost, sometimes more than TypeScript wants to handle.
 
 ## Adapter Creator Libraries
 
