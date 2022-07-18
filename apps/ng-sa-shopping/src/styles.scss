@@ -1,1 +1,8 @@
-@import '../../../styles/base-styles';
+@import '../../../styles/theme-css-vars';
+@import '../../../styles/carbon-sass-vars'; // Import every time before importing component styles from ~carbon-components;
+
+@import '~carbon-components/scss/components/button/button';
+@import '~carbon-components/scss/components/checkbox/checkbox';
+@import '~carbon-components/scss/components/number-input/number-input';
+
+@import '../../../styles/spacing';

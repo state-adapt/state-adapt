@@ -34,7 +34,7 @@ export class AppComponent {
   toggleFilter = this.filterService.filterStore.toggleFilter;
   filters$ = this.filterService.filterStore.state$;
 
-  filteredProducts$ = this.productService.filteredProductStore.state$;
+  filteredProducts$ = this.productService.filteredProductStore.filteredProducts$;
 
   constructor(
     private productService: ProductService,

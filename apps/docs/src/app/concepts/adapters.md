@@ -130,6 +130,12 @@ Note: If you get this TypeScript error when using the output of `createSelectors
 The inferred type of this node exceeds the maximum length the compiler will serialize. An explicit type annotation is needed.
 ```
 
+Or this error:
+
+```
+Type instantiation is excessively deep and possibly infinite.
+```
+
 All you have to do is spread the selectors into a new object:
 
 ```typescript
@@ -139,7 +145,7 @@ const numberStringAdapter = createAdapter<number>()({
 });
 ```
 
-This forces TypeScript to break the nested type references created in `createSelectors` and understand `selectors` as a flat object instead.
+This forces TypeScript to break the nested type references created in `createSelectors` and understand `selectors` as a flat object instead. If your selector chain is long enough, you might need to break it up into multiple calls to `createSelectors`.
 
 ## Adapter Creator Libraries
 

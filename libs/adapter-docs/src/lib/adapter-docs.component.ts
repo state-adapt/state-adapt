@@ -14,7 +14,7 @@ import {
 } from 'rxjs/operators';
 import { initialState } from './adapter-docs-state.interface';
 import { AdapterDocs, defaultAdapterDocs } from './adapter-docs.interface';
-import { docsAdapter, docsUiAdapter } from './docs.adapter';
+import { docsAdapter } from './docs.adapter';
 import { DropdownSelectedEvent } from './dropdown-selection-event.interface';
 import { EditorReadyService } from './editor-ready.service';
 import { getDiffHtml, toJson } from './get-diff-html.function';
@@ -313,7 +313,7 @@ export class AdapterDocsComponent implements OnInit {
   );
   historyItemSelected$ = new Source<TileSelection>('historyItemSelected$');
 
-  docsStore = adapt([this.path, initialState, docsUiAdapter], {
+  docsStore = adapt([this.path, initialState, docsAdapter], {
     receiveDocs: this.docsReceived$,
     selectStateChange: this.stateChangeSelection$,
     selectStateChangeFromHistory: this.historyItemSelected$,

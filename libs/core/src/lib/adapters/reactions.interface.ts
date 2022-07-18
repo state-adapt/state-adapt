@@ -1,3 +1,5 @@
+import { Reaction } from './reaction.type';
+
 export interface Reactions<State> {
-  [index: string]: (state: State, event: any, initialState: State) => State;
+  [index: string]: Reaction<State>;
 }

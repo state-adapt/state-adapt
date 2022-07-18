@@ -426,8 +426,8 @@ export class AdaptCommon<CommonStore extends StoreMethods = any> {
       selections: Selections<State, S>;
     } = Object.keys(selectors).reduce(
       (selected, key) => {
-        const fullSelector = createSelector([getState], (state: State, props: any) =>
-          state !== undefined ? selectors[key](state, props) : state,
+        const fullSelector = createSelector([getState], (state: State) =>
+          state !== undefined ? selectors[key](state) : state,
         );
         return {
           fullSelectors: { ...selected.fullSelectors, [key]: fullSelector },

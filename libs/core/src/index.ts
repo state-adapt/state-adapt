@@ -26,6 +26,7 @@ export * from './lib/selectors/selectors.interface';
 export * from './lib/selectors/selections.type';
 export * from './lib/selectors/create-selector.function';
 export * from './lib/selectors/create-selectors.function';
+export * from './lib/selectors/build-selectors.function';
 
 export * from './lib/adapters/reactions.interface';
 export * from './lib/adapters/second-parameter-or-any.type';
@@ -33,11 +34,15 @@ export * from './lib/adapters/second-parameter-or-void.type';
 export * from './lib/adapters/adapter.type';
 export * from './lib/adapters/create-reactions.function';
 export * from './lib/adapters/create-adapter.function';
+export * from './lib/adapters/map-payloads.function';
+export * from './lib/adapters/build-adapter.function';
+export * from './lib/adapters/join-adapters.function';
 
 export * from './lib/stores/sources.type';
 export * from './lib/stores/mini-store.interface';
 export * from './lib/stores/join-selectors.function';
 export * from './lib/stores/join.function';
+export * from './lib/stores/join-stores.function';
 
 export * from './lib/global-store/adapt.reducer';
 export * from './lib/global-store/adapt.store';

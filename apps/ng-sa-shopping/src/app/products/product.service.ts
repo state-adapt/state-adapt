@@ -1,9 +1,21 @@
 import { Injectable } from '@angular/core';
-import { AdaptCommon, joinSelectors, Source } from '@state-adapt/core';
-import { Product, products, QuantityChange } from '../../../../../libs/shopping/src';
+import {
+  AdaptCommon,
+  joinAdapters,
+  joinSelectors,
+  joinStores,
+  Source,
+} from '@state-adapt/core';
+import {
+  Filters,
+  Product,
+  products,
+  QuantityChange,
+} from '../../../../../libs/shopping/src';
+import { filterAdapter } from '../filters/filter.adapter';
 import { FilterService } from '../filters/filter.service';
-import { productAdapter } from './product.adapter';
 import { getFilteredProducts } from './filter-product.selectors';
+import { productAdapter } from './product.adapter';
 
 @Injectable({ providedIn: 'root' })
 export class ProductService {
@@ -23,12 +35,25 @@ export class ProductService {
     removeProduct: this.removeFromCart$,
   });
 
-  filterStore = this.filterService.filterStore;
-  filteredProductStore = joinSelectors(
-    this.filterStore,
-    this.productStore,
-    getFilteredProducts,
-  );
+  // fps = joinAdapters<{ product: Product[]; filter: Filters }>()({
+  //   product: productAdapter,
+  //   filter: filterAdapter,
+  // })({
+  //   filteredProducts: s => getFilteredProducts(s.filter, s.product),
+  // })();
+
+  filteredProductStore = joinStores({
+    product: this.productStore,
+    filter: this.filterService.filterStore,
+  })({
+    filteredProducts: s => getFilteredProducts(s.filter, s.product),
+  })();
+
+  // filteredProductStore = joinSelectors(
+  //   this.filterService.filterStore,
+  //   this.productStore,
+  //   getFilteredProducts,
+  // );
 
   constructor(private adapt: AdaptCommon<any>, private filterService: FilterService) {}
 }
