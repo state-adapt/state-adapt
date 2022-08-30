@@ -24,17 +24,19 @@ Stores do 4 things:
 
 ## `init`
 
-`init` is a method on `AdaptCommon` that creates stores. There are 6 ways to use it:
+`init` is a method on `AdaptCommon` that creates stores. There are 4 ways to use it:
 
 ![AdaptCommon['init'] Overloads](../assets/adapt-method-jsdoc.png)
 
-The `sources` parameter is worth explaining more. It is an object that maps the relationship between state changes and the sources that should trigger them. This object is equivalent to a reducer in _Redux_ or _NgRx_. The property names of the object are the adapter's state change function names. The right-hand side of the object specifies one or more sources that should trigger the state change specified in the property name. To specify multiple sources, pass them in an array, like
+The `sources` parameter is worth explaining more. When it is an object, it maps the relationship between state changes and the sources that should trigger them. This object is equivalent to a reducer in _Redux_ or _NgRx_. The property names of the object are the adapter's state change function names. The right-hand side of the object specifies one or more sources that should trigger the state change specified in the property name. To specify multiple sources, pass them in an array, like
 
 ```typescript
 {
   add: [this.numberAdded$, this.aDifferentNumberAdded$],
 }
 ```
+
+`sources` can also be a single observable or array of observables that gets treated the same as if this was passed in: `{ set: source$ }` or `{ set: [source1$, source2$] }`
 
 This is the default way to use [`init`](/concepts/stores#init) from `'@state-adapt/core'`:
 

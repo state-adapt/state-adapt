@@ -15,6 +15,13 @@ import { ContentComponent } from '../content.component';
       <h2><a routerLink="/concepts/adapters">Previous: Adapters</a></h2>
     </state-adapt-content>
   `,
+  styles: [
+    `
+      ::ng-deep state-adapt-stores img {
+        max-width: 100%;
+      }
+    `,
+  ],
 })
 export class StoresComponent {
   md = md;

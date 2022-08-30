@@ -6,14 +6,17 @@ import { countAdapter } from './count.adapter';
 @Component({
   selector: 'state-adapt-root',
   template: `
+    <h2>Store 1</h2>
     <state-adapt-counter
       (increment)="store1.set($event)"
       (resetCount)="store1.reset(0)"
       [count]="store1.state$ | async"
     ></state-adapt-counter>
 
+    <h2>Store 2</h2>
     <p>{{ store2.state$ | async }}</p>
 
+    <h2>Store 3</h2>
     <state-adapt-counter
       (increment)="store3.increment($event)"
       (double)="store3.double()"
@@ -21,12 +24,14 @@ import { countAdapter } from './count.adapter';
       [count]="store3.state$ | async"
     ></state-adapt-counter>
 
+    <h2>Store 4</h2>
     <state-adapt-counter
       (increment)="store4.multiply($event)"
       (resetCount)="store4.reset(0)"
       [count]="store4.state$ | async"
     ></state-adapt-counter>
 
+    <h2>Store 5</h2>
     <state-adapt-counter
       (increment)="store5.increment($event)"
       (double)="store5.double()"
@@ -34,6 +39,7 @@ import { countAdapter } from './count.adapter';
       [count]="store5.state$ | async"
     ></state-adapt-counter>
 
+    <h2>Store 6</h2>
     <state-adapt-counter
       (increment)="store6.increment($event)"
       (double)="store6.double()"
@@ -41,20 +47,35 @@ import { countAdapter } from './count.adapter';
       [count]="store6.state$ | async"
     ></state-adapt-counter>
 
+    <h2>Reset Action</h2>
     <state-adapt-reset-both (resetBoth)="resetBoth$.next()"></state-adapt-reset-both>
   `,
+  styles: [
+    `
+      :host {
+        font-family: sans-serif;
+      }
+      ::ng-deep h1 {
+        margin-top: 0 !important;
+      }
+      h2 {
+        width: 500px;
+        margin: auto;
+      }
+    `,
+  ],
 })
 export class AppComponent {
   interval$ = interval(3000).pipe(toSource('[counts] interval$'));
   resetBoth$ = new Source<void>('[counts] resetBoth$');
 
   store1 = this.adapt.init('count1', 0);
-  store2 = this.adapt.init('count2', 0, this.interval$);
-  store3 = this.adapt.init('count3', 0, countAdapter);
+  store2 = this.adapt.init(['count2', 0], this.interval$);
+  store3 = this.adapt.init(['count3', 0], countAdapter);
   store4 = this.adapt.init(['count4', 10], {
     multiply: (state, n: number) => state * n,
   });
-  store5 = this.adapt.init('count5', 0, countAdapter, this.interval$);
+  store5 = this.adapt.init(['count5', 0, countAdapter], this.interval$);
   store6 = this.adapt.init(['count6', 0, countAdapter], {
     set: this.interval$,
     reset: this.resetBoth$,

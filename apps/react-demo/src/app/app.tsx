@@ -16,12 +16,12 @@ export function App() {
   const [interval$] = useState(() => interval(5000).pipe(toSource('interval$')));
 
   const store1 = useAdapt('count1', 0);
-  const store2 = useAdapt('count2', 0, interval$);
-  const store3 = useAdapt('count3', 0, countAdapter);
+  const store2 = useAdapt(['count2', 0], interval$);
+  const store3 = useAdapt(['count3', 0], countAdapter);
   const store4 = useAdapt(['count4', 10], {
     multiply: (state, n: number) => state * n,
   });
-  const store5 = useAdapt('count5', 0, countAdapter, interval$);
+  const store5 = useAdapt(['count5', 0, countAdapter], interval$);
   const store6 = useAdapt(['count6', 0, countAdapter], {
     set: interval$,
     reset: resetAll$,
@@ -125,7 +125,7 @@ export function App() {
 
         <br />
         <br />
-        <button onClick={() => resetAll$.next()}>Reset All</button>
+        <button onClick={() => resetAll$.next()}>Reset Externally</button>
       </main>
     </div>
   );
