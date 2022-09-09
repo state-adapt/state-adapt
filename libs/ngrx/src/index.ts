@@ -1,5 +1,3 @@
-export * from '@state-adapt/angular';
-
-export * from './lib/adapt.service';
-export { adapt } from './lib/adapt.function';
-export { watch } from './lib/watch.function';
+export * from './lib/adapt-ngrx.service';
+export * from './lib/adapt-ngrx.function';
+export * from './lib/watch-ngrx.function';

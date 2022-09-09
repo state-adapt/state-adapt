@@ -15,7 +15,7 @@ Set up StateAdapt with
 First, `npm install`:
 
 ```
-npm i -s @state-adapt/angular
+npm i -s @state-adapt/{core,rxjs,angular}
 ```
 
 Include in app.module.ts like so:
@@ -48,7 +48,7 @@ Open up Redux Devtools and you should see the state update immediately to `'Hell
 First, `npm install`:
 
 ```
-npm i -s @state-adapt/ngrx
+npm i -s @state-adapt/{core,rxjs,angular,ngrx}
 ```
 
 Include in your app.module.ts like so:
@@ -56,7 +56,7 @@ Include in your app.module.ts like so:
 ```typescript
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
-import { adaptReducer, actionSanitizer, stateSanitizer } from '@state-adapt/ngrx';
+import { adaptReducer, actionSanitizer, stateSanitizer } from '@state-adapt/core';
 // ...
 // In your module imports array:
     StoreModule.forRoot({ adapt: adaptReducer }),
@@ -71,9 +71,9 @@ import { adaptReducer, actionSanitizer, stateSanitizer } from '@state-adapt/ngrx
 Now in a component or service:
 
 ```typescript
-import { adapt } from '@state-adapt/ngrx';
+import { adaptNgrx } from '@state-adapt/ngrx';
 // ...
-  stringStore = adapt('string', '');
+  stringStore = adaptNgrx('string', '');
   constructor() {
     this.stringStore.state$.subscribe(console.log);
     this.stringStore.set('Hello World!');
@@ -90,7 +90,7 @@ Open up Redux Devtools and you should see the state update immediately to `'Hell
 First, `npm install`:
 
 ```
-npm i -s @state-adapt/ngxs
+npm i -s @state-adapt/{core,rxjs,angular,ngxs}
 ```
 
 Include in your app.module.ts like so:
@@ -98,7 +98,7 @@ Include in your app.module.ts like so:
 ```typescript
 import { NgxsModule } from '@ngxs/store';
 import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
-import { actionSanitizer, stateSanitizer } from '@state-adapt/ngxs';
+import { actionSanitizer, stateSanitizer } from '@state-adapt/core';
 import { AdaptState } from '@state-adapt/ngxs';
 // ...
 // In your module imports array:
@@ -115,9 +115,9 @@ import { AdaptState } from '@state-adapt/ngxs';
 Now in a component or service:
 
 ```typescript
-import { adapt } from '@state-adapt/ngxs';
+import { adaptNgxs } from '@state-adapt/ngxs';
 // ...
-  stringStore = adapt('string', '');
+  stringStore = adaptNgxs('string', '');
   constructor() {
     this.stringStore.state$.subscribe(console.log);
     this.stringStore.set('Hello World!');
@@ -134,13 +134,14 @@ Open up Redux Devtools and you should see the state update immediately to `'Hell
 First, `npm install`:
 
 ```
-npm i -s @state-adapt/react
+npm i -s @state-adapt/{core,rxjs,react}
 ```
 
 Define your adapt store:
 
 ```typescript
-import { actionSanitizer, stateSanitizer, createStore } from '@state-adapt/react';
+import { actionSanitizer, stateSanitizer } from '@state-adapt/core';
+import { createStore } from '@state-adapt/rxjs';
 
 const enableReduxDevTools = (window as any).__REDUX_DEVTOOLS_EXTENSION__?.({
   actionSanitizer,
@@ -187,18 +188,14 @@ Open up Redux Devtools and you should see the state update immediately to `'new 
 First, `npm install`:
 
 ```
-npm i -s @state-adapt/react
+npm i -s @state-adapt/{core,rxjs,react}
 ```
 
 Define your Redux store:
 
 ```typescript
-import {
-  adaptReducer,
-  actionSanitizer,
-  stateSanitizer,
-  createStateAdapt,
-} from '@state-adapt/react';
+import { adaptReducer, actionSanitizer, stateSanitizer } from '@state-adapt/core';
+import { createStateAdapt } from '@state-adapt/rxjs';
 import { combineReducers, createStore } from 'redux';
 
 const enableReduxDevTools = (window as any).__REDUX_DEVTOOLS_EXTENSION__?.({

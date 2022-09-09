@@ -3,10 +3,5 @@
   "dest": "../../dist/libs/ngxs",
   "lib": {
     "entryFile": "src/index.ts"
-  },
-  "allowedNonPeerDependencies": [
-    "@state-adapt/core",
-    "@state-adapt/rxjs",
-    "@state-adapt/angular"
-  ]
+  }
 }

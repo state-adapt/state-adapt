@@ -1,4 +1,4 @@
-import { Adapter, createAdapter } from '@state-adapt/angular';
+import { Adapter, createAdapter } from '@state-adapt/core';
 
 export interface AdapterCreatorParam {
   text: string;

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { interval } from 'rxjs';
-import { createAdapter, toSource } from '../../../../libs/react/src';
-import { useAdapt, useObservable, useSource } from '../../../../libs/react/src';
+import { createAdapter } from '@state-adapt/core';
+import { toSource } from '@state-adapt/rxjs';
+import { useAdapt, useObservable, useSource } from '@state-adapt/react';
 
 export const countAdapter = createAdapter<number>()({
   increment: (state, n: number) => state + n,

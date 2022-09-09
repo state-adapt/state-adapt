@@ -3,6 +3,5 @@
   "dest": "../../dist/libs/rxjs",
   "lib": {
     "entryFile": "src/index.ts"
-  },
-  "allowedNonPeerDependencies": ["@state-adapt/core"]
+  }
 }

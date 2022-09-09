@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { Adapt, Source } from '@state-adapt/ngrx';
+import { Source } from '@state-adapt/rxjs';
+import { adaptNgrx } from '@state-adapt/ngrx';
 import { countAdapter } from './count.adapter';
 
 @Component({
@@ -25,12 +26,10 @@ import { countAdapter } from './count.adapter';
 export class AppComponent {
   resetBoth$ = new Source<void>('[counts] resetBoth$');
 
-  store1 = this.adapt.init(['count1', 0, countAdapter], {
+  store1 = adaptNgrx(['count1', 0, countAdapter], {
     reset: this.resetBoth$,
   });
-  store2 = this.adapt.init(['count2', 0, countAdapter], {
+  store2 = adaptNgrx(['count2', 0, countAdapter], {
     reset: this.resetBoth$,
   });
-
-  constructor(private adapt: Adapt) {}
 }

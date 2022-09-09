@@ -22,12 +22,10 @@
   },
   "peerDependencies": {
     "@angular/core": "^14.0.0",
-    "@ngrx/store": "^14.0.0"
+    "@ngrx/store": "^14.0.0",
+    "@state-adapt/angular": "0.50.0"
   },
   "dependencies": {
-    "tslib": "^2.0.0",
-    "@state-adapt/core": "0.50.0",
-    "@state-adapt/rxjs": "0.50.0",
-    "@state-adapt/angular": "0.50.0"
+    "tslib": "^2.0.0"
   }
 }

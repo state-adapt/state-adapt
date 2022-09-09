@@ -3,6 +3,5 @@
   "dest": "../../dist/libs/angular",
   "lib": {
     "entryFile": "src/index.ts"
-  },
-  "allowedNonPeerDependencies": ["@state-adapt/core", "@state-adapt/rxjs"]
+  }
 }

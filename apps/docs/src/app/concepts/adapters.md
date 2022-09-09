@@ -44,6 +44,8 @@ Since these functions are only referenced and never called in your code, the con
 createAdapter provides type inference when creating state adapters, which is convenient because every state change and selector starts with the same type (`State`), and every state change returns that type as well. Here is an example using createAdapter:
 
 ```typescript
+import { createAdapter } from '@state-adapt/core';
+
 const numberAdapter = createAdapter<number>()({
   // Notice the first empty call—TypeScript requires it
   add: (state, n: number) => state + n,
@@ -75,6 +77,7 @@ Every adapter also comes with a default selector:
 You can extend the functionality of existing adapters when creating new adapters. Here is an example that extends the number adapter from above:
 
 ```typescript
+import { createAdapter } from '@state-adapt/core';
 import { numberAdapter } from './number.adapter';
 
 const numberStringAdapter = createAdapter<number>()({
@@ -94,6 +97,8 @@ const numberStringAdapter = createAdapter<number>()({
 [`createAdapter`](/concepts/adapters#createadapter) memoizes selectors passed into the `selectors` property, but it only does so shallowly. `createSelectors` provides full selector memoization and a default `state` selector (after the first argument). It takes up to 7 selector objects as arguments, each one receiving all of the selectors from the previous selector objects.
 
 ```typescript
+import { createSelectors, createAdapter } from '@state-adapt/core';
+
 const selectors = createSelectors<string>()(
   {
     reverse: s => s.split('').reverse().join(''),
@@ -109,6 +114,7 @@ const stringAdapter = createAdapter<string>()({ selectors });
 Reuse selectors from anywhere:
 
 ```typescript
+import { createAdapter, createSelectors } from '@state-adapt/core';
 import { numberAdapter } from './number.adapter';
 
 const selectors = createSelectors(numberAdapter.selectors, {
@@ -153,6 +159,8 @@ This forces TypeScript to break the nested type references created in `createSel
 [`createAdapter`](/concepts/adapters#createadapter) memoizes selectors passed into the `selectors` property, but it only does so shallowly. [`buildSelectors`](/concepts/adapters#buildselectors) provides full selector memoization and a default `state` selector (after the first call). It takes initial selectors in the first call, which receive a state object to select against, and it returns a function that can be called successively with more selectors, each selecting against the return values from all selectors previously passed in. To return all the selectors combined, call it a final time with no parameter:
 
 ```typescript
+import { createSelectors, createAdapter } from '@state-adapt/core';
+
 const selectors = buildSelectors<string>()({
   reverse: s => s.split('').reverse().join(''),
 })({
@@ -165,6 +173,7 @@ const stringAdapter = createAdapter<string>()({ selectors });
 Reuse selectors from anywhere:
 
 ```typescript
+import { createAdapter, createSelectors } from '@state-adapt/core';
 import { numberAdapter } from './number.adapter';
 
 const selectors = buildSelectors<number>()(numberAdapter.selectors)({
@@ -186,6 +195,7 @@ const numberStringAdapter = createAdapter<number>()({
 `buildAdapter` uses similar syntax to that of [`buildSelectors`](/concepts/adapters#buildselectors): You call it with an initial adapter, then call it again and again with more objects inheriting from previous objects, until a final empty call `()` to get the final built adapter:
 
 ```typescript
+import { buildAdapter } from '@state-adapt/core';
 import { numberAdapter } from './number.adapter';
 
 const numberStringAdapter = buildAdapter<number>()(numberAdapter)({
@@ -199,6 +209,7 @@ const numberStringAdapter = buildAdapter<number>()(numberAdapter)({
 The function returning new reactions can be used like this:
 
 ```typescript
+import { buildAdapter } from '@state-adapt/core';
 import { numberAdapter } from './number.adapter';
 
 const numberStringAdapter = buildAdapter<number>()(numberAdapter)({
@@ -213,6 +224,7 @@ const numberStringAdapter = buildAdapter<number>()(numberAdapter)({
 The nested object defining grouped state reactions is for nested states. Let's say you had an adapter like this:
 
 ```typescript
+import { buildAdapter } from '@state-adapt/core';
 import { numberAdapter } from './number.adapter';
 
 interface NumbersState {
@@ -281,6 +293,7 @@ State change groups are able to efficiently calculate a single new state.
 Similar data types will have similar state management logic. Take this example from [`buildAdapter`](/concepts/adapters#buildadapter):
 
 ```typescript
+import { buildAdapter } from '@state-adapt/core';
 import { numberAdapter } from './number.adapter';
 
 interface NumbersState {
@@ -303,6 +316,7 @@ const numbersAdapter = buildAdapter<NumbersState>()({
 See how both properties are numbers and end up with the same state change? What would be awesome is if we could define individual adapters for these properties and automatically inheret the state changes for those properties in our parent state adapter:
 
 ```typescript
+import { joinAdapters } from '@state-adapt/core';
 import { numberAdapter } from './number.adapter';
 
 interface NumbersState {
@@ -321,6 +335,7 @@ This will produce the same adapter as in the previous code snippet.
 [`joinAdapters`](/concepts/adapters#joinadapters) returns the same builder function as [`buildAdapter`](/concepts/adapters#buildadapter), so you can use it like this:
 
 ```typescript
+import { joinAdapters } from '@state-adapt/core';
 import { numberAdapter } from './number.adapter';
 
 interface NumbersState {

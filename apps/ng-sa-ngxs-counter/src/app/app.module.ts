@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgxsModule } from '@ngxs/store';
 import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
-import { actionSanitizer, stateSanitizer } from '@state-adapt/ngxs';
+import { actionSanitizer, stateSanitizer } from '@state-adapt/core';
 import { AdaptState } from '@state-adapt/ngxs';
 import { CounterUiModule } from '../../../../libs/counter-ui/src';
 import { environment } from '../environments/environment';

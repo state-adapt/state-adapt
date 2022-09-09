@@ -2,11 +2,10 @@
   "name": "@state-adapt/angular",
   "version": "0.50.0",
   "peerDependencies": {
-    "@angular/core": "^14.0.0"
+    "@angular/core": "^14.0.0",
+    "@state-adapt/rxjs": "0.50.0"
   },
   "dependencies": {
-    "tslib": "^2.3.0",
-    "@state-adapt/core": "0.50.0",
-    "@state-adapt/rxjs": "0.50.0"
+    "tslib": "^2.3.0"
   }
 }

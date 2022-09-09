@@ -22,11 +22,10 @@
   },
   "peerDependencies": {
     "react": "^17.0.1",
-    "rxjs": "^6.6.3"
+    "rxjs": "^6.6.3",
+    "@state-adapt/rxjs": "0.50.0"
   },
   "dependencies": {
-    "tslib": "^2.0.0",
-    "@state-adapt/core": "0.50.0",
-    "@state-adapt/rxjs": "0.50.0"
+    "tslib": "^2.0.0"
   }
 }

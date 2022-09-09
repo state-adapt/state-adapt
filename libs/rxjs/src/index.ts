@@ -1,5 +1,3 @@
-export * from '@state-adapt/core';
-
 export * from './lib/sources/split-sources.function';
 export * from './lib/sources/to-source.operator';
 export * from './lib/sources/source';

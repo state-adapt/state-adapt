@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { AdaptCommon, joinStores, Source } from '@state-adapt/angular';
+import { joinStores, Source } from '@state-adapt/rxjs';
+import { adapt } from '@state-adapt/angular';
 import { Product, products, QuantityChange } from '../../../../../libs/shopping/src';
 import { FilterService } from '../filters/filter.service';
 import { getFilteredProducts } from './filter-product.selectors';
@@ -11,13 +12,13 @@ export class ProductService {
   addToCart$ = new Source<Product>('[Products] addToCart$');
   removeFromCart$ = new Source<Product>('[Products] removeFromCart$');
 
-  productStore = this.adapt.init(['products', products, productAdapter], {
+  productStore = adapt(['products', products, productAdapter], {
     changeQuantity: this.quantityChange$,
     addProduct: this.removeFromCart$,
     removeProduct: this.addToCart$,
   });
 
-  cartStore = this.adapt.init(['cart', [] as Product[], productAdapter], {
+  cartStore = adapt(['cart', [] as Product[], productAdapter], {
     changeQuantity: this.quantityChange$,
     addProduct: this.addToCart$,
     removeProduct: this.removeFromCart$,
@@ -30,5 +31,5 @@ export class ProductService {
     filteredProducts: s => getFilteredProducts(s.filter, s.product),
   })();
 
-  constructor(private adapt: AdaptCommon<any>, private filterService: FilterService) {}
+  constructor(private filterService: FilterService) {}
 }

@@ -1,4 +1,4 @@
-import { createAdapter } from '@state-adapt/angular';
+import { createAdapter } from '@state-adapt/core';
 
 export const countAdapter = createAdapter<number>()({
   increment: (state, n: number) => state + n,

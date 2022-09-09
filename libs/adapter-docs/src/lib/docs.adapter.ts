@@ -1,4 +1,4 @@
-import { buildAdapter, buildSelectors, mapPayloads } from '@state-adapt/angular';
+import { buildAdapter, buildSelectors, mapPayloads } from '@state-adapt/core';
 import { ListItem } from 'carbon-components-angular';
 import { TileSelection } from 'carbon-components-angular/tiles';
 import { AdapterDocsState, INITIAL_STATE } from './adapter-docs-state.interface';

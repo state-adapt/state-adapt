@@ -2,9 +2,11 @@ import {
   // adaptReducer,
   actionSanitizer,
   stateSanitizer,
-  // createStateAdapt,
+} from '@state-adapt/core';
+import {
   createStore,
-} from '../../../libs/react/src';
+  // createStateAdapt
+} from '@state-adapt/rxjs';
 
 // import { combineReducers, createStore } from 'redux';
 

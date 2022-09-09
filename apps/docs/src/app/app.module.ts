@@ -1,11 +1,6 @@
 import { NgModule, SecurityContext } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import {
-  actionSanitizer,
-  AdaptCommon,
-  createStore,
-  stateSanitizer,
-} from '@state-adapt/angular';
+import { defaultStoreProvider } from '@state-adapt/angular';
 import { IconModule } from 'carbon-components-angular/icon';
 import { ButtonModule } from 'carbon-components-angular/button';
 import { UIShellModule } from 'carbon-components-angular/ui-shell';
@@ -15,11 +10,6 @@ import { AppComponent } from './app.component';
 import { ContentComponent } from './content.component';
 import { getMarkedOptions } from './get-marked-options.function';
 import { IntroComponent } from './intro/intro.component';
-
-const enableReduxDevTools = (window as any).__REDUX_DEVTOOLS_EXTENSION__?.({
-  actionSanitizer,
-  stateSanitizer,
-});
 
 @NgModule({
   imports: [
@@ -38,7 +28,7 @@ const enableReduxDevTools = (window as any).__REDUX_DEVTOOLS_EXTENSION__?.({
     ContentComponent,
   ],
   declarations: [AppComponent, IntroComponent],
-  providers: [{ provide: AdaptCommon, useValue: createStore(enableReduxDevTools) }],
+  providers: [defaultStoreProvider],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

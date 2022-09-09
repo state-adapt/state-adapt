@@ -38,9 +38,10 @@ The `sources` parameter is worth explaining more. When it is an object, it maps 
 
 `sources` can also be a single observable or array of observables that gets treated the same as if this was passed in: `{ set: source$ }` or `{ set: [source1$, source2$] }`
 
-This is the default way to use [`init`](/concepts/stores#init) from `'@state-adapt/core'` (or whatever the import path is in your environment. See [Getting Started](<(/getting-started)>)):
+This is the default way to use [`init`](/concepts/stores#init) from `'@state-adapt/rxjs'`:
 
 ```typescript
+import { AdaptCommon } from '@state-adapt/rxjs';
 // ...
   numberStore = this.adapt.init('number', 0);
   constructor(private adapt: AdaptCommon) {}
@@ -50,8 +51,8 @@ This is the default way to use [`init`](/concepts/stores#init) from `'@state-ada
 You will probably never call the [`init`](/concepts/stores#init) method directly. StateAdapt exports a specific function for each environment:
 
 - **Angular:** `import { adapt } from '@state-adapt/angular';`
-- **Angular + NgRx:** `import { adapt } from '@state-adapt/ngrx';`
-- **Angular + NGXS:** `import { adapt } from '@state-adapt/ngxs';`
+- **Angular + NgRx:** `import { adaptNgrx } from '@state-adapt/ngrx';`
+- **Angular + NGXS:** `import { adaptNgxs } from '@state-adapt/ngxs';`
 - **React (/+ Redux):** `import { useAdapt } from '@state-adapt/react';`
 
 ## State Paths
@@ -182,6 +183,8 @@ Initially, `total$` will emit `4000`, calculated from the initial inputs of `0` 
 [`joinSelectors`](/concepts/stores#joinselectors) is the simplest way to use state from multiple stores:
 
 ```typescript
+import { joinSelectors } from '@state-adapt/rxjs';
+// ...
 total$ = joinSelectors(this.number1Store, this.number2Store, (n1, n2) => n1 + n2);
 ```
 
@@ -204,6 +207,8 @@ TypeScript will autocomplete the name of the selector as you type and correctly 
 [`join`](/concepts/stores#join) is a heavier solution than [`joinSelectors`](/concepts/stores#joinselectors). When you need to join many selectors from the same stores your code will be more DRY if you use [`join`](/concepts/stores#join) instead of [`joinSelectors`](/concepts/stores#joinselectors). [`join`](/concepts/stores#join) gives you access to all of each store's selectors by allowing you to specify a prefix to prepend to all selector names from each individual store. It returns a new store-like object with new selectors you define using `createSelector` from _Reselect_:
 
 ```typescript
+import { join } from '@state-adapt/rxjs';
+// ...
 numbersStore = join(['one', this.number1Store], ['two', this.number2Store], {
   totalNegative1: s => s.oneNegative + s.twoState,
   totalNegative2: s => s.oneState + s.twoNegative,
@@ -217,6 +222,8 @@ totalNegative2$ = this.numbersStore.totalNegative2$;
 [`joinStores`](/concepts/stores#joinstores) gives you access to all of each store's selectors by allowing you to specify a prefix to prepend to all selector names from each individual store. It returns a new store-like object with new selectors. It also has similar syntax to that of [`joinAdapters`](/concepts/adapters#joinadapters):
 
 ```typescript
+import { joinStores } from '@state-adapt/rxjs';
+// ...
 numbersStore = joinStores({
   one: this.number1Store,
   two: this.number2Store,
@@ -232,6 +239,9 @@ totalNegative2$ = this.numbersStore.totalNegative2$;
 The reason for this is so you can define state logic in adapters instead of inside `joinStores`, which makes it simpler to test. This alternative syntax would be slightly preferrable:
 
 ```typescript
+import { joinAdapters } from '@state-adapt/core';
+import { joinStores } from '@state-adapt/rxjs';
+
 const numbersStore = joinAdapters<NumbersState>()({
   one: numberAdapter,
   two: numberAdapter,
