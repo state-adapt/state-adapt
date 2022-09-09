@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { State, StateContext, Action } from '@ngxs/store';
-import { updatePaths } from '@state-adapt/core';
+import { updatePaths } from '@state-adapt/angular';
 import { PatchState } from './patch-state.action';
 
 export interface AdaptModel {
@@ -16,7 +16,7 @@ export class AdaptState {
   @Action(PatchState)
   patchState(
     { getState, patchState }: StateContext<AdaptModel>,
-    { payload }: PatchState
+    { payload }: PatchState,
   ) {
     return patchState(updatePaths(getState(), payload));
   }

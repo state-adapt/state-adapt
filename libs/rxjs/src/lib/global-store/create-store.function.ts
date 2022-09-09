@@ -1,5 +1,4 @@
-import { adaptReducer } from './adapt.reducer';
-import { createAdaptNestedReducer } from './create-adapt-nested-reducer.function';
+import { adaptReducer, createAdaptNestedReducer } from '@state-adapt/core';
 import { createStateAdapt } from './create-state-adapt.funciton';
 
 function createReduxLikeStore(reducer: any, preloadedState: any, enhancer: any) {

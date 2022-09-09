@@ -15,13 +15,13 @@ Set up StateAdapt with
 First, `npm install`:
 
 ```
-npm i -s @state-adapt/core @state-adapt/angular
+npm i -s @state-adapt/angular
 ```
 
 Include in app.module.ts like so:
 
 ```typescript
-import { defaultStoreProvider } from '@state-adapt/core';
+import { defaultStoreProvider } from '@state-adapt/angular';
 // ...
     providers: [defaultStoreProvider],
 ```
@@ -48,7 +48,7 @@ Open up Redux Devtools and you should see the state update immediately to `'Hell
 First, `npm install`:
 
 ```
-npm i -s @state-adapt/core @state-adapt/ngrx
+npm i -s @state-adapt/ngrx
 ```
 
 Include in your app.module.ts like so:
@@ -56,7 +56,7 @@ Include in your app.module.ts like so:
 ```typescript
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
-import { adaptReducer, actionSanitizer, stateSanitizer } from '@state-adapt/core';
+import { adaptReducer, actionSanitizer, stateSanitizer } from '@state-adapt/ngrx';
 // ...
 // In your module imports array:
     StoreModule.forRoot({ adapt: adaptReducer }),
@@ -90,7 +90,7 @@ Open up Redux Devtools and you should see the state update immediately to `'Hell
 First, `npm install`:
 
 ```
-npm i -s @state-adapt/core @state-adapt/ngxs
+npm i -s @state-adapt/ngxs
 ```
 
 Include in your app.module.ts like so:
@@ -98,7 +98,7 @@ Include in your app.module.ts like so:
 ```typescript
 import { NgxsModule } from '@ngxs/store';
 import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
-import { actionSanitizer, stateSanitizer } from '@state-adapt/core';
+import { actionSanitizer, stateSanitizer } from '@state-adapt/ngxs';
 import { AdaptState } from '@state-adapt/ngxs';
 // ...
 // In your module imports array:
@@ -134,13 +134,13 @@ Open up Redux Devtools and you should see the state update immediately to `'Hell
 First, `npm install`:
 
 ```
-npm i -s @state-adapt/core @state-adapt/react
+npm i -s @state-adapt/react
 ```
 
 Define your adapt store:
 
 ```typescript
-import { actionSanitizer, stateSanitizer, createStore } from '@state-adapt/core';
+import { actionSanitizer, stateSanitizer, createStore } from '@state-adapt/react';
 
 const enableReduxDevTools = (window as any).__REDUX_DEVTOOLS_EXTENSION__?.({
   actionSanitizer,
@@ -187,7 +187,7 @@ Open up Redux Devtools and you should see the state update immediately to `'new 
 First, `npm install`:
 
 ```
-npm i -s @state-adapt/core @state-adapt/react
+npm i -s @state-adapt/react
 ```
 
 Define your Redux store:
@@ -198,7 +198,7 @@ import {
   actionSanitizer,
   stateSanitizer,
   createStateAdapt,
-} from '@state-adapt/core';
+} from '@state-adapt/react';
 import { combineReducers, createStore } from 'redux';
 
 const enableReduxDevTools = (window as any).__REDUX_DEVTOOLS_EXTENSION__?.({

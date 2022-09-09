@@ -31,7 +31,6 @@ Example:
 
 ```typescript
 import { timer } from 'rxjs';
-import { toSource } from '@state-adapt/core';
 
 const timer$ = timer(3000).pipe(toSource('timer$'));
 ```
@@ -51,8 +50,6 @@ When you don't have an observable already, you can use a [`Source`](/concepts/so
 ```
 
 ```typescript
-import { Source } from '@state-adapt/core';
-// ...
 formSubmission$ = new Source<void>('formSubmission$');
 ```
 
@@ -66,7 +63,6 @@ Some observables are actually several event types merged together. Although it w
 
 ```typescript
 import { Observable } from 'rxjs';
-import { splitSources } from '@state-adapt/core';
 
 enum MessageType {
   MESSAGE_1 = 'MESSAGE_1',
@@ -108,7 +104,6 @@ This is a function that takes in 2 arguments (an `actionType` and an optional `p
 ```typescript
 import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { toSource, getAction } from '@state-adapt/core';
 
 const obs$ = of(1);
 const source1$ = obs$.pipe(toSource('source1$'));
@@ -122,8 +117,6 @@ This can give you a little more flexibility when creating sources.
 Http requests are often just used for the single value they emit when they complete. However, if you want to handle the loading state and errors, http requests become a common example of observables that contain multiple event types in a single observable: `request`, `error` and `success`. `getHttpActions` uses [`getAction`](/concepts/sources#getaction) internally to convert an HTTP request observable into an observable of those 3 actions. Example usage:
 
 ```typescript
-import { getHttpActions } from '@state-adapt/core';
-
 const fetchData = (filters: Filters) =>
   timer(2000).pipe(mapTo({ body: 'Some data', status: 200, error: null }));
 
@@ -168,8 +161,6 @@ The 2nd argument is the observable of all HTTP actions, which is what [`getHttpA
 [`getHttpSources`](/concepts/sources#gethttpsources) is a combination of [`getHttpActions`](/concepts/sources#gethttpactions) and [`splitHttpSources`](/concepts/sources#splithttpsources). Here is an example of two ways that are equivalent:
 
 ```typescript
-import { getHttpActions, splitSources, getHttpSources } from '@state-adapt/core';
-
 const fetchData = () =>
   timer(2000).pipe(mapTo({ body: 'Some data', status: 200, error: null }));
 
@@ -201,7 +192,6 @@ Bad example:
 ```
 
 ```typescript
-import { Source } from '@state-adapt/core';
 // ... DO NOT DO THIS
 submitForm$ = new Source<FormData>('submitForm$');
 resetForm$ = new Source<void>('resetForm$');
@@ -220,7 +210,6 @@ Good example:
 ```
 
 ```typescript
-import { Source } from '@state-adapt/core';
 // ... DO THIS
 formSubmission$ = new Source<void>('formSubmission$'); // or formSubmitted$
 ```

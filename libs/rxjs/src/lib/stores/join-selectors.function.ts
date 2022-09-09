@@ -1,7 +1,5 @@
-import { createSelector } from 'reselect';
+import { AnySelectors, Selectors, createSelector } from '@state-adapt/core';
 import { merge, using } from 'rxjs';
-import { AnySelectors } from '../selectors/any-selectors.interface';
-import { Selectors } from '../selectors/selectors.interface';
 import { JoinedMiniStore } from './joined-mini-store.interface';
 import { JoinedSelectors } from './joined-selectors.type';
 import { MiniStore } from './mini-store.interface';

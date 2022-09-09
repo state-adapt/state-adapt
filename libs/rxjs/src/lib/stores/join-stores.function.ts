@@ -1,12 +1,12 @@
-import { merge, using } from 'rxjs';
-import { createSelector } from '../selectors/create-selector.function';
 import {
   combineSelectors,
+  createSelector,
+  Flat,
   ReturnTypeSelectors,
   SelectorReturnTypes,
-} from '../selectors/create-selectors.function';
-import { Selectors } from '../selectors/selectors.interface';
-import { Flat } from '../utils/flat.type';
+  Selectors,
+} from '@state-adapt/core';
+import { merge, using } from 'rxjs';
 import { JoinedMiniStore } from './joined-mini-store.interface';
 // import { JoinedSelectors } from './joined-selectors.type';
 import { StoreLike } from './store-like.type';

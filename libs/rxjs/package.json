@@ -1,0 +1,30 @@
+{
+  "name": "@state-adapt/rxjs",
+  "description": "State management library built with RxJS and inspired by the adapter pattern introduced in NgRx/Entity.",
+  "version": "0.49.0",
+  "homepage": "https://github.com/state-adapt/state-adapt",
+  "author": "Mike Pearson",
+  "license": "MIT",
+  "keywords": [
+    "rxjs",
+    "redux",
+    "state management",
+    "state adapters",
+    "ngrx",
+    "ngrx/entity"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/state-adapt/state-adapt"
+  },
+  "bugs": {
+    "url": "https://github.com/state-adapt/state-adapt/issues"
+  },
+  "peerDependencies": {
+    "rxjs": "^6.6.6"
+  },
+  "dependencies": {
+    "tslib": "^2.0.0",
+    "@state-adapt/core": "^0.49.0"
+  }
+}

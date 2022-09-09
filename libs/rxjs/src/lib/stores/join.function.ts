@@ -1,11 +1,7 @@
-import { createSelector } from 'reselect';
 import { merge, using } from 'rxjs';
 // import { AnySelectors } from '../selectors/any-selectors.interface';
-import {
-  createSelectors,
-  SelectorReturnTypes,
-} from '../selectors/create-selectors.function';
-import { Selections } from '../selectors/selections.type';
+import { createSelector, createSelectors, SelectorReturnTypes } from '@state-adapt/core';
+import { Selections } from '../stores/selections.type';
 import { JoinedMiniStore } from './joined-mini-store.interface';
 import { JoinedSelectors } from './joined-selectors.type';
 import { MiniStore } from './mini-store.interface';
@@ -210,7 +206,7 @@ export function join<CombinedS extends Selectors<any>>(
   };
 }
 
-function prefixObjectKeys<Prefix extends string, T>(
+function prefixObjectKeys<Prefix extends string, T extends Record<string, any>>(
   prefix: Prefix,
   obj: T,
 ): Prefixed<Prefix, T> {

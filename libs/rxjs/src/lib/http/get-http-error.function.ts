@@ -1,6 +1,5 @@
+import { Action, getAction } from '@state-adapt/core';
 import { Observable, of } from 'rxjs';
-import { Action } from '../actions/action.interface';
-import { getAction } from '../actions/get-action.function';
 
 export type ErrorAction<Err = string> = Action<Err, 'error$'>;
 export type ErrorActionWithReq<Req, Err = string> = Action<[Err, Req], 'error$'>;

@@ -18,9 +18,7 @@
   "bugs": {
     "url": "https://github.com/state-adapt/state-adapt/issues"
   },
-  "peerDependencies": {
-    "rxjs": "6.6.6"
-  },
+  "peerDependencies": {},
   "dependencies": {
     "tslib": "^2.0.0",
     "reselect": "^4.0.0"

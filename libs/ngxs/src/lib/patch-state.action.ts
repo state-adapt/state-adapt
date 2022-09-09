@@ -1,4 +1,4 @@
-import { adaptType, Update } from '@state-adapt/core';
+import { adaptType, Update } from '@state-adapt/angular';
 
 export class PatchState {
   static readonly type = adaptType; // NGXS requires static, NgRx requires NOT static

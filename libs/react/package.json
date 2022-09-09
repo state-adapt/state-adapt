@@ -21,11 +21,12 @@
     "url": "https://github.com/state-adapt/state-adapt/issues"
   },
   "peerDependencies": {
-    "@state-adapt/core": "^0.32.0",
     "react": "^17.0.1",
     "rxjs": "^6.6.3"
   },
   "dependencies": {
-    "tslib": "^2.0.0"
+    "tslib": "^2.0.0",
+    "@state-adapt/core": "0.49.0",
+    "@state-adapt/rxjs": "0.49.0"
   }
 }

@@ -1,5 +1,5 @@
 import { Subject } from 'rxjs';
-import { Action } from '../actions/action.interface';
+import { Action } from '@state-adapt/core';
 
 type SubjectWithoutNext = new <K>() => {
   [P in Exclude<keyof Subject<K>, 'next'>]: Subject<K>[P];

@@ -5,7 +5,7 @@ import {
   AdaptCommon,
   createStore,
   stateSanitizer,
-} from '@state-adapt/core';
+} from '@state-adapt/angular';
 import { IconModule } from 'carbon-components-angular/icon';
 import { ButtonModule } from 'carbon-components-angular/button';
 import { UIShellModule } from 'carbon-components-angular/ui-shell';

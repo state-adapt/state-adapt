@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { PrefixedAction } from '../actions/prefixed-action.type';
+import { PrefixedAction } from '@state-adapt/core';
 import { splitSources } from '../sources/split-sources.function';
 import {
   GetHttpActions,

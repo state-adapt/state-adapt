@@ -6,7 +6,6 @@
     "@angular/platform-browser",
     "@ngxs/store",
     "@ngxs/devtools-plugin",
-    "@state-adapt/core",
     "@state-adapt/ngxs",
     "@angular/common",
     "carbon-components-angular",

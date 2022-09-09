@@ -1,6 +1,6 @@
+import { Selectors } from '@state-adapt/core';
 import { Observable } from 'rxjs';
-import { Selections } from '../selectors/selections.type';
-import { Selectors } from '../selectors/selectors.interface';
+import { Selections } from '../stores/selections.type';
 
 export type MiniStore<State, S extends Selectors<State>> = Selections<State, S> & {
   _requireSources$: Observable<any>;

@@ -1,4 +1,4 @@
-import { createAdapter } from '@state-adapt/core';
+import { createAdapter } from '@state-adapt/angular';
 
 interface DemoState {
   prop1: string;

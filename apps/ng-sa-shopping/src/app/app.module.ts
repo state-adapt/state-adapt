@@ -5,7 +5,7 @@ import {
   stateSanitizer,
   createStore,
   AdaptCommon,
-} from '@state-adapt/core';
+} from '@state-adapt/angular';
 import { ShoppingSharedModule } from '../../../../libs/shopping/src';
 
 const enableReduxDevTools = (window as any).__REDUX_DEVTOOLS_EXTENSION__?.({
@@ -19,8 +19,6 @@ import { AppComponent } from './app.component';
   imports: [BrowserModule, ShoppingSharedModule],
   bootstrap: [AppComponent],
   declarations: [AppComponent],
-  providers: [
-    { provide: AdaptCommon, useValue: createStore(enableReduxDevTools) },
-  ],
+  providers: [{ provide: AdaptCommon, useValue: createStore(enableReduxDevTools) }],
 })
 export class AppModule {}

@@ -1,5 +1,5 @@
 import { inject } from '@angular/core';
-import { AdaptCommon } from '@state-adapt/core';
+import { AdaptCommon } from '@state-adapt/angular';
 import { Adapt } from './adapt.service';
 
 export const adapt: AdaptCommon['init'] = <T extends any[]>(...args: T) => {

@@ -1,4 +1,4 @@
-import { createAdapter } from '@state-adapt/core';
+import { createAdapter } from '@state-adapt/angular';
 import { Product, QuantityChange } from '../../../../../libs/shopping/src';
 
 export const productAdapter = createAdapter<Product[]>()({

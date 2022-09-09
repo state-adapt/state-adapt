@@ -1,5 +1,5 @@
 import { inject } from '@angular/core';
-import { AdaptCommon } from '@state-adapt/core';
+import { AdaptCommon } from '@state-adapt/rxjs';
 
 export const watch: AdaptCommon['watch'] = <T extends any[]>(...args: T) => {
   const adaptDep = inject(AdaptCommon);

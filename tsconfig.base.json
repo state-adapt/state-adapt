@@ -24,6 +24,7 @@
       "@state-adapt/ngrx": ["libs/ngrx/src/index.ts"],
       "@state-adapt/ngxs": ["libs/ngxs/src/index.ts"],
       "@state-adapt/react": ["libs/react/src/index.ts"],
+      "@state-adapt/rxjs": ["libs/rxjs/src/index.ts"],
       "@state-adapt/shopping": ["libs/shopping/src/index.ts"]
     }
   },

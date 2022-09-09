@@ -1,24 +1,26 @@
-import { createSelector } from 'reselect';
-import { defer, merge, NEVER, Observable, of, using } from 'rxjs';
-import { distinctUntilChanged, filter, finalize, share, tap } from 'rxjs/operators';
-import type { Action } from '../actions/action.interface';
-import { getAction } from '../actions/get-action.function';
-import { Adapter, ReactionsWithSelectors } from '../adapters/adapter.type';
-import { BasicAdapterMethods, createAdapter } from '../adapters/create-adapter.function';
-import { Reactions } from '../adapters/reactions.interface';
-import { SyntheticSources } from '../adapters/synthetic-sources.type';
+import type { Action } from '@state-adapt/core';
 import {
+  Adapter,
+  BasicAdapterMethods,
+  createAdapter,
   createDestroy,
   createInit,
   createPatchState,
-} from '../global-store/adapt.actions';
-import { Selections } from '../selectors/selections.type';
-import { Selectors } from '../selectors/selectors.interface';
-import { WithGetState } from '../selectors/with-get-state.type';
+  flatten,
+  getAction,
+  Reactions,
+  ReactionsWithSelectors,
+  Selectors,
+  SyntheticSources,
+  WithGetState,
+} from '@state-adapt/core';
+import { createSelector } from 'reselect';
+import { defer, merge, NEVER, Observable, of, using } from 'rxjs';
+import { distinctUntilChanged, filter, finalize, share, tap } from 'rxjs/operators';
 import { isSource } from '../sources/is-source.function';
 import { MiniStore } from '../stores/mini-store.interface';
+import { Selections } from '../stores/selections.type';
 import { Sources } from '../stores/sources.type';
-import { flatten } from '../utils/flatten.function';
 
 interface ParsedPath {
   path: string;

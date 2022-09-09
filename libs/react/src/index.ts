@@ -1,3 +1,5 @@
+export * from '@state-adapt/rxjs';
+
 export * from './lib/adapt.context';
 export * from './lib/use-adapt';
 export * from './lib/use-observable';

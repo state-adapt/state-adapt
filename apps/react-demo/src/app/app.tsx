@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { interval } from 'rxjs';
-import { createAdapter, toSource } from '../../../../libs/core/src';
+import { createAdapter, toSource } from '../../../../libs/react/src';
 import { useAdapt, useObservable, useSource } from '../../../../libs/react/src';
 
 export const countAdapter = createAdapter<number>()({

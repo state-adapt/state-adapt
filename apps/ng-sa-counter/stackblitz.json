@@ -4,7 +4,7 @@
     "@angular/core",
     "@angular/platform-browser-dynamic",
     "@angular/platform-browser",
-    "@state-adapt/core",
+    "@state-adapt/angular",
     "@angular/common",
     "carbon-components-angular",
     "rxjs",

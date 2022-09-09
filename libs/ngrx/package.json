@@ -21,11 +21,13 @@
     "url": "https://github.com/state-adapt/state-adapt/issues"
   },
   "peerDependencies": {
-    "@angular/common": "^11.2.6",
-    "@angular/core": "^11.2.6",
-    "@ngrx/store": "^11.0.1"
+    "@angular/core": "^14.0.0",
+    "@ngrx/store": "^14.0.0"
   },
   "dependencies": {
-    "tslib": "^2.0.0"
+    "tslib": "^2.0.0",
+    "@state-adapt/core": "0.49.0",
+    "@state-adapt/rxjs": "0.49.0",
+    "@state-adapt/angular": "0.49.0"
   }
 }

@@ -1,5 +1,4 @@
-import { AnySelectors } from '../selectors/any-selectors.interface';
-import { Selectors } from '../selectors/selectors.interface';
+import { AnySelectors, Selectors } from '@state-adapt/core';
 import { JoinedMiniStore } from './joined-mini-store.interface';
 import { MiniStore } from './mini-store.interface';
 

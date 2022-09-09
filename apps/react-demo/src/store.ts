@@ -4,7 +4,7 @@ import {
   stateSanitizer,
   // createStateAdapt,
   createStore,
-} from '../../../libs/core/src';
+} from '../../../libs/react/src';
 
 // import { combineReducers, createStore } from 'redux';
 

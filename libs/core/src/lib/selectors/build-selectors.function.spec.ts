@@ -1,4 +1,4 @@
-import { createSelectors } from './create-selectors.function';
+import { buildSelectors } from './build-selectors.function';
 
 const copy = (a: any) => JSON.parse(JSON.stringify(a));
 
@@ -15,7 +15,7 @@ const runTimes = {
   getA1000PlusB1000: 0,
 };
 
-const selectors = createSelectors<TestState>()({
+const selectors = buildSelectors<TestState>()({
   getA1000: s => {
     runTimes.getA1000++;
     return s.a * 1000;
@@ -24,9 +24,9 @@ const selectors = createSelectors<TestState>()({
     runTimes.getB1000++;
     return s.b * 1000;
   },
-});
+})();
 
-const selectors2 = createSelectors<TestState>()(selectors, {
+const selectors2 = buildSelectors<TestState>()(selectors)({
   getA1000MinusB1000: s => {
     runTimes.getA1000MinusB1000++;
     return s.getA1000 - s.getB1000;
@@ -35,7 +35,7 @@ const selectors2 = createSelectors<TestState>()(selectors, {
     runTimes.getA1000PlusB1000++;
     return s.getA1000 + s.getB1000;
   },
-});
+})();
 
 describe('combineSelectors', () => {
   const state1 = { a: 4, b: 3, c: 0 };

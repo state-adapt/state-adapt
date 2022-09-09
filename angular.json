@@ -998,6 +998,43 @@
       },
       "tags": []
     },
+    "rxjs": {
+      "$schema": "../../node_modules/nx/schemas/project-schema.json",
+      "projectType": "library",
+      "root": "libs/rxjs",
+      "sourceRoot": "libs/rxjs/src",
+      "prefix": "state-adapt",
+      "architect": {
+        "build": {
+          "builder": "@nrwl/angular:package",
+          "options": {
+            "tsConfig": "libs/rxjs/tsconfig.lib.json",
+            "project": "libs/rxjs/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "libs/rxjs/tsconfig.lib.prod.json"
+            }
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/rxjs/src/**/*.ts", "libs/rxjs/src/**/*.html"]
+          },
+          "outputs": ["{options.outputFile}"]
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/rxjs"],
+          "options": {
+            "jestConfig": "libs/rxjs/jest.config.ts",
+            "passWithNoTests": true
+          }
+        }
+      },
+      "tags": []
+    },
     "shopping": {
       "$schema": "../../node_modules/nx/schemas/project-schema.json",
       "projectType": "library",

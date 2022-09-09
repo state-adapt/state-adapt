@@ -1,6 +1,5 @@
 import { Component, inject, Input, OnInit } from '@angular/core';
-import { adapt, watch } from '@state-adapt/angular';
-import { Source, toSource } from '@state-adapt/core';
+import { adapt, Source, toSource, watch } from '@state-adapt/angular';
 import { TileSelection } from 'carbon-components-angular/tiles';
 import { combineLatest, Subject } from 'rxjs';
 import {

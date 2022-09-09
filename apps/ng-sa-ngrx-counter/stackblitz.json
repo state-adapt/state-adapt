@@ -6,7 +6,6 @@
     "@angular/platform-browser",
     "@ngrx/store",
     "@ngrx/store-devtools",
-    "@state-adapt/core",
     "@state-adapt/ngrx",
     "@angular/common",
     "carbon-components-angular",

@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { defaultStoreProvider } from '@state-adapt/core';
+import { defaultStoreProvider } from '@state-adapt/angular';
 import { CounterUiModule } from '../../../../libs/counter-ui/src';
 import { AppComponent } from './app.component';
 

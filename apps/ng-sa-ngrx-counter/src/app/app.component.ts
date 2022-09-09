@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
-import { Source } from '@state-adapt/core';
-import { Adapt } from '@state-adapt/ngrx';
+import { Adapt, Source } from '@state-adapt/ngrx';
 import { countAdapter } from './count.adapter';
 
 @Component({
