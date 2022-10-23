@@ -2,7 +2,12 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "../../dist/out-tsc",
-    "types": ["node"]
+    "target": "es2020",
+    "declaration": true,
+    "declarationMap": true,
+    "inlineSources": true,
+    "types": ["node"],
+    "lib": ["dom", "es2018"]
   },
   "files": [
     "../../node_modules/@nrwl/react/typings/cssmodule.d.ts",
