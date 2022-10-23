@@ -1,4 +1,8 @@
-# 0.52.0 2022-09-10
+# 0.54.0 2022-10-22
+
+- Fix(core): Prod build TS issue
+
+# 0.52.0 2022-09-10, 0.53.0 2022-09-10
 
 - Fix(core): Prod build TS issue
 
