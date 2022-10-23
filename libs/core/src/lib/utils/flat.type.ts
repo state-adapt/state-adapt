@@ -1,1 +1,1 @@
-export type Flat<T> = {} & { [P in keyof T]: T[P] };
+export type Flat<T> = {} & { [P in Extract<keyof T, string>]: T[P] };

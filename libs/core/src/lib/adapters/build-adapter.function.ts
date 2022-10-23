@@ -29,7 +29,7 @@ export type BuiltAdapter<
 };
 
 export type ReactionsFromAdapter<A extends Adapter<any, any, any>> = {
-  [K in Extract<keyof A, string>]: A[K] extends Reaction<any> ? A[K] : never;
+  [K in keyof A]: A[K] extends Reaction<any> ? A[K] : never;
 };
 
 export function buildAdapter<State>() {
