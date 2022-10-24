@@ -43,7 +43,10 @@ type SuperState<AE extends AdapterEntries<any>> = {
   [K in keyof AE]: Parameters<AE[K][keyof AE[K]]>[0];
 };
 
-type FlattendAdapters<AE extends AdapterEntries<any>, ParentState> = {
+type FlattendAdapters<
+  AE extends AdapterEntries<any>,
+  ParentState extends Record<string, any>,
+> = {
   [NS in Extract<keyof AE, string>]: (
     x: NestedAdapter<ParentState, SuperState<AE>, NS, AE[NS]>,
   ) => void;
@@ -55,7 +58,7 @@ type AdapterEntries<SuperState extends Record<string, any>> = {
   [K in keyof SuperState]: ReactionsWithSelectors<SuperState[K], any>;
 };
 
-export function joinAdapters<ParentState>() {
+export function joinAdapters<ParentState extends Record<string, any>>() {
   return <AE extends AdapterEntries<Partial<ParentState>>>(
     adapterEntries: AE,
   ): NewBlockAdder<
