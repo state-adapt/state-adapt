@@ -1,5 +1,6 @@
 # 0.56.0 2022-10-24
 
+- Bugfix(core): Handle empty selectors in joinAdapters
 - Chore(core): Add secondary import for core adapters
 - Feat(core): Add some core adapters
 - - booleanAdapter
