@@ -11,7 +11,7 @@ export class NameComponent {
 <button (click)="nameStore.set('Bilbo')">Change Name</button>
 ```
 
-<video autoplay loop>
+<video controls loop>
   <source src="../assets/demo-1-simple-state.mov" type="video/mp4"/>
 </video>
 
@@ -35,7 +35,7 @@ export class NameComponent {
 <button (click)="nameStore.set('Bilbo')">Change Name</button>
 ```
 
-<video autoplay loop>
+<video controls loop>
   <source src="../assets/demo-2-derived-state.mov" type="video/mp4" />
 </video>
 
@@ -69,7 +69,7 @@ export class NameComponent {
 + <button (click)="nameStore.reverseName()">Reverse Name</button>
 ```
 
-<video autoplay loop>
+<video controls loop>
   <source src="../assets/demo-3-state-changes.mp4" type="video/mp4" />
 </video>
 
@@ -102,7 +102,7 @@ export class NameComponent {
 + <button (click)="name2Store.reverseName()">Reverse Name</button>
 ```
 
-<video autoplay loop>
+<video controls loop>
   <source src="../assets/demo-4-state-adapters.mp4" type="video/mp4" />
 </video>
 
@@ -148,7 +148,7 @@ export class NameComponent {
 <button (click)="name2Store.reverseName()">Reverse Name</button>
 ```
 
-<video autoplay loop>
+<video controls loop>
   <source src="../assets/demo-5-observable-sources.mp4" type="video/mp4" />
 </video>
 
@@ -198,7 +198,7 @@ export class NameComponent {
 + <button (click)="resetBoth$.next()">Reset Both</button>
 ```
 
-<video autoplay loop>
+<video controls loop>
   <source src="../assets/demo-6-dom-sources.mp4" type="video/mp4" />
 </video>
 
