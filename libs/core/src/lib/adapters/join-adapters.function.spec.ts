@@ -25,16 +25,25 @@ const cState: CState = {
   prop4: [4],
 };
 
+interface DState {
+  prop5: string;
+}
+const dState: DState = {
+  prop5: 'd',
+};
+
 interface ParentState {
   a: AState;
   b: BState;
   c: CState;
+  d: DState;
   extraProp: string[];
 }
 const parentState: ParentState = {
   a: aState,
   b: bState,
   c: cState,
+  d: dState,
   extraProp: ['extraProp'],
 };
 
@@ -45,10 +54,12 @@ const aAdapter = createAdapter<AState>()({
 const bAdapter = createAdapter<BState>()({
   setProp3: (state, newProp3Ar: string[]) => ({ ...state, prop3: newProp3Ar }),
 });
+const dAdapter = createAdapter<DState>()({});
 const extraPropAdapter = createAdapter<string[]>()({});
 const joinedAdapters = joinAdapters<ParentState>()({
   a: aAdapter,
   b: bAdapter,
+  d: dAdapter,
 })({
   changeABAndExtraProp: {
     a: aAdapter.setProp2FromAr,
@@ -81,6 +92,7 @@ describe('mergeAdapters', () => {
       a: { prop1: 10, prop2: '20' },
       b: { prop3: ['asdfasdfsadfsdfsdfdsfds'] },
       c: { prop4: [11] },
+      d: { prop5: 'd' },
       extraProp: ['extraProp'],
     };
     const returnedState = joinedAdapters.set(parentState, newState);
@@ -101,6 +113,13 @@ describe('mergeAdapters', () => {
       a: { ...parentState.a, prop2: 'Hello there' },
       b: { ...parentState.b, prop3: ['Hello there'] },
       extraProp: ['Hello there'],
+    });
+  });
+  it('should handle empty selectors correctly', () => {
+    const newState = joinedAdapters.setD(parentState, { prop5: 'D' }, parentState);
+    expect(newState).toEqual({
+      ...parentState,
+      d: { prop5: 'D' },
     });
   });
 });
