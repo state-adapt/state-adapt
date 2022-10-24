@@ -41,7 +41,7 @@ export function buildAdapter<State>() {
     Adapter<
       State,
       WithStateSelector<State, S>,
-      Flat<R & WithStateSelector<State, S> & BasicAdapterMethods<State>>
+      R & WithStateSelector<State, S> & BasicAdapterMethods<State>
     >['selectors']
   > => {
     const adapter = createAdapter<State>()<S, R>(reactionsWithSelectors);

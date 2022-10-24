@@ -1,3 +1,7 @@
+# 0.55.0 2022-11-22
+
+- Fix(core): TS issue with build adapters
+
 # 0.54.0 2022-10-22
 
 - Fix(core): Prod build TS issue
