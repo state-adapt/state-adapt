@@ -11,8 +11,8 @@ export class NameComponent {
 <button (click)="nameStore.set('Bilbo')">Change Name</button>
 ```
 
-<video controls>
-  <source src="../assets/demo-1-simple-state.mov" type="video/mp4" />
+<video autoplay loop>
+  <source src="../assets/demo-1-simple-state.mov" type="video/mp4"/>
 </video>
 
 [StackBlitz](https://stackblitz.com/edit/angular-ivy-jwt8jh?file=src%2Fapp%2F1-simple-state.component.ts)
@@ -35,7 +35,7 @@ export class NameComponent {
 <button (click)="nameStore.set('Bilbo')">Change Name</button>
 ```
 
-<video controls>
+<video autoplay loop>
   <source src="../assets/demo-2-derived-state.mov" type="video/mp4" />
 </video>
 
@@ -69,7 +69,7 @@ export class NameComponent {
 + <button (click)="nameStore.reverseName()">Reverse Name</button>
 ```
 
-<video controls>
+<video autoplay loop>
   <source src="../assets/demo-3-state-changes.mp4" type="video/mp4" />
 </video>
 
@@ -102,7 +102,7 @@ export class NameComponent {
 + <button (click)="name2Store.reverseName()">Reverse Name</button>
 ```
 
-<video controls>
+<video autoplay loop>
   <source src="../assets/demo-4-state-adapters.mp4" type="video/mp4" />
 </video>
 
@@ -148,7 +148,7 @@ export class NameComponent {
 <button (click)="name2Store.reverseName()">Reverse Name</button>
 ```
 
-<video controls>
+<video autoplay loop>
   <source src="../assets/demo-5-observable-sources.mp4" type="video/mp4" />
 </video>
 
@@ -198,7 +198,7 @@ export class NameComponent {
 + <button (click)="resetBoth$.next()">Reset Both</button>
 ```
 
-<video controls>
+<video autoplay loop>
   <source src="../assets/demo-6-dom-sources.mp4" type="video/mp4" />
 </video>
 
