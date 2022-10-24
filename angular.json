@@ -105,7 +105,12 @@
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["libs/core/src/**/*.ts", "libs/core/src/**/*.html"]
+            "lintFilePatterns": [
+              "libs/core/src/**/*.ts",
+              "libs/core/src/**/*.html",
+              "libs/core/adapters/**/*.ts",
+              "libs/core/adapters/**/*.html"
+            ]
           },
           "outputs": ["{options.outputFile}"]
         },
