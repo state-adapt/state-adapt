@@ -68,7 +68,7 @@ export function joinAdapters<ParentState extends Record<string, any>>() {
     FlattendAdapters<AE, ParentState> extends { selectors: infer S }
       ? S extends Selectors<ParentState>
         ? WithStateSelector<ParentState, S>
-        : WithStateSelector<ParentState, {}>
+        : WithStateSelector<ParentState, Record<string, (state: ParentState) => any>>
       : {}
   > => {
     const joinedAdapters: any = { selectors: {} };
