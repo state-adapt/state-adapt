@@ -1,4 +1,12 @@
-# 0.55.0 2022-11-22
+# 0.56.0 2022-10-24
+
+- Chore(core): Add secondary import for core adapters
+- Feat(core): Add some core adapters
+- - booleanAdapter
+- - stringAdapter
+- - numberAdapter
+
+# 0.55.0 2022-10-23
 
 - Fix(core): TS issue with build adapters
 
