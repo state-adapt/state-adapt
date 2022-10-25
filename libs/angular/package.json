@@ -1,9 +1,9 @@
 {
   "name": "@state-adapt/angular",
-  "version": "0.56.0",
+  "version": "0.57.0",
   "peerDependencies": {
     "@angular/core": "^14.0.0",
-    "@state-adapt/rxjs": "0.56.0"
+    "@state-adapt/rxjs": "0.57.0"
   },
   "dependencies": {
     "tslib": "^2.3.0"
