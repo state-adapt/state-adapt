@@ -1,3 +1,7 @@
+## 0.57.0 2022-10-24
+
+- Bugfix(core): Handle void payloads in joinAdapters
+
 ## 0.56.0 2022-10-24
 
 - Bugfix(core): Handle empty selectors in joinAdapters

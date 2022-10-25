@@ -54,7 +54,15 @@ const aAdapter = createAdapter<AState>()({
 const bAdapter = createAdapter<BState>()({
   setProp3: (state, newProp3Ar: string[]) => ({ ...state, prop3: newProp3Ar }),
 });
-const dAdapter = createAdapter<DState>()({});
+const dAdapter = createAdapter<DState>()({
+  toggleCaps: state => ({
+    ...state,
+    prop5:
+      state.prop5.toLowerCase() === state.prop5
+        ? state.prop5.toUpperCase()
+        : state.prop5.toLowerCase(),
+  }),
+});
 const extraPropAdapter = createAdapter<string[]>()({});
 const joinedAdapters = joinAdapters<ParentState>()({
   a: aAdapter,
@@ -117,6 +125,17 @@ describe('mergeAdapters', () => {
   });
   it('should handle empty selectors correctly', () => {
     const newState = joinedAdapters.setD(parentState, { prop5: 'D' }, parentState);
+    expect(newState).toEqual({
+      ...parentState,
+      d: { prop5: 'D' },
+    });
+  });
+  it('should handle empty payloads correctly', () => {
+    const newState = joinedAdapters.toggleDCaps(
+      parentState,
+      undefined as void,
+      parentState,
+    );
     expect(newState).toEqual({
       ...parentState,
       d: { prop5: 'D' },

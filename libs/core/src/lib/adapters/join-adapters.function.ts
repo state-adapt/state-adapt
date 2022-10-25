@@ -25,7 +25,7 @@ type NestedAdapter<
   ) => any
     ? (
         state: ParentState,
-        payload: Parameters<R[K]>[1],
+        payload: Parameters<R[K]>[1] extends void ? void : Parameters<R[K]>[1],
         initialState: ParentState,
       ) => ParentState
     : never;
