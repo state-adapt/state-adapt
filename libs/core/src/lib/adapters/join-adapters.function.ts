@@ -88,7 +88,11 @@ export function joinAdapters<ParentState extends Record<string, any>>() {
           initialState: any,
         ) => ({
           ...state,
-          [namespace]: adapter[reactionName](state[namespace], payload, initialState),
+          [namespace]: adapter[reactionName](
+            state[namespace],
+            payload,
+            initialState[namespace],
+          ),
         });
       }
       if (adapter.selectors) {
