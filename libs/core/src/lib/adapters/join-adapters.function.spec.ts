@@ -1,6 +1,7 @@
 import { joinAdapters } from './join-adapters.function';
 import { createAdapter } from './create-adapter.function';
 import { mapPayloads } from './map-payloads.function';
+import { SecondParameterOrAny } from './second-parameter-or-any.type';
 
 interface AState {
   prop1: number;
@@ -72,7 +73,8 @@ const joinedAdapters = joinAdapters<ParentState>()({
   changeABAndExtraProp: {
     a: aAdapter.setProp2FromAr,
     b: bAdapter.setProp3,
-    extraProp: extraPropAdapter.set, // Yes, make an adapter for that specific property
+    extraProp: extraPropAdapter.set, // Yes, make an adapter for that specific property,
+    d: dAdapter.reset, // Make sure `void` payload doesn't swallow the whole thing
   },
 })({
   combinedSelector: s => s.aOneAndTwo + s.a.prop2 + s.state.c.prop4[0].toString(),
@@ -140,5 +142,18 @@ describe('mergeAdapters', () => {
       ...parentState,
       d: { prop5: 'D' },
     });
+  });
+  it('should reset child state correctly and expect void when called directly', () => {
+    const newState = joinedAdapters.resetA(
+      parentState,
+      1 as unknown as void,
+      parentState,
+    );
+    expect(newState).toEqual(parentState);
+  });
+  it('should enable void payload to react to any source', () => {
+    const payload: SecondParameterOrAny<Parameters<typeof joinedAdapters.resetA>> =
+      'asdf';
+    expect(payload).toBe(payload);
   });
 });

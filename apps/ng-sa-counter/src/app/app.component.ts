@@ -9,7 +9,7 @@ import { countAdapter } from './count.adapter';
     <h2>Store 1</h2>
     <state-adapt-counter
       (increment)="store1.set($event)"
-      (resetCount)="store1.reset(0)"
+      (resetCount)="store1.reset()"
       [count]="store1.state$ | async"
     ></state-adapt-counter>
 
@@ -20,14 +20,14 @@ import { countAdapter } from './count.adapter';
     <state-adapt-counter
       (increment)="store3.increment($event)"
       (double)="store3.double()"
-      (resetCount)="store3.reset(0)"
+      (resetCount)="store3.reset()"
       [count]="store3.state$ | async"
     ></state-adapt-counter>
 
     <h2>Store 4</h2>
     <state-adapt-counter
       (increment)="store4.multiply($event)"
-      (resetCount)="store4.reset(0)"
+      (resetCount)="store4.reset()"
       [count]="store4.state$ | async"
     ></state-adapt-counter>
 
@@ -35,7 +35,7 @@ import { countAdapter } from './count.adapter';
     <state-adapt-counter
       (increment)="store5.increment($event)"
       (double)="store5.double()"
-      (resetCount)="store5.reset(0)"
+      (resetCount)="store5.reset()"
       [count]="store5.state$ | async"
     ></state-adapt-counter>
 
@@ -43,7 +43,7 @@ import { countAdapter } from './count.adapter';
     <state-adapt-counter
       (increment)="store6.increment($event)"
       (double)="store6.double()"
-      (resetCount)="store6.reset(0)"
+      (resetCount)="store6.reset()"
       [count]="store6.state$ | async"
     ></state-adapt-counter>
 

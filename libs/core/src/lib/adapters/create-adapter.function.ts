@@ -5,7 +5,7 @@ export type BasicAdapterMethods<State> = {
   noop: (s: State) => State;
   set: (s: State, p: State) => State;
   update: (s: State, u: Partial<State>) => State;
-  reset: (s: State, p: any, i: State) => State;
+  reset: (s: State, p: void, i: State) => State;
 };
 
 export function createAdapter<State>() {

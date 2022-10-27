@@ -118,7 +118,7 @@ type NestedReactions<
     state: State,
     payload: CRDef[K][keyof CRDef[K]] extends (
       state: any,
-      payload: infer Payload,
+      payload: void & infer Payload,
       initialState: any,
     ) => any
       ? Payload

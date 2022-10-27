@@ -1,3 +1,7 @@
+## 0.58.0 2022-10-24
+
+- Bugfix(core): Handle void payloads better
+
 ## 0.57.0 2022-10-24
 
 - Bugfix(core): Handle void payloads in joinAdapters
