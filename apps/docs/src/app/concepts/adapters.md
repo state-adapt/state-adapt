@@ -358,8 +358,8 @@ All selectors from `number` adapter (see [`createAdapter`](/concepts/adapters#cr
 
 ```typescript
 {
-  negativeCoolNumber: state => state.coolNumber * -1,
-  negativeWeirdNumber: state => state.coolNumber * -1,
+  coolNumberNegative: state => state.coolNumber * -1,
+  weirdNumberNegative: state => state.coolNumber * -1,
 }
 ```
 
