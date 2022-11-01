@@ -1,5 +1,6 @@
 ## 0.58.0 2022-10-24
 
+- Feature(core): Improve string adapter
 - Bugfix(core): Handle void payloads better
 - Bugfix(core): Pass child adapter initial state to child state changes
 
