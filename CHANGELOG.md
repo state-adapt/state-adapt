@@ -1,9 +1,10 @@
 ## 0.58.0 2022-10-24
 
+- Refactor(core)!: Remove createSelector function
+- - Remove reselect dependency
 - Refactor(core)!: Remove deprecated joinSelectors function
 - Bugfix(core): Rewrite selectors with new caching mechanism
 - - Show selector cache in Redux Devtools
-- - Remove reselect dependency
 - Refactor(core)!: Remove deprecated join function
 - Feature(core): Improve string adapter
 - Bugfix(core): Handle void payloads better

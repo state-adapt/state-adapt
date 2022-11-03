@@ -11,7 +11,6 @@ export * from './lib/actions/get-action.function';
 
 export * from './lib/selectors/selectors.interface';
 export * from './lib/selectors/any-selectors.interface';
-export * from './lib/selectors/create-selector.function';
 export * from './lib/selectors/memoize-selectors.function';
 export * from './lib/selectors/create-selectors.function';
 export * from './lib/selectors/build-selectors.function';
