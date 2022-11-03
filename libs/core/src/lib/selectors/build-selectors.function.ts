@@ -2,16 +2,20 @@ import {
   combineSelectors,
   ReturnTypeSelectors,
   SelectorReturnTypes,
-  WithStateSelector,
 } from '../selectors/create-selectors.function';
 import { Selectors } from '../selectors/selectors.interface';
 import { Flat } from '../utils/flat.type';
+import { memoizeSelectors, WithStateSelector } from './memoize-selectors.function';
 
+/**
+ * @deprecated Use buildAdapter
+ *
+ */
 export function buildSelectors<State>() {
   return <S extends Selectors<State>>(
     selectors: S,
   ): NewBlockAdder<State, WithStateSelector<State, S>> => {
-    return addNewBlock({ ...selectors, state: (state: State) => state });
+    return addNewBlock(memoizeSelectors<State, S>(selectors));
   };
 }
 

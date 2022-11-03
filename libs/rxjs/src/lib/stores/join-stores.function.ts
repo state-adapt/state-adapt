@@ -1,10 +1,12 @@
 import {
   combineSelectors,
-  createSelector,
+  createSelectorsCache,
   Flat,
+  memoizeWithProxy,
   ReturnTypeSelectors,
   SelectorReturnTypes,
   Selectors,
+  SelectorsCache,
 } from '@state-adapt/core';
 import { merge, using } from 'rxjs';
 import { JoinedMiniStore } from './joined-mini-store.interface';
@@ -63,9 +65,34 @@ export function joinStores<SE extends StoreEntries>(
   // a selector for each piece of state. The developer only defines the 2nd+ selector group.
 
   const namespaces = Object.keys(storeEntries) as (string & keyof SE)[];
-
   const joinedSelectors: Selectors<any> = {};
+
+  const cache = createSelectorsCache();
+  const getCacheOverride = (sharedChildCache: SelectorsCache) => {
+    // Use this join's cache instead of the one from future joins
+    // But register future joins' caches as children
+    if (sharedChildCache) {
+      cache.__children[sharedChildCache.__id] = sharedChildCache;
+    }
+    return cache;
+  };
+
+  joinedSelectors.state = memoizeWithProxy()(
+    'state',
+    joinedSelectors,
+    s => {
+      const newState = {} as any;
+      namespaces.forEach(key => {
+        newState[key] = s[key];
+      });
+      return newState;
+    },
+    getCacheOverride,
+  );
+
   namespaces.forEach(namespace => {
+    // Already cached selectors to be made available under new names
+    // to be used in subsequent selector definitions.
     const fullSelectors = storeEntries[namespace]._fullSelectors;
     for (const selectorName in fullSelectors) {
       const selector = fullSelectors[selectorName];
@@ -84,6 +111,7 @@ export function joinStores<SE extends StoreEntries>(
     storeEntries,
     namespaces,
     selectors: joinedSelectors,
+    getCacheOverride,
   });
 }
 
@@ -91,6 +119,7 @@ type StoreBuilder<State, S extends Selectors<State>, SE extends StoreEntries> = 
   storeEntries: SE;
   namespaces: (string & keyof SE)[];
   selectors: S;
+  getCacheOverride: (c: SelectorsCache) => SelectorsCache;
 };
 
 type Prev = [never, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19];
@@ -131,45 +160,36 @@ function addNewBlock<SB extends StoreBuilder<any, any, any>>(
     if (newS)
       return addNewBlock({
         ...builder,
-        selectors: combineSelectors<any>()<any, any, any>(builder.selectors, newS),
+        selectors: combineSelectors<any>()<any, any, any>(
+          builder.selectors,
+          newS,
+          // These new selectors will ignore the cache objects (if any) given to them
+          // Instead, attach that cache object as a child of this joined store's cache object
+          builder.getCacheOverride,
+        ),
       });
 
     // Done
     const { namespaces, selectors, storeEntries } = builder;
-
-    console.log(namespaces, selectors, storeEntries);
-
-    // addNewBlock 1st call is always a new copy from joinStores
-    selectors.state = createSelector(
-      namespaces.map(namespace => selectors[namespace]),
-      (...states: any[]) => {
-        const state = {} as any;
-        namespaces.forEach((namespace, i) => {
-          state[namespace] = selectors[namespace](states[i]);
-        });
-        return state;
-      },
-    );
-
     const select = storeEntries[namespaces[0]]._select;
 
     const requireAllSources$ = merge(
       ...namespaces.map(namespace => storeEntries[namespace]._requireSources$),
     );
 
-    const selections = {} as any;
+    const joinedStore = {
+      _fullSelectors: selectors,
+      _requireSources$: requireAllSources$,
+      _select: select,
+    } as any;
+
     for (const selectorName in selectors) {
-      selections[selectorName + '$'] = using(
+      joinedStore[selectorName + '$'] = using(
         () => requireAllSources$.subscribe(),
         () => select(selectors[selectorName]),
       );
     }
 
-    return {
-      ...selections,
-      _fullSelectors: selectors,
-      _requireSources$: requireAllSources$,
-      _select: select,
-    };
+    return joinedStore;
   };
 }

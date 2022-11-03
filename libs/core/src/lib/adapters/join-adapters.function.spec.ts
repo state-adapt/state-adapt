@@ -2,6 +2,7 @@ import { joinAdapters } from './join-adapters.function';
 import { createAdapter } from './create-adapter.function';
 import { mapPayloads } from './map-payloads.function';
 import { SecondParameterOrAny } from './second-parameter-or-any.type';
+import { createSelectorsCache } from '../selectors/memoize-selectors.function';
 
 interface AState {
   prop1: number;
@@ -84,18 +85,21 @@ const joinedAdapters = joinAdapters<ParentState>()({
   }),
 )();
 
+const cache = createSelectorsCache();
+
 describe('mergeAdapters', () => {
   it("should return child adapter's state", () => {
-    const bResult = joinedAdapters.selectors.b(parentState);
+    const bResult = joinedAdapters.selectors.b(parentState, cache);
     expect(bResult).toEqual(bState);
   });
   it("should return child adapter's selector result", () => {
-    const aResult = joinedAdapters.selectors.aOneAndTwo(parentState);
+    const aResult = joinedAdapters.selectors.aOneAndTwo(parentState, cache);
     expect(aResult).toBe('12');
   });
   it('should return combined selector result', () => {
-    const aResult = joinedAdapters.selectors.combinedSelector(parentState);
+    const aResult = joinedAdapters.selectors.combinedSelector(parentState, cache);
     expect(aResult).toBe('1224');
+    // console.log('cache', JSON.stringify(cache, null, '\t'));
   });
   it('should set state', () => {
     const newState: ParentState = {

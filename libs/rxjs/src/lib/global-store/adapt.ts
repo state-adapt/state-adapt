@@ -13,8 +13,11 @@ import {
   Selectors,
   SyntheticSources,
   WithGetState,
+  createSelectorsCache,
+  getMemoizedSelector,
+  globalSelectorsCache,
+  SelectorsCache,
 } from '@state-adapt/core';
-import { createSelector } from 'reselect';
 import { defer, merge, NEVER, Observable, of, using } from 'rxjs';
 import { distinctUntilChanged, filter, finalize, share, tap } from 'rxjs/operators';
 import { isSource } from '../sources/is-source.function';
@@ -205,7 +208,7 @@ export class AdaptCommon<CommonStore extends StoreMethods = any> {
     initialState = initialState as State;
     adapter = adapter
       ? createAdapter<State>()(adapter as R & { selectors?: S })
-      : createAdapter<State>()();
+      : createAdapter<State>()({});
     const sourcesDefined = sources || ({} as any);
     sources = isSource(sourcesDefined) // Single source or array
       ? { set: sourcesDefined }
@@ -215,21 +218,23 @@ export class AdaptCommon<CommonStore extends StoreMethods = any> {
     // Parameters are all defined
 
     const pathObj = this.parsePath(path);
-    const selectors = (adapter.selectors || {}) as S;
-    const reactions = { ...adapter } as Reactions<State>;
-    delete reactions.selectors;
     const [requireSources$, syntheticSources] = this.getRequireSources<
       State,
       S,
       R,
       SyntheticSources<R>
-    >(reactions, pathObj, sources, initialState);
+    >(adapter as any, pathObj, sources, initialState);
 
+    const getSelectorsCache = this.getSelectorsCacheFactory(path);
     const getState = this.getStateSelector<State>(pathObj.pathAr);
+    const getStateSelector = getMemoizedSelector(path, getState, () =>
+      this.getGlobalSelectorsCache(),
+    ); // all state selectors go in global cache
     const { fullSelectors, selections } = this.getSelections<State, S>(
-      selectors,
-      getState,
+      adapter.selectors as S,
+      getStateSelector as (state: any) => State,
       requireSources$,
+      getSelectorsCache,
     );
 
     return {
@@ -251,12 +256,17 @@ export class AdaptCommon<CommonStore extends StoreMethods = any> {
     //
   ): MiniStore<State, S & WithGetState<State>> {
     const selectors = adapter.selectors || ({} as S);
+    const getSelectorsCache = this.getSelectorsCacheFactory(path);
     const getState = this.getStateSelector<State>(path.split('.'));
+    const getStateSelector = getMemoizedSelector(path, getState, () =>
+      this.getGlobalSelectorsCache(),
+    ); // all state selectors go in global cache
     const requireSources$ = of(null);
     const { fullSelectors, selections } = this.getSelections<State, S>(
       selectors,
-      getState,
+      getStateSelector as (state: any) => State,
       requireSources$,
+      getSelectorsCache,
     );
     return {
       ...selections,
@@ -283,13 +293,15 @@ export class AdaptCommon<CommonStore extends StoreMethods = any> {
   ): [Observable<any>, RSS] {
     const reactionEntries = Object.entries(reactions);
     const allSourcesWithReactions = flatten(
-      reactionEntries.map(([reactionName, reaction]) => {
-        const reactionSource = sources[reactionName] || [];
-        const reactionSources = Array.isArray(reactionSource)
-          ? reactionSource
-          : [reactionSource];
-        return reactionSources.map(source$ => ({ source$, reaction }));
-      }),
+      reactionEntries
+        .filter(([name]) => name !== 'selectors')
+        .map(([reactionName, reaction]) => {
+          const reactionSource = sources[reactionName] || [];
+          const reactionSources = Array.isArray(reactionSource)
+            ? reactionSource
+            : [reactionSource];
+          return reactionSources.map(source$ => ({ source$, reaction }));
+        }),
     );
 
     const allUpdatesFromSources$ = allSourcesWithReactions.map(
@@ -336,6 +348,7 @@ export class AdaptCommon<CommonStore extends StoreMethods = any> {
       if (colllisionPath) {
         throw this.getPathCollisionError(path, colllisionPath);
       }
+      this.createSelectorsCache(path);
       this.commonStore.dispatch(createInit(path, initialState));
       this.pathStates[path] = {
         lastState: initialState,
@@ -355,6 +368,7 @@ export class AdaptCommon<CommonStore extends StoreMethods = any> {
           );
         });
         delete this.pathStates[path];
+        this.destroySelectorsCache(path);
         this.commonStore.dispatch(createDestroy(path));
       }),
       share(),
@@ -426,10 +440,27 @@ export class AdaptCommon<CommonStore extends StoreMethods = any> {
       pathAr.reduce((state, segment) => state && state[segment], adapt);
   }
 
+  private getGlobalSelectorsCache() {
+    return globalSelectorsCache;
+  }
+
+  private getSelectorsCacheFactory(path: string) {
+    return () => globalSelectorsCache.__children[path];
+  }
+
+  private createSelectorsCache(path: string) {
+    globalSelectorsCache.__children[path] = createSelectorsCache();
+  }
+
+  private destroySelectorsCache(path: string) {
+    delete globalSelectorsCache.__children[path];
+  }
+
   private getSelections<State, S extends Selectors<State>>(
     selectors: S,
-    getState: ({ adapt }: { adapt: any }) => State,
+    getStateSelector: (state: any) => State, // uses global cache
     requireSources$: Observable<any>,
+    getSelectorsCache: () => SelectorsCache,
   ): {
     fullSelectors: S & { state: () => State };
     selections: Selections<State, S>;
@@ -439,32 +470,33 @@ export class AdaptCommon<CommonStore extends StoreMethods = any> {
         () => requireSources$.subscribe(),
         () => filterDefined(selection$),
       );
-    const selections: {
+
+    const selections = {
+      fullSelectors: { state: getStateSelector },
+      selections: {
+        state$: getUsing(this.commonStore.select(getStateSelector)),
+      },
+    } as {
       fullSelectors: S & { state: () => State };
       selections: Selections<State, S>;
-    } = Object.keys(selectors).reduce(
-      (selected, key) => {
-        const fullSelector = createSelector([getState], (state: State) =>
-          state !== undefined ? selectors[key](state) : state,
-        );
-        return {
-          fullSelectors: { ...selected.fullSelectors, [key]: fullSelector },
-          selections: {
-            ...selected.selections,
-            [key + '$']: getUsing(this.commonStore.select(fullSelector)),
-          },
-        };
-      },
-      {
-        fullSelectors: { state: getState },
-        selections: {
-          state$: getUsing(this.commonStore.select(getState)),
-        },
-      } as {
-        fullSelectors: S & { state: () => State };
-        selections: Selections<State, S>;
-      },
-    );
+    };
+    for (const key in selectors) {
+      const fullSelector = (state: any, sharedChildCache: SelectorsCache) => {
+        const pathState = getStateSelector(state);
+        if (pathState !== undefined) {
+          const cache = getSelectorsCache();
+          if (sharedChildCache) {
+            cache.__children[sharedChildCache.__id] = sharedChildCache;
+          }
+          return (selectors[key] as any)(pathState, cache);
+        }
+      };
+
+      (selections.fullSelectors as any)[key] = fullSelector;
+      (selections.selections as any)[key + '$'] = getUsing(
+        this.commonStore.select(fullSelector),
+      );
+    }
 
     return selections;
   }

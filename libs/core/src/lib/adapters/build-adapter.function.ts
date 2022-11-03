@@ -2,8 +2,8 @@ import {
   combineSelectors,
   ReturnTypeSelectors,
   SelectorReturnTypes,
-  WithStateSelector,
 } from '../selectors/create-selectors.function';
+import { WithStateSelector } from '../selectors/memoize-selectors.function';
 import { Selectors } from '../selectors/selectors.interface';
 import { Flat } from '../utils/flat.type';
 import { Adapter, ReactionsWithSelectors } from './adapter.type';

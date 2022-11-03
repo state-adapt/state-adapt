@@ -1,3 +1,4 @@
+import { SelectorsCache } from './memoize-selectors.function';
 import { Selectors } from './selectors.interface';
 
 export type SelectorReturnTypes<State, S extends Selectors<State>> = {
@@ -15,137 +16,10 @@ export type ReturnTypeSelectors<
   ) => ReturnType<NewSelectors[Key]>;
 };
 
-export type WithStateSelector<State, S extends Selectors<State>> = S & {
-  state: (state: State) => State;
-};
-
-type SelectorsCreator<State> = {
-  // ====================================================================================== 1
-  <S extends Selectors<State>, S1 extends WithStateSelector<State, S>>(selectors1: S): S1;
-  // ====================================================================================== 2
-  <
-    S extends Selectors<State>,
-    S1 extends WithStateSelector<State, S>,
-    S1States extends SelectorReturnTypes<State, S1>,
-    S2 extends Selectors<S1States>,
-  >(
-    selectors1: S,
-    selectors2: S2,
-  ): S1 & ReturnTypeSelectors<State, S1States, S2>;
-  // ====================================================================================== 3
-  <
-    S extends Selectors<State>,
-    S1 extends WithStateSelector<State, S>,
-    S1States extends SelectorReturnTypes<State, S1>,
-    S2 extends Selectors<S1States>,
-    S2States extends SelectorReturnTypes<State, S1 & S2>,
-    S3 extends Selectors<S2States>,
-  >(
-    selectors1: S,
-    selectors2: S2,
-    selectors3: S3,
-  ): S1 & ReturnTypeSelectors<State, S2States, S2 & S3>;
-  // ====================================================================================== 4
-  <
-    S extends Selectors<State>,
-    S1 extends WithStateSelector<State, S>,
-    S1States extends SelectorReturnTypes<State, S1>,
-    S2 extends Selectors<S1States>,
-    S2States extends SelectorReturnTypes<State, S1 & S2>,
-    S3 extends Selectors<S2States>,
-    S3States extends SelectorReturnTypes<State, S1 & S2 & S3>,
-    S4 extends Selectors<S3States>,
-  >(
-    selectors1: S,
-    selectors2: S2,
-    selectors3: S3,
-    selectors4: S4,
-  ): S1 & ReturnTypeSelectors<State, S3States, S2 & S3 & S4>;
-  // ====================================================================================== 5
-  <
-    S extends Selectors<State>,
-    S1 extends WithStateSelector<State, S>,
-    S1States extends SelectorReturnTypes<State, S1>,
-    S2 extends Selectors<S1States>,
-    S2States extends SelectorReturnTypes<State, S1 & S2>,
-    S3 extends Selectors<S2States>,
-    S3States extends SelectorReturnTypes<State, S1 & S2 & S3>,
-    S4 extends Selectors<S3States>,
-    S4States extends SelectorReturnTypes<State, S1 & S2 & S3 & S4>,
-    S5 extends Selectors<S4States>,
-  >(
-    selectors1: S,
-    selectors2: S2,
-    selectors3: S3,
-    selectors4: S4,
-    selectors5: S5,
-  ): S1 & ReturnTypeSelectors<State, S4States, S2 & S3 & S4 & S5>;
-  // ====================================================================================== 6
-  <
-    S extends Selectors<State>,
-    S1 extends WithStateSelector<State, S>,
-    S1States extends SelectorReturnTypes<State, S1>,
-    S2 extends Selectors<S1States>,
-    S2States extends SelectorReturnTypes<State, S1 & S2>,
-    S3 extends Selectors<S2States>,
-    S3States extends SelectorReturnTypes<State, S1 & S2 & S3>,
-    S4 extends Selectors<S3States>,
-    S4States extends SelectorReturnTypes<State, S1 & S2 & S3 & S4>,
-    S5 extends Selectors<S4States>,
-    S5States extends SelectorReturnTypes<State, S1 & S2 & S3 & S4 & S5>,
-    S6 extends Selectors<S5States>,
-  >(
-    selectors1: S,
-    selectors2: S2,
-    selectors3: S3,
-    selectors4: S4,
-    selectors5: S5,
-    selectors6: S6,
-  ): S1 & ReturnTypeSelectors<State, S5States, S2 & S3 & S4 & S5 & S6>;
-  // ====================================================================================== 7
-  <
-    S extends Selectors<State>,
-    S1 extends WithStateSelector<State, S>,
-    S1States extends SelectorReturnTypes<State, S1>,
-    S2 extends Selectors<S1States>,
-    S2States extends SelectorReturnTypes<State, S1 & S2>,
-    S3 extends Selectors<S2States>,
-    S3States extends SelectorReturnTypes<State, S1 & S2 & S3>,
-    S4 extends Selectors<S3States>,
-    S4States extends SelectorReturnTypes<State, S1 & S2 & S3 & S4>,
-    S5 extends Selectors<S4States>,
-    S5States extends SelectorReturnTypes<State, S1 & S2 & S3 & S4 & S5>,
-    S6 extends Selectors<S5States>,
-    S6States extends SelectorReturnTypes<State, S1 & S2 & S3 & S4 & S5 & S6>,
-    S7 extends Selectors<S6States>,
-  >(
-    selectors1: S,
-    selectors2: S2,
-    selectors3: S3,
-    selectors4: S4,
-    selectors5: S5,
-    selectors6: S6,
-    selectors7: S7,
-  ): S1 & ReturnTypeSelectors<State, S6States, S2 & S3 & S4 & S5 & S6 & S7>;
-};
-
 /**
- * @deprecated Use buildSelectors
+ *
+ * @returns original selectors object with new selectors added (mutates)
  */
-export function createSelectors<State>(): SelectorsCreator<State> {
-  return (...args: any) => {
-    return createSelectorsFn(args);
-  };
-}
-
-export function createSelectorsFn([selectors1, ...args]: any) {
-  return args.reduce(
-    (selectors: any, newSelectors: any) =>
-      combineSelectors<any>()<any, any, any>(selectors, newSelectors),
-    { ...selectors1, state: (state: any) => state },
-  );
-}
-
 export function combineSelectors<State>() {
   return <
     S1 extends Selectors<State>,
@@ -154,71 +28,85 @@ export function combineSelectors<State>() {
   >(
     selectors: S1,
     newSelectors: S2 = {} as S2,
+    getCacheOverride?: (c: SelectorsCache) => SelectorsCache,
   ): S1 & ReturnTypeSelectors<State, S1States, S2> => {
-    let latestState: State;
-    let inputResults = {} as Partial<S1States>;
-    let previousInputResults = {} as Partial<S1States>;
-    const selectorInputs = {} as Partial<{ [Key in keyof S2]: Set<keyof S1> }>;
-    const results = {} as Partial<SelectorReturnTypes<S1States, S2>>;
+    for (const name in newSelectors) {
+      (selectors as any)[name] = memoizeWithProxy<State>()(
+        name,
+        selectors,
+        newSelectors[name],
+        getCacheOverride,
+      );
+    }
 
-    const newStateSelectors = Object.entries(newSelectors).reduce(
-      (all, [name, fn]) => ({
-        ...all,
-        [name]: (s: State) => {
-          if (s !== latestState) {
-            latestState = s;
-            previousInputResults = inputResults;
-            inputResults = {};
-          }
-          selectorInputs[name as keyof S2] = selectorInputs[name] || new Set();
-          const selectorInputNames = [
-            ...(selectorInputs[name as keyof S2] as Set<keyof S1>),
-          ];
+    return selectors as S1 & ReturnTypeSelectors<State, S1States, S2>;
+  };
+}
 
-          // If no inputs, just call fn again
-          // If all inputs so far record the same results, the final result will be the same (selectors are deterministic)
-          const sameInputResults =
-            !!selectorInputNames.length &&
-            selectorInputNames.every(inputName => {
-              if (inputResults[inputName] === undefined) {
-                inputResults[inputName] = selectors[inputName](s);
-              }
-              return previousInputResults[inputName] === inputResults[inputName];
-            });
+export function memoizeWithProxy<State>() {
+  return <S1 extends Selectors<State>, S1States extends SelectorReturnTypes<State, S1>>(
+    name: string,
+    selectors: S1,
+    fn: (s: S1States) => any,
+    getCacheOverride?: (c: SelectorsCache) => SelectorsCache,
+  ) => {
+    return (s: State, providedCache?: SelectorsCache) => {
+      const cache = getCacheOverride
+        ? getCacheOverride(providedCache as SelectorsCache)
+        : providedCache;
 
-          if (sameInputResults) {
-            if (results[name] === undefined) {
-              results[name as keyof S2] = fn(inputResults as S1States);
-            }
-            return results[name];
-          }
+      // 1. No cache provided, just evaluate without memoization
+      if (!cache) {
+        const handler = {
+          get: function (target: S1States, prop: string) {
+            return target[selectors[prop](s)];
+          },
+        };
+        const proxy = new Proxy(selectors as any as S1States, handler);
+        return fn(proxy);
+      }
 
-          //   Pass existing inputResults into fn with proxy to watch for additional input selectors being accessed
-          //     (In proxy handler set each cachedInputResult and add to selectorInputNames as needed)
-          //   Set and return cachedResult
-          const handler = {
-            get: function (target: S1States, prop: string) {
-              selectorInputs[name]?.add(prop);
-              const inputResult = target[prop];
-              if (inputResult === undefined) {
-                target[prop as keyof S1] = selectors[prop](s);
-              }
-              return target[prop];
-            },
-          };
+      const results = cache.__results;
+      const cachedResult = results[name];
 
-          const proxy = new Proxy(inputResults as S1States, handler);
-          const result = fn(proxy);
-          results[name as keyof S2] = result;
-          return result;
+      // 2. Get cached inputs, return cachedResult if results of cached inputs are all the same
+      const inputs = cache.__inputs;
+      const cachedInputs = (inputs[name] = inputs[name] || {
+        set: new Set<string>(),
+        values: {},
+      });
+      const cachedInputsSet = cachedInputs.set;
+      const cachedInputValues = cachedInputs.values;
+
+      // If all registered inputs record the same results, the final result will be the same (selectors are deterministic)
+      // On initial run, no cachedInputs; skip past this optimization so an input can be added to cachedInputs
+      // This calls each registered input which may have a cached value
+      const allInputResultsSame =
+        !!cachedInputsSet.size &&
+        [...cachedInputsSet].every(inputName => {
+          const previousInputValue = cachedInputValues[inputName];
+          const newInputValue = (cachedInputValues[inputName] = (
+            selectors[inputName] as any
+          )(s, cache));
+          return previousInputValue === newInputValue;
+        });
+
+      if (allInputResultsSame) return cachedResult;
+
+      // 3. Recalculate
+      // Pass proxy into fn to watch for additional input selectors being accessed
+      const handler = {
+        get: function (target: S1States, inputName: string) {
+          cachedInputsSet.add(inputName);
+          const newInputValue = (cachedInputValues[inputName] = (
+            target[inputName] as any
+          )(s, cache));
+          return newInputValue;
         },
-      }),
-      {} as ReturnTypeSelectors<State, S1States, S2>,
-    );
+      };
 
-    return {
-      ...selectors,
-      ...newStateSelectors,
+      const proxy = new Proxy(selectors, handler);
+      return (results[name] = fn(proxy as any));
     };
   };
 }

@@ -1,3 +1,4 @@
+import { memoizeSelectors } from '../selectors/memoize-selectors.function';
 import { Selectors } from '../selectors/selectors.interface';
 import { Adapter, ReactionsWithSelectors } from './adapter.type';
 
@@ -17,9 +18,6 @@ export function createAdapter<State>() {
     update: (state, update) => ({ ...state, ...update }),
     reset: (state, payload, initialState) => initialState,
     ...adapter,
-    selectors: {
-      ...(adapter.selectors || ({} as S)),
-      state: state => state,
-    },
+    selectors: memoizeSelectors<State, S>((adapter.selectors as S) || ({} as S)),
   });
 }

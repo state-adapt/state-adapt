@@ -1,5 +1,8 @@
-import { createSelector } from '../selectors/create-selector.function';
-import { WithStateSelector } from '../selectors/create-selectors.function';
+import {
+  createSelectorsCache,
+  getMemoizedSelector,
+  WithStateSelector,
+} from '../selectors/memoize-selectors.function';
 import { Selectors } from '../selectors/selectors.interface';
 import { PrefixedAfterVerb } from '../utils/prefixed-after-verb.type';
 import { ReactionsWithSelectors } from './adapter.type';
@@ -71,14 +74,14 @@ export function joinAdapters<ParentState extends Record<string, any>>() {
         : WithStateSelector<ParentState, Record<string, (state: ParentState) => any>>
       : {}
   > => {
-    const joinedAdapters: any = { selectors: {} };
+    const joinedAdapters: any = { selectors: { state: (state: any) => state } };
     for (const namespace in adapterEntries) {
       const adapter = adapterEntries[namespace];
       for (const reactionName in adapter) {
         if (reactionName === 'selectors') continue;
         const firstCapIdx = reactionName.match(/(?=[A-Z])/)?.index ?? reactionName.length;
-        const verb = reactionName.substr(0, firstCapIdx);
-        const rest = reactionName.substr(firstCapIdx);
+        const verb = reactionName.substring(0, firstCapIdx);
+        const rest = reactionName.substring(firstCapIdx);
         const newReactionName = `${verb}${
           namespace.charAt(0).toUpperCase() + namespace.substr(1)
         }${rest}`;
@@ -95,22 +98,30 @@ export function joinAdapters<ParentState extends Record<string, any>>() {
           ),
         });
       }
+      joinedAdapters.selectors[namespace] = getMemoizedSelector(
+        namespace,
+        (state: any) => state[namespace],
+      );
       if (adapter.selectors) {
         for (const selectorName in adapter.selectors) {
           const selector = adapter.selectors[selectorName];
           const newSelectorName = `${namespace}${
-            selectorName.charAt(0).toUpperCase() + selectorName.substr(1)
+            selectorName.charAt(0).toUpperCase() + selectorName.substring(1)
           }`;
-          joinedAdapters.selectors[newSelectorName] = createSelector(
-            (state: any) => state[namespace],
-            selector,
+
+          joinedAdapters.selectors[newSelectorName] = getMemoizedSelector(
+            newSelectorName,
+            (state: any, cache) => selector(state[namespace], cache),
+            parentCache => {
+              const children = parentCache.__children;
+              return (children[namespace] =
+                children[namespace] || createSelectorsCache());
+            },
           );
         }
       }
-      joinedAdapters.selectors[namespace] = (state: any) => state[namespace];
     }
 
-    joinedAdapters.selectors.state = (state: any) => state;
     return buildAdapter<ParentState>()(joinedAdapters) as any;
   };
 }
