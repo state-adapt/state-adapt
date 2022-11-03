@@ -85,46 +85,10 @@ export class AdaptCommon<CommonStore extends StoreMethods = any> {
     initialState: State,
   ): MiniStore<State, WithGetState<State>> & SyntheticSources<BasicAdapterMethods<State>>;
 
-  // init(path, initialState, setterSource$)
-  /**
-   * @deprecated
-   */
-  init<State>(
-    path: string,
-    initialState: State,
-    setterSource$: Observable<Action<State>> | Observable<Action<State>>[],
-  ): MiniStore<State, WithGetState<State>> & SyntheticSources<BasicAdapterMethods<State>>;
-
-  // init(path, initialState, adapter)
-  /**
-   * @deprecated
-   */
-  init<State, S extends Selectors<State>, R extends ReactionsWithSelectors<State, S>>(
-    path: string,
-    initialState: State,
-    adapter: R & { selectors?: S },
-  ): MiniStore<State, S & WithGetState<State>> &
-    SyntheticSources<R & BasicAdapterMethods<State>>;
-
   // init([path, initialState], adapter)
   init<State, S extends Selectors<State>, R extends ReactionsWithSelectors<State, S>>(
     [path, initialState]: [string, State],
     adapter: R & { selectors?: S },
-  ): MiniStore<State, S & WithGetState<State>> &
-    SyntheticSources<R & BasicAdapterMethods<State>>;
-
-  // init(path, initialState, adapter, sources)
-  /**
-   * @deprecated
-   */
-  init<State, S extends Selectors<State>, R extends ReactionsWithSelectors<State, S>>(
-    path: string,
-    initialState: State,
-    adapter: R & { selectors?: S },
-    sources:
-      | Sources<State, S, R>
-      | Observable<Action<State>>
-      | Observable<Action<State>>[],
   ): MiniStore<State, S & WithGetState<State>> &
     SyntheticSources<R & BasicAdapterMethods<State>>;
 
