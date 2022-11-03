@@ -11,7 +11,7 @@ export * from './lib/http/get-http-sources.function';
 
 export * from './lib/stores/selections.type';
 export * from './lib/stores/sources.type';
-export * from './lib/stores/mini-store.interface';
+export * from './lib/stores/smart-store.interface';
 export * from './lib/stores/join-stores.function';
 
 export * from './lib/global-store/adapt.store';

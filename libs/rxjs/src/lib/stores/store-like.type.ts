@@ -1,7 +1,7 @@
 import { AnySelectors, Selectors } from '@state-adapt/core';
-import { JoinedMiniStore } from './joined-mini-store.interface';
-import { MiniStore } from './mini-store.interface';
+import { JoinedStore } from './joined-store.interface';
+import { SmartStore } from './smart-store.interface';
 
 export type StoreLike<State, S extends Selectors<State>, AS extends AnySelectors> =
-  | MiniStore<State, S>
-  | JoinedMiniStore<State, AS>;
+  | SmartStore<State, S>
+  | JoinedStore<State, AS>;

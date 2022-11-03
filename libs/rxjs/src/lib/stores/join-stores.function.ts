@@ -9,15 +9,12 @@ import {
   SelectorsCache,
 } from '@state-adapt/core';
 import { merge, using } from 'rxjs';
-import { JoinedMiniStore } from './joined-mini-store.interface';
-// import { JoinedSelectors } from './joined-selectors.type';
+import { JoinedStore } from './joined-store.interface';
 import { StoreLike } from './store-like.type';
 
 type StoreEntries = {
   [index: string]: StoreLike<any, any, any>;
 };
-
-// type StoreSelectors<Store extends StoreLike<any, any, any,>> = Store['_fullSelectors'];
 
 type StoreState<Store extends StoreLike<any, any, any>> = Store extends StoreLike<
   infer State,
@@ -48,7 +45,7 @@ type SelectorsOfState<State> = {
 type JoinedSelectors<SE extends StoreEntries> = SelectorsOfState<EntriesState<SE>> &
   ({
     [K in string & keyof SE]: (
-      x: PrefixedSelectors<EntriesState<SE>, K, SE[K]['_fullSelectors']>,
+      x: PrefixedSelectors<EntriesState<SE>, K, SE[K]['__']['fullSelectors']>,
     ) => void;
   }[string & keyof SE] extends (x: infer I) => void
     ? I
@@ -93,7 +90,7 @@ export function joinStores<SE extends StoreEntries>(
   namespaces.forEach(namespace => {
     // Already cached selectors to be made available under new names
     // to be used in subsequent selector definitions.
-    const fullSelectors = storeEntries[namespace]._fullSelectors;
+    const fullSelectors = storeEntries[namespace].__.fullSelectors;
     for (const selectorName in fullSelectors) {
       const selector = fullSelectors[selectorName];
       if (selectorName === 'state') {
@@ -139,7 +136,7 @@ interface NewBlockAdder<
   SE extends StoreEntries,
   D extends Prev[number] = 19,
 > {
-  (): JoinedMiniStore<State, S>;
+  (): JoinedStore<State, S>;
 
   <NewBlock extends Selectors<SelectorReturnTypes<State, S>>>(
     newBlock: NewBlock,
@@ -171,16 +168,18 @@ function addNewBlock<SB extends StoreBuilder<any, any, any>>(
 
     // Done
     const { namespaces, selectors, storeEntries } = builder;
-    const select = storeEntries[namespaces[0]]._select;
+    const select = storeEntries[namespaces[0]].__.select;
 
     const requireAllSources$ = merge(
-      ...namespaces.map(namespace => storeEntries[namespace]._requireSources$),
+      ...namespaces.map(namespace => storeEntries[namespace].__.requireSources$),
     );
 
     const joinedStore = {
-      _fullSelectors: selectors,
-      _requireSources$: requireAllSources$,
-      _select: select,
+      __: {
+        fullSelectors: selectors,
+        requireSources$: requireAllSources$,
+        select: select,
+      },
     } as any;
 
     for (const selectorName in selectors) {

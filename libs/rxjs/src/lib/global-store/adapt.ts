@@ -21,8 +21,8 @@ import {
 import { defer, merge, NEVER, Observable, of, using } from 'rxjs';
 import { distinctUntilChanged, filter, finalize, share, tap } from 'rxjs/operators';
 import { isSource } from '../sources/is-source.function';
-import { MiniStore } from '../stores/mini-store.interface';
 import { Selections } from '../stores/selections.type';
+import { SmartStore } from '../stores/smart-store.interface';
 import { Sources } from '../stores/sources.type';
 
 interface ParsedPath {
@@ -83,13 +83,14 @@ export class AdaptCommon<CommonStore extends StoreMethods = any> {
   init<State>(
     path: string,
     initialState: State,
-  ): MiniStore<State, WithGetState<State>> & SyntheticSources<BasicAdapterMethods<State>>;
+  ): SmartStore<State, WithGetState<State>> &
+    SyntheticSources<BasicAdapterMethods<State>>;
 
   // init([path, initialState], adapter)
   init<State, S extends Selectors<State>, R extends ReactionsWithSelectors<State, S>>(
     [path, initialState]: [string, State],
     adapter: R & { selectors?: S },
-  ): MiniStore<State, S & WithGetState<State>> &
+  ): SmartStore<State, S & WithGetState<State>> &
     SyntheticSources<R & BasicAdapterMethods<State>>;
 
   // init([path, initialState], sources);
@@ -99,7 +100,7 @@ export class AdaptCommon<CommonStore extends StoreMethods = any> {
       | Sources<State, S, R>
       | Observable<Action<State>>
       | Observable<Action<State>>[],
-  ): MiniStore<State, S & WithGetState<State>> &
+  ): SmartStore<State, S & WithGetState<State>> &
     SyntheticSources<R & BasicAdapterMethods<State>>;
 
   // init([path, initialState, adapter], sources);
@@ -109,7 +110,7 @@ export class AdaptCommon<CommonStore extends StoreMethods = any> {
       | Sources<State, S, R>
       | Observable<Action<State>>
       | Observable<Action<State>>[],
-  ): MiniStore<State, S & WithGetState<State>> &
+  ): SmartStore<State, S & WithGetState<State>> &
     SyntheticSources<R & BasicAdapterMethods<State>>;
 
   // 1. init(path, initialState)
@@ -136,7 +137,7 @@ export class AdaptCommon<CommonStore extends StoreMethods = any> {
       | Sources<State, S, R>
       | Observable<Action<State>>
       | Observable<Action<State>>[],
-  ): MiniStore<State, S & WithGetState<State>> & SyntheticSources<R> {
+  ): SmartStore<State, S & WithGetState<State>> & SyntheticSources<R> {
     const arrayLength = Array.isArray(first) ? first.length : 0;
 
     let path;
@@ -204,9 +205,11 @@ export class AdaptCommon<CommonStore extends StoreMethods = any> {
     return {
       ...syntheticSources,
       ...selections,
-      _requireSources$: requireSources$,
-      _fullSelectors: fullSelectors,
-      _select: (sel: any) => filterDefined(this.commonStore.select(sel)),
+      __: {
+        requireSources$: requireSources$,
+        fullSelectors: fullSelectors,
+        select: (sel: any) => filterDefined(this.commonStore.select(sel)),
+      },
     };
   }
 
@@ -218,7 +221,7 @@ export class AdaptCommon<CommonStore extends StoreMethods = any> {
     path: string,
     adapter: Adapter<State, S, R & BasicAdapterMethods<State>>,
     //
-  ): MiniStore<State, S & WithGetState<State>> {
+  ): SmartStore<State, S & WithGetState<State>> {
     const selectors = adapter.selectors || ({} as S);
     const getSelectorsCache = this.getSelectorsCacheFactory(path);
     const getState = this.getStateSelector<State>(path.split('.'));
@@ -234,9 +237,11 @@ export class AdaptCommon<CommonStore extends StoreMethods = any> {
     );
     return {
       ...selections,
-      _requireSources$: requireSources$,
-      _fullSelectors: fullSelectors,
-      _select: (sel: any) => filterDefined(this.commonStore.select(sel)),
+      __: {
+        requireSources$: requireSources$,
+        fullSelectors: fullSelectors,
+        select: (sel: any) => filterDefined(this.commonStore.select(sel)),
+      },
     };
   }
 

@@ -1,5 +1,6 @@
 ## 0.58.0 2022-10-24
 
+- Refactor(core): Rename MiniStore to SmartStore, nest private properties
 - Refactor(core)!: Remove deprecated adapt.init overloads
 - Refactor(core)!: Remove createSelector function
 - - Remove reselect dependency
