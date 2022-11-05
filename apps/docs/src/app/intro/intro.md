@@ -70,7 +70,7 @@ export class NameComponent {
 ```
 
 <video controls loop>
-  <source src="../assets/demo-3-state-changes.mp4" type="video/mp4" />
+  <source src="../assets/demo-3-state-changes.mov" type="video/mp4" />
 </video>
 
 [StackBlitz](https://stackblitz.com/edit/angular-ivy-jwt8jh?file=src%2Fapp%2F3-state-changes.component.ts)
@@ -103,7 +103,7 @@ export class NameComponent {
 ```
 
 <video controls loop>
-  <source src="../assets/demo-4-state-adapters.mp4" type="video/mp4" />
+  <source src="../assets/demo-4-state-adapters.mov" type="video/mp4" />
 </video>
 
 [StackBlitz](https://stackblitz.com/edit/angular-ivy-jwt8jh?file=src%2Fapp%2F4-state-adapters.component.ts)
@@ -149,7 +149,7 @@ export class NameComponent {
 ```
 
 <video controls loop>
-  <source src="../assets/demo-5-observable-sources.mp4" type="video/mp4" />
+  <source src="../assets/demo-5-observable-sources.mov" type="video/mp4" />
 </video>
 
 [StackBlitz](https://stackblitz.com/edit/angular-ivy-jwt8jh?file=src%2Fapp%2F5-observable-sources.component.ts)
@@ -199,7 +199,7 @@ export class NameComponent {
 ```
 
 <video controls loop>
-  <source src="../assets/demo-6-dom-sources.mp4" type="video/mp4" />
+  <source src="../assets/demo-6-dom-sources.mov" type="video/mp4" />
 </video>
 
 [StackBlitz](https://stackblitz.com/edit/angular-ivy-jwt8jh?file=src%2Fapp%2F6-dom-sources.component.ts)
@@ -269,7 +269,7 @@ We encourage following 3 rules for progressive reactivity:
 2. Don't write callback functions.
 3. Wrap imperative APIs with declarative ones.
 
-[Learn more](https://medium.com/weekly-webtips/introducing-stateadapt-reusable-reactive-state-management-9f0388f1850e)
+[Learn more](https://dev.to/this-is-angular/progressive-reactivity-in-angular-1d40)
 
 ## Set up StateAdapt in your project
 
@@ -283,7 +283,7 @@ Currently works with:
 - React
 - React + Redux
 
-## StateAdapt in action
+## Demos and Examples
 
 [StackBlitz examples](/demos)
 
