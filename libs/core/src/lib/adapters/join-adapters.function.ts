@@ -9,9 +9,9 @@ import { ReactionsWithSelectors } from './adapter.type';
 import {
   buildAdapter,
   NewBlockAdder,
-  ReactionsFromAdapter,
+  ReactionsWithoutSelectors,
 } from './build-adapter.function';
-import { BasicAdapterMethods } from './create-adapter.function';
+import { BasicAdapterMethods, createAdapter } from './create-adapter.function';
 
 type NestedAdapter<
   ParentState extends Record<string, any>,
@@ -43,7 +43,9 @@ type NestedAdapter<
 };
 
 type SuperState<AE extends AdapterEntries<any>> = {
-  [K in keyof AE]: Parameters<AE[K][keyof AE[K]]>[0];
+  [K in keyof AE]: Parameters<
+    AE[K][keyof AE[K]] extends (...args: any) => any ? AE[K][keyof AE[K]] : never
+  >[0];
 };
 
 type FlattendAdapters<
@@ -57,24 +59,33 @@ type FlattendAdapters<
   ? I
   : never;
 
-type AdapterEntries<SuperState extends Record<string, any>> = {
-  [K in keyof SuperState]: ReactionsWithSelectors<SuperState[K], any>;
+type AdapterEntries<SuperState> = {
+  [K in keyof SuperState]: {
+    [index: string]:
+      | ((state: SuperState[K], event: any, initialState: SuperState[K]) => SuperState[K])
+      | { [index: string]: (state: SuperState[K]) => any };
+  };
 };
 
-export function joinAdapters<ParentState extends Record<string, any>>() {
-  return <AE extends AdapterEntries<Partial<ParentState>>>(
+export function joinAdapters<
+  ParentState extends Record<string, any>,
+  ExtraProps extends string = '',
+>() {
+  return <AE extends AdapterEntries<Omit<ParentState, ExtraProps>>>(
     adapterEntries: AE,
   ): NewBlockAdder<
     ParentState,
-    ReactionsFromAdapter<FlattendAdapters<AE, ParentState>> &
-      BasicAdapterMethods<ParentState>,
     FlattendAdapters<AE, ParentState> extends { selectors: infer S }
       ? S extends Selectors<ParentState>
         ? WithStateSelector<ParentState, S>
         : WithStateSelector<ParentState, Record<string, (state: ParentState) => any>>
-      : {}
+      : {},
+    ReactionsWithoutSelectors<
+      ParentState,
+      FlattendAdapters<AE, ParentState> & BasicAdapterMethods<ParentState>
+    >
   > => {
-    const joinedAdapters: any = { selectors: { state: (state: any) => state } };
+    const joinedAdapters: any = createAdapter<ParentState>()({});
     for (const namespace in adapterEntries) {
       const adapter = adapterEntries[namespace];
       for (const reactionName in adapter) {
@@ -91,7 +102,7 @@ export function joinAdapters<ParentState extends Record<string, any>>() {
           initialState: any,
         ) => ({
           ...state,
-          [namespace]: adapter[reactionName](
+          [namespace]: (adapter[reactionName] as any)(
             state[namespace],
             payload,
             initialState[namespace],
@@ -104,7 +115,7 @@ export function joinAdapters<ParentState extends Record<string, any>>() {
       );
       if (adapter.selectors) {
         for (const selectorName in adapter.selectors) {
-          const selector = adapter.selectors[selectorName];
+          const selector = (adapter.selectors as any)[selectorName];
           const newSelectorName = `${namespace}${
             selectorName.charAt(0).toUpperCase() + selectorName.substring(1)
           }`;

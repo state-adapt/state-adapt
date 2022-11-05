@@ -1,5 +1,7 @@
 ## 0.58.0 2022-10-24
 
+- Bugfix(core)!: Fix joinAdapters type inference
+- - Require string union of properties not given adapters
 - Bugfix(core): Fix buildAdapter type inference
 - Refactor(core): Rename MiniStore to SmartStore, nest private properties
 - Refactor(core)!: Remove deprecated adapt.init overloads

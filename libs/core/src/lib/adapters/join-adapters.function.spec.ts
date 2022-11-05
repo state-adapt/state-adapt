@@ -66,7 +66,7 @@ const dAdapter = createAdapter<DState>()({
   }),
 });
 const extraPropAdapter = createAdapter<string[]>()({});
-const joinedAdapters = joinAdapters<ParentState>()({
+const joinedAdapters = joinAdapters<ParentState, 'extraProp' | 'c'>()({
   a: aAdapter,
   b: bAdapter,
   d: dAdapter,
