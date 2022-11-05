@@ -17,31 +17,33 @@ function getListItem(selectedName?: string) {
   });
 }
 
-const selectors = buildSelectors<AdapterDocsState>()({
-  adapterStateChangeItems: s =>
-    s.docs.demoAdapter.value
-      ? Object.keys(s.docs.demoAdapter.value)
-          .filter(prop => prop !== 'selectors')
-          .map(getListItem(s.selectedStateChange))
-      : [],
-  adapterSelectorItems: s =>
-    (s.docs.demoAdapter.value?.selectors
-      ? Object.keys(s.docs.demoAdapter.value.selectors)
-      : []
-    ).map(getListItem(s.selectedSelector)),
-  adapterStateChanges: s => s.docs.demoAdapter.stateChanges,
-  adapterSelectors: s => s.docs.demoAdapter.selectors,
-  userSelectedStateChangeName: s => s.selectedStateChange,
-  userSelectedSelectorName: s => s.selectedSelector,
-  demoHistory: s => s.demoHistory,
-  demoState: s => s.demoState,
-  initialDemoState: s => s.docs.demoAdapter.initialState,
-  userPayload: s => s.payload,
-  docs: s => s.docs,
-  creatorSourceCodeMd: s => wrapInTs(s.docs.sourceCode),
-  demoSourceCodeMd: s => wrapInTs(s.docs.demoAdapter.sourceCode),
-  parameters: s => s.docs.parameters,
-  payloadEditorRefreshRequired: s => s.payloadEditorRefreshRequired,
+export const docsAdapter = buildAdapter<AdapterDocsState>()({
+  selectors: {
+    adapterStateChangeItems: s =>
+      s.docs.demoAdapter.value
+        ? Object.keys(s.docs.demoAdapter.value)
+            .filter(prop => prop !== 'selectors')
+            .map(getListItem(s.selectedStateChange))
+        : [],
+    adapterSelectorItems: s =>
+      (s.docs.demoAdapter.value?.selectors
+        ? Object.keys(s.docs.demoAdapter.value.selectors)
+        : []
+      ).map(getListItem(s.selectedSelector)),
+    adapterStateChanges: s => s.docs.demoAdapter.stateChanges,
+    adapterSelectors: s => s.docs.demoAdapter.selectors,
+    userSelectedStateChangeName: s => s.selectedStateChange,
+    userSelectedSelectorName: s => s.selectedSelector,
+    demoHistory: s => s.demoHistory,
+    demoState: s => s.demoState,
+    initialDemoState: s => s.docs.demoAdapter.initialState,
+    userPayload: s => s.payload,
+    docs: s => s.docs,
+    creatorSourceCodeMd: s => wrapInTs(s.docs.sourceCode),
+    demoSourceCodeMd: s => wrapInTs(s.docs.demoAdapter.sourceCode),
+    parameters: s => s.docs.parameters,
+    payloadEditorRefreshRequired: s => s.payloadEditorRefreshRequired,
+  },
 })({
   firstStateChangeName: s => s.adapterStateChangeItems[0]?.content,
   firstSelectorName: s => s.adapterSelectorItems[0]?.content,
@@ -78,9 +80,7 @@ const selectors = buildSelectors<AdapterDocsState>()({
     uri: 'main.json',
     value: s.payload && toJson(JSON.parse(s.payload)), // Format
   }),
-})();
-
-export const docsAdapter = buildAdapter<AdapterDocsState>()({ selectors })(() => ({
+})(([selectors]) => ({
   receiveDocs: (state, docs: AdapterDocs) => ({ ...state, docs }),
   selectStateChange: (state: AdapterDocsState, stateChangeName: string) => {
     const selectionChanged = selectors.selectedStateChangeName(state) !== stateChangeName;
