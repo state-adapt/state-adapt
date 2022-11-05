@@ -17,7 +17,7 @@ export function createAdapter<State>() {
     set: (state, payload) => payload,
     update: (state, update) => ({ ...state, ...update }),
     reset: (state, payload, initialState) => initialState,
-    ...adapter,
-    selectors: memoizeSelectors<State, S>((adapter.selectors as S) || ({} as S)),
+    ...adapter, // New reactions object
+    selectors: memoizeSelectors<State, S>((adapter.selectors as S) || ({} as S)), // New selectors object
   });
 }

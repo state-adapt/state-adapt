@@ -5,7 +5,7 @@ import {
 } from '../selectors/create-selectors.function';
 import { WithStateSelector } from '../selectors/memoize-selectors.function';
 import { Selectors } from '../selectors/selectors.interface';
-import { Flat } from '../utils/flat.type';
+import { FlatAnyKey } from '../utils/flat.type';
 import { Adapter, ReactionsWithSelectors } from './adapter.type';
 import { BasicAdapterMethods, createAdapter } from './create-adapter.function';
 import { Reaction } from './reaction.type';
@@ -13,8 +13,8 @@ import { Reactions } from './reactions.interface';
 
 export interface AdapterBuilder<
   State,
-  R extends Reactions<State>,
   S extends Selectors<State>,
+  R extends Reactions<State>,
 > {
   selectors: S;
   reactions: R;
@@ -28,21 +28,31 @@ export type BuiltAdapter<
   [K in keyof R | 'selectors']: K extends 'selectors' ? S : R[K];
 };
 
+export type ReactionsWithoutSelectors<
+  State,
+  R extends ReactionsWithSelectors<State, any>,
+> = {
+  [K in keyof R]: K extends 'selectors'
+    ? never
+    : R[K] extends Reaction<State>
+    ? R[K]
+    : never;
+};
+
 export type ReactionsFromAdapter<A extends Adapter<any, any, any>> = {
   [K in keyof A]: A[K] extends Reaction<any> ? A[K] : never;
 };
 
 export function buildAdapter<State>() {
-  return <S extends Selectors<State>, R extends ReactionsWithSelectors<State, S>>(
-    reactionsWithSelectors: R = {} as R,
+  return <
+    S extends Selectors<State> = {},
+    R extends ReactionsWithSelectors<State, S> = {},
+  >(
+    reactionsWithSelectors: Adapter<State, S, R> = {} as Adapter<State, S, R>,
   ): NewBlockAdder<
     State,
-    ReactionsFromAdapter<Adapter<State, S, Flat<R & BasicAdapterMethods<State>>>>,
-    Adapter<
-      State,
-      WithStateSelector<State, S>,
-      R & WithStateSelector<State, S> & BasicAdapterMethods<State>
-    >['selectors']
+    WithStateSelector<State, S>,
+    ReactionsWithoutSelectors<State, R & BasicAdapterMethods<State>>
   > => {
     const adapter = createAdapter<State>()<S, R>(reactionsWithSelectors);
     return addNewBlock({ reactions: adapter, selectors: adapter.selectors });
@@ -53,25 +63,25 @@ type Prev = [never, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17
 
 export type AddNewBlock<
   State,
-  R extends Reactions<State>,
   S extends Selectors<State>,
+  R extends Reactions<State>,
   D extends Prev[number] = 19,
 > = (
-  oldAdapterBuilder: AdapterBuilder<State, R, S>,
-) => D extends [never] ? never : NewBlockAdder<State, R, S, D>;
+  oldAdapterBuilder: AdapterBuilder<State, S, R>,
+) => D extends [never] ? never : NewBlockAdder<State, S, R, D>;
 
 export interface NewBlockAdder<
   State,
-  R extends Reactions<State>,
   S extends Selectors<State>,
+  R extends Reactions<State>,
   D extends Prev[number] = 19,
 > {
-  (): Flat<BuiltAdapter<State, R, S>>;
+  (): FlatAnyKey<BuiltAdapter<State, R, S>>;
 
   <NewBlock extends (ar: [S, R]) => Reactions<State>>(
     newBlock: NewBlock,
   ): NewBlock extends (ar: [S, R]) => infer R2
-    ? ReturnType<AddNewBlock<State, Flat<Omit<R, keyof R2> & R2>, S, Prev[D]>>
+    ? ReturnType<AddNewBlock<State, S, Omit<R, keyof R2> & R2, Prev[D]>>
     : never;
 
   <NewBlock extends Selectors<SelectorReturnTypes<State, S>>>(
@@ -79,8 +89,8 @@ export interface NewBlockAdder<
   ): ReturnType<
     AddNewBlock<
       State,
+      FlatAnyKey<ReturnTypeSelectors<State, SelectorReturnTypes<State, S>, S & NewBlock>>,
       R,
-      Flat<ReturnTypeSelectors<State, SelectorReturnTypes<State, S>, Flat<S & NewBlock>>>,
       Prev[D]
     >
   >;
@@ -97,9 +107,7 @@ export interface NewBlockAdder<
     },
   >(
     newBlock: NewBlock,
-  ): ReturnType<
-    AddNewBlock<State, Flat<R & NestedReactions<State, NewBlock>>, S, Prev[D]>
-  >;
+  ): ReturnType<AddNewBlock<State, S, R & NestedReactions<State, NewBlock>, Prev[D]>>;
 }
 
 type NestedReactions<
@@ -138,13 +146,11 @@ export function addNewBlock<AB extends AdapterBuilder<any, any, any>>(
 
     // New reactions
     if (typeof newBlock === 'function') {
-      return addNewBlock({
-        selectors: builder.selectors,
-        reactions: {
-          ...builder.reactions,
-          ...newBlock([builder.selectors, builder.reactions] as [any, any]),
-        },
-      });
+      const newReactions = newBlock([builder.selectors, builder.reactions] as [any, any]);
+      for (const prop in newReactions) {
+        builder.reactions[prop] = newReactions[prop];
+      }
+      return addNewBlock(builder);
     }
 
     // Selectors and combined reactions
@@ -155,17 +161,16 @@ export function addNewBlock<AB extends AdapterBuilder<any, any, any>>(
     }
 
     // Selectors
-    if (type === 'selectors')
-      return addNewBlock({
-        selectors: combineSelectors<any>()<any, any, any>(builder.selectors, newBlock),
-        reactions: builder.reactions,
-      });
+    if (type === 'selectors') {
+      // Mutates
+      combineSelectors<any>()<any, any, any>(builder.selectors, newBlock);
+      return addNewBlock(builder);
+    }
 
     // Reactions
-    const newReactions = {} as any;
     for (const prop in newBlock) {
       const reactionGroup = newBlock[prop];
-      newReactions[prop] = (state: any, payload: any, initialState: any) => {
+      builder.reactions[prop] = (state: any, payload: any, initialState: any) => {
         let newState;
         for (const subStateName in reactionGroup) {
           const subReaction = reactionGroup[subStateName] as any;
@@ -179,10 +184,6 @@ export function addNewBlock<AB extends AdapterBuilder<any, any, any>>(
         return newState || state;
       };
     }
-    // TODO: Make a copy of `reactions` and `selectors` on the initial call, do faster mutations after that.
-    return addNewBlock({
-      selectors: builder.selectors,
-      reactions: { ...builder.reactions, ...newReactions },
-    });
+    return addNewBlock(builder);
   };
 }
