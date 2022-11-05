@@ -54,6 +54,7 @@ export function getMemoizedSelector<State>(
 ) {
   return (s: State, parentCache: SelectorsCache) => {
     const cache = toChildCache ? toChildCache(parentCache) : parentCache;
+    if (!cache) return (fn as any)(s);
     const { values } = (cache.__inputs[name] = cache.__inputs[name] || {
       set: new Set(['state']),
       values: { state: undefined },
