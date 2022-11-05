@@ -204,6 +204,63 @@ export class NameComponent {
 
 [StackBlitz](https://stackblitz.com/edit/angular-ivy-jwt8jh?file=src%2Fapp%2F6-dom-sources.component.ts)
 
+## 7. Select state from multiple stores
+
+```diff-typescript
+export class NameComponent {
+  nameAdapter = createAdapter<string>()({
+    reverseName: name => name.split('').reverse().join(''),
+    concatName: (name, anotherName: string) => `${name} ${anotherName}`,
+    selectors: {
+      yelledName: name => name.toUpperCase(), // Will be memoized
+    },
+  });
+
+  resetBoth$ = new Source<void>('[name] resetBoth$'); // Annotate for Redux Devtools
+
+  nameFromServer$ = timer(3000).pipe(
+    mapTo('Joel'),
+    toSource('[name] nameFromServer$'), // Annotate for Redux Devtools
+  );
+
+  name1Store = adapt(['name1', 'Bob', this.nameAdapter], {
+    set: this.nameFromServer$, // `set` is provided with all adapters
+    reset: this.resetBoth$, // `reset` is provided with all adapters
+  });
+  name2Store = adapt(['name2', 'Bob', this.nameAdapter], {
+    concatName: this.nameFromServer$,
+    reset: this.resetBoth$, // `reset` is provided with all adapters
+  });
+
++  bothBobs$ = joinStores({
++    name1: this.name1Store,
++    name2: this.name2Store,
++  })({
++    bothBobs: (s) => s.name1 === 'Bob' && s.name2 === 'Bob',
++  })().bothBobs$;
+}
+```
+
+```diff-html
+ <h1>Hello {{ name1Store.yelledName$ | async }}!</h1>
+ <button (click)="name1Store.set('Bilbo')">Change Name</button>
+ <button (click)="name1Store.reverseName()">Reverse Name</button>
+
+ <h1>Hello {{ name2Store.yelledName$ | async }}!</h1>
+ <button (click)="name2Store.set('Bilbo')">Change Name</button>
+ <button (click)="name2Store.reverseName()">Reverse Name</button>
+
+ <button (click)="resetBoth$.next()">Reset Both</button>
++
++ <h2 *ngIf="bothBobs$ | async">Hello Bobs!</h2>
+```
+
+<video controls loop>
+  <source src="../assets/demo-7-multi-store-selectors.mov" type="video/mp4" />
+</video>
+
+[StackBlitz](https://stackblitz.com/edit/angular-ivy-jwt8jh?file=src%2Fapp%2F7-multi-store-selectors.component.ts)
+
 ## StateAdapt Philosophy
 
 We encourage following 3 rules for progressive reactivity:
