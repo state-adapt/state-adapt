@@ -59,7 +59,7 @@ export function memoizeWithProxy<State>() {
       if (!cache) {
         const handler = {
           get: function (target: S1States, prop: string) {
-            return target[selectors[prop](s)];
+            return target[prop](s);
           },
         };
         const proxy = new Proxy(selectors as any as S1States, handler);
