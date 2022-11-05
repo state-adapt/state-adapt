@@ -1,25 +1,7 @@
 import { Component } from '@angular/core';
-import { buildAdapter, joinAdapters } from '@state-adapt/core';
-// import { buildAdapter } from '@state-adapt/core';
 import { AdaptCommon, Source, toSource } from '@state-adapt/rxjs';
 import { interval } from 'rxjs';
 import { countAdapter } from './count.adapter';
-
-interface JoinedCounters {
-  a: number;
-  b: number;
-}
-
-interface MegaCounter {
-  m: JoinedCounters;
-}
-
-const initialMegaCounter: MegaCounter = {
-  m: {
-    a: 0,
-    b: 0,
-  },
-};
 
 @Component({
   selector: 'state-adapt-root',
@@ -85,70 +67,36 @@ const initialMegaCounter: MegaCounter = {
   ],
 })
 export class AppComponent {
-  // interval$ = interval(3000).pipe(toSource('[counts] interval$'));
-  // resetBoth$ = new Source<void>('[counts] resetBoth$');
+  interval$ = interval(3000).pipe(toSource('[counts] interval$'));
+  resetBoth$ = new Source<void>('[counts] resetBoth$');
 
-  // joinedNumbersAdapter = joinAdapters<JoinedCounters>()({
-  //   a: countAdapter,
-  //   b: countAdapter,
-  // })();
-
-  // megaAdapter = joinAdapters<MegaCounter>()({
-  //   m: this.joinedNumbersAdapter,
-  // })();
-
-  // store1 = this.adapt.init('count1', 0);
-  // store2 = this.adapt.init(['count2', 0], this.interval$);
-  // store3 = this.adapt.init(['count3', 0], countAdapter);
-  // store4 = this.adapt.init(['count4', 10], {
-  //   multiply: (state, n: number) => state * n,
-  // });
-  // store5 = this.adapt.init(['count5', initialMegaCounter, this.megaAdapter], {
-  //   setMA: this.interval$,
-  // });
-  // store6 = this.adapt.init(['count6', 0, countAdapter], {
-  //   set: this.interval$,
-  //   reset: this.resetBoth$,
-  // });
-
-  numberAdapter = buildAdapter<number>()({
-    double: state => state * 2,
-    selectors: {
-      double: s => s * 2,
-    },
-  })({ quadruple: s => s.double * 2 })();
-
-  a = this.numberAdapter.selectors.quadruple;
-
-  numbersAdapter = joinAdapters<{ a: number; b: number }>()({
-    a: this.numberAdapter,
-    b: this.numberAdapter,
-  })({
-    rando: s => s.state,
-  })();
-
-  b = this.numbersAdapter.selectors;
-
-  interval7$ = interval(7000).pipe(toSource('interval7$'));
-  interval3$ = interval(3000).pipe(toSource('interval3$'));
-
-  numbersA = this.adapt.init(['numberA', { a: 5, b: 5 }, this.numbersAdapter], {
-    doubleA: this.interval7$,
-    doubleB: this.interval3$,
+  store1 = this.adapt.init('count1', 0);
+  store2 = this.adapt.init(['count2', 0], this.interval$);
+  store3 = this.adapt.init(['count3', 0], countAdapter);
+  store4 = this.adapt.init(['count4', 10], {
+    multiply: (state, n: number) => state * n,
+  });
+  store5 = this.adapt.init(['count5', 0, countAdapter], this.interval$);
+  store6 = this.adapt.init(['count6', 0, countAdapter], {
+    set: this.interval$,
+    reset: this.resetBoth$,
   });
 
-  // numbersB = this.adapt.init(['numberB', { a: 7, b: 7 }], this.numbersAdapter);
+  constructor(private adapt: AdaptCommon) {}
 
-  sub5 = this.numbersA.aQuadruple$.subscribe(s => console.log('numbersA.quadrupleB$', s));
-  // sub7 = this.numbersB.quadrupleB$.subscribe(s => console.log('numbersB.quadrupleB$', s));
-  m5 = this.numbersA.set({ a: 4, b: 4 });
-
-  constructor(private adapt: AdaptCommon) {
-    // this.store1.set();
-    // this.store2.set();
-    // this.store3.double(4);
-    // this.store4.multiply('4');
-    // this.store5.set('4');
-    // this.store6.increment();
+  doUnreasonableThings() {
+    // Should be TS errors
+    // @ts-expect-error Should have payload
+    this.store1.set();
+    // @ts-expect-error Should have payload
+    this.store2.set();
+    // @ts-expect-error Should not have payload
+    this.store3.double(4);
+    // @ts-expect-error Payload should be number
+    this.store4.multiply('4');
+    // @ts-expect-error Payload should be MegaCounter
+    this.store5.set('4');
+    // @ts-expect-error Should have payload
+    this.store6.increment();
   }
 }

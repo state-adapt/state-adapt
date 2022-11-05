@@ -1,5 +1,6 @@
 ## 0.58.0 2022-10-24
 
+- Chore(rxjs): Add integration TS tests
 - Bugfix(core)!: Fix joinAdapters type inference
 - - Require string union of properties not given adapters
 - Bugfix(core): Fix buildAdapter type inference
