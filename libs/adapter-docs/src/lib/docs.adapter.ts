@@ -129,11 +129,12 @@ export const docsAdapter = buildAdapter<AdapterDocsState>()({ selectors })(() =>
   mapPayloads(
     {
       setDemoStateToNull: reactions.setDemoState,
+      selectStateChangeFromDropdown: reactions.selectStateChange,
       ...reactions,
     },
     {
       setDemoStateToNull: () => null,
-      selectStateChange: ({ item }: DropdownSelectedEvent) => item.content,
+      selectStateChangeFromDropdown: ({ item }: DropdownSelectedEvent) => item.content,
       selectStateChangeFromHistory: (selection: TileSelection) => +selection.value,
       selectHistoryItem: (selection?: TileSelection) => +(selection?.value || '-1'),
       selectSelector: ({ item }: DropdownSelectedEvent) => item.content,

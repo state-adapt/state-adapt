@@ -315,7 +315,7 @@ export class AdapterDocsComponent implements OnInit {
 
   docsStore = adapt([this.path, initialState, docsAdapter], {
     receiveDocs: this.docsReceived$,
-    selectStateChange: this.stateChangeSelection$,
+    selectStateChangeFromDropdown: this.stateChangeSelection$,
     selectStateChangeFromHistory: this.historyItemSelected$,
     resetEditorRefresh: this.stateChangePayloadDelay$,
     setPayload: this.payloadChangedDebounced$,
