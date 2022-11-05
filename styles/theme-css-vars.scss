@@ -96,8 +96,8 @@ body.light-theme {
   --danger: #da1e28;
 }
 body.dark-theme {
-  --card-shadows: 0 0 0 #004;
-  --banner-border: 3px solid var(--accent-01);
+  --card-shadows: 0 0 10px #0008;
+  --banner-border: 0px solid var(--accent-01);
 
   --code-bright-weight: 400;
   --code-dark-weight: bold;
@@ -114,8 +114,10 @@ body.dark-theme {
   --ui-background: #262626;
   --ui-01: #393939;
   --ui-01b: #1a1a1a;
-  --ui-01c: #330d0044;
-  --ui-01d: #002929;
+  --ui-01c: #202020;
+  --ui-01d: #262626;
+  // --ui-01c: #330d0044;
+  // --ui-01d: #002929;
   --ui-02: #525252;
   --ui-03: #525252;
   --ui-04: #8d8d8d;
