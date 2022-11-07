@@ -1,6 +1,6 @@
 # Thinking Reactively
 
-StateAdapt enables completely reactive state management. Although each team should determine for themselves how much they want to commit to reactive architecture, we believe that functional reactive programming will increasingly become the dominant pattern for most nontrivial apps.
+StateAdapt enables almost completely reactive state management. Although each team should determine for themselves how much they want to commit to reactive architecture, we believe that functional reactive programming will increasingly become the dominant pattern for most nontrivial apps.
 
 ## Reactive code is better
 

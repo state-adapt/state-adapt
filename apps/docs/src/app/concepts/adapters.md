@@ -5,12 +5,9 @@
 - [Selectors](/concepts/adapters#selectors)
 - [`createAdapter`](/concepts/adapters#createadapter)
 - [Extending Adapters](/concepts/adapters#extending-adapters)
-- [`createSelectors`](/concepts/adapters#createselectors)
-- [`buildSelectors`](/concepts/adapters#buildselectors)
 - [`buildAdapter`](/concepts/adapters#buildadapter)
 - [`joinAdapters`](/concepts/adapters#joinadapters)
 - [`mapPayloads`](/concepts/adapters#mappayloads)
-- [TypeScript Errors](/concepts/adapters#typescript-errors)
 - [Adapter Creator Libraries](/concepts/adapters#adapter-creator-libraries)
 
 ## Overview
@@ -26,7 +23,7 @@ State change functions are pure functions that implement ways state can change. 
   state, // Current state
   payload, // Data needed to calculate new state
   initialState, // State the adapter was initialized with
-) => ({...state}), // New state
+) => ({ ...state }), // New state
 ```
 
 ## Selectors
@@ -37,7 +34,7 @@ Selectors are pure functions that calculate derived state or just return a speci
 state => state.property,
 ```
 
-Since these functions are only referenced and never called in your code, the convention is to name them nouns instead of verbs (e.g. `state` instead of `getState`). Another reason is explained in [`createSelectors`](/concepts/adapters#createselectors).
+Since these functions are only referenced and never called in your code, the convention is to name them nouns instead of verbs (e.g. `state` instead of `getState`).
 
 ## `createAdapter`
 
@@ -47,7 +44,6 @@ createAdapter provides type inference when creating state adapters, which is con
 import { createAdapter } from '@state-adapt/core';
 
 const numberAdapter = createAdapter<number>()({
-  // Notice the first empty call—TypeScript requires it
   add: (state, n: number) => state + n,
   subtract: (state, n: number) => state - n,
   selectors: {
@@ -60,17 +56,14 @@ Defining selectors is optional.
 
 Every adapter comes with 4 default state reactions:
 
-`set` replaces the old state with a new one
-
-`update` replaces specific properties of the old state by spreading the object passed in
-
-`reset` resets to the original state the adapter was initialized with
-
-`noop` does nothing; it just allows sources to log in Redux Devtools
+- `set` replaces the old state with a new one
+- `update` replaces specific properties of the old state by spreading the object passed in
+- `reset` resets to the original state the adapter was initialized with
+- `noop` does nothing; it just allows sources to log in Redux Devtools
 
 Every adapter also comes with a default selector:
 
-`state` returns the top-level state value
+- `state` returns the top-level state value
 
 ## Extending Adapters
 
@@ -90,71 +83,9 @@ const numberStringAdapter = createAdapter<number>()({
 });
 ```
 
-## `createSelectors`
-
-`createSelectors` has been deprecated in favor of [`buildSelectors`](/concepts/adapters#buildselectors)
-
-[`createAdapter`](/concepts/adapters#createadapter) memoizes selectors passed into the `selectors` property, but it only does so shallowly. `createSelectors` provides full selector memoization and a default `state` selector (after the first argument). It takes up to 7 selector objects as arguments, each one receiving all of the selectors from the previous selector objects.
-
-```typescript
-import { createSelectors, createAdapter } from '@state-adapt/core';
-
-const selectors = createSelectors<string>()(
-  {
-    reverse: s => s.split('').reverse().join(''),
-  },
-  {
-    isPalendrome: s => s.reverse === s.state,
-  },
-);
-
-const stringAdapter = createAdapter<string>()({ selectors });
-```
-
-Reuse selectors from anywhere:
-
-```typescript
-import { createAdapter, createSelectors } from '@state-adapt/core';
-import { numberAdapter } from './number.adapter';
-
-const selectors = createSelectors(numberAdapter.selectors, {
-  negative: s => s.negative.toString(),
-});
-
-const numberStringAdapter = createAdapter<number>()({
-  ...numberAdapter,
-  selectors,
-});
-```
-
-`s` is typed the same as the selectors object passed in as the first argument, except using the return type of each selector instead of the selector itself. Internally, `createSelectors` uses a `Proxy` to detect which selectors your new selector functions are accessing in order memoize them efficiently. You could think of `s` as referencing either the selectors object you passed in, or a derived state object created by calling those selectors for each object key. This dual reference is why the convention is to name it `s` instead of either `selectors` or `state`.
-
-`createSelectors` is another reason for naming selectors as nouns instead of verbs: Either it would need to do extra, unnecessary processing to add `'get'`s in the `Proxy` property accessor method to find the correct selectors, or developers would need to treat verbs as nouns in their selector functions, which would be awkward: `s => s.getNegative.toString()`.
-
-Note: If you get this TypeScript error when using the output of `createSelectors` in an adapter:
-
-```
-The inferred type of this node exceeds the maximum length the compiler will serialize. An explicit type annotation is needed.
-```
-
-Or this error:
-
-```
-Type instantiation is excessively deep and possibly infinite.
-```
-
-All you have to do is spread the selectors into a new object:
-
-```typescript
-const numberStringAdapter = createAdapter<number>()({
-  ...numberAdapter,
-  selectors: { ...selectors },
-});
-```
-
-This forces TypeScript to break the nested type references created in `createSelectors` and understand `selectors` as a flat object instead. If your selector chain is long enough, you might need to break it up into multiple calls to `createSelectors`.
-
 ## `buildSelectors`
+
+`buildSelectors` has been deprecated in favor of [`buildAdapter`](/concepts/adapters#buildadapter)
 
 [`createAdapter`](/concepts/adapters#createadapter) memoizes selectors passed into the `selectors` property, but it only does so shallowly. [`buildSelectors`](/concepts/adapters#buildselectors) provides full selector memoization and a default `state` selector (after the first call). It takes initial selectors in the first call, which receive a state object to select against, and it returns a function that can be called successively with more selectors, each selecting against the return values from all selectors previously passed in. To return all the selectors combined, call it a final time with no parameter:
 
@@ -192,19 +123,98 @@ const numberStringAdapter = createAdapter<number>()({
 
 ## `buildAdapter`
 
-`buildAdapter` uses similar syntax to that of [`buildSelectors`](/concepts/adapters#buildselectors): You call it with an initial adapter, then call it again and again with more objects inheriting from previous objects, until a final empty call `()` to get the final built adapter:
+`buildAdapter` is called with an initial adapter, then can be called again and again with more objects inheriting from previous objects, until a final empty call `()` to get the final built adapter:
 
 ```typescript
 import { buildAdapter } from '@state-adapt/core';
 import { numberAdapter } from './number.adapter';
 
 const numberStringAdapter = buildAdapter<number>()(numberAdapter)({
-  negative: s => s.negative.toString(),
-})();
-// Same result as the buildSelectors example above
+  // Define more stuff
+})(([selectors, reactions]) => ({
+  // Define more stuff
+}))({
+  // etc
+})(); // End
 ```
 
-[`buildAdapter`](/concepts/adapters#buildadapter) takes 3 possible arguments in each call: A selectors object, like in the example above or the example in [`buildselectors`](/concepts/adapters#buildselectors); a function taking in an array of selectors and reactions and returning new reactions; or a nested object defining grouped state reactions.
+The first call creates a new object, but after that, every object passed in is looped over and used to mutate the original new object.
+
+[`buildAdapter`](/concepts/adapters#buildadapter) takes 3 possible arguments in each call (after the first):
+
+1. A selectors object
+2. A function taking in a tuple of `[selectors, reactions]` and returning new reactions
+3. A nested object defining grouped state reactions
+
+Let's look at each of these.
+
+### 1. Selectors
+
+Selectors should be defined before anything else, since they can be used in reactions, and it helps to have a consistent pattern to make things easily findable.
+
+[`buildAdapter`](/concepts/adapters#buildadapter) provides full selector memoization and a default `state` selector (after the first call). The selectors defined in the first call each receive a state object to select against. Each subsequent selector block has access to all selectors previously defined. To return all the selectors combined into an adapter, call it a final time with no parameter.
+
+Example:
+
+```typescript
+import { buildAdapter } from '@state-adapt/core';
+
+// Starting with empty adapter {}
+const stringAdapter = buildAdapter<string>()({})({
+  reverse: s => s.state.split('').reverse().join(''),
+})({
+  isPalendrome: s => s.reverse === s.state,
+})();
+```
+
+`s` is typed as an object with properties with the same names as all the selectors defined previously, and typed with each corresponding selector's return type. Internally, [`buildAdapter`](/concepts/adapters#buildadapter) uses a `Proxy` to detect which selectors your new selector functions are accessing in order memoize them efficiently.
+
+Why `s`? Well, should the object (`s`) passed into each selector function be named `selectors`, `state` or `selectorState`? In reality it's just a proxy, so none of these really make sense. So, the convention is `s`, since it's short and the only letter all the possible meanings share.
+
+Note 1: [`buildAdapter`](/concepts/adapters#buildadapter) is another reason for naming selectors as nouns instead of verbs: Either it would need to do extra, unnecessary processing to add `'get'`s in the `Proxy` property accessor method to find the correct selectors, or developers would need to treat verbs as nouns in their selector functions, which would be awkward: `s => s.getNegative.toString()`.
+
+Note 2: Here's how the above selectors would have been defined using a Redux-like `createSelector` function:
+
+```tsx
+import { createSelector } from 'reselect'; // or whatever
+
+// Need a function that returns the selector in order to be
+// reusable and independently memoized:
+const getSelectReverse = (selectState: (state: string) => string) =>
+  createSelector(selectState, state => state.split('').reverse().join(''));
+
+const getSelectIsPalendrome = (selectState: (state: string) => string) =>
+  createSelector(
+    selectState,
+    getSelectReverse(selectState),
+    (state, reverse) => state === reverse
+  );
+
+// ...
+// Before using in a specific piece of state
+const selectReverse = getSelectReverse(selectSpecificState);
+const selectIsPalendrome = getSelectIsPalendrome(selectSpecificState);
+```
+
+or in RxJS:
+
+```tsx
+import { map, combineLatest, distinctUntilChanged } from 'rxjs';
+
+const getReverse = (state: string) => state.split('').reverse().join('');
+const getIsPalendrome = ([state, reverse]: [string, string]) =>
+  state === reverse;
+
+// ...
+// Using in a specific piece of state
+const reverse$ = specificState$.pipe(map(getReverse), distinctUntilChanged());
+const isPalendrome$ = combineLatest([specificState$, reverse$]).pipe(
+  map(getIsPalendrome),
+  distinctUntilChanged()
+);
+```
+
+### 2. Reactions
 
 The function returning new reactions can be used like this:
 
@@ -220,6 +230,10 @@ const numberStringAdapter = buildAdapter<number>()(numberAdapter)({
 ```
 
 `setToNegative` becomes a reaction on `numberStringAdapter` that multiplies the state by `-1` (the return of `selectors.negative(state)`).
+
+Selectors used when defining new reactions must be called as functions and will not be memoized. If efficiency is critical, you might want to put the derived state in the action payload for the state change.
+
+### 3. Nested Reactions
 
 The nested object defining grouped state reactions is for nested states. Let's say you had an adapter like this:
 
@@ -264,9 +278,9 @@ const numbersAdapter = buildAdapter<NumbersState>()({
 })();
 ```
 
-`setBothNumbers` becomes a reaction on `numbersAdapter` that sets both `coolNumber` and `weirdNumber` to the same payload passed into `setBothNumbers`. Every reaction passed into the same grouped reaction must take the same payload type.
+`setBothNumbers` becomes a reaction on `numbersAdapter` that sets both `coolNumber` and `weirdNumber` to the same payload passed into `setBothNumbers`. The new reaction's payload type will be the intersection of the payload types from the reactions used.
 
-The reason grouped reactions are useful is because if you tried to reuse `setCoolNumber` and `setWeirdNumber`, you would end up calculating a new state twice:
+The reason grouped reactions are useful is because if you tried to reuse `setCoolNumber` and `setWeirdNumber`, you would end up calculating 2 new states:
 
 ```typescript
 const numbersAdapter = buildAdapter<NumbersState>()({
@@ -290,7 +304,7 @@ State change groups are able to efficiently calculate a single new state.
 
 ## `joinAdapters`
 
-Similar data types will have similar state management logic. Take this example from [`buildAdapter`](/concepts/adapters#buildadapter):
+Similar data types will have similar state management logic. Take this example we just saw above from [`buildAdapter`](/concepts/adapters#buildadapter):
 
 ```typescript
 import { buildAdapter } from '@state-adapt/core';
@@ -332,7 +346,7 @@ const numbersAdapter = joinAdapters<NumbersState>()({
 
 This will produce the same adapter as in the previous code snippet.
 
-[`joinAdapters`](/concepts/adapters#joinadapters) returns the same builder function as [`buildAdapter`](/concepts/adapters#buildadapter), so you can use it like this:
+[`joinAdapters`](/concepts/adapters#joinadapters) returns the same builder function as [`buildAdapter`](/concepts/adapters#buildadapter). So we can add our grouped reaction just like we did in the [`buildAdapter`](/concepts/adapters#buildadapter) example:
 
 ```typescript
 import { joinAdapters } from '@state-adapt/core';
@@ -381,6 +395,26 @@ This may change in the future to simple prefixing like selectors, depending on w
 - `toggle` => `toggleFeature`
 - `decrementPopulation` => `decrementFeaturePopulation`
 - `setTo5` => `setFeatureTo5`
+
+If you have a large state model and don't want to define an adapter for every property, [`joinAdapters`](/concepts/adapters#joinadapters) takes in a 2nd type argument for you to specify which properties to exclude:
+
+```typescript
+import { joinAdapters } from '@state-adapt/core';
+import { numberAdapter } from './number.adapter';
+
+interface NumbersState {
+  coolNumber: number;
+  weirdNumber: number;
+  a: string;
+  b: any;
+  c: Record<string, undefined>;
+}
+
+const numbersAdapter = joinAdapters<NumbersState, 'a' | 'b' | 'c'>()({
+  coolNumber: numberAdapter,
+  weirdNumber: numberAdapter,
+})();
+```
 
 ## `mapPayloads`
 
@@ -432,8 +466,8 @@ const numberAdapter = buildAdapter<number>()({
       add5: () => 5, // add5 is now a reaction that doesn't take a payload
       add10: () => 10, // add10 is now a reaction that doesn't take a payload
       add16: () => 15, // add15 is now a reaction that doesn't take a payload
-    },
-  ),
+    }
+  )
 )();
 ```
 
@@ -485,42 +519,22 @@ const dataAdapter = createAdapter<WithData>()({
   receiveData: (state, data: Data) => ({ ...state, data }),
 });
 
-const apiDataAdapter = buildAdapter<WithData>()(([s, reactions]) =>
+const apiDataAdapter = buildAdapter<WithData>()(dataAdapter)(([s, reactions]) =>
   mapPayloads(reactions, {
-    receiveData: (data: ApiData) => data.weirdly.nested.response.shape.with.data,
-  }),
+    receiveData: (data: ApiData) =>
+      data.weirdly.nested.response.shape.with.data,
+  })
 );
 ```
 
 This is preferable over either modifying the simpler `dataAdapter` _or_ modifying the HTTP source observable with `.pipe(map(...))`. Sources should be as simple as possible. Adapters are the perfect place to put mapping logic.
 
-## TypeScript Errors
-
-If you get this TypeScript error:
-
-```
-The inferred type of this node exceeds the maximum length the compiler will serialize. An explicit type annotation is needed.
-```
-
-Or this error:
-
-```
-Type instantiation is excessively deep and possibly infinite.
-```
-
-You can try spreading adapters and selectors into a new object:
-
-```typescript
-const numberAdapter2 = createAdapter<number>()({
-  ...numberAdapter,
-  selectors: { ...selectors },
-});
-```
-
-This forces TypeScript to break the nested type references created in the various adapter builder functions and understand `selectors` as a flat object instead.
-
-However, sometimes even this isn't enough, and you may have to use explicit type annotations. StateAdapt relies heavily on type inference, and that comes at a cost, sometimes more than TypeScript wants to handle.
+Note: If you use the same reaction name, like in this example, make sure it is in a separate [`buildAdapter`](/concepts/adapters#buildadapter) call from the one that defined it. Otherwise the original reaction will be redefined when [`buildAdapter`](/concepts/adapters#buildadapter) mutates the adapter. But if you use `mapPayloads` in a separate [`buildAdapter`](/concepts/adapters#buildadapter) call, the original adapter object will be unaffected, since [`buildAdapter`](/concepts/adapters#buildadapter) always creates a new initial object.
 
 ## Adapter Creator Libraries
 
-Coming soon
+State adapters allow state management patterns to be easily reusable.
+
+Similar to how components enabled awesome component libraries for modern UI frameworks, state adapters open up the opportunity for adapter libraries.
+
+StateAdapt has created a few core adapters, and plans to create many more. See the [core adapters documentation](/adapters/core).
