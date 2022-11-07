@@ -1,7 +1,7 @@
-import { AdapterDocs } from '@state-adapt/adapter-docs';
-import demoAdapterCode from '!!raw-loader!./adapter';
 import createDemoAdapterCode from '!!raw-loader!./../../../../../libs/core/src/lib/adapters/create-adapter.function';
-import { adapter } from './adapter';
+import demoAdapterCode from '!!raw-loader!./adapter-demo';
+import { AdapterDocs } from '@state-adapt/adapter-docs';
+import { adapter } from './adapter-demo';
 
 export const createAdapterDocs: AdapterDocs = {
   name: 'createAdapter',

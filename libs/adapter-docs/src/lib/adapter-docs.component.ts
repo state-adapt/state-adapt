@@ -18,12 +18,13 @@ import { docsAdapter } from './docs.adapter';
 import { DropdownSelectedEvent } from './dropdown-selection-event.interface';
 import { EditorReadyService } from './editor-ready.service';
 import { getDiffHtml, toJson } from './get-diff-html.function';
+import { getId } from '@state-adapt/core';
 
 @Component({
   selector: 'state-adapt-adapter-docs',
   template: `
     <ng-container *ngIf="docs$ | async; let docs">
-      <h1 class="adapter-creator-name">
+      <h1 class="adapter-creator-name" [id]="docs.name">
         <code>{{ docs.name }}</code>
       </h1>
 
@@ -282,7 +283,7 @@ export class AdapterDocsComponent implements OnInit {
   editorTheme = (window as any).document.body.className.includes('light')
     ? 'vs-light'
     : 'vs-dark';
-  path = ('adapterDocs' + Math.random()).replace('.', '');
+  path = 'adapterDocs' + getId();
 
   detachedDocsStore = watch(this.path, docsAdapter);
 
@@ -320,12 +321,12 @@ export class AdapterDocsComponent implements OnInit {
     resetEditorRefresh: this.stateChangePayloadDelay$,
     setPayload: this.payloadChangedDebounced$,
     setDemoState: this.newStateCalculated$,
-    selectHistoryItem: [
+    selectHistoryItemFromTile: [
       this.historyItemSelected$,
       this.payloadChangedDebounced$,
       this.stateChangeSelection$,
     ],
-    selectSelector: this.selectorSelection$,
+    selectSelectorFromDropdown: this.selectorSelection$,
   });
 
   docs$ = this.docsStore.docs$;
@@ -367,7 +368,7 @@ export class AdapterDocsComponent implements OnInit {
   ]).pipe(
     map(([adapter, [diff, selectorName]]) => {
       const selector = (adapter.selectors || {})[selectorName] || this.getState;
-      const selectorDiff = diff.map(selector) as [any, any];
+      const selectorDiff = diff.map(state => selector(state)) as [any, any];
       return getDiffHtml(...selectorDiff);
     }),
   );

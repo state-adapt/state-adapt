@@ -19,6 +19,7 @@ function getListItem(selectedName?: string) {
 
 export const docsAdapter = buildAdapter<AdapterDocsState>()({
   selectors: {
+    name: s => s.docs.name,
     adapterStateChangeItems: s =>
       s.docs.demoAdapter.value
         ? Object.keys(s.docs.demoAdapter.value)
@@ -63,7 +64,7 @@ export const docsAdapter = buildAdapter<AdapterDocsState>()({
       documentation: 'Returns state',
     },
   diffState: ({ selectedOrLastHistoryItem: item, demoStateOrInitial: state }) =>
-    !item ? [null, state] : [item.inputs.state, item.state],
+    !item ? [state, state] : [item.inputs.state, item.state],
 })({
   diffStateAndSelectorName: s => [s.diffState, s.selectedSelectorName] as [any[], string],
   payload: s =>
@@ -77,9 +78,10 @@ export const docsAdapter = buildAdapter<AdapterDocsState>()({
   }),
   payloadCodeModel: s => ({
     language: 'json',
-    uri: 'main.json',
-    value: s.payload && toJson(JSON.parse(s.payload)), // Format
+    uri: s.name + 'main.json',
+    value: s.payload && toJson(JSON.parse(s.payload)),
   }),
+  // State changes
 })(([selectors]) => ({
   receiveDocs: (state, docs: AdapterDocs) => ({ ...state, docs }),
   selectStateChange: (state: AdapterDocsState, stateChangeName: string) => {
@@ -130,14 +132,17 @@ export const docsAdapter = buildAdapter<AdapterDocsState>()({
     {
       setDemoStateToNull: reactions.setDemoState,
       selectStateChangeFromDropdown: reactions.selectStateChange,
+      selectHistoryItemFromTile: reactions.selectHistoryItem,
+      selectSelectorFromDropdown: reactions.selectSelector,
       ...reactions,
     },
     {
       setDemoStateToNull: () => null,
       selectStateChangeFromDropdown: ({ item }: DropdownSelectedEvent) => item.content,
       selectStateChangeFromHistory: (selection: TileSelection) => +selection.value,
-      selectHistoryItem: (selection?: TileSelection) => +(selection?.value || '-1'),
-      selectSelector: ({ item }: DropdownSelectedEvent) => item.content,
+      selectHistoryItemFromTile: (selection?: TileSelection) =>
+        +(selection?.value || '-1'),
+      selectSelectorFromDropdown: ({ item }: DropdownSelectedEvent) => item.content,
     },
   ),
 )();
