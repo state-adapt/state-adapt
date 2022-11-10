@@ -13,17 +13,19 @@ export interface SelectorsCache {
 
 let cacheId = 0;
 
-export const createSelectorsCache = (): SelectorsCache => {
+export const createSelectorsCache = (
+  children: Record<string, SelectorsCache> = {},
+): SelectorsCache => {
   return {
     __id: cacheId++,
     __results: {},
     __inputs: {},
-    __children: {},
+    __children: children,
   };
 };
 
 export const globalSelectorsCacheKey = '__stateadapt_selectors';
-export const globalSelectorsCache = ((window as any)[globalSelectorsCacheKey] =
+export const globalSelectorsCache = (((window as any) || {})[globalSelectorsCacheKey] =
   createSelectorsCache());
 
 export const serializeSelectorsCache = (c: SelectorsCache) => {
@@ -50,9 +52,9 @@ export function memoizeSelectors<State, S extends Selectors<State>>(
 export function getMemoizedSelector<State>(
   name: string,
   fn: (s: State, fnCache?: SelectorsCache) => any,
-  toChildCache?: (pc: SelectorsCache) => SelectorsCache,
+  toChildCache?: (pc?: SelectorsCache) => SelectorsCache,
 ) {
-  return (s: State, parentCache: SelectorsCache) => {
+  return (s: State, parentCache?: SelectorsCache) => {
     const cache = toChildCache ? toChildCache(parentCache) : parentCache;
     if (!cache) return (fn as any)(s);
     const { values } = (cache.__inputs[name] = cache.__inputs[name] || {
@@ -63,4 +65,18 @@ export function getMemoizedSelector<State>(
     values.state = s;
     return (cache.__results[name] = (fn as any)(s, cache));
   };
+}
+
+export function mapToSelectorsWithCache<State, S extends Selectors<State>>(
+  selectors: S,
+  getFeature: (state: any) => State,
+  cache?: SelectorsCache,
+): S {
+  const definedCache = cache || createSelectorsCache();
+  const newSelectors = {} as any;
+  for (const prop in selectors) {
+    newSelectors[prop] = (state: any) =>
+      (selectors[prop] as any)(getFeature(state), definedCache);
+  }
+  return newSelectors;
 }

@@ -1,4 +1,8 @@
-## 0.58.0 2022-10-24
+## 0.59.0 2022-11-09
+
+- Feature(core): Add function to memoize generic selectors
+
+## 0.58.0 2022-11-04
 
 - Chore(rxjs): Add integration TS tests
 - Bugfix(core)!: Fix joinAdapters type inference

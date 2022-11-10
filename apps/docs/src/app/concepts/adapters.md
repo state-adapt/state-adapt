@@ -159,8 +159,7 @@ Example:
 ```typescript
 import { buildAdapter } from '@state-adapt/core';
 
-// Starting with empty adapter {}
-const stringAdapter = buildAdapter<string>()({})({
+const stringAdapter = buildAdapter<string>()()({
   reverse: s => s.state.split('').reverse().join(''),
 })({
   isPalendrome: s => s.reverse === s.state,
@@ -191,7 +190,7 @@ const getSelectIsPalendrome = (selectState: (state: string) => string) =>
   );
 
 // ...
-// Before using in a specific piece of state
+// Before using for some specific state
 const selectReverse = getSelectReverse(selectSpecificState);
 const selectIsPalendrome = getSelectIsPalendrome(selectSpecificState);
 ```

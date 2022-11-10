@@ -124,7 +124,7 @@ export function joinAdapters<
             newSelectorName,
             (state: any, cache) => selector(state[namespace], cache),
             parentCache => {
-              const children = parentCache.__children;
+              const children = parentCache!.__children;
               return (children[namespace] =
                 children[namespace] || createSelectorsCache());
             },
