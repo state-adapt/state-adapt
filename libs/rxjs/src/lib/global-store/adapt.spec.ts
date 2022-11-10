@@ -76,18 +76,14 @@ const interval3$ = interval(3000).pipe(toSource('interval3$'));
 describe('AdaptCommon', () => {
   const initialState = { a: 5, b: 5 };
   const store = adapt.init(['numberA', initialState, numbersAdapter], {
-    doubleA: interval7$,
-    doubleB: interval3$,
+    // doubleA: interval7$,
+    // doubleB: interval3$,
   });
 
   // @ts-expect-error Property should be Observable<number> not Observable<any>
-  const sub5 = store.bQuadruple$.subscribe((s: string) =>
-    console.log('store.quadrupleB$', s),
-  );
+  const sub5 = store.bQuadruple$.subscribe((s: string) => {});
   // @ts-expect-error Property should be Observable<number> not Observable<any>
-  const sub6 = store.aDouble$.subscribe((s: string) =>
-    console.log('store.quadrupleB$', s),
-  );
+  const sub6 = store.aDouble$.subscribe((s: string) => {});
 
   function doUnreasonableThings() {
     // Should be good
@@ -95,7 +91,7 @@ describe('AdaptCommon', () => {
     // @ts-expect-error Property should take {a: number; b: number}
     const m6 = store.set({ a: 4, b: '4' });
     // @ts-expect-error Should recognize undefined property
-    const sub55 = store.bQzuadruple$.subscribe(s => console.log('store.quadrupleB$', s));
+    const sub55 = store.bQzuadruple$.subscribe(s => {});
   }
 
   it('should emit initial state', () => {
