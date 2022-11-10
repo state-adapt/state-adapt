@@ -6,7 +6,7 @@ import { countAdapter } from './count.adapter';
 @Component({
   selector: 'state-adapt-root',
   template: `
-    <!-- <h2>Store 1</h2>
+    <h2>Store 1</h2>
     <state-adapt-counter
       (increment)="store1.set($event)"
       (resetCount)="store1.reset()"
@@ -32,12 +32,11 @@ import { countAdapter } from './count.adapter';
     ></state-adapt-counter>
 
     <h2>Store 5</h2>
-    {{ store5.mAS$ | async }}
     <state-adapt-counter
-      (increment)="store5.incrementMA($event)"
-      (double)="store5.doubleMA()"
+      (increment)="store5.increment($event)"
+      (double)="store5.double()"
       (resetCount)="store5.reset()"
-      [count]="store5.mA$ | async"
+      [count]="store5.state$ | async"
     ></state-adapt-counter>
 
     <h2>Store 6</h2>
@@ -49,7 +48,7 @@ import { countAdapter } from './count.adapter';
     ></state-adapt-counter>
 
     <h2>Reset Action</h2>
-    <state-adapt-reset-both (resetBoth)="resetBoth$.next()"></state-adapt-reset-both> -->
+    <state-adapt-reset-both (resetBoth)="resetBoth$.next()"></state-adapt-reset-both>
   `,
   styles: [
     `
