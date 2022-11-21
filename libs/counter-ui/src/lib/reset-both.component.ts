@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 
 @Component({
-  selector: 'state-adapt-reset-both',
+  selector: 'sa-reset-both',
   template: `
     <div style="width: 500px; margin: 100px auto">
       <button ibmButton="primary" (click)="resetBoth.next()">Reset Externally</button>

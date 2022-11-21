@@ -12,13 +12,17 @@ interface Demo {
 
 @Component({
   standalone: true,
-  selector: 'state-adapt-demos',
+  selector: 'sa-demos',
   imports: [CommonModule, ContentComponent, TilesModule],
   template: `
-    <state-adapt-content>
+    <sa-content>
       <h1>Demos</h1>
       <div class="demo-tiles-container">
-        <ibm-clickable-tile *ngFor="let demo of demos" [href]="demo.href" target="_blank">
+        <ibm-clickable-tile
+          *ngFor="let demo of demos"
+          [href]="demo.href"
+          target="_blank"
+        >
           <div>
             <h3>{{ demo.title }}</h3>
             <ol>
@@ -28,7 +32,7 @@ interface Demo {
           <img [src]="demo.img" />
         </ibm-clickable-tile>
       </div>
-    </state-adapt-content>
+    </sa-content>
   `,
   styles: [
     `

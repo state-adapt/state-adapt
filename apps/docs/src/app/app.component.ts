@@ -10,7 +10,7 @@ import fadeIcon from 'raw-loader!../assets/fade.svg';
 import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
-  selector: 'state-adapt-root',
+  selector: 'sa-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
@@ -111,7 +111,11 @@ export class AppComponent {
     return item.route;
   }
 
-  private mapToChildRoute(url: string, baseUrl: string, [childUrl, childName]: string[]) {
+  private mapToChildRoute(
+    url: string,
+    baseUrl: string,
+    [childUrl, childName]: string[],
+  ) {
     const route = baseUrl + childUrl;
     const hashUrl = new RegExp(/#.*/);
     return {

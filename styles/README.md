@@ -58,7 +58,7 @@ Create a standalone component like this:
 
 ```typescript
 @Component({
-  selector: 'state-adapt-global-list-styles',
+  selector: 'sa-global-list-styles',
   encapsulation: ViewEncapsulation.None,
   template: '',
   styleUrls: ['state-adapt-global-list-styles.scss'],
@@ -66,4 +66,4 @@ Create a standalone component like this:
 export class GlobalListStylesComponent {}
 ```
 
-And then in any component that depends on these styles, just have `<state-adapt-global-list-styles></state-adapt-global-list-styles>` at the top.
+And then in any component that depends on these styles, just have `<sa-global-list-styles></sa-global-list-styles>` at the top.

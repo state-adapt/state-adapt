@@ -3,28 +3,32 @@ import { filters } from './filters';
 import { Filters } from './filters.interface';
 
 @Component({
-  selector: 'state-adapt-product-filters',
+  selector: 'sa-product-filters',
   template: `
     <ibm-checkbox
       [checked]="filters.under1"
       (checkedChange)="filterToggle.emit('under1')"
-      >Under $1</ibm-checkbox
     >
+      Under $1
+    </ibm-checkbox>
     <ibm-checkbox
       [checked]="filters.between1and2"
       (checkedChange)="filterToggle.emit('between1and2')"
-      >$1 to $2</ibm-checkbox
     >
+      $1 to $2
+    </ibm-checkbox>
     <ibm-checkbox
       [checked]="filters.between2and3"
       (checkedChange)="filterToggle.emit('between2and3')"
-      >$2 to $3</ibm-checkbox
     >
+      $2 to $3
+    </ibm-checkbox>
     <ibm-checkbox
       [checked]="filters.above3"
       (checkedChange)="filterToggle.emit('above3')"
-      >$3 & Above</ibm-checkbox
     >
+      $3 & Above
+    </ibm-checkbox>
   `,
   styles: [
     `

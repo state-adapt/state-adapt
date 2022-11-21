@@ -1,5 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, ChangeDetectionStrategy, NgZone, OnInit, Input } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  NgZone,
+  OnInit,
+  Input,
+} from '@angular/core';
 
 enum SourceType {
   WEBSOCKET = 'websocket',
@@ -78,7 +84,8 @@ const waitRandom = (min: number, n: number, fn: () => void) => {
   setTimeout(() => waitRandom(min, n, fn), Math.max(min, n * Math.random()));
 };
 
-const mapIndex = (i: number, l1: number, l2: number) => Math.floor((i * l2) / l1);
+const mapIndex = (i: number, l1: number, l2: number) =>
+  Math.floor((i * l2) / l1);
 
 const getTerminals = (gridWidth: number, n: number) =>
   getNumbersBetween(0, 2 * gridWidth - 1, n)
@@ -97,7 +104,10 @@ const getTerminals = (gridWidth: number, n: number) =>
         ? (position - 1.5 * gridWidth) * -1 + 1.5 * gridWidth // Shift to center at 0, reflect, shift back
         : position;
 
-      const height = Math.max(0, getNumberBetween(0, gridWidth - cornerPosition - 1));
+      const height = Math.max(
+        0,
+        getNumberBetween(0, gridWidth - cornerPosition - 1),
+      );
       const midY = (gridHeight / 2) * 60;
       const y = midY - (isBelow ? -(height + 0.5) : height + 0.5) * 60; // -0.5 to get to center. height of 4 => y of 30 (half down)
       const x = (gridWidth - (cornerPosition + height + 0.5)) * 60; // 45 degree, +0.5 to get to center
@@ -140,7 +150,7 @@ const getSinks = (n: number, gridWidth: number): Sink[] =>
 
 @Component({
   standalone: true,
-  selector: 'state-adapt-circuits',
+  selector: 'sa-circuits',
   imports: [CommonModule],
   templateUrl: './circuits.component.html',
   styleUrls: ['./circuits.component.scss'],
@@ -148,7 +158,8 @@ const getSinks = (n: number, gridWidth: number): Sink[] =>
 })
 export class CircuitsComponent implements OnInit {
   ww = (window as any).innerWidth;
-  @Input() n = this.ww < 550 ? 6 : this.ww < 1000 ? 10 : this.ww < 1900 ? 15 : 22;
+  @Input() n =
+    this.ww < 550 ? 6 : this.ww < 1000 ? 10 : this.ww < 1900 ? 15 : 22;
   circuits!: Circuit[];
 
   constructor(private zone: NgZone) {}
@@ -186,8 +197,8 @@ export class CircuitsComponent implements OnInit {
         '.connector-pulse path',
       ) as SVGAElement;
       const adapter = sourceParent.querySelector('.adapter') as SVGAElement;
-      const sinkGroups = Array.from(sourceParent.querySelectorAll('.sink')).map(child =>
-        child.querySelector('.connector-pulse path'),
+      const sinkGroups = Array.from(sourceParent.querySelectorAll('.sink')).map(
+        child => child.querySelector('.connector-pulse path'),
       ) as SVGAElement[];
 
       (
@@ -199,7 +210,9 @@ export class CircuitsComponent implements OnInit {
           [
             startSink,
             () =>
-              sinkGroups.forEach(child => Math.random() < 0.6 && this.activate(child)),
+              sinkGroups.forEach(
+                child => Math.random() < 0.6 && this.activate(child),
+              ),
           ],
           [endSink, () => sinkGroups.forEach(child => this.deactivate(child))],
         ] as [number, any][]

@@ -4,51 +4,51 @@ import { interval } from 'rxjs';
 import { countAdapter } from './count.adapter';
 
 @Component({
-  selector: 'state-adapt-root',
+  selector: 'sa-root',
   template: `
     <h2>Store 1</h2>
-    <state-adapt-counter
+    <sa-counter
       (increment)="store1.set($event)"
       (resetCount)="store1.reset()"
       [count]="store1.state$ | async"
-    ></state-adapt-counter>
+    ></sa-counter>
 
     <h2>Store 2</h2>
     <p>{{ store2.state$ | async }}</p>
 
     <h2>Store 3</h2>
-    <state-adapt-counter
+    <sa-counter
       (increment)="store3.increment($event)"
       (double)="store3.double()"
       (resetCount)="store3.reset()"
       [count]="store3.state$ | async"
-    ></state-adapt-counter>
+    ></sa-counter>
 
     <h2>Store 4</h2>
-    <state-adapt-counter
+    <sa-counter
       (increment)="store4.multiply($event)"
       (resetCount)="store4.reset()"
       [count]="store4.state$ | async"
-    ></state-adapt-counter>
+    ></sa-counter>
 
     <h2>Store 5</h2>
-    <state-adapt-counter
+    <sa-counter
       (increment)="store5.increment($event)"
       (double)="store5.double()"
       (resetCount)="store5.reset()"
       [count]="store5.state$ | async"
-    ></state-adapt-counter>
+    ></sa-counter>
 
     <h2>Store 6</h2>
-    <state-adapt-counter
+    <sa-counter
       (increment)="store6.increment($event)"
       (double)="store6.double()"
       (resetCount)="store6.reset()"
       [count]="store6.state$ | async"
-    ></state-adapt-counter>
+    ></sa-counter>
 
     <h2>Reset Action</h2>
-    <state-adapt-reset-both (resetBoth)="resetBoth$.next()"></state-adapt-reset-both>
+    <sa-reset-both (resetBoth)="resetBoth$.next()"></sa-reset-both>
   `,
   styles: [
     `

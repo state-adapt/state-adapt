@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'state-adapt-root',
+  selector: 'sa-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })

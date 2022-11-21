@@ -21,7 +21,7 @@ import { getDiffHtml, toJson } from './get-diff-html.function';
 import { getId } from '@state-adapt/core';
 
 @Component({
-  selector: 'state-adapt-adapter-docs',
+  selector: 'sa-adapter-docs',
   template: `
     <ng-container *ngIf="docs$ | async; let docs">
       <h1 class="adapter-creator-name" [id]="docs.name">

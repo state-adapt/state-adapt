@@ -13,25 +13,17 @@ export { EditorReadyService } from '@state-adapt/adapter-docs';
 
 @Component({
   standalone: true,
-  selector: 'state-adapt-adapters-core',
+  selector: 'sa-adapters-core',
   encapsulation: ViewEncapsulation.None,
   imports: [AdapterDocsModule, ContentComponent, MarkdownModule],
   template: `
-    <state-adapt-content>
+    <sa-content>
       <markdown [data]="md"></markdown>
-      <state-adapt-adapter-docs
-        [adapterDocs]="createAdapterDocs"
-      ></state-adapt-adapter-docs>
-      <state-adapt-adapter-docs
-        [adapterDocs]="booleanAdapterDocs"
-      ></state-adapt-adapter-docs>
-      <state-adapt-adapter-docs
-        [adapterDocs]="numberAdapterDocs"
-      ></state-adapt-adapter-docs>
-      <state-adapt-adapter-docs
-        [adapterDocs]="stringAdapterDocs"
-      ></state-adapt-adapter-docs>
-    </state-adapt-content>
+      <sa-adapter-docs [adapterDocs]="createAdapterDocs"></sa-adapter-docs>
+      <sa-adapter-docs [adapterDocs]="booleanAdapterDocs"></sa-adapter-docs>
+      <sa-adapter-docs [adapterDocs]="numberAdapterDocs"></sa-adapter-docs>
+      <sa-adapter-docs [adapterDocs]="stringAdapterDocs"></sa-adapter-docs>
+    </sa-content>
   `,
   styleUrls: ['styles.scss'],
 })

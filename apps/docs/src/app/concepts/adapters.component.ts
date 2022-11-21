@@ -6,14 +6,14 @@ import { ContentComponent } from '../content.component';
 
 @Component({
   standalone: true,
-  selector: 'state-adapt-adapters',
+  selector: 'sa-adapters',
   imports: [RouterModule, ContentComponent, MarkdownModule],
   template: `
-    <state-adapt-content>
+    <sa-content>
       <markdown [data]="md"></markdown>
       <h2><a routerLink="/concepts/stores">Next: Stores</a></h2>
       <h2><a routerLink="/concepts/sources">Previous: Sources</a></h2>
-    </state-adapt-content>
+    </sa-content>
   `,
 })
 export class AdaptersComponent {

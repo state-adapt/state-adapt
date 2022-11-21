@@ -3,16 +3,16 @@ import { Product } from './product.interface';
 import { QuantityChange } from './quantity-change.interface';
 
 @Component({
-  selector: 'state-adapt-cart',
+  selector: 'sa-cart',
   template: `
     <div class="container">
-      <state-adapt-product
+      <sa-product
         *ngFor="let product of products"
         [inCart]="true"
         [product]="product"
         (quantityChange)="quantityChange.emit($event)"
         (inCartChange)="inCartChange.emit(product)"
-      ></state-adapt-product>
+      ></sa-product>
     </div>
     <div class="container">Total: {{ total | currency }}</div>
   `,

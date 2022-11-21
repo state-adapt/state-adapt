@@ -5,12 +5,12 @@ import { ContentComponent } from '../content.component';
 
 @Component({
   standalone: true,
-  selector: 'state-adapt-getting-started',
+  selector: 'sa-getting-started',
   imports: [ContentComponent, MarkdownModule],
   template: `
-    <state-adapt-content>
+    <sa-content>
       <markdown [data]="md"></markdown>
-    </state-adapt-content>
+    </sa-content>
   `,
 })
 export class GettingStartedComponent {

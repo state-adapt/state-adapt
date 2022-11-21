@@ -3,25 +3,25 @@ import { ProductService } from './products/product.service';
 import { FilterService } from './filters/filter.service';
 
 @Component({
-  selector: 'state-adapt-root',
+  selector: 'sa-root',
   template: `
-    <state-adapt-shopping>
-      <state-adapt-product-filters
+    <sa-shopping>
+      <sa-product-filters
         [filters]="filters$ | async"
         (filterToggle)="toggleFilter($event)"
-      ></state-adapt-product-filters>
-      <state-adapt-products
+      ></sa-product-filters>
+      <sa-products
         [products]="filteredProducts$ | async"
         (quantityChange)="quantityChange$.next($event)"
         (inCartChange)="addToCart$.next($event)"
-      ></state-adapt-products>
-      <state-adapt-cart
+      ></sa-products>
+      <sa-cart
         [products]="cartProducts$ | async"
         [total]="cartTotal$ | async"
         (inCartChange)="removeFromCart$.next($event)"
         (quantityChange)="quantityChange$.next($event)"
-      ></state-adapt-cart>
-    </state-adapt-shopping>
+      ></sa-cart>
+    </sa-shopping>
   `,
 })
 export class AppComponent {

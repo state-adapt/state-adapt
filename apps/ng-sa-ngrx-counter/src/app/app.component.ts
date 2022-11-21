@@ -4,23 +4,23 @@ import { adaptNgrx } from '@state-adapt/ngrx';
 import { countAdapter } from './count.adapter';
 
 @Component({
-  selector: 'state-adapt-root',
+  selector: 'sa-root',
   template: `
-    <state-adapt-counter
+    <sa-counter
       (increment)="store1.increment($event)"
       (double)="store1.double()"
       (resetCount)="store1.reset(0)"
       [count]="store1.state$ | async"
-    ></state-adapt-counter>
+    ></sa-counter>
 
-    <state-adapt-counter
+    <sa-counter
       (increment)="store2.increment($event)"
       (double)="store2.double()"
       (resetCount)="store2.reset(0)"
       [count]="store2.state$ | async"
-    ></state-adapt-counter>
+    ></sa-counter>
 
-    <state-adapt-reset-both (resetBoth)="resetBoth$.next()"></state-adapt-reset-both>
+    <sa-reset-both (resetBoth)="resetBoth$.next()"></sa-reset-both>
   `,
 })
 export class AppComponent {

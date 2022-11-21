@@ -6,13 +6,13 @@ import { ContentComponent } from '../content.component';
 
 @Component({
   standalone: true,
-  selector: 'state-adapt-concepts-overview',
+  selector: 'sa-concepts-overview',
   imports: [RouterModule, ContentComponent, MarkdownModule],
   template: `
-    <state-adapt-content>
+    <sa-content>
       <markdown [data]="md"></markdown>
       <h2><a routerLink="/concepts/sources">Next: Sources</a></h2>
-    </state-adapt-content>
+    </sa-content>
   `,
 })
 export class ConceptsOverviewComponent {

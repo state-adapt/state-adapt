@@ -6,7 +6,7 @@
       "projectType": "library",
       "root": "libs/adapter-docs",
       "sourceRoot": "libs/adapter-docs/src",
-      "prefix": "state-adapt",
+      "prefix": "sa",
       "architect": {
         "build": {
           "builder": "@nrwl/angular:package",
@@ -46,7 +46,7 @@
       "projectType": "library",
       "root": "libs/angular",
       "sourceRoot": "libs/angular/src",
-      "prefix": "state-adapt",
+      "prefix": "sa",
       "architect": {
         "build": {
           "builder": "@nrwl/angular:package",
@@ -129,7 +129,7 @@
       "projectType": "library",
       "root": "libs/core",
       "sourceRoot": "libs/core/src",
-      "prefix": "state-adapt",
+      "prefix": "sa",
       "architect": {
         "build": {
           "builder": "@nrwl/angular:package",
@@ -172,7 +172,7 @@
       "projectType": "library",
       "root": "libs/counter-ui",
       "sourceRoot": "libs/counter-ui/src",
-      "prefix": "state-adapt",
+      "prefix": "sa",
       "architect": {
         "lint": {
           "builder": "@nrwl/linter:eslint",
@@ -200,7 +200,7 @@
       "projectType": "library",
       "root": "libs/dashboards-feature",
       "sourceRoot": "libs/dashboards-feature/src",
-      "prefix": "state-adapt",
+      "prefix": "sa",
       "architect": {
         "lint": {
           "builder": "@nrwl/linter:eslint",
@@ -228,7 +228,7 @@
       "projectType": "application",
       "root": "apps/docs",
       "sourceRoot": "apps/docs/src",
-      "prefix": "state-adapt",
+      "prefix": "sa",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
@@ -355,7 +355,7 @@
       "projectType": "application",
       "root": "apps/ng-sa-component-store",
       "sourceRoot": "apps/ng-sa-component-store/src",
-      "prefix": "state-adapt",
+      "prefix": "sa",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
@@ -476,7 +476,7 @@
       "projectType": "application",
       "root": "apps/ng-sa-counter",
       "sourceRoot": "apps/ng-sa-counter/src",
-      "prefix": "state-adapt",
+      "prefix": "sa",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
@@ -567,7 +567,7 @@
       "projectType": "application",
       "root": "apps/ng-sa-ngrx-counter",
       "sourceRoot": "apps/ng-sa-ngrx-counter/src",
-      "prefix": "state-adapt",
+      "prefix": "sa",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
@@ -658,7 +658,7 @@
       "projectType": "application",
       "root": "apps/ng-sa-ngxs-counter",
       "sourceRoot": "apps/ng-sa-ngxs-counter/src",
-      "prefix": "state-adapt",
+      "prefix": "sa",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
@@ -749,7 +749,7 @@
       "projectType": "application",
       "root": "apps/ng-sa-shopping",
       "sourceRoot": "apps/ng-sa-shopping/src",
-      "prefix": "state-adapt",
+      "prefix": "sa",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
@@ -844,7 +844,7 @@
       "projectType": "library",
       "root": "libs/ngrx",
       "sourceRoot": "libs/ngrx/src",
-      "prefix": "state-adapt",
+      "prefix": "sa",
       "architect": {
         "build": {
           "builder": "@nrwl/angular:package",
@@ -881,7 +881,7 @@
       "projectType": "library",
       "root": "libs/ngxs",
       "sourceRoot": "libs/ngxs/src",
-      "prefix": "state-adapt",
+      "prefix": "sa",
       "architect": {
         "build": {
           "builder": "@nrwl/angular:package",
@@ -1052,7 +1052,7 @@
       "projectType": "library",
       "root": "libs/rxjs",
       "sourceRoot": "libs/rxjs/src",
-      "prefix": "state-adapt",
+      "prefix": "sa",
       "architect": {
         "build": {
           "builder": "@nrwl/angular:package",
@@ -1089,7 +1089,7 @@
       "projectType": "library",
       "root": "libs/shopping",
       "sourceRoot": "libs/shopping/src",
-      "prefix": "state-adapt",
+      "prefix": "sa",
       "architect": {
         "lint": {
           "builder": "@nrwl/linter:eslint",

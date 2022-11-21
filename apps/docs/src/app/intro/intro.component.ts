@@ -1,8 +1,13 @@
-import { AfterViewInit, Component, ViewChild, ViewContainerRef } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ViewChild,
+  ViewContainerRef,
+} from '@angular/core';
 import md from 'raw-loader!./intro.md';
 
 @Component({
-  selector: 'state-adapt-intro',
+  selector: 'sa-intro',
   templateUrl: `./intro.component.html`,
   styleUrls: ['./intro.component.scss'],
 })
@@ -19,7 +24,9 @@ export class IntroComponent implements AfterViewInit {
   }
 
   ngAfterViewInit() {
-    [...(document as any).querySelectorAll('video')].forEach(v => (v.playbackRate = 0.5));
+    [...(document as any).querySelectorAll('video')].forEach(
+      v => (v.playbackRate = 0.5),
+    );
   }
 
   MOARRR() {

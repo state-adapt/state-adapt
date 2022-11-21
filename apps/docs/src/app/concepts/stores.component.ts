@@ -6,14 +6,18 @@ import { ContentComponent } from '../content.component';
 
 @Component({
   standalone: true,
-  selector: 'state-adapt-stores',
+  selector: 'sa-stores',
   imports: [RouterModule, ContentComponent, MarkdownModule],
   template: `
-    <state-adapt-content>
+    <sa-content>
       <markdown [data]="md"></markdown>
-      <h2><a routerLink="/concepts/thinking-reactively">Next: Thinking Reactively</a></h2>
+      <h2>
+        <a routerLink="/concepts/thinking-reactively"
+          >Next: Thinking Reactively</a
+        >
+      </h2>
       <h2><a routerLink="/concepts/adapters">Previous: Adapters</a></h2>
-    </state-adapt-content>
+    </sa-content>
   `,
   styles: [
     `
