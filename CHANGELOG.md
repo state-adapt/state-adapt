@@ -1,3 +1,8 @@
+## 0.60.0
+
+- Feature: Add @state-adapt/angular-router library
+- Feature(angular-router): Add librarySaNavigateComponent
+
 ## 0.59.0 2022-11-09
 
 - Feature(core): Add function to memoize generic selectors
