@@ -9,14 +9,14 @@ import { countAdapter } from './count.adapter';
     <sa-counter
       (increment)="store1.increment($event)"
       (double)="store1.double()"
-      (resetCount)="store1.reset(0)"
+      (resetCount)="store1.reset()"
       [count]="store1.state$ | async"
     ></sa-counter>
 
     <sa-counter
       (increment)="store2.increment($event)"
       (double)="store2.double()"
-      (resetCount)="store2.reset(0)"
+      (resetCount)="store2.reset()"
       [count]="store2.state$ | async"
     ></sa-counter>
 
