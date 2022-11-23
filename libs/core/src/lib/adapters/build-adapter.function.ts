@@ -44,10 +44,7 @@ export type ReactionsFromAdapter<A extends Adapter<any, any, any>> = {
 };
 
 export function buildAdapter<State>() {
-  return <
-    S extends Selectors<State> = {},
-    R extends ReactionsWithSelectors<State, S> = {},
-  >(
+  return <S extends Selectors<State>, R extends ReactionsWithSelectors<State, S>>(
     reactionsWithSelectors: Adapter<State, S, R> = {} as Adapter<State, S, R>,
   ): NewBlockAdder<
     State,
