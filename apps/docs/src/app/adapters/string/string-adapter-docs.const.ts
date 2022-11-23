@@ -29,7 +29,7 @@ export const stringAdapterDocs: AdapterDocs = {
           'Returns previous state. Used to enable sources to dispatch for Redux Devtoos.',
       },
       set: {
-        demoPayload: 'Jerry',
+        demoPayload: '"Jerry"',
         documentation: 'Sets state to value passed in payload.',
       },
       reset: {
