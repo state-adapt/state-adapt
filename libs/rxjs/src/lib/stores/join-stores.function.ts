@@ -57,7 +57,7 @@ type JoinedSelectors<SE extends StoreEntries> = SelectorsOfState<EntriesState<SE
 export function joinStores<SE extends StoreEntries>(
   storeEntries: SE,
 ): NewBlockAdder<Flat<EntriesState<SE>>, JoinedSelectors<SE>, SE> {
-  // The initial selectors defined in `buildSelectors` are selecting against State.
+  // The initial selectors defined in `combineSelectors` are selecting against State.
   // Here, we are defining the initial selectors. The result includes
   // a selector for each piece of state. The developer only defines the 2nd+ selector group.
 

@@ -13,7 +13,6 @@ export * from './lib/selectors/selectors.interface';
 export * from './lib/selectors/any-selectors.interface';
 export * from './lib/selectors/memoize-selectors.function';
 export * from './lib/selectors/create-selectors.function';
-export * from './lib/selectors/build-selectors.function';
 export * from './lib/selectors/with-get-state.type';
 
 export * from './lib/adapters/reactions.interface';

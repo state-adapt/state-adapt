@@ -83,44 +83,6 @@ const numberStringAdapter = createAdapter<number>()({
 });
 ```
 
-## `buildSelectors`
-
-`buildSelectors` has been deprecated in favor of [`buildAdapter`](/concepts/adapters#buildadapter)
-
-[`createAdapter`](/concepts/adapters#createadapter) memoizes selectors passed into the `selectors` property, but it only does so shallowly. [`buildSelectors`](/concepts/adapters#buildselectors) provides full selector memoization and a default `state` selector (after the first call). It takes initial selectors in the first call, which receive a state object to select against, and it returns a function that can be called successively with more selectors, each selecting against the return values from all selectors previously passed in. To return all the selectors combined, call it a final time with no parameter:
-
-```typescript
-import { createSelectors, createAdapter } from '@state-adapt/core';
-
-const selectors = buildSelectors<string>()({
-  reverse: s => s.split('').reverse().join(''),
-})({
-  isPalendrome: s => s.reverse === s.state,
-})();
-
-const stringAdapter = createAdapter<string>()({ selectors });
-```
-
-Reuse selectors from anywhere:
-
-```typescript
-import { createAdapter, createSelectors } from '@state-adapt/core';
-import { numberAdapter } from './number.adapter';
-
-const selectors = buildSelectors<number>()(numberAdapter.selectors)({
-  negative: s => s.negative.toString(),
-})();
-
-const numberStringAdapter = createAdapter<number>()({
-  ...numberAdapter,
-  selectors,
-});
-```
-
-`s` is typed the same as the selectors object passed in as the first argument, except using the return type of each selector instead of the selector itself. Internally, [`buildSelectors`](/concepts/adapters#buildselectors) uses a `Proxy` to detect which selectors your new selector functions are accessing in order memoize them efficiently. You could think of `s` as referencing either the selectors object you passed in, or a derived state object created by calling those selectors for each object key. This dual reference is why the convention is to name it `s` instead of either `selectors` or `state`.
-
-[`buildSelectors`](/concepts/adapters#buildselectors) is another reason for naming selectors as nouns instead of verbs: Either it would need to do extra, unnecessary processing to add `'get'`s in the `Proxy` property accessor method to find the correct selectors, or developers would need to treat verbs as nouns in their selector functions, which would be awkward: `s => s.getNegative.toString()`.
-
 ## `buildAdapter`
 
 `buildAdapter` is called with an initial adapter, then can be called again and again with more objects inheriting from previous objects, until a final empty call `()` to get the final built adapter:
@@ -186,7 +148,7 @@ const getSelectIsPalendrome = (selectState: (state: string) => string) =>
   createSelector(
     selectState,
     getSelectReverse(selectState),
-    (state, reverse) => state === reverse
+    (state, reverse) => state === reverse,
   );
 
 // ...
@@ -209,7 +171,7 @@ const getIsPalendrome = ([state, reverse]: [string, string]) =>
 const reverse$ = specificState$.pipe(map(getReverse), distinctUntilChanged());
 const isPalendrome$ = combineLatest([specificState$, reverse$]).pipe(
   map(getIsPalendrome),
-  distinctUntilChanged()
+  distinctUntilChanged(),
 );
 ```
 
@@ -465,8 +427,8 @@ const numberAdapter = buildAdapter<number>()({
       add5: () => 5, // add5 is now a reaction that doesn't take a payload
       add10: () => 10, // add10 is now a reaction that doesn't take a payload
       add16: () => 15, // add15 is now a reaction that doesn't take a payload
-    }
-  )
+    },
+  ),
 )();
 ```
 
@@ -522,7 +484,7 @@ const apiDataAdapter = buildAdapter<WithData>()(dataAdapter)(([s, reactions]) =>
   mapPayloads(reactions, {
     receiveData: (data: ApiData) =>
       data.weirdly.nested.response.shape.with.data,
-  })
+  }),
 );
 ```
 
