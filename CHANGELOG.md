@@ -2,6 +2,7 @@
 
 - Feature: Add @state-adapt/angular-router library
 - Feature(angular-router): Add librarySaNavigateComponent
+- Bugfix(core): undefined is filtered from selections, so TS needed to reflect that.
 
 ## 0.59.0 2022-11-09
 
