@@ -84,8 +84,9 @@ export const docsAdapter = buildAdapter<AdapterDocsState>()({
   // State changes
 })(([selectors]) => ({
   receiveDocs: (state, docs: AdapterDocs) => ({ ...state, docs }),
-  selectStateChange: (state: AdapterDocsState, stateChangeName: string) => {
-    const selectionChanged = selectors.selectedStateChangeName(state) !== stateChangeName;
+  selectStateChange: (state: AdapterDocsState, stateChangeName: string, i, cache) => {
+    const selectionChanged =
+      selectors.selectedStateChangeName(state, cache) !== stateChangeName;
     return {
       ...state,
       selectedStateChange: stateChangeName,
@@ -122,10 +123,11 @@ export const docsAdapter = buildAdapter<AdapterDocsState>()({
     selectedSelector,
   }),
 }))(([, reactions]) => ({
-  selectStateChangeFromHistory: (state, index: number) =>
+  selectStateChangeFromHistory: (state, index: number, ...rest) =>
     reactions.selectStateChange(
       state,
       state.demoHistory.find((item, i) => i === index)?.inputs.stateChangeName || '',
+      ...rest,
     ),
 }))(([, reactions]) =>
   mapPayloads(

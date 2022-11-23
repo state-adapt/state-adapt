@@ -45,6 +45,7 @@ interface PathState {
   lastState: any;
   initialState: any;
   arr: string[];
+  selectorsCache: SelectorsCache;
 }
 
 interface PathStates {
@@ -317,12 +318,13 @@ export class AdaptCommon<CommonStore extends StoreMethods = any> {
       if (colllisionPath) {
         throw this.getPathCollisionError(path, colllisionPath);
       }
-      this.createSelectorsCache(path);
+      const selectorsCache = this.createSelectorsCache(path);
       this.commonStore.dispatch(createInit(path, initialState));
       this.pathStates[path] = {
         lastState: initialState,
         initialState,
         arr: pathAr,
+        selectorsCache,
       };
       return merge(...allUpdatesFromSources$, NEVER); // If sources all complete, keep state in the store
     }).pipe(
@@ -396,8 +398,8 @@ export class AdaptCommon<CommonStore extends StoreMethods = any> {
     if (pathState === undefined) {
       throw `Cannot apply update before store "${path}" is initialized.`;
     }
-    const { lastState, initialState, arr } = pathState;
-    const newState = reaction(lastState, payload, initialState);
+    const { lastState, initialState, arr, selectorsCache } = pathState;
+    const newState = reaction(lastState, payload, initialState, selectorsCache);
     pathState.lastState = newState;
     return [arr, newState];
   }
@@ -418,7 +420,7 @@ export class AdaptCommon<CommonStore extends StoreMethods = any> {
   }
 
   private createSelectorsCache(path: string) {
-    globalSelectorsCache.__children[path] = createSelectorsCache();
+    return (globalSelectorsCache.__children[path] = createSelectorsCache());
   }
 
   private destroySelectorsCache(path: string) {
