@@ -76,10 +76,10 @@ import { getId } from '@state-adapt/core';
                 [theme]="editorTheme"
                 [codeModel]="codeModel$ | async"
                 [options]="codeOptions"
-                (keypress)="editorKeyPressed$.next($event)"
+                (valueChanged)="payloadChanged$.next($event)"
               ></ngs-code-editor>
             </ng-container>
-            <!-- (valueChanged)="payloadChanged$.next($event)" -->
+            <!-- (keypress)="editorKeyPressed$.next($event)" -->
           </ibm-tab>
           <ibm-tab class="padded documentation" heading="Documentation">
             {{ (selectedStateChange$ | async)?.documentation }}
@@ -296,10 +296,12 @@ export class AdapterDocsComponent implements OnInit {
     toSource('stateChangePayloadDelay$'),
   );
   selectorSelection$ = new Source<DropdownSelectedEvent>('selectorSelection$');
-  editorKeyPressed$ = new Subject<KeyboardEvent>();
-  payloadChangedDebounced$ = this.editorKeyPressed$.pipe(
+  payloadChanged$ = new Subject<string>();
+  // editorKeyPressed$ = new Subject<KeyboardEvent>();
+  // payloadChangedDebounced$ = this.editorKeyPressed$.pipe(
+  payloadChangedDebounced$ = this.payloadChanged$.pipe(
     debounceTime(200),
-    map(event => (event.target as HTMLInputElement).value),
+    // map(event => (event.target as HTMLInputElement).value),
     toSource('editorKeyPressed$'),
   );
   executeClicked$ = new Subject<void>();

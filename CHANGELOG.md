@@ -9,6 +9,7 @@
 - Feature(core/adapters): Add base adapters for each type
 - Refactor(core)!: Remove inappropriate update state changes from joinAdapters
 - Refactor(core)!: Remove inappropriate update state change from createAdapter
+- Feature(core/adapters): Add createEntityAdapter
 
 ## 0.59.0 2022-11-09
 

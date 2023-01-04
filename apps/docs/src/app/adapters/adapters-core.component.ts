@@ -7,6 +7,7 @@ import { createAdapterDocs } from './create-adapter-docs.const';
 import { booleanAdapterDocs } from './boolean/boolean-adapter-docs.const';
 import { numberAdapterDocs } from './number/number-adapter-docs.const';
 import { stringAdapterDocs } from './string/string-adapter-docs.const';
+import { entityAdapterDocs } from './entity/entity-adapter-docs.const';
 // https://github.com/ngstack/code-editor/issues/628
 export { CodeEditorService } from '@ngstack/code-editor';
 export { EditorReadyService } from '@state-adapt/adapter-docs';
@@ -23,6 +24,7 @@ export { EditorReadyService } from '@state-adapt/adapter-docs';
       <sa-adapter-docs [adapterDocs]="booleanAdapterDocs"></sa-adapter-docs>
       <sa-adapter-docs [adapterDocs]="numberAdapterDocs"></sa-adapter-docs>
       <sa-adapter-docs [adapterDocs]="stringAdapterDocs"></sa-adapter-docs>
+      <sa-adapter-docs [adapterDocs]="entityAdapterDocs"></sa-adapter-docs>
     </sa-content>
   `,
   styleUrls: ['styles.scss'],
@@ -33,4 +35,5 @@ export class AdaptersCoreComponent {
   booleanAdapterDocs = booleanAdapterDocs;
   numberAdapterDocs = numberAdapterDocs;
   stringAdapterDocs = stringAdapterDocs;
+  entityAdapterDocs = entityAdapterDocs;
 }
