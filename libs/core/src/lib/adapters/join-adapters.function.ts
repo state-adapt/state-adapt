@@ -21,6 +21,11 @@ type NestedAdapter<
 > = {
   [K in Extract<keyof R, string> as K extends 'selectors' | 'noop'
     ? never
+    : // Shouldn't spread non-objects. Should probably take care of this in createAdapter, but that was difficult.
+    K extends 'update'
+    ? Parameters<R[keyof R]>[0] extends object
+      ? K
+      : never
     : PrefixedAfterVerb<K, Prefix>]: R[K] extends (
     state: any,
     payload: any,
@@ -86,10 +91,11 @@ export function joinAdapters<
     >
   > => {
     const joinedAdapters: any = createAdapter<ParentState>()({});
+    const ignoredKeys = ['noop', 'selectors'];
     for (const namespace in adapterEntries) {
       const adapter = adapterEntries[namespace];
       for (const reactionName in adapter) {
-        if (reactionName === 'selectors') continue;
+        if (ignoredKeys.includes(reactionName)) continue;
         const firstCapIdx = reactionName.match(/(?=[A-Z])/)?.index ?? reactionName.length;
         const verb = reactionName.substring(0, firstCapIdx);
         const rest = reactionName.substring(firstCapIdx);
