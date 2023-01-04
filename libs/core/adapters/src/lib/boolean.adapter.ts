@@ -5,3 +5,5 @@ export const booleanAdapter = createAdapter<boolean>()({
   setFalse: () => false,
   toggle: state => !state,
 });
+
+export const baseBooleanAdapter = createAdapter<boolean>()({ selectors: {} });

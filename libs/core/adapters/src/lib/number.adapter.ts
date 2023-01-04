@@ -12,3 +12,5 @@ export const numberAdapter = createAdapter<number>()({
   max: (n, n2: number) => Math.max(n, n2),
   min: (n, n2: number) => Math.min(n, n2),
 });
+
+export const baseNumberAdapter = createAdapter<number>()({ selectors: {} });

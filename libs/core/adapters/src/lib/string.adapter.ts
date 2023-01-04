@@ -9,3 +9,5 @@ export const stringAdapter = createAdapter<string>()({
     uppercase: str => str.toUpperCase(),
   },
 });
+
+export const baseStringAdapter = createAdapter<string>()({ selectors: {} });

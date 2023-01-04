@@ -6,6 +6,7 @@
 - Bugfix(core): Fix buildAdapter type inference
 - Refactor(core)!: Remove deprecated buildSelectors function
 - Feature(core): Pass selectorsCache into state reactions
+- Feature(core/adapters): Add base adapters for each type
 
 ## 0.59.0 2022-11-09
 
