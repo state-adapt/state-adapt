@@ -25,7 +25,7 @@ const filterExplanation = `Uses the optionAdapter.selectors.selected selector to
 const sorterExplanation = `Uses the optionAdapter.selectors.name selector to sort. Made available by passing 'name' to the sorters array in createEntityAdapter's options parameter.`;
 
 export const entityAdapterDocs: AdapterDocs = {
-  name: 'entityAdapter',
+  name: 'createEntityAdapter',
   description: 'Adapter for a list of entities',
   sourceCode:
     '// https://github.com/state-adapt/state-adapt/tree/main/libs/core/adapters/src/lib',
