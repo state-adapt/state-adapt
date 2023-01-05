@@ -10,7 +10,7 @@ import {
   createSelectorsCache,
   getMemoizedSelector,
 } from '@state-adapt/core';
-import { PrefixedAfterVerb } from 'libs/core/src/lib/utils/prefixed-after-verb.type';
+import { PrefixedAfterVerb } from '@state-adapt/core';
 
 type Index = number | string | symbol;
 

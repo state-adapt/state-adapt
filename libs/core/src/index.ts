@@ -3,6 +3,7 @@ export * from './lib/utils/patch.function';
 export * from './lib/utils/update-paths.function';
 export * from './lib/utils/flatten.function';
 export * from './lib/utils/flat.type';
+export * from './lib/utils/prefixed-after-verb.type';
 
 export * from './lib/actions/action.interface';
 export * from './lib/actions/prefixed-action.type';
