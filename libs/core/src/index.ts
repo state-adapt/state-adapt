@@ -16,6 +16,8 @@ export * from './lib/selectors/memoize-selectors.function';
 export * from './lib/selectors/create-selectors.function';
 export * from './lib/selectors/with-get-state.type';
 
+export * from './lib/adapters/create-update-reaction.function';
+export * from './lib/adapters/create-noop-reaction.function';
 export * from './lib/adapters/reactions.interface';
 export * from './lib/adapters/second-parameter-or-any.type';
 export * from './lib/adapters/second-parameter-or-void.type';

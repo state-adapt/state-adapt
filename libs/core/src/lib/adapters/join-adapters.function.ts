@@ -12,6 +12,10 @@ import {
   ReactionsWithoutSelectors,
 } from './build-adapter.function';
 import { BasicAdapterMethods, createAdapter } from './create-adapter.function';
+import {
+  createUpdateReaction,
+  WithUpdateReaction,
+} from './create-update-reaction.function';
 
 type NestedAdapter<
   ParentState extends Record<string, any>,
@@ -19,13 +23,8 @@ type NestedAdapter<
   Prefix extends Extract<keyof PartialParentState, string>,
   R extends ReactionsWithSelectors<ParentState[Prefix], any>,
 > = {
-  [K in Extract<keyof R, string> as K extends 'selectors' | 'noop'
+  [K in Extract<keyof R, string> as K extends 'selectors'
     ? never
-    : // Shouldn't spread non-objects. Should probably take care of this in createAdapter, but that was difficult.
-    K extends 'update'
-    ? Parameters<R[keyof R]>[0] extends object
-      ? K
-      : never
     : PrefixedAfterVerb<K, Prefix>]: R[K] extends (
     state: any,
     payload: any,
@@ -87,10 +86,13 @@ export function joinAdapters<
       : {},
     ReactionsWithoutSelectors<
       ParentState,
-      FlattendAdapters<AE, ParentState> & BasicAdapterMethods<ParentState>
+      FlattendAdapters<AE, ParentState> &
+        BasicAdapterMethods<ParentState> &
+        WithUpdateReaction<ParentState>
     >
   > => {
     const joinedAdapters: any = createAdapter<ParentState>()({});
+    joinedAdapters.update = createUpdateReaction();
     const ignoredKeys = ['noop', 'selectors'];
     for (const namespace in adapterEntries) {
       const adapter = adapterEntries[namespace];

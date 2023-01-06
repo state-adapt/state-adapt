@@ -54,12 +54,10 @@ const numberAdapter = createAdapter<number>()({
 
 Defining selectors is optional.
 
-Every adapter comes with 4 default state reactions:
+Every adapter comes with 2 default state reactions:
 
 - `set` replaces the old state with a new one
-- `update` replaces specific properties of the old state by spreading the object passed in
 - `reset` resets to the original state the adapter was initialized with
-- `noop` does nothing; it just allows sources to log in Redux Devtools
 
 Every adapter also comes with a default selector:
 
@@ -305,7 +303,24 @@ const numbersAdapter = joinAdapters<NumbersState>()({
 })();
 ```
 
-This will produce the same adapter as in the previous code snippet.
+This will produce the same adapter as in the previous code snippet, plus some extra things, like this:
+
+```tsx
+const numbersAdapter = buildAdapter<NumbersState>()({
+  setCoolNumber: (state, newCoolNumber: number) => ({
+    ...state,
+    coolNumber: newCoolNumber,
+  }),
+  setWeirdNumber: (state, newWeirdNumber: number) => ({
+    ...state,
+    weirdNumber: newWeirdNumber,
+  }),
+  update: (state, update: Partial<NumbersState>) => ({ ...state, ...update }),
+})({
+  coolNumber: s => s.state.coolNumber,
+  weirdNumber: s => s.state.weirdNumber,
+})();
+```
 
 [`joinAdapters`](/concepts/adapters#joinadapters) returns the same builder function as [`buildAdapter`](/concepts/adapters#buildadapter). So we can add our grouped reaction just like we did in the [`buildAdapter`](/concepts/adapters#buildadapter) example:
 
@@ -349,7 +364,7 @@ All state reactions have the namespace inserted after the first word. So we get 
 }
 ```
 
-This may change in the future to simple prefixing like selectors, depending on what we find as we use this on real-world problems. Here are some example state change names and what they'd end up as with `joinAdapters`:
+Here are some example state change names and what they'd end up as with `joinAdapters`:
 
 - `set` => `setFeature`
 - `setLoadingToTrue` => `setFeatureLoadingToTrue`
@@ -357,7 +372,9 @@ This may change in the future to simple prefixing like selectors, depending on w
 - `decrementPopulation` => `decrementFeaturePopulation`
 - `setTo5` => `setFeatureTo5`
 
-If you have a large state model and don't want to define an adapter for every property, [`joinAdapters`](/concepts/adapters#joinadapters) takes in a 2nd type argument for you to specify which properties to exclude:
+We also get an `update` function that allows passing a partial of `State` that will be spread onto state.
+
+Lastly, if you have a large state model and don't want to define an adapter for every property, [`joinAdapters`](/concepts/adapters#joinadapters) takes in a 2nd type argument for you to specify which properties to exclude:
 
 ```typescript
 import { joinAdapters } from '@state-adapt/core';

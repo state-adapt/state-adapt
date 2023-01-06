@@ -5,24 +5,15 @@ import { adapter } from './adapter-demo';
 
 export const createAdapterDocs: AdapterDocs = {
   name: 'createAdapter',
-  description: 'Base adapter with basic operations: noop, set, update and reset',
+  description: 'Base adapter with basic operations: set and reset',
   sourceCode: createDemoAdapterCode as unknown as string,
   parameters: [],
   demoAdapter: {
     value: adapter,
     stateChanges: {
-      noop: {
-        demoPayload: 'null',
-        documentation:
-          'Returns previous state. Used to enable sources to dispatch for Redux Devtoos.',
-      },
       set: {
         demoPayload: '{ "prop1": "New state set", "prop2": "New State set" }',
         documentation: 'Sets state to value passed in payload.',
-      },
-      update: {
-        demoPayload: '{ "prop2": "Updated state" }',
-        documentation: 'Spreads payload object onto existing state.',
       },
       reset: {
         demoPayload: 'null',

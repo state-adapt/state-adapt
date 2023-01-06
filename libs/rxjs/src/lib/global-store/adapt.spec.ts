@@ -63,6 +63,8 @@ const c2: (s: number) => string = numbersAdapter.selectors.bQuadruple;
 const c3: (s: number) => string = numbersAdapter.selectors.bOctuple;
 // @ts-expect-error Should return {a: number; b: number}
 const d: (s: number) => string = numbersAdapter.doubleB;
+// @ts-expect-error Should not exist for primitive child adapter
+const d2 = numbersAdapter.updateA;
 // @ts-expect-error Should return number
 const e: (s: number) => string = numbersAdapter.selectors.aDouble;
 // @ts-expect-error Should return {a: number; b: number}

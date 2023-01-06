@@ -33,20 +33,9 @@ export const entityAdapterDocs: AdapterDocs = {
   demoAdapter: {
     value: entityAdapter,
     stateChanges: {
-      noop: {
-        demoPayload: 'null',
-        documentation:
-          'Returns previous state. Used to enable sources to dispatch for Redux Devtoos.',
-      },
       set: {
         demoPayload: initialStateStr,
         documentation: 'Sets state to value passed in payload.',
-      },
-      update: {
-        demoPayload: `{
-            "extraProp": "extraProp"
-        }`,
-        documentation: 'Spreads value passed in payload onto state.',
       },
       reset: {
         demoPayload: 'null',

@@ -127,7 +127,7 @@ type EntityStateSelectors<
   ) => Entity[];
 };
 
-const ingoredKeys = ['selectors', 'noop', 'set'] as const;
+const ingoredKeys = ['selectors', 'set'] as const;
 
 export function createEntityAdapter<
   Entity,

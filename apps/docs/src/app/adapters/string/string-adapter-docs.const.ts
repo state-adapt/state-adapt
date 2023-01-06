@@ -11,6 +11,14 @@ export const stringAdapterDocs: AdapterDocs = {
   demoAdapter: {
     value: stringAdapter,
     stateChanges: {
+      set: {
+        demoPayload: '"100"',
+        documentation: 'Sets state to value passed in payload.',
+      },
+      reset: {
+        demoPayload: 'null',
+        documentation: 'Resets state to initial state.',
+      },
       concat: {
         demoPayload: '" Saget!"',
         documentation: 'Concatenates state with payload',
@@ -22,19 +30,6 @@ export const stringAdapterDocs: AdapterDocs = {
       uppercase: {
         demoPayload: 'null',
         documentation: 'Converts state to uppercase',
-      },
-      noop: {
-        demoPayload: 'null',
-        documentation:
-          'Returns previous state. Used to enable sources to dispatch for Redux Devtoos.',
-      },
-      set: {
-        demoPayload: '"Jerry"',
-        documentation: 'Sets state to value passed in payload.',
-      },
-      reset: {
-        demoPayload: 'null',
-        documentation: 'Resets state to initial state.',
       },
     },
     selectors: {

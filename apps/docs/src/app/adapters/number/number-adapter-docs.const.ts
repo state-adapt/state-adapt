@@ -11,6 +11,14 @@ export const numberAdapterDocs: AdapterDocs = {
   demoAdapter: {
     value: numberAdapter,
     stateChanges: {
+      set: {
+        demoPayload: '100',
+        documentation: 'Sets state to value passed in payload.',
+      },
+      reset: {
+        demoPayload: 'null',
+        documentation: 'Resets state to initial state.',
+      },
       increment: {
         demoPayload: 'null',
         documentation: 'Increments state by 1',
@@ -45,24 +53,13 @@ export const numberAdapterDocs: AdapterDocs = {
       },
       max: {
         demoPayload: '10',
-        documentation: 'Sets state to the maximum of the previous state and the payload',
+        documentation:
+          'Sets state to the maximum of the previous state and the payload',
       },
       min: {
         demoPayload: '-10',
-        documentation: 'Sets state to the minimum of the previous state and the payload',
-      },
-      noop: {
-        demoPayload: 'null',
         documentation:
-          'Returns previous state. Used to enable sources to dispatch for Redux Devtoos.',
-      },
-      set: {
-        demoPayload: '100',
-        documentation: 'Sets state to value passed in payload.',
-      },
-      reset: {
-        demoPayload: 'null',
-        documentation: 'Resets state to initial state.',
+          'Sets state to the minimum of the previous state and the payload',
       },
     },
     selectors: {},

@@ -23,11 +23,6 @@ export const booleanAdapterDocs: AdapterDocs = {
         demoPayload: 'null',
         documentation: 'Set state to false.',
       },
-      noop: {
-        demoPayload: 'null',
-        documentation:
-          'Returns previous state. Used to enable sources to dispatch for Redux Devtoos.',
-      },
       set: {
         demoPayload: 'false',
         documentation: 'Sets state to value passed in payload.',

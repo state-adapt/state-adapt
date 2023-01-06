@@ -1,6 +1,7 @@
 ## 0.61.0
 
 - Feature(core/adapters): Detect default Id type in EntityState
+- Refactor(core)!: Move noop and update reactions out of createAdapter
 
 ## 0.60.0
 

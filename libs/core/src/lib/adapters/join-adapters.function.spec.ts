@@ -49,10 +49,14 @@ const parentState: ParentState = {
   extraProp: ['extraProp'],
 };
 
-const aAdapter = createAdapter<AState>()({
+const aAdapter = joinAdapters<AState>()({
+  prop1: createAdapter<number>()({}),
+  prop2: createAdapter<string>()({}),
+})({
+  oneAndTwo: s => s.prop1.toString() + s.prop2,
+})(() => ({
   setProp2FromAr: (state, newProp2Ar: string[]) => ({ ...state, prop2: newProp2Ar[0] }),
-  selectors: { oneAndTwo: state => state.prop1.toString() + state.prop2 },
-});
+}))();
 const bAdapter = createAdapter<BState>()({
   setProp3: (state, newProp3Ar: string[]) => ({ ...state, prop3: newProp3Ar }),
 });
@@ -115,6 +119,14 @@ describe('mergeAdapters', () => {
   it('should set child state, with mapped payload', () => {
     const newState = joinedAdapters.setA(parentState, 10, parentState);
     expect(newState).toEqual({ ...parentState, a: { prop1: 10, prop2: '20' } });
+  });
+  it('should update child object state', () => {
+    const newState = joinedAdapters.updateA(parentState, { prop2: '3' }, parentState);
+    expect(newState).toEqual({ ...parentState, a: { prop1: 1, prop2: '3' } });
+    const checkTypes = () => {
+      // @ts-expect-error
+      joinedAdapters.updateB(parentState, { prop3: ['4'] }, parentState);
+    };
   });
   it('should change multiple sub-states', () => {
     const newState = joinedAdapters.changeABAndExtraProp(

@@ -1,4 +1,4 @@
-import type { Action } from '@state-adapt/core';
+import { Action, createNoopReaction, createUpdateReaction } from '@state-adapt/core';
 import {
   Adapter,
   BasicAdapterMethods,
@@ -17,6 +17,8 @@ import {
   getMemoizedSelector,
   globalSelectorsCache,
   SelectorsCache,
+  WithUpdateReaction,
+  WithNoopReaction,
 } from '@state-adapt/core';
 import { defer, merge, NEVER, Observable, of, using } from 'rxjs';
 import { distinctUntilChanged, filter, finalize, share, tap } from 'rxjs/operators';
@@ -61,7 +63,15 @@ interface UpdaterStream {
   }[];
 }
 
-export class AdaptCommon<CommonStore extends StoreMethods = any> {
+type InitializedReactions<
+  State,
+  S extends Selectors<State> = {},
+  R extends ReactionsWithSelectors<State, S> = {},
+> = R &
+  BasicAdapterMethods<State> &
+  (State extends object ? WithUpdateReaction<State> : {}) &
+  WithNoopReaction<State>;
+
   private pathStates: PathStates = {};
   private updaterStreams: UpdaterStream[] = [];
 
@@ -85,14 +95,14 @@ export class AdaptCommon<CommonStore extends StoreMethods = any> {
     path: string,
     initialState: State,
   ): SmartStore<State, WithGetState<State>> &
-    SyntheticSources<BasicAdapterMethods<State>>;
+    SyntheticSources<InitializedReactions<State>>;
 
   // init([path, initialState], adapter)
   init<State, S extends Selectors<State>, R extends ReactionsWithSelectors<State, S>>(
     [path, initialState]: [string, State],
     adapter: R & { selectors?: S },
   ): SmartStore<State, S & WithGetState<State>> &
-    SyntheticSources<R & BasicAdapterMethods<State>>;
+    SyntheticSources<InitializedReactions<State, S, R>>;
 
   // init([path, initialState], sources);
   init<State, S extends Selectors<State>, R extends ReactionsWithSelectors<State, S>>(
@@ -102,7 +112,7 @@ export class AdaptCommon<CommonStore extends StoreMethods = any> {
       | Observable<Action<State>>
       | Observable<Action<State>>[],
   ): SmartStore<State, S & WithGetState<State>> &
-    SyntheticSources<R & BasicAdapterMethods<State>>;
+    SyntheticSources<InitializedReactions<State, S, R>>;
 
   // init([path, initialState, adapter], sources);
   init<State, S extends Selectors<State>, R extends ReactionsWithSelectors<State, S>>(
@@ -112,7 +122,7 @@ export class AdaptCommon<CommonStore extends StoreMethods = any> {
       | Observable<Action<State>>
       | Observable<Action<State>>[],
   ): SmartStore<State, S & WithGetState<State>> &
-    SyntheticSources<R & BasicAdapterMethods<State>>;
+    SyntheticSources<InitializedReactions<State, S, R>>;
 
   // 1. init(path, initialState)
   // 2. init([path, initialState], sources)
@@ -175,6 +185,15 @@ export class AdaptCommon<CommonStore extends StoreMethods = any> {
     adapter = adapter
       ? createAdapter<State>()(adapter as R & { selectors?: S })
       : createAdapter<State>()({});
+    (adapter as any).noop = createNoopReaction();
+    if (
+      !(adapter as any).update &&
+      typeof initialState === 'object' &&
+      !Array.isArray(initialState) &&
+      initialState !== null
+    ) {
+      (adapter as any).update = createUpdateReaction();
+    }
     const sourcesDefined = sources || ({} as any);
     sources = isSource(sourcesDefined) // Single source or array
       ? { set: sourcesDefined }
