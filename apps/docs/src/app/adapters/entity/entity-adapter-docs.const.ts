@@ -98,7 +98,7 @@ export const entityAdapterDocs: AdapterDocs = {
       },
       updateSelected: {
         demoPayload: `{"name": "Johnny"}`,
-        documentation: `Extended update state change from optionAdapter. The payload is the value to pass into optionAdapter's update function for each selected entity. Uses the optionAdapter.selectors.selected selector to determine which entities are selected. Made available by passing 'selected' to the filters array in createEntityAdapter\'s options parameter.`,
+        documentation: `Extended update state change from optionAdapter. The payload is the value to pass into optionAdapter's update function for each selected entity. ${filterExplanation}`,
       },
       resetOne: {
         demoPayload: `"1"`,
@@ -114,7 +114,7 @@ export const entityAdapterDocs: AdapterDocs = {
       },
       resetSelected: {
         demoPayload: 'null',
-        documentation: `Extended reset state change from optionAdapter. Resets all selected entities in state. Uses the optionAdapter.selectors.selected selector to determine which entities are selected. Made available by passing 'selected' to the filters array in createEntityAdapter\'s options parameter.`,
+        documentation: `Extended reset state change from optionAdapter. Resets all selected entities in state. ${filterExplanation}`,
       },
       setOneName: {
         demoPayload: `["1", "Johnny"]`,
