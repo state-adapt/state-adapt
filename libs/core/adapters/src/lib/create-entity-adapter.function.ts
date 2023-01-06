@@ -6,9 +6,9 @@ import {
   buildAdapter,
   SelectorsCache,
   BasicAdapterMethods,
-  FlatAnyKey,
   createSelectorsCache,
   getMemoizedSelector,
+  Flat,
 } from '@state-adapt/core';
 import { PrefixedAfterVerb } from '@state-adapt/core';
 
@@ -48,61 +48,65 @@ type EntityStateReactions<
   State extends EntityState<Entity, Id>,
   R extends ReactionsWithSelectors<Entity, any>,
   Filters extends string[],
-> = {
-  addOne: (state: State, payload: Entity) => State;
-  addMany: (state: State, payload: Entity[]) => State;
-  setOne: (state: State, payload: Entity) => State;
-  setMany: (state: State, payload: Entity[]) => State;
-  setAll: (state: State, payload: Entity[]) => State;
-  removeOne: (state: State, payload: Id) => State;
-  removeMany: (state: State, payload: Id[]) => State;
-  removeAll: (state: State) => State;
-  updateOne: (state: State, payload: { id: Id; changes: Partial<Entity> }) => State;
-  upsertOne: (state: State, payload: Entity) => State;
-  upsertMany: (state: State, payload: Entity[]) => State;
-} & BasicAdapterMethods<State> & {
-    // }; //     : never; //     ? (state: State, payload: Payload, initialState: State) => State //   ) => any //     initialState: any, //     payload: any, //     state: any, //     : PrefixedAfterVerb<K, Prefix>]: R[K] extends ( //     ? never //   [K in Extract<keyof R, string> as K extends IgnoredKeys // > = { //   Payload, //   IgnoredKeys extends string, //   Prefix extends string, //   R extends ReactionsWithSelectors<any, any>, //   State extends EntityState<any, any>, // type EntityReaction< // This repo has a workaround, but it's currently returning a 500 error: https://gcanti.github.io/fp-ts/ // This is called 'higher-kinded types' https://github.com/microsoft/TypeScript/issues/44875 // `Payload` would need to take R[K] as a generic
-    [K in Extract<keyof R, string> as K extends typeof ingoredKeys[number]
-      ? never
-      : PrefixedAfterVerb<
-          Exclude<K, 'set' | 'reset'>,
-          Filters[number] | 'all'
-        >]: R[K] extends (state: any, payload: any, initialState: any) => any
-      ? (
-          state: State,
-          payload: Parameters<R[K]>[1] extends void ? void : Parameters<R[K]>[1],
-          initialState: State,
-        ) => State
-      : never;
-  } & {
-    [K in Extract<keyof R, string> as K extends typeof ingoredKeys[number]
-      ? never
-      : PrefixedAfterVerb<K, 'one'>]: R[K] extends (
-      state: any,
-      payload: any,
-      initialState: any,
-    ) => any
-      ? (
-          state: State,
-          payload: Parameters<R[K]>[1] extends void ? Id : [Id, Parameters<R[K]>[1]],
-          initialState: State,
-        ) => State
-      : never;
-  } & {
-    [K in Extract<keyof R, string> as K extends typeof ingoredKeys[number]
-      ? never
-      : PrefixedAfterVerb<K, 'many'>]: R[K] extends (
-      state: any,
-      payload: any,
-      initialState: any,
-    ) => any
-      ? (
-          state: State,
-          payload: Parameters<R[K]>[1] extends void ? Id[] : [Id, Parameters<R[K]>[1]][],
-          initialState: State,
-        ) => State
-      : never;
-  };
+> = Flat<
+  {
+    addOne: (state: State, payload: Entity) => State;
+    addMany: (state: State, payload: Entity[]) => State;
+    setOne: (state: State, payload: Entity) => State;
+    setMany: (state: State, payload: Entity[]) => State;
+    setAll: (state: State, payload: Entity[]) => State;
+    removeOne: (state: State, payload: Id) => State;
+    removeMany: (state: State, payload: Id[]) => State;
+    removeAll: (state: State) => State;
+    updateOne: (state: State, payload: { id: Id; changes: Partial<Entity> }) => State;
+    upsertOne: (state: State, payload: Entity) => State;
+    upsertMany: (state: State, payload: Entity[]) => State;
+  } & BasicAdapterMethods<State> & {
+      // }; //     : never; //     ? (state: State, payload: Payload, initialState: State) => State //   ) => any //     initialState: any, //     payload: any, //     state: any, //     : PrefixedAfterVerb<K, Prefix>]: R[K] extends ( //     ? never //   [K in Extract<keyof R, string> as K extends IgnoredKeys // > = { //   Payload, //   IgnoredKeys extends string, //   Prefix extends string, //   R extends ReactionsWithSelectors<any, any>, //   State extends EntityState<any, any>, // type EntityReaction< // This repo has a workaround, but it's currently returning a 500 error: https://gcanti.github.io/fp-ts/ // This is called 'higher-kinded types' https://github.com/microsoft/TypeScript/issues/44875 // `Payload` would need to take R[K] as a generic
+      [K in Extract<keyof R, string> as K extends typeof ingoredKeys[number]
+        ? never
+        : PrefixedAfterVerb<
+            Exclude<K, 'set' | 'reset'>,
+            Filters[number] | 'all'
+          >]: R[K] extends (state: any, payload: any, initialState: any) => any
+        ? (
+            state: State,
+            payload: Parameters<R[K]>[1] extends void ? void : Parameters<R[K]>[1],
+            initialState: State,
+          ) => State
+        : never;
+    } & {
+      [K in Extract<keyof R, string> as K extends typeof ingoredKeys[number]
+        ? never
+        : PrefixedAfterVerb<K, 'one'>]: R[K] extends (
+        state: any,
+        payload: any,
+        initialState: any,
+      ) => any
+        ? (
+            state: State,
+            payload: Parameters<R[K]>[1] extends void ? Id : [Id, Parameters<R[K]>[1]],
+            initialState: State,
+          ) => State
+        : never;
+    } & {
+      [K in Extract<keyof R, string> as K extends typeof ingoredKeys[number]
+        ? never
+        : PrefixedAfterVerb<K, 'many'>]: R[K] extends (
+        state: any,
+        payload: any,
+        initialState: any,
+      ) => any
+        ? (
+            state: State,
+            payload: Parameters<R[K]>[1] extends void
+              ? Id[]
+              : [Id, Parameters<R[K]>[1]][],
+            initialState: State,
+          ) => State
+        : never;
+    }
+>;
 
 type EntityStateSelectors<
   Entity,
@@ -146,11 +150,9 @@ export function createEntityAdapter<
       sorters?: Sorters;
       useCache?: boolean;
     },
-  ): FlatAnyKey<
-    EntityStateReactions<Entity, Id, State, R, Filters> & {
-      selectors: EntityStateSelectors<Entity, Id, State, Filters, Sorters>;
-    }
-  > => {
+  ): EntityStateReactions<Entity, Id, State, R, Filters> & {
+    selectors: EntityStateSelectors<Entity, Id, State, Filters, Sorters>;
+  } => {
     const fullAdapter = createAdapter<Entity>()(adapter);
     const entitySelectors = fullAdapter.selectors as S & { id: (entity: Entity) => Id };
     entitySelectors.id =
