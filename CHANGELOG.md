@@ -2,6 +2,7 @@
 
 - Feature(core/adapters): Detect default Id type in EntityState
 - Refactor(core)!: Move noop and update reactions out of createAdapter
+- Refactor(core)!: Rename AdaptCommon class to Adapt
 
 ## 0.60.0
 

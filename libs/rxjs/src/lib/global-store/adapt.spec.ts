@@ -75,7 +75,7 @@ const g: (s: number) => string = numbersAdapter.doubleA;
 const interval7$ = interval(7000).pipe(toSource('interval7$'));
 const interval3$ = interval(3000).pipe(toSource('interval3$'));
 
-describe('AdaptCommon', () => {
+describe('Adapt', () => {
   const initialState = { a: 5, b: 5 };
   const store = adapt.init(['numberA', initialState, numbersAdapter], {
     // doubleA: interval7$,

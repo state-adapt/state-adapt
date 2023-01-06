@@ -1,6 +1,6 @@
-import { AdaptCommon, createStore } from '@state-adapt/rxjs';
+import { Adapt, createStore } from '@state-adapt/rxjs';
 
 // Angular provider
 export function provideStore(enableReduxDevTools: any) {
-  return { provide: AdaptCommon, useValue: createStore(enableReduxDevTools) };
+  return { provide: Adapt, useValue: createStore(enableReduxDevTools) };
 }

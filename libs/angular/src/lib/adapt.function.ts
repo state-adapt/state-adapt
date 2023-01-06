@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
-import { AdaptCommon } from '@state-adapt/rxjs';
+import { Adapt } from '@state-adapt/rxjs';
 
-export const adapt: AdaptCommon['init'] = <T extends any[]>(...args: T) => {
-  const adaptDep = inject(AdaptCommon);
+export const adapt: Adapt['init'] = <T extends any[]>(...args: T) => {
+  const adaptDep = inject(Adapt);
   return (adaptDep.init as any)(...args);
 };

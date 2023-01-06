@@ -72,6 +72,7 @@ type InitializedReactions<
   (State extends object ? WithUpdateReaction<State> : {}) &
   WithNoopReaction<State>;
 
+export class Adapt<CommonStore extends StoreMethods = any> {
   private pathStates: PathStates = {};
   private updaterStreams: UpdaterStream[] = [];
 

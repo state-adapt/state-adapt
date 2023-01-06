@@ -24,9 +24,9 @@ Stores do 4 things:
 
 ## `init`
 
-`init` is a method on `AdaptCommon` that creates stores. There are 4 ways to use it:
+`init` is a method on `Adapt` that creates stores. There are 4 ways to use it:
 
-![AdaptCommon['init'] Overloads](../assets/adapt-method-jsdoc.png)
+![Adapt['init'] Overloads](../assets/adapt-method-jsdoc.png)
 
 The `sources` parameter needs explaining. When it is an object, it maps relationships between state changes and the sources that should trigger them. This object is equivalent to a reducer in _Redux_ or _NgRx_. The property names of the object are the adapter's state change function names. The right-hand side of the object specifies one or more sources that should trigger the state change specified in the property name. To specify multiple sources, pass them in an array, like
 
@@ -41,10 +41,10 @@ The `sources` parameter needs explaining. When it is an object, it maps relation
 This is the default way to use [`init`](/concepts/stores#init) from `'@state-adapt/rxjs'`:
 
 ```typescript
-import { AdaptCommon } from '@state-adapt/rxjs';
+import { Adapt } from '@state-adapt/rxjs';
 // ...
   numberStore = this.adapt.init('number', 0);
-  constructor(private adapt: AdaptCommon) {}
+  constructor(private adapt: Adapt) {}
 // ...
 ```
 
@@ -104,7 +104,7 @@ Each selector's observable chains off of all the sources passed into the store. 
 
 ## `watch`
 
-[`watch`](/concepts/stores#watch) is a method on `AdaptCommon` that returns a store that does not chain off of sources. It takes 2 arguments: The [path](/concepts/stores#state-paths) of the state you are interested in, and the adapter containing the selectors you want to use:
+[`watch`](/concepts/stores#watch) is a method on `Adapt` that returns a store that does not chain off of sources. It takes 2 arguments: The [path](/concepts/stores#state-paths) of the state you are interested in, and the adapter containing the selectors you want to use:
 
 ```typescript
 import { watch } from '@state-adapt/angular';
@@ -127,7 +127,7 @@ dataReceived$ = this.dataStore.dataNeeded$.pipe(
   // Error: Property 'dataStore' is used before its initialization.
   filter(needed => needed),
   switchMap(() => this.dataService.fetchData()),
-  toSource('dataReceived$')
+  toSource('dataReceived$'),
 );
 
 dataStore = adapt(['data', initialState, dataAdapter], {
@@ -147,7 +147,7 @@ dataNeeded$ = watch('data', dataAdapter).dataNeeded$;
 dataReceived$ = this.dataNeeded$.pipe(
   filter(needed => needed),
   switchMap(() => this.dataService.fetchData()),
-  toSource('dataReceived$')
+  toSource('dataReceived$'),
 );
 
 dataStore = adapt(['data', initialState, dataAdapter], {
@@ -174,7 +174,7 @@ number2$ = adapt(['number2', 4000, numberAdapter], {
 }).state$;
 
 total$ = combineLatest([this.number1$, this.number2$]).pipe(
-  map((n1, n2) => n1 + n2)
+  map((n1, n2) => n1 + n2),
 );
 ```
 

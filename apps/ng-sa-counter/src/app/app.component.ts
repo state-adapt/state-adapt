@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { AdaptCommon, Source, toSource } from '@state-adapt/rxjs';
+import { Adapt, Source, toSource } from '@state-adapt/rxjs';
 import { interval } from 'rxjs';
 import { countAdapter } from './count.adapter';
 
@@ -81,7 +81,7 @@ export class AppComponent {
     reset: this.resetBoth$,
   });
 
-  constructor(private adapt: AdaptCommon) {}
+  constructor(private adapt: Adapt) {}
 
   doUnreasonableThings() {
     // Should be TS errors
