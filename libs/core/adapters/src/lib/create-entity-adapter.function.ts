@@ -14,7 +14,10 @@ import { PrefixedAfterVerb } from '@state-adapt/core';
 
 type Index = number | string | symbol;
 
-export interface EntityState<Entity, Id extends Index = string> {
+export interface EntityState<
+  Entity,
+  Id extends Index = Entity extends { id: Index } ? Entity['id'] : never,
+> {
   ids: Id[];
   entities: Record<Id, Entity>;
 }

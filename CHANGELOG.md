@@ -1,3 +1,7 @@
+## 0.61.0
+
+- Feature(core/adapters): Detect default Id type in EntityState
+
 ## 0.60.0
 
 - Feature: Add @state-adapt/angular-router library
