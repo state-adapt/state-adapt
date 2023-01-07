@@ -18,7 +18,7 @@ import { QuantityChange } from './quantity-change.interface';
   `,
   styles: [
     `
-      state-adapt-product {
+      sa-product {
         display: block;
         position: relative;
       }

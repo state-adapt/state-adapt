@@ -20,7 +20,7 @@ import { QuantityChange } from './quantity-change.interface';
         gap: 30px;
         padding: 14px;
       }
-      state-adapt-product {
+      sa-product {
         display: flex;
         width: 200px;
       }

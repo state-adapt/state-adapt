@@ -5,10 +5,10 @@ import { Component } from '@angular/core';
   template: `
     <main>
       <div id="products-container">
-        <ng-content select="state-adapt-product-filters"></ng-content>
-        <ng-content select="state-adapt-products"></ng-content>
+        <ng-content select="sa-product-filters"></ng-content>
+        <ng-content select="sa-products"></ng-content>
       </div>
-      <div id="cart"><ng-content select="state-adapt-cart"></ng-content></div>
+      <div id="cart"><ng-content select="sa-cart"></ng-content></div>
     </main>
   `,
   styles: [
