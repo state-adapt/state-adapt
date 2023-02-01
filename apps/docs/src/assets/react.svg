@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-11.5 -10.23174 23 20.46348">
+  <style>
+  .r-st0 {
+    fill: #61dafb;
+  }
+  .r-st1 {
+    stroke: #61dafb;
+  }
+  </style>
+  <title>React Logo</title>
+  <circle cx="0" cy="0" r="2.05" class="r-st0"/>
+  <g class="r-st1" stroke-width="1" fill="none">
+    <ellipse rx="11" ry="4.2"/>
+    <ellipse rx="11" ry="4.2" transform="rotate(60)"/>
+    <ellipse rx="11" ry="4.2" transform="rotate(120)"/>
+  </g>
+</svg>
