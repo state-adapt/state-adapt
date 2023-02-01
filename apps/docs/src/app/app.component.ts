@@ -22,6 +22,7 @@ export class AppComponent {
   awakeIcon = this.sanitizer.bypassSecurityTrustHtml(awakeIcon);
   fadeIcon = this.sanitizer.bypassSecurityTrustHtml(fadeIcon);
   setColorScheme = ((window as any).setColorScheme = setColorScheme);
+  getColorScheme = ((window as any).getColorScheme = getColorScheme);
 
   urlChange$ = new Subject<string>();
   links$ = merge(

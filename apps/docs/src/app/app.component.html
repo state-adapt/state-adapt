@@ -1,26 +1,3 @@
-<ibm-header name="StateAdapt" [brand]="brandTemplate">
-  <ibm-hamburger (click)="sidenavExpanded = !sidenavExpanded"></ibm-hamburger>
-  <ibm-header-global>
-    <button
-      [iconOnly]="true"
-      ibmButton="secondary"
-      [innerHTML]="awakeIcon"
-      (click)="setColorScheme('light')"
-    ></button>
-    <button
-      [iconOnly]="true"
-      ibmButton="secondary"
-      [innerHTML]="fadeIcon"
-      (click)="setColorScheme('reset')"
-    ></button>
-    <button
-      [iconOnly]="true"
-      ibmButton="secondary"
-      [innerHTML]="asleepIcon"
-      (click)="setColorScheme('dark')"
-    ></button>
-  </ibm-header-global>
-</ibm-header>
 <ng-template #brandTemplate>
   <a routerLink="/" class="brand" style="text-decoration: none">
     <img src="../assets/sa3-3.svg" />
@@ -28,6 +5,32 @@
     <span class="logo-adapt">Adapt</span>
   </a>
 </ng-template>
+<ibm-header name="StateAdapt" [brand]="brandTemplate">
+  <ibm-hamburger (click)="sidenavExpanded = !sidenavExpanded"></ibm-hamburger>
+  <ibm-header-global>
+    <button
+      *ngIf="getColorScheme().includes('light')"
+      [iconOnly]="true"
+      ibmButton="secondary"
+      [innerHTML]="awakeIcon"
+      (click)="setColorScheme('dark')"
+    ></button>
+    <button
+      *ngIf="getColorScheme().includes('reset')"
+      [iconOnly]="true"
+      ibmButton="secondary"
+      [innerHTML]="fadeIcon"
+      (click)="setColorScheme('light')"
+    ></button>
+    <button
+      *ngIf="getColorScheme().includes('dark')"
+      [iconOnly]="true"
+      ibmButton="secondary"
+      [innerHTML]="asleepIcon"
+      (click)="setColorScheme('reset')"
+    ></button>
+  </ibm-header-global>
+</ibm-header>
 <ibm-sidenav [expanded]="sidenavExpanded">
   <ng-container *ngFor="let link of links$ | async; trackBy: trackByRoute">
     <ibm-sidenav-item
