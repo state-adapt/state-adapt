@@ -8,6 +8,15 @@
 <ibm-header name="StateAdapt" [brand]="brandTemplate">
   <ibm-hamburger (click)="sidenavExpanded = !sidenavExpanded"></ibm-hamburger>
   <ibm-header-global>
+    <a
+      href="https://github.com/state-adapt/state-adapt"
+      style="margin-top: -2px"
+      ><button
+        [iconOnly]="true"
+        ibmButton="secondary"
+        [innerHTML]="githubIcon"
+      ></button>
+    </a>
     <button
       *ngIf="getColorScheme().includes('light')"
       [iconOnly]="true"

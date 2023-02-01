@@ -7,7 +7,7 @@ import { setColorScheme } from './set-color-scheme.function';
 import asleepIcon from 'raw-loader!../assets/asleep.svg';
 import awakeIcon from 'raw-loader!../assets/awake.svg';
 import fadeIcon from 'raw-loader!../assets/fade.svg';
-import { DomSanitizer } from '@angular/platform-browser';
+import githubIcon from 'raw-loader!../assets/github.svg';
 
 @Component({
   selector: 'sa-root',
@@ -17,6 +17,8 @@ import { DomSanitizer } from '@angular/platform-browser';
 export class AppComponent {
   mobile = window.innerWidth < 800;
   sidenavExpanded = window.innerWidth > 800;
+
+  githubIcon = this.sanitizer.bypassSecurityTrustHtml(githubIcon);
 
   asleepIcon = this.sanitizer.bypassSecurityTrustHtml(asleepIcon);
   awakeIcon = this.sanitizer.bypassSecurityTrustHtml(awakeIcon);
