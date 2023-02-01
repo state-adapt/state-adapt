@@ -252,7 +252,8 @@
               "node_modules/prismjs/plugins/diff-highlight/prism-diff-highlight.min.js",
               "node_modules/prismjs/components/prism-jsx.min.js",
               "node_modules/prismjs/components/prism-tsx.min.js",
-              "node_modules/prismjs/components/prism-json.min.js"
+              "node_modules/prismjs/components/prism-json.min.js",
+              "node_modules/prism-svelte/index.js"
             ]
           },
           "configurations": {
