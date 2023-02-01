@@ -24,7 +24,8 @@
             "prefix": "sa",
             "style": "kebab-case"
           }
-        ]
+        ],
+        "@typescript-eslint/member-ordering": "off"
       }
     },
     {
