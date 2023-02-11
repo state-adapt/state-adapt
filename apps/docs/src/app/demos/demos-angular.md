@@ -2,9 +2,11 @@
 
 ## StackBlitz
 
-[Progressive Colors](https://stackblitz.com/edit/angular-ivy-cwnz5p?file=src%2Fapp%2F7-multi-store-selectors.component.ts)
+[Basic Setup](https://stackblitz.com/edit/state-adapt-angular?file=src%2Fapp%2Fapp.module.ts)
 
 [Progressive Name](https://stackblitz.com/edit/angular-ivy-jwt8jh?file=src%2Fapp%2F7-multi-store-selectors.component.ts)
+
+[Progressive Colors](https://stackblitz.com/edit/angular-ivy-cwnz5p?file=src%2Fapp%2F7-multi-store-selectors.component.ts)
 
 [Reactive Forms with NgRx](https://stackblitz.com/edit/angular-reactive-forms-state-management?file=src%2Fapp%2Fform%2Fstate-adapt-form.component.ts)
 

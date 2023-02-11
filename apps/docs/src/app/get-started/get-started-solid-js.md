@@ -10,7 +10,7 @@ SolidJS doesn't currently have a dedicated library from StateAdapt, but it will.
 
 ## Setup
 
-[StackBlitz demo](https://stackblitz.com/edit/vitejs-vite-szsd3d?file=src%2Fadapt.function.ts,src%2Flib%2FCounter.solid-js&terminal=dev)
+[StackBlitz demo](https://stackblitz.com/edit/solidjs-templates-oc7ivf?file=src%2Fadapt.function.ts)
 
 First, `npm install`:
 
