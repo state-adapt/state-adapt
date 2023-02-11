@@ -180,17 +180,20 @@
   }
 
   .framework-container {
+    display: flex;
+    justify-content: center;
+    width: 80px; // If add Vue.js, keep this at 80px
     &:hover {
       transform: scale(1.02);
     }
     &.active {
-      border-bottom: 2px solid var(--link-01);
+      border-bottom: 5px solid var(--link-01);
     }
   }
 
   a {
     svg {
-      min-width: 60px;
+      width: 60px;
     }
   }
 }

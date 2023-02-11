@@ -11,6 +11,6 @@ export function setUpScrollColors(component: any) {
       clearTimeout(component.monoTimeout);
     }
     set(true);
-    component.monoTimeout = setTimeout(() => set(false), 300);
+    component.monoTimeout = setTimeout(() => set(false), 200);
   });
 }

@@ -26,7 +26,7 @@ export type BasicAdapterMethods<State> = {
   const numberAdapter = createAdapter<number>()({});
   ```
 
-  #### Example: small initial adapter object
+  #### Example: Small initial adapter object
 
   ```typescript
   import { createAdapter } from '@state-adapt/core';

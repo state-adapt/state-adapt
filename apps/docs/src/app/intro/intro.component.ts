@@ -124,7 +124,7 @@ export class IntroComponent implements AfterViewInit {
       href: '#1-start-with-simple-state',
       svg: adaptiveSvg,
       title: 'Incremental Syntax',
-      description: `Local, or global? Component, or Service? StateAdapt's flexible syntax eliminates the need to ask these stressful questions up-front.`,
+      description: `Local, or global? Component, or Service? StateAdapt's flexible syntax eliminates the need to ask these stressful questions up front.`,
     },
     {
       href: 'https://dev.to/this-is-learning/how-i-got-selectors-in-redux-devtools-443j',
@@ -142,7 +142,7 @@ export class IntroComponent implements AfterViewInit {
       href: 'https://twitter.com/mfpears/status/1615240298573221888',
       svg: copilotSvg,
       title: 'GitHub Copilot support',
-      description: `Every StateAdapt utility has JSDocs comments with several clear examples fine-tuned to help Copilot generate useful code suggestions.`,
+      description: `Every StateAdapt utility has JSDoc comments with several clear examples fine-tuned to help Copilot generate useful code suggestions.`,
     },
   ].map(feature => ({
     ...feature,

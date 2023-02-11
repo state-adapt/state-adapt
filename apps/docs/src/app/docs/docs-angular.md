@@ -1,5 +1,13 @@
 # @state-adapt/angular
 
+## Peer Dependencies
+
+[@state-adapt/core](/docs/core)
+
+[@state-adapt/rxjs](/docs/rxjs)
+
+## Index
+
 [`defaultStoreProvider`](/angular/docs/angular#defaultstoreprovider)
 
 [`provideStore`](/angular/docs/angular#providestore)

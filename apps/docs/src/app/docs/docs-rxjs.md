@@ -1,5 +1,9 @@
 # @state-adapt/rxjs
 
+## Peer Dependencies
+
+[@state-adapt/core](/docs/core)
+
 ## Global Configuration
 
 [`ConfigureStateAdaptOptions`](/docs/rxjs#configurestateadaptoptions)

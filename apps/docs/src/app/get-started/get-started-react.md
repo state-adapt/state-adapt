@@ -4,7 +4,7 @@
 
 ## Documentation
 
-[@state-adapt/react](/docs/react)
+[@state-adapt/react](/react/docs/react)
 
 ## Setup
 

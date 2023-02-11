@@ -4,11 +4,11 @@
 
 ## Documentation
 
-[@state-adapt/angular](/docs/angular)
+[@state-adapt/angular](/angular/docs/angular)
 
-[@state-adapt/ngrx](/docs/ngrx)
+[@state-adapt/ngrx](/angular/docs/ngrx)
 
-[@state-adapt/ngxs](/docs/ngxs)
+[@state-adapt/ngxs](/angular/docs/ngxs)
 
 ## Setup
 

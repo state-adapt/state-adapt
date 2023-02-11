@@ -274,6 +274,10 @@ import { getId } from '@state-adapt/core';
         font-size: 12px;
         border-left-width: 0px;
       }
+      ibm-tile-group code,
+      ibm-tile code {
+        background-color: transparent !important;
+      }
     `,
   ],
 })

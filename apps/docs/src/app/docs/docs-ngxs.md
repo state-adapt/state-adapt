@@ -1,5 +1,15 @@
 # @state-adapt/ngxs
 
+## Peer Dependencies
+
+[@state-adapt/core](/docs/core)
+
+[@state-adapt/rxjs](/docs/rxjs)
+
+[@state-adapt/angular](/angular/docs/angular)
+
+## Index
+
 [`AdaptState`](/angular/docs/ngxs#adaptstate)
 
 [`adaptNgxs`](/angular/docs/ngxs#adaptngxs)
