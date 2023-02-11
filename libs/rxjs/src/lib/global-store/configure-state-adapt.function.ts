@@ -25,7 +25,7 @@ function isStoreOptions(options: ConfigureStateAdaptOptions): options is { store
 
   `configureStateAdapt` takes in a {@link ConfigureStateAdaptOptions} object and returns a new instance of {@link StateAdapt}.
 
-  ### Standalone example with default options
+  ### Example: Standalone with default options
 
   ```ts
   import { actionSanitizer, stateSanitizer } from '@state-adapt/core';
@@ -36,7 +36,7 @@ function isStoreOptions(options: ConfigureStateAdaptOptions): options is { store
   export const { adapt, watch } = stateAdapt;
   ```
 
-  ### Standalone example
+  ### Example: Standalone
 
   ```ts
   import { actionSanitizer, stateSanitizer } from '@state-adapt/core';
@@ -53,7 +53,7 @@ function isStoreOptions(options: ConfigureStateAdaptOptions): options is { store
   export const { adapt, watch } = stateAdapt;
   ```
 
-  ### Example with another store
+  ### Example: With another store
 
   ```ts
   import { configureStore } from '@reduxjs/toolkit'; // or any other Redux-like store
