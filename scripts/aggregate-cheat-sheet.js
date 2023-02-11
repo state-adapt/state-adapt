@@ -48,7 +48,7 @@ const cheatSheetFileContents = fs.readFileSync(cheatSheetFilePath, 'utf8');
 // replace the examples in the file
 const newCheatSheetFileContents = cheatSheetFileContents.replace(
   /\/\*\*([\s\S]*?)\*\//,
-  `/**\n${examples}\n*/`,
+  () => `/**\n${examples}\n*/`,
 );
 // write the file
 fs.writeFileSync(cheatSheetFilePath, newCheatSheetFileContents);
