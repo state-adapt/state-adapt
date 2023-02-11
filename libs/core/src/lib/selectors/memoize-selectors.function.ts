@@ -24,9 +24,8 @@ export const createSelectorsCache = (
   };
 };
 
-export const globalSelectorsCacheKey = '__stateadapt_selectors';
-export const globalSelectorsCache = (((window as any) || {})[globalSelectorsCacheKey] =
-  createSelectorsCache());
+export const globalSelectorsOptions = { devtools: true };
+export const globalSelectorsCache = createSelectorsCache();
 
 export const serializeSelectorsCache = (c: SelectorsCache) => {
   const results = { ...c.__results };
