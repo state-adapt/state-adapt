@@ -34,3 +34,5 @@ export * from './lib/global-store/action-sanitizer.function';
 export * from './lib/global-store/state-sanitizer.function';
 export * from './lib/global-store/adapt.reducer';
 export * from './lib/global-store/create-adapt-nested-reducer.function';
+
+export * from './cheat-sheet.const';

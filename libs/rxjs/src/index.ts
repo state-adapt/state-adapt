@@ -14,7 +14,5 @@ export * from './lib/stores/sources.type';
 export * from './lib/stores/smart-store.interface';
 export * from './lib/stores/join-stores.function';
 
-export * from './lib/global-store/adapt.store';
-export * from './lib/global-store/create-state-adapt.funciton';
-export * from './lib/global-store/adapt';
-export * from './lib/global-store/create-store.function';
+
+export * from './cheat-sheet.const';
