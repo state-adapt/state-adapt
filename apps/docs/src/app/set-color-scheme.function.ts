@@ -8,7 +8,7 @@ export function setColorScheme(theme: 'light' | 'dark' | 'reset' | '' = '') {
     : 'light';
   const storedTheme = localStorage.getItem('theme');
   const themeToSet = themeToSave || storedTheme || browserTheme || 'dark';
-  document.body.className = `${themeToSet}-theme`;
+  document.querySelector('html')!.className = `${themeToSet}-theme`;
 }
 
 export function getColorScheme() {

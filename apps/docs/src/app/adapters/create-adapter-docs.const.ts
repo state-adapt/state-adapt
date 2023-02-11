@@ -1,12 +1,14 @@
-import createDemoAdapterCode from '!!raw-loader!./../../../../../libs/core/src/lib/adapters/create-adapter.function';
-import demoAdapterCode from '!!raw-loader!./adapter-demo';
+import createDemoAdapterCode from '!!raw-loader!!!md-loader!!!snippet-loader!./../../../../../libs/core/src/lib/adapters/create-adapter.function';
+import demoAdapterCode from '!!raw-loader!!!md-loader!!!snippet-loader!./adapter-demo';
 import { AdapterDocs } from '@state-adapt/adapter-docs';
 import { adapter } from './adapter-demo';
+
+console.log(demoAdapterCode);
 
 export const createAdapterDocs: AdapterDocs = {
   name: 'createAdapter',
   description: 'Base adapter with basic operations: set and reset',
-  sourceCode: createDemoAdapterCode as unknown as string,
+  sourceCode: createDemoAdapterCode,
   parameters: [],
   demoAdapter: {
     value: adapter,

@@ -1,6 +1,6 @@
 import { AdapterDocs } from '@state-adapt/adapter-docs';
-import booleanAdapterCode from '!!raw-loader!./boolean-adapter-demo';
-import createBooleanAdapterCode from '!!raw-loader!./../../../../../../libs/core/adapters/src/lib/boolean.adapter';
+import booleanAdapterCode from '!!raw-loader!!!md-loader!!!snippet-loader!./boolean-adapter-demo';
+import createBooleanAdapterCode from '!!raw-loader!!!md-loader!!!snippet-loader!./../../../../../../libs/core/adapters/src/lib/boolean.adapter';
 import { booleanAdapter } from './boolean-adapter-demo';
 
 export const booleanAdapterDocs: AdapterDocs = {

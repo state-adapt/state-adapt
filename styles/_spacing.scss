@@ -1,16 +1,17 @@
 h1,
 h2,
 h3,
-h4 {
+h4,
+h5 {
   margin-top: 1.5em !important;
 }
 
-// blockquote {
-//   quotes: none;
-//   margin: 2em;
-//   border-left: 6px solid #8884;
-//   padding-left: 1em;
-// }
+blockquote {
+  quotes: none;
+  margin: 2em;
+  border-left: 6px solid #8884;
+  padding-left: 1em;
+}
 
 p,
 ul {

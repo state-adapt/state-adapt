@@ -1,20 +1,21 @@
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { MarkdownModule } from 'ngx-markdown';
-import md from 'raw-loader!./thinking-reactively.md';
+import { HtmlComponent } from '@state-adapt/adapter-docs';
+
 import { ContentComponent } from '../content.component';
+import html from './thinking-reactively.md';
 
 @Component({
   standalone: true,
   selector: 'sa-thinking-reactively',
-  imports: [RouterModule, ContentComponent, MarkdownModule],
+  imports: [RouterModule, ContentComponent, HtmlComponent],
   template: `
     <sa-content>
-      <markdown [data]="md"></markdown>
+      <sa-html [html]="html"></sa-html>
       <h2><a routerLink="/concepts/stores">Previous: Stores</a></h2>
     </sa-content>
   `,
 })
 export class ThinkingReactivelyComponent {
-  md = md;
+  html = html;
 }

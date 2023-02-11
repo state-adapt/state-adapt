@@ -22,8 +22,8 @@ $diagram-opacity: 0.4;
     @include child-left-top($circuit-quad, 2, -0.5, 0.25);
     @include child-left-top($circuit-quad, 3, 3.6, 1.4);
     @include child-left-top($circuit-quad, 4, 0.9, 3);
-    @include child-left-top($circuit-quad, 5, -0.75, 6.5);
-    @include child-left-top($circuit-quad, 6, 3.6, 5);
+    @include child-left-top($circuit-quad, 5, -0.75, 6.5); //
+    @include child-left-top($circuit-quad, 6, 3.6, 5); //
     @include child-left-top($circuit-quad, 7, 6, 3);
     @include child-left-top($circuit-quad, 8, 8.4, 4);
     @include child-left-top($circuit-quad, 9, 5.05, 1);
@@ -32,12 +32,12 @@ $diagram-opacity: 0.4;
     @include child-left-top($circuit-quad, 12, 14.2, 0.75);
     @include child-left-top($circuit-quad, 13, 12, 2);
     @include child-left-top($circuit-quad, 14, 13.2, 3);
-    @include child-left-top($circuit-quad, 15, 15.6, 5.75);
+    @include child-left-top($circuit-quad, 15, 15.6, 5.75); //
     @include child-left-top($circuit-quad, 16, 18, 3.5);
     @include child-left-top($circuit-quad, 17, 22, 2);
-    @include child-left-top($circuit-quad, 18, 21, 6);
+    @include child-left-top($circuit-quad, 18, 21, 6); //
     @include child-left-top($circuit-quad, 19, 20.2, 1);
-    @include child-left-top($circuit-quad, 20, 17, 4.75);
+    @include child-left-top($circuit-quad, 20, 17, 4.75); //
     @include child-left-top($circuit-quad, 21, 17.5, -0.25);
     @include child-left-top($circuit-quad, 22, 18.5, 1.75);
 

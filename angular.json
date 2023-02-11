@@ -234,7 +234,7 @@
       "prefix": "sa",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@nrwl/angular:webpack-browser",
           "options": {
             "outputPath": "dist/apps/docs",
             "index": "apps/docs/src/index.html",
@@ -243,12 +243,14 @@
             "tsConfig": "apps/docs/tsconfig.app.json",
             "aot": true,
             "assets": ["apps/docs/src/favicon.ico", "apps/docs/src/assets"],
+            "customWebpackConfig": {
+              "path": "apps/docs/webpack.config.js"
+            },
             "styles": [
               "apps/docs/src/styles.scss",
               "node_modules/prismjs/plugins/diff-highlight/prism-diff-highlight.css"
             ],
             "scripts": [
-              "node_modules/marked/lib/marked.js",
               "node_modules/prismjs/prism.js",
               "node_modules/prismjs/components/prism-typescript.min.js",
               "node_modules/prismjs/components/prism-diff.min.js",
@@ -290,7 +292,7 @@
           }
         },
         "serve": {
-          "builder": "@angular-devkit/build-angular:dev-server",
+          "builder": "@nrwl/angular:webpack-server",
           "options": {
             "browserTarget": "docs:build"
           },

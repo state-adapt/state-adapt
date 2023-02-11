@@ -1,8 +1,10 @@
 ## 1. Start with simple state
 
-```typescript
+StateAdapt stores can be as simple as RxJS `BehaviorSubject`s, but with Redux Devtools support!
+
+```tsx
 export class NameComponent {
-  nameStore = adapt('name', 'Bob'); // 'name' is the namespace for Redux Devtools
+  nameStore = adapt('name', 'Bob'); // 'name' is for Redux Devtools
 }
 ```
 
@@ -11,11 +13,13 @@ export class NameComponent {
 <button (click)="nameStore.set('Bilbo')">Change Name</button>
 ```
 
+Here it is in Redux Devtools:
+
 <video controls loop>
   <source src="../assets/demo-1-simple-state.mov" type="video/mp4"/>
 </video>
 
-[StackBlitz](https://stackblitz.com/edit/angular-ivy-jwt8jh?file=src%2Fapp%2F1-simple-state.component.ts)
+### Try it on [StackBlitz](https://stackblitz.com/edit/angular-ivy-jwt8jh?file=src%2Fapp%2F1-simple-state.component.ts)
 
 ## 2. Add selectors for derived state
 
@@ -39,14 +43,7 @@ export class NameComponent {
   <source src="../assets/demo-2-derived-state.mov" type="video/mp4" />
 </video>
 
-[StackBlitz](https://stackblitz.com/edit/angular-ivy-jwt8jh?file=src%2Fapp%2F2-derived-state.component.ts)
-
-<!--
-Need to figure out how to compile the markdown at build time.
-Maybe a custom builder like this:
-https://www.thisdot.co/blog/angular-custom-builders-markdown-angular
-https://github.com/flakolefluk/md-builder
- -->
+### Try it on [StackBlitz](https://stackblitz.com/edit/angular-ivy-jwt8jh?file=src%2Fapp%2F2-derived-state.component.ts)
 
 ## 3. Define state changes declaratively in stores
 
@@ -73,9 +70,11 @@ export class NameComponent {
   <source src="../assets/demo-3-state-changes.mov" type="video/mp4" />
 </video>
 
-[StackBlitz](https://stackblitz.com/edit/angular-ivy-jwt8jh?file=src%2Fapp%2F3-state-changes.component.ts)
+### Try it on [StackBlitz](https://stackblitz.com/edit/angular-ivy-jwt8jh?file=src%2Fapp%2F3-state-changes.component.ts)
 
 ## 4. Reuse state patterns with state adapters
+
+If you need to reuse state logic, it's as simple as dragging it outside the `adapt` call into a `createAdapter` call.
 
 ```diff-typescript
 export class NameComponent {
@@ -87,8 +86,8 @@ export class NameComponent {
     },
   });
 +
-+  name1Store = adapt(['name1', 'Bob'], this.nameAdapter);
-+  name2Store = adapt(['name2', 'Bob'], this.nameAdapter);
++  name1Store = adapt(['name.1', 'Bob'], this.nameAdapter);
++  name2Store = adapt(['name.2', 'Bob'], this.nameAdapter);
 }
 ```
 
@@ -106,9 +105,7 @@ export class NameComponent {
   <source src="../assets/demo-4-state-adapters.mov" type="video/mp4" />
 </video>
 
-[StackBlitz](https://stackblitz.com/edit/angular-ivy-jwt8jh?file=src%2Fapp%2F4-state-adapters.component.ts)
-
-Soon we'll be publishing adapters for common patterns: Lists, async state, pagination, etc…
+### Try it on [StackBlitz](https://stackblitz.com/edit/angular-ivy-jwt8jh?file=src%2Fapp%2F4-state-adapters.component.ts)
 
 ## 5. React to observable data sources
 
@@ -129,10 +126,10 @@ export class NameComponent {
 +    toSource('[name] nameFromServer$'), // Annotate for Redux Devtools
 +  );
 +
--  name1Store = adapt(['name1', 'Bob'], this.nameAdapter);
-+  name1Store = adapt(['name1', 'Bob', this.nameAdapter], this.nameFromServer$);//Set state
--  name2Store = adapt(['name2', 'Bob'], this.nameAdapter);
-+  name2Store = adapt(['name2', 'Bob', this.nameAdapter], {
+-  name1Store = adapt(['name.1', 'Bob'], this.nameAdapter);
++  name1Store = adapt(['name.1', 'Bob', this.nameAdapter], this.nameFromServer$);//Set state
+-  name2Store = adapt(['name.2', 'Bob'], this.nameAdapter);
++  name2Store = adapt(['name.2', 'Bob', this.nameAdapter], {
 +    concatName: this.nameFromServer$, // Trigger a specific state reaction
 +  });
 }
@@ -152,7 +149,7 @@ export class NameComponent {
   <source src="../assets/demo-5-observable-sources.mov" type="video/mp4" />
 </video>
 
-[StackBlitz](https://stackblitz.com/edit/angular-ivy-jwt8jh?file=src%2Fapp%2F5-observable-sources.component.ts)
+### Try it on [StackBlitz](https://stackblitz.com/edit/angular-ivy-jwt8jh?file=src%2Fapp%2F5-observable-sources.component.ts)
 
 ## 6. Share DOM event sources with multiple stores
 
@@ -175,11 +172,11 @@ export class NameComponent {
     toSource('[name] nameFromServer$'), // Annotate for Redux Devtools
   );
 
-  name1Store = adapt(['name1', 'Bob', this.nameAdapter], {
+  name1Store = adapt(['name.1', 'Bob', this.nameAdapter], {
 +    set: this.nameFromServer$, // `set` is provided with all adapters
 +    reset: this.resetBoth$, // `reset` is provided with all adapters
-  });
-  name2Store = adapt(['name2', 'Bob', this.nameAdapter], {
++  });
+  name2Store = adapt(['name.2', 'Bob', this.nameAdapter], {
     concatName: this.nameFromServer$,
 +    reset: this.resetBoth$, // `reset` is provided with all adapters
   });
@@ -202,7 +199,7 @@ export class NameComponent {
   <source src="../assets/demo-6-dom-sources.mov" type="video/mp4" />
 </video>
 
-[StackBlitz](https://stackblitz.com/edit/angular-ivy-jwt8jh?file=src%2Fapp%2F6-dom-sources.component.ts)
+### Try it on [StackBlitz](https://stackblitz.com/edit/angular-ivy-jwt8jh?file=src%2Fapp%2F6-dom-sources.component.ts)
 
 ## 7. Select state from multiple stores
 
@@ -223,20 +220,20 @@ export class NameComponent {
     toSource('[name] nameFromServer$'), // Annotate for Redux Devtools
   );
 
-  name1Store = adapt(['name1', 'Bob', this.nameAdapter], {
+  name1Store = adapt(['name.1', 'Bob', this.nameAdapter], {
     set: this.nameFromServer$, // `set` is provided with all adapters
     reset: this.resetBoth$, // `reset` is provided with all adapters
   });
-  name2Store = adapt(['name2', 'Bob', this.nameAdapter], {
+  name2Store = adapt(['name.2', 'Bob', this.nameAdapter], {
     concatName: this.nameFromServer$,
     reset: this.resetBoth$, // `reset` is provided with all adapters
   });
-
++
 +  bothBobs$ = joinStores({
 +    name1: this.name1Store,
 +    name2: this.name2Store,
 +  })({
-+    bothBobs: (s) => s.name1 === 'Bob' && s.name2 === 'Bob',
++    bothBobs: s => s.name1 === 'Bob' && s.name2 === 'Bob',
 +  })().bothBobs$;
 }
 ```
@@ -259,48 +256,4 @@ export class NameComponent {
   <source src="../assets/demo-7-multi-store-selectors.mov" type="video/mp4" />
 </video>
 
-[StackBlitz](https://stackblitz.com/edit/angular-ivy-jwt8jh?file=src%2Fapp%2F7-multi-store-selectors.component.ts)
-
-## StateAdapt Philosophy
-
-We encourage following 3 rules for progressive reactivity:
-
-1. Keep code declarative by introducing reactivity instead of imperative code.
-2. Don't write callback functions.
-3. Wrap imperative APIs with declarative ones.
-
-[Learn more](https://dev.to/this-is-angular/progressive-reactivity-in-angular-1d40)
-
-## Set up StateAdapt in your project
-
-[Set up StateAdapt in your project ](/getting-started)
-
-Currently works with:
-
-- Angular
-- Angular + NgRx
-- Angular + NGXS
-- React
-- React + Redux
-
-## Demos and Examples
-
-[StackBlitz examples](/demos)
-
-[Real World App](https://github.com/mfp22/stefanoslig-angular-14-ngrx-nx-realworld-example-app/tree/state-adapt) —
-A Medium clone originally created by Thinkster for demonstrating various technologies on a nontrivial scale — See [the original repo](https://github.com/gothinkster/realworld).
-
-[Angular state management library comparison app](https://github.com/dherrero/angular-state-manager) —
-A repo that has implemented the same feature with NgRx, Elf, NGXS, StateAdapt and a custom Flux pattern using a generic class
-
-[Shopping Cart Example](https://github.com/mfp22/ngrx-example/commit/4d701533b22d4a35328fbf8ae46493dd8347c87e)
-
-[Server-driven counter app with aggregate page](https://github.com/mfp22/redux-client-ngrx/tree/state-adapt)
-
-[Simple city app](https://github.com/mfp22/Cities-NGRX/commit/83f35e81f36f183bc1632004b505668f063f10e9)
-
-**Have a project you'd like to see implemented in StateAdapt? Open an issue at [our GitHub repo](https://github.com/state-adapt/state-adapt), and if it's different enough from existing examples we might convert it and add here.**
-
-## Contribute
-
-Open an issue, request a feature, or ask for help at [our GitHub repo](https://github.com/state-adapt/state-adapt)
+### Try it on [StackBlitz](https://stackblitz.com/edit/angular-ivy-jwt8jh?file=src%2Fapp%2F7-multi-store-selectors.component.ts)

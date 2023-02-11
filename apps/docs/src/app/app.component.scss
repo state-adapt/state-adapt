@@ -4,6 +4,12 @@
   margin: 50px auto;
 }
 
+::ng-deep {
+  [aria-expanded='false'] {
+    opacity: 0.5;
+  }
+}
+
 a.brand {
   font-size: 16px;
   img {

@@ -50,10 +50,15 @@
     >
       {{ link.name }}
     </ibm-sidenav-item>
-    <ibm-sidenav-menu *ngIf="link.children" [title]="link.name">
+    <ibm-sidenav-menu
+      *ngIf="link.children"
+      [title]="link.name"
+      [expanded]="link.expanded"
+    >
       <ibm-sidenav-item
         *ngFor="let childLink of link.children; trackBy: trackByRoute"
         [route]="[childLink.route]"
+        [routeExtras]="{ fragment: childLink.fragment }"
         [active]="childLink.active"
         (navigation)="navigate(null)"
       >
@@ -67,8 +72,10 @@
   <!-- and metadata from libraries will be passed in through dependency injection or loaded some other way. -->
 </ibm-sidenav>
 <main
+  #main
   [class.squished]="sidenavExpanded"
   (click)="(mobile && (sidenavExpanded = false)) || true"
 >
-  <router-outlet></router-outlet>
+  <router-outlet (deactivate)="main.scrollTop = 0"></router-outlet>
 </main>
+<div style="height: 50vh"></div>

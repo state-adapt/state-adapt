@@ -1,5 +1,5 @@
 import { AdapterDocs } from '@state-adapt/adapter-docs';
-import entityAdapterCode from '!!raw-loader!./entity-adapter-demo';
+import entityAdapterCode from '!!raw-loader!!!md-loader!!!snippet-loader!./entity-adapter-demo';
 import { entityAdapter, initialState } from './entity-adapter-demo';
 
 const initialStateStr = JSON.stringify(initialState, null, 2);

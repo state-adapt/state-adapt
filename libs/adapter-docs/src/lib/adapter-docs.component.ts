@@ -28,7 +28,7 @@ import { getId } from '@state-adapt/core';
         <code>{{ docs.name }}</code>
       </h1>
 
-      <markdown [data]="docs.description"></markdown>
+      <sa-html [html]="docs.description"></sa-html>
 
       <div class="history" *ngIf="demoHistory$ | async as demoHistory">
         <ibm-tile-group
@@ -110,7 +110,7 @@ import { getId } from '@state-adapt/core';
         </div>
         <ibm-tabs>
           <ibm-tab heading="Result">
-            <markdown [data]="selectorResult$ | async"></markdown>
+            <sa-html [html]="selectorResult$ | async"></sa-html>
           </ibm-tab>
           <ibm-tab heading="Diff">
             <pre class="language-json" [innerHTML]="selectorDiff$ | async"></pre>
@@ -122,7 +122,7 @@ import { getId } from '@state-adapt/core';
       </ibm-tile>
 
       <h2 style="clear: both">Demo Code</h2>
-      <markdown [data]="demoSourceCodeMd$ | async"></markdown>
+      <sa-html [html]="demoSourceCodeMd$ | async"></sa-html>
       <ng-template #codeTemplate let-item="item">
         <code>{{ item?.content }}</code>
       </ng-template>
@@ -138,7 +138,7 @@ import { getId } from '@state-adapt/core';
           </ibm-list-column>
           <ibm-list-column>
             <!-- {{ param.description }} -->
-            <markdown [data]="param.description"></markdown>
+            <sa-html [html]="param.description"></sa-html>
           </ibm-list-column>
         </ibm-list-row>
       </ibm-structured-list>
@@ -147,7 +147,7 @@ import { getId } from '@state-adapt/core';
         <code>{{ docs.name }}</code>
         Source Code
       </h2>
-      <markdown [data]="creatorSourceCodeMd$ | async"></markdown>
+      <sa-html [html]="creatorSourceCodeMd$ | async"></sa-html>
     </ng-container>
   `,
   styles: [
@@ -359,9 +359,9 @@ export class AdapterDocsComponent implements OnInit {
   ]).pipe(
     map(
       ([adapter, [diff, selectorName]]) =>
-        '```json\n' +
+        '<pre class="language-json">\n' +
         toJson((adapter.selectors || {})[selectorName]?.(diff[1]) || diff[1]) +
-        '\n```',
+        '\n</pre>',
     ),
   );
   selectorDiff$ = combineLatest([

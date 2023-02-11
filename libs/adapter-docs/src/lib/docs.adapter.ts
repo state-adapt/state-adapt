@@ -7,7 +7,7 @@ import { DropdownSelectedEvent } from './dropdown-selection-event.interface';
 import { toJson } from './get-diff-html.function';
 
 function wrapInTs(code: string) {
-  return '```typescript\n' + code + '\n```';
+  return '<pre class="language-typescript>\n' + code + '\n</pre>';
 }
 
 function getListItem(selectedName?: string) {
@@ -40,8 +40,8 @@ export const docsAdapter = buildAdapter<AdapterDocsState>()({
     initialDemoState: s => s.docs.demoAdapter.initialState,
     userPayload: s => s.payload,
     docs: s => s.docs,
-    creatorSourceCodeMd: s => wrapInTs(s.docs.sourceCode),
-    demoSourceCodeMd: s => wrapInTs(s.docs.demoAdapter.sourceCode),
+    creatorSourceCodeMd: s => s.docs.sourceCode,
+    demoSourceCodeMd: s => s.docs.demoAdapter.sourceCode,
     parameters: s => s.docs.parameters,
     payloadEditorRefreshRequired: s => s.payloadEditorRefreshRequired,
   },
@@ -83,7 +83,10 @@ export const docsAdapter = buildAdapter<AdapterDocsState>()({
   }),
   // State changes
 })(([selectors]) => ({
-  receiveDocs: (state, docs: AdapterDocs) => ({ ...state, docs }),
+  receiveDocs: (state, docs: AdapterDocs) => ({
+    ...state,
+    docs: { ...docs, description: `<p>${docs.description}</p>` },
+  }),
   selectStateChange: (state: AdapterDocsState, stateChangeName: string, i, cache) => {
     const selectionChanged =
       selectors.selectedStateChangeName(state, cache) !== stateChangeName;

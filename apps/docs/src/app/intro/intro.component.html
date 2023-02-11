@@ -10,17 +10,72 @@
       <span id="adapt">Adapt</span>
     </h1>
     <h3 id="tagline">
-      Progressively Reactive
+      Clean, Modern
       <br id="tagline-break" />
       State Management
     </h3>
-    <div class="getting-started-container">
-      <a routerLink="/getting-started" class="getting-started">Get Started</a>
+    <div class="frameworks-container">
+      <a
+        *ngFor="let framework of frameworks"
+        [routerLink]="[framework.docsRouterLink]"
+      >
+        <div class="framework-container">
+          <svg
+            [class.mono]="frameworksMono"
+            [innerHTML]="framework.svg"
+            class="framework-icon"
+            viewBox="0 0 900 900"
+          />
+        </div>
+      </a>
     </div>
   </div>
 </div>
-<div class="content">
+
+<div class="features-section">
+  <div class="features-container">
+    <a
+      *ngFor="let feature of features$ | async; trackBy: trackByTitle"
+      [href]="feature.href"
+    >
+      <div class="feature-container">
+        <svg
+          [class.mono]="featuresMono"
+          [innerHTML]="feature.svg"
+          class="feature-icon"
+          viewBox="0 0 900 900"
+        />
+        <div class="feature-text">
+          <h4 class="feature-title">{{ feature.title }}</h4>
+          <div class="feature-description">
+            {{ feature.description }}
+          </div>
+        </div>
+      </div>
+    </a>
+    <div class="feature-container"></div>
+  </div>
+</div>
+
+<div class="content" [class.mono]="featuresMono">
   <sa-content>
-    <markdown [data]="md"></markdown>
+    <div class="frameworks-container">
+      <a
+        *ngFor="let framework of frameworks$ | async"
+        [routerLink]="[framework.homeRouterLink]"
+        [replaceUrl]="true"
+      >
+        <div class="framework-container" [class.active]="framework.active">
+          <svg
+            [class.mono]="frameworksMono"
+            [innerHTML]="framework.svg"
+            class="framework-icon"
+            viewBox="0 0 900 900"
+          />
+        </div>
+      </a>
+    </div>
+    <sa-html [html]="frameworkExampleDocs$ | async"></sa-html>
+    <sa-html [html]="introGeneralDocs$ | async"></sa-html>
   </sa-content>
 </div>

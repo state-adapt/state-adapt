@@ -1,6 +1,6 @@
 import { AdapterDocs } from '@state-adapt/adapter-docs';
-import stringAdapterCode from '!!raw-loader!./string-adapter-demo';
-import createStringAdapterCode from '!!raw-loader!./../../../../../../libs/core/adapters/src/lib/string.adapter';
+import stringAdapterCode from '!!raw-loader!!!md-loader!!!snippet-loader!./string-adapter-demo';
+import createStringAdapterCode from '!!raw-loader!!!md-loader!!!snippet-loader!./../../../../../../libs/core/adapters/src/lib/string.adapter';
 import { stringAdapter } from './string-adapter-demo';
 
 export const stringAdapterDocs: AdapterDocs = {

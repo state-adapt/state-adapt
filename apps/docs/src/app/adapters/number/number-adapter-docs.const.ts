@@ -1,6 +1,6 @@
 import { AdapterDocs } from '@state-adapt/adapter-docs';
-import numberAdapterCode from '!!raw-loader!./number-adapter-demo';
-import createNumberAdapterCode from '!!raw-loader!./../../../../../../libs/core/adapters/src/lib/number.adapter';
+import numberAdapterCode from '!!raw-loader!!!md-loader!!!snippet-loader!./number-adapter-demo';
+import createNumberAdapterCode from '!!raw-loader!!!md-loader!!!snippet-loader!./../../../../../../libs/core/adapters/src/lib/number.adapter';
 import { numberAdapter } from './number-adapter-demo';
 
 export const numberAdapterDocs: AdapterDocs = {

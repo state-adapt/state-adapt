@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { NgModule, SecurityContext } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { CodeEditorModule } from '@ngstack/code-editor';
 import {
   ButtonModule,
@@ -9,8 +9,8 @@ import {
   TabsModule,
   TilesModule,
 } from 'carbon-components-angular';
-import { MarkdownModule } from 'ngx-markdown';
 import { AdapterDocsComponent } from './adapter-docs.component';
+import { HtmlComponent } from './html.component';
 
 @NgModule({
   imports: [
@@ -21,10 +21,8 @@ import { AdapterDocsComponent } from './adapter-docs.component';
     DropdownModule,
     TabsModule,
     InputModule,
-    MarkdownModule.forRoot({
-      sanitize: SecurityContext.NONE,
-    }),
     CodeEditorModule.forRoot(),
+    HtmlComponent,
   ],
   declarations: [AdapterDocsComponent],
   exports: [AdapterDocsComponent],

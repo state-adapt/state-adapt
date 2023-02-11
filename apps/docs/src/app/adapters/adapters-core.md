@@ -1,7 +1,11 @@
 # Core Adapters
 
-- [`createAdapter`](/adapters/core#createAdapter)
-- [`booleanAdapter`](/adapters/core#booleanAdapter)
-- [`numberAdapter`](/adapters/core#numberAdapter)
-- [`stringAdapter`](/adapters/core#stringAdapter)
-- [`createEntityAdapter`](/adapters/core#createEntityAdapter)
+[`createAdapter`](/adapters/core#createAdapter)
+
+[`booleanAdapter`](/adapters/core#booleanAdapter)
+
+[`numberAdapter`](/adapters/core#numberAdapter)
+
+[`stringAdapter`](/adapters/core#stringAdapter)
+
+[`createEntityAdapter`](/adapters/core#createEntityAdapter)

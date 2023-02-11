@@ -5,4 +5,4 @@ interface DemoState {
   prop2: string;
 }
 
-export const adapter = createAdapter<DemoState>()();
+export const adapter = createAdapter<DemoState>()({});

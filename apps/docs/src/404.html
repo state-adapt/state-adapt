@@ -1,5 +1,6 @@
 <script>
   const path = window.location.pathname.slice(1);
-  localStorage.setItem('path', path);
+  const hash = window.location.hash;
+  localStorage.setItem('url', path + hash);
   window.location.href = '../';
 </script>

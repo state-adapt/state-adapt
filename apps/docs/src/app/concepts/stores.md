@@ -4,10 +4,7 @@
 - [`init`](/concepts/stores#init)
 - [State Paths](/concepts/stores#state-paths)
 - [getId](/concepts/stores#getid)
-- [`state$`](/concepts/stores#state)
 - [Selectors](/concepts/stores#selectors)
-- [`updater`](/concepts/stores#updater)
-- [`setter`](/concepts/stores#setter)
 - [`watch`](/concepts/stores#watch)
 - [Joining Stores](/concepts/stores#joining-stores)
 
@@ -79,15 +76,6 @@ This applies both to paths that are identical as well as paths that are subtring
 
 In case you need to avoid a path collision and have no way of generating a unique path deterministically, [`getId`](/concepts/stores#getid) will give you a unique id you can append to the path you pass into [`init`](/concepts/stores#init).
 
-## `state$`
-
-[`state$`](/concepts/stores#state) is a default property created on each store. It is an observable of the store's state:
-
-```typescript
-numberStore = this.adapt.init('number', 0);
-number$ = this.numberStore.state$;
-```
-
 ## Selectors
 
 Selectors defined in an adapter get assigned to properties on the store object with an added `'$'` at the end of the property name. They are observables of the selected state:
@@ -98,6 +86,7 @@ numberAdapter = createAdapter<number>()({
 });
 numberStore = this.adapt.init(['number', 0], this.numberAdapter);
 negativeNumber$ = this.numberStore.negative$;
+state$ = this.numberStore.state$; // Every adapter gets a `state` selector
 ```
 
 Each selector's observable chains off of all the sources passed into the store. For example, if one of your sources is an observable of an HTTP request, that request will automatically be triggered as soon as you subscribe to any of the selector observables from the store. If necessary, you can access store selectors that do not chain off of any sources by using the [`watch`](/concepts/stores#watch) method described next.

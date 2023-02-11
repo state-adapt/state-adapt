@@ -7,7 +7,8 @@ body {
   // Maybe will create ./_media-vars.scss for media query variables. For now, 1100px copy/pasted everywhere.
 }
 
-body.light-theme {
+html.light-theme {
+  color-scheme: light;
   --card-shadows: 0 0 10px #0004;
   --banner-border: 0;
 
@@ -96,7 +97,8 @@ body.light-theme {
   --hover-field: #e5e5e5;
   --danger: #da1e28;
 }
-body.dark-theme {
+html.dark-theme {
+  color-scheme: dark;
   --card-shadows: 0 0 10px #0008;
   --banner-border: 0px solid var(--accent-01);
 

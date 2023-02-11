@@ -1,7 +1,6 @@
 import { Component, ViewEncapsulation } from '@angular/core';
-import { AdapterDocsModule } from '@state-adapt/adapter-docs';
-import { MarkdownModule } from 'ngx-markdown';
-import md from 'raw-loader!./adapters-core.md';
+import { AdapterDocsModule, HtmlComponent } from '@state-adapt/adapter-docs';
+import html from './adapters-core.md';
 import { ContentComponent } from '../content.component';
 import { createAdapterDocs } from './create-adapter-docs.const';
 import { booleanAdapterDocs } from './boolean/boolean-adapter-docs.const';
@@ -16,10 +15,10 @@ export { EditorReadyService } from '@state-adapt/adapter-docs';
   standalone: true,
   selector: 'sa-adapters-core',
   encapsulation: ViewEncapsulation.None,
-  imports: [AdapterDocsModule, ContentComponent, MarkdownModule],
+  imports: [AdapterDocsModule, ContentComponent, HtmlComponent],
   template: `
     <sa-content>
-      <markdown [data]="md"></markdown>
+      <sa-html [html]="html"></sa-html>
       <sa-adapter-docs [adapterDocs]="createAdapterDocs"></sa-adapter-docs>
       <sa-adapter-docs [adapterDocs]="booleanAdapterDocs"></sa-adapter-docs>
       <sa-adapter-docs [adapterDocs]="numberAdapterDocs"></sa-adapter-docs>
@@ -30,7 +29,7 @@ export { EditorReadyService } from '@state-adapt/adapter-docs';
   styleUrls: ['styles.scss'],
 })
 export class AdaptersCoreComponent {
-  md = md;
+  html = html;
   createAdapterDocs = createAdapterDocs;
   booleanAdapterDocs = booleanAdapterDocs;
   numberAdapterDocs = numberAdapterDocs;
