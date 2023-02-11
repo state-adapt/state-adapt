@@ -24,6 +24,9 @@ type MappedReactions<
     : never;
 };
 
+/**
+ * @deprecated Keep UI logic in the UI layer. Keep API logic in the sources layer. Keep the adapter layer for shareable state management logic, detachable from the UI and API layers.
+ */
 export function mapPayloads<
   R extends ReactionsWithSelectors<any, any>,
   M extends Partial<PayloadMaps<R>>,
