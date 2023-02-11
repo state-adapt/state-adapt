@@ -23,9 +23,10 @@ export function setUpFramework(activatedRoute: ActivatedRoute, router: Router) {
       startWith({ framework }),
       switchMap((params: Record<string, any>) => {
         const framework = params.framework;
-        if (!framework) return Promise.resolve('');
-        localStorage.setItem('framework', framework);
-        return import(`./progressive-examples/${framework}.md`).then(
+        const definedFramework =
+          framework && framework !== 'null' ? framework : 'angular';
+        localStorage.setItem('framework', definedFramework);
+        return import(`./progressive-examples/${definedFramework}.md`).then(
           m => m.default,
         );
       }),
