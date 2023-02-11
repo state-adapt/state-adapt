@@ -59,6 +59,7 @@ export interface AdaptModel {
       // ...
     ]
   });
+  ```
  */
 @Injectable()
 @State<AdaptModel>({
