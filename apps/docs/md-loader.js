@@ -117,7 +117,7 @@ function insertIncludes(str, filePath, libRelativePath) {
     } else if (['ts', 'tsx'].includes(match[2])) {
       // console.log('ts file');
       const tokensToImportsMap = getTokensToImportPathsMap(fileStr);
-      console.log('tokensToImportsMap', tokensToImportsMap);
+      // console.log('tokensToImportsMap', tokensToImportsMap);
       let jsdocResult;
       // Loop through jsdoc comments and find one that contains the token
       // regex that matches comments that start with /** and end with */

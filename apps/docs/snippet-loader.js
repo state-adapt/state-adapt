@@ -19,11 +19,11 @@ module.exports = function (source) {
   const strWithoutJsdoc = str.replace(jsdocRegex, '');
   const fileExtension = path.extname(this.resourcePath);
   const lang = filenameLangMap[fileExtension];
-  console.log('\n\nlang', lang);
+  // console.log('\n\nlang', lang);
   const wrapped = `\`\`\`${lang}
 ${strWithoutJsdoc}\`\`\`
 `;
-  console.log('\n\nwrapped', wrapped);
+  // console.log('\n\nwrapped', wrapped);
   return wrapped;
 };
 

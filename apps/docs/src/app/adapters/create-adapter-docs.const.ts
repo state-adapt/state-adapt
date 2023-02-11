@@ -3,8 +3,6 @@ import demoAdapterCode from '!!raw-loader!!!md-loader!!!snippet-loader!./adapter
 import { AdapterDocs } from '@state-adapt/adapter-docs';
 import { adapter } from './adapter-demo';
 
-console.log(demoAdapterCode);
-
 export const createAdapterDocs: AdapterDocs = {
   name: 'createAdapter',
   description: 'Base adapter with basic operations: set and reset',
