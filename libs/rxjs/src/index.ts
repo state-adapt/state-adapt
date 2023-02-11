@@ -1,6 +1,10 @@
-export * from './lib/sources/split-sources.function';
-export * from './lib/sources/to-source.operator';
 export * from './lib/sources/source';
+export * from './lib/sources/to-source.operator';
+export * from './lib/sources/catch-error-source.operator';
+export * from './lib/sources/to-request-source.operator';
+export * from './lib/sources/split-sources.function';
+export * from './lib/sources/split-request-sources.function';
+export * from './lib/sources/get-request-sources.function';
 
 export * from './lib/http/prefix-source.function';
 export * from './lib/http/get-http-error.function';

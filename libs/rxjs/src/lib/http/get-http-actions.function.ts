@@ -3,6 +3,7 @@ import { concat, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { getCatchHttpError } from './get-catch-http-error.function';
 import { ErrorAction, ErrorActionWithReq } from './get-http-error.function';
+import { toRequestSource } from '../sources/to-request-source.operator';
 
 export type GetResponse<Res, Body, Err> = (res: Res) => [boolean, Body, Err];
 export type RequestActionVoid = {
@@ -35,9 +36,15 @@ export interface GetHttpActionsWithReq<Res, Body, Err, Req> {
   >;
 }
 
+/**
+ * @deprecated Use {@link toRequestSource} instead.
+ */
 export function getHttpActions<Res, Body, Err>(
   ...[http$, getResponse]: Parameters<GetHttpActions<Res, Body, Err>>
 ): ReturnType<GetHttpActions<Res, Body, Err>>;
+/**
+ * @deprecated Use {@link toRequestSource} instead.
+ */
 export function getHttpActions<Res, Body, Err, Req = any>(
   ...[http$, getResponse, req]: Parameters<GetHttpActionsWithReq<Res, Body, Err, Req>>
 ): ReturnType<GetHttpActionsWithReq<Res, Body, Err, Req>>;

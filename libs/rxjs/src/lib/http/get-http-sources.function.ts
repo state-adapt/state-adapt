@@ -9,12 +9,19 @@ import {
   SeparatedHttpSourcesWithReq,
   splitHttpSources,
 } from './split-http-sources.function';
+import { getRequestSources } from '../sources/get-request-sources.function';
 
+/**
+ * @deprecated Use {@link getRequestSources} instead.
+ */
 export function getHttpSources<Prefix extends string, Res, Body, Err>(
   feature: Prefix,
   http$: Observable<Res>,
   getResponse: GetResponse<Res, Body, Err>,
 ): SeparatedHttpSources<Prefix, Body, Err>;
+/**
+ * @deprecated Use {@link getRequestSources} instead.
+ */
 export function getHttpSources<Prefix extends string, Res, Body, Err, Req>(
   feature: Prefix,
   http$: Observable<Res>,

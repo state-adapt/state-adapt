@@ -10,6 +10,7 @@ import {
 } from './get-http-actions.function';
 import { ErrorAction, ErrorActionWithReq } from './get-http-error.function';
 import { prefixSource } from './prefix-source.function';
+import { splitRequestSources } from '../sources/split-request-sources.function';
 
 export type SeparatedHttpSources<Prefix extends string, Body, Err> = {
   request$: Observable<PrefixedAction<Prefix, RequestActionVoid>>;
@@ -22,10 +23,16 @@ export type SeparatedHttpSourcesWithReq<Prefix extends string, Body, Err, Req> =
   error$: Observable<PrefixedAction<Prefix, ErrorActionWithReq<Req, string | Err>>>;
 };
 
+/**
+ * @deprecated Use {@link splitRequestSources} instead.
+ */
 export function splitHttpSources<Res, Body, Err, Prefix extends string = string>(
   feature: Prefix,
   httpWithSources$: ReturnType<GetHttpActions<Res, Body, Err>>,
 ): SeparatedHttpSources<Prefix, Body, Err>;
+/**
+ * @deprecated Use {@link splitRequestSources} instead.
+ */
 export function splitHttpSources<Res, Body, Err, Req, Prefix extends string = string>(
   feature: Prefix,
   httpWithSources$: ReturnType<GetHttpActionsWithReq<Res, Body, Err, Req>>,

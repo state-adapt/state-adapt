@@ -1,10 +1,17 @@
 import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { ErrorAction, ErrorActionWithReq, getHttpError } from './get-http-error.function';
+import { catchErrorSource } from '../sources/catch-error-source.operator';
 
+/**
+ * @deprecated Use {@link catchErrorSource} instead.
+ */
 export function getCatchHttpError<Type extends string>(
   type: Type,
 ): <T>(obs$: Observable<T>) => Observable<T | ErrorAction<string>>;
+/**
+ * @deprecated Use {@link catchErrorSource} instead.
+ */
 export function getCatchHttpError<Type extends string, Req = any>(
   type: Type,
   req: Req,

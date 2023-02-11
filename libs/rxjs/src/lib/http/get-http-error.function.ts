@@ -4,9 +4,15 @@ import { Observable, of } from 'rxjs';
 export type ErrorAction<Err = string> = Action<Err, 'error$'>;
 export type ErrorActionWithReq<Req, Err = string> = Action<[Err, Req], 'error$'>;
 
+/**
+ * @deprecated Use {@link getAction} instead.
+ */
 export function getHttpError<Type extends string>(
   type: Type,
 ): (err: string) => Observable<ErrorAction>;
+/**
+ * @deprecated Use {@link getAction} instead.
+ */
 export function getHttpError<Type extends string, Req = any>(
   type: Type,
   req: Req,
