@@ -1,56 +1,71 @@
+import { merge, using } from 'rxjs';
+
 import {
   combineSelectors,
   createSelectorsCache,
   Flat,
   memoizeWithProxy,
-  ReturnTypeSelectors,
-  SelectorReturnTypes,
   Selectors,
   SelectorsCache,
+  joinAdapters,
 } from '@state-adapt/core';
-import { merge, using } from 'rxjs';
-import { JoinedStore } from './joined-store.interface';
-import { StoreLike } from './store-like.type';
 
-type StoreEntries = {
-  [index: string]: StoreLike<any, any, any>;
-};
+import {
+  AddNewBlock,
+  EntriesState,
+  JoinedSelectors,
+  NewBlockAdder,
+  StoreBuilder,
+  StoreEntries,
+} from './join-stores.types';
 
-type StoreState<Store extends StoreLike<any, any, any>> = Store extends StoreLike<
-  infer State,
-  any,
-  any
->
-  ? State
-  : never;
+/**
+  ## ![StateAdapt](https://miro.medium.com/max/4800/1*qgM6mFM2Qj6woo5YxDMSrA.webp|width=14) `joinStores`
 
-type EntriesState<SE extends StoreEntries> = {
-  [K in string & keyof SE]: StoreState<SE[K]>;
-};
+  `joinStores` is a function that takes in a `StoreEntries extends { [index: string]: StoreLike }` object and returns a `StoreBuilder` function.
+  The `StoreBuilder` function can be called again and again with more selector definitions, and finally with no arguments to create a store.
 
-type PrefixedSelectors<
-  State,
-  Prefix extends string & keyof State,
-  S extends Selectors<any>,
-> = {
-  [K in string & keyof S as K extends 'state' ? never : `${Prefix}${Capitalize<K>}`]: (
-    state: State,
-  ) => ReturnType<S[K]>;
-};
+  `joinStores` syntax is identical to that of {@link joinAdapters} so that you can easily switch between the two.
+  The difference is that `joinStores` can only define selectors, while `joinAdapters` can define both selectors and reactions.
 
-type SelectorsOfState<State> = {
-  [K in string & keyof State]: (state: State) => State[K];
-};
+  #### Example: Combining states from two stores
 
-type JoinedSelectors<SE extends StoreEntries> = SelectorsOfState<EntriesState<SE>> &
-  ({
-    [K in string & keyof SE]: (
-      x: PrefixedSelectors<EntriesState<SE>, K, SE[K]['__']['fullSelectors']>,
-    ) => void;
-  }[string & keyof SE] extends (x: infer I) => void
-    ? I
-    : never);
+  ```typescript
+  import { joinStores } from '@state-adapt/rxjs';
+  import { adapt } from '../configure-state-adapt.ts';
 
+  const store1 = adapt('store1', 1);
+  const store2 = adapt('store2', 2);
+
+  const joinedStore = joinStores({ store1, store2 })();
+
+  joinedStore.state$.subscribe(console.log);
+  // { store1: 1, store2: 2 }
+  ```
+
+  #### Example: Combining selectors from two stores
+
+  ```typescript
+  import { createAdapter } from '@state-adapt/core';
+  import { joinStores } from '@state-adapt/rxjs';
+  import { adapt } from '../configure-state-adapt.ts';
+
+  const adapter = createAdapter<number>()({
+    selectors: {
+      double: s => s * 2,
+    }
+  });
+
+  const store1 = adapt(['store1', 1], adapter);
+  const store2 = adapt(['store2', 2], adapter);
+
+  const joinedStore = joinStores({ store1, store2 })({
+    sum: s => s.store1Double + s.store2Double,
+  })();
+
+  joinedStore.sum$.subscribe(console.log);
+  // 6
+ */
 // state => easy
 // joined selectors => Map—Grab from each store, prefix object, do merge trick
 //
@@ -110,44 +125,6 @@ export function joinStores<SE extends StoreEntries>(
     selectors: joinedSelectors,
     getCacheOverride,
   });
-}
-
-type StoreBuilder<State, S extends Selectors<State>, SE extends StoreEntries> = {
-  storeEntries: SE;
-  namespaces: (string & keyof SE)[];
-  selectors: S;
-  getCacheOverride: (c: SelectorsCache) => SelectorsCache;
-};
-
-type Prev = [never, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19];
-
-type AddNewBlock<
-  State,
-  S extends Selectors<State>,
-  SE extends StoreEntries,
-  D extends Prev[number] = 19,
-> = (
-  builder: StoreBuilder<State, S, SE>,
-) => D extends [never] ? S : NewBlockAdder<State, S, SE, D>;
-
-interface NewBlockAdder<
-  State,
-  S extends Selectors<State>,
-  SE extends StoreEntries,
-  D extends Prev[number] = 19,
-> {
-  (): JoinedStore<State, S>;
-
-  <NewBlock extends Selectors<SelectorReturnTypes<State, S>>>(
-    newBlock: NewBlock,
-  ): ReturnType<
-    AddNewBlock<
-      State,
-      Flat<ReturnTypeSelectors<State, SelectorReturnTypes<State, S>, Flat<S & NewBlock>>>,
-      SE,
-      Prev[D]
-    >
-  >;
 }
 
 function addNewBlock<SB extends StoreBuilder<any, any, any>>(
