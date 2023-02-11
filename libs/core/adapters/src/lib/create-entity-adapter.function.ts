@@ -39,7 +39,11 @@ export function createEntityState<
   Id extends Index = Entity extends { id: Index } ? Entity['id'] : never,
   State extends EntityState<Entity, Id> = EntityState<Entity, Id>,
 >(state: Partial<State> = {}): EntityState<Entity, Id> {
-  return { ...state, ids: [] as Id[], entities: {} as Record<Id, Entity> };
+  return {
+    ...state,
+    ids: state.ids || ([] as Id[]),
+    entities: state.entities || ({} as Record<Id, Entity>),
+  };
 }
 
 type EntityStateReactions<
