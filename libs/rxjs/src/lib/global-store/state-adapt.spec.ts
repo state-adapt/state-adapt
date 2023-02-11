@@ -6,15 +6,16 @@ import {
   stateSanitizer,
 } from '@state-adapt/core';
 import { toSource } from '@state-adapt/rxjs';
-import { interval } from 'rxjs';
-import { createStore } from './create-store.function';
+import { NEVER, interval } from 'rxjs';
+import { configureStateAdapt } from './configure-state-adapt.function';
+import { switchMap } from 'rxjs/operators';
 
 const enableReduxDevTools = (window as any).__REDUX_DEVTOOLS_EXTENSION__?.({
   actionSanitizer,
   stateSanitizer,
 });
-
-const adapt = createStore(enableReduxDevTools);
+const stateAdapt = configureStateAdapt({ devtools: enableReduxDevTools });
+const { adapt, watch } = stateAdapt;
 
 const simpleNumberAdapter = createAdapter<number>()({
   double: state => state * 2,
@@ -72,14 +73,20 @@ const f: (s: number) => string = numbersAdapter.selectors.rando;
 // @ts-expect-error Should return {a: number; b: number}
 const g: (s: number) => string = numbersAdapter.doubleA;
 
-const interval7$ = interval(7000).pipe(toSource('interval7$'));
-const interval3$ = interval(3000).pipe(toSource('interval3$'));
+// Jest hates timeoutes, but this is to test types
+const interval7$ = NEVER.pipe(
+  switchMap(() => interval(7000).pipe(toSource('interval7$'))),
+);
+const interval3$ = NEVER.pipe(
+  switchMap(() => interval(3000).pipe(toSource('interval3$'))),
+);
 
-describe('Adapt', () => {
+describe('StateAdapt', () => {
   const initialState = { a: 5, b: 5 };
-  const store = adapt.init(['numberA', initialState, numbersAdapter], {
-    // doubleA: interval7$,
-    // doubleB: interval3$,
+  const store = adapt(['numberA', initialState, numbersAdapter], {
+    doubleA: interval7$,
+    doubleB: interval3$,
+    noop: interval7$,
   });
 
   // @ts-expect-error Property should be Observable<number> not Observable<any>
@@ -87,11 +94,14 @@ describe('Adapt', () => {
   // @ts-expect-error Property should be Observable<number> not Observable<any>
   const sub6 = store.aDouble$.subscribe((s: string) => {});
 
-  function doUnreasonableThings() {
+  function checkTypes() {
     // Should be good
     const m5 = store.set({ a: 4, b: 4 });
+    const m51 = store.setA(4);
     // @ts-expect-error Property should take {a: number; b: number}
     const m6 = store.set({ a: 4, b: '4' });
+    // @ts-expect-error Property should number
+    const m61 = store.setA({ a: 4, b: '4' });
     // @ts-expect-error Should recognize undefined property
     const sub55 = store.bQzuadruple$.subscribe(s => {});
   }
@@ -108,6 +118,22 @@ describe('Adapt', () => {
   it('should emit 8x initial b state (5)', () => {
     let bOctuple;
     store.bOctuple$.subscribe(s => {
+      // Synchronous
+      bOctuple = s;
+    });
+    expect(bOctuple).toBe(40);
+  });
+
+  it('should be availabe to watch', () => {
+    let state;
+    watch('numberA', numbersAdapter).state$.subscribe(s => {
+      // Synchronous
+      state = s;
+    });
+    expect(state).toBe(initialState);
+
+    let bOctuple;
+    watch('numberA', numbersAdapter).bOctuple$.subscribe(s => {
       // Synchronous
       bOctuple = s;
     });

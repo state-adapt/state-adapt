@@ -1,17 +1,17 @@
 import { BehaviorSubject } from 'rxjs';
 import { distinctUntilChanged, filter, map } from 'rxjs/operators';
 
-export interface ObservableStore<State, AnyAction> {
+export interface GlobalStore<State, AnyAction> {
   subscribe: (observer: any) => void;
   getState: () => State;
   dispatch: (action: AnyAction) => void;
 }
 
-export class AdaptStore<
+export class ObservableStore<
   State,
   AnyAction,
   Action extends AnyAction,
-  Store extends ObservableStore<State, AnyAction>,
+  Store extends GlobalStore<State, AnyAction>,
 > extends BehaviorSubject<State> {
   store: Store;
   actionQueue = [] as any[]; // First is currently dispatching

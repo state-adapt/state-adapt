@@ -18,6 +18,11 @@ export * from './lib/stores/sources.type';
 export * from './lib/stores/smart-store.interface';
 export * from './lib/stores/join-stores.function';
 
+// export * from './lib/global-store/observable-store';
+export * from './lib/global-store/configure-state-adapt.options';
+export * from './lib/global-store/configure-state-adapt.function';
+export * from './lib/global-store/state-adapt.types';
+export * from './lib/global-store/state-adapt';
 
 export * from './lib/utils/map-each-with-effect.function';
 
