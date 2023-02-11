@@ -12,7 +12,8 @@
           "builder": "@nrwl/angular:package",
           "options": {
             "tsConfig": "libs/adapter-docs/tsconfig.lib.json",
-            "project": "libs/adapter-docs/ng-package.json"
+            "project": "libs/adapter-docs/ng-package.json",
+            "updateBuildableProjectDepsInPackageJson": false
           },
           "configurations": {
             "production": {
@@ -53,7 +54,8 @@
           "outputs": ["dist/libs/angular"],
           "options": {
             "tsConfig": "libs/angular/tsconfig.lib.json",
-            "project": "libs/angular/ng-package.json"
+            "project": "libs/angular/ng-package.json",
+            "updateBuildableProjectDepsInPackageJson": false
           },
           "configurations": {
             "production": {
@@ -92,7 +94,8 @@
           "builder": "@nrwl/angular:package",
           "outputs": ["dist/libs/angular-router"],
           "options": {
-            "project": "libs/angular-router/ng-package.json"
+            "project": "libs/angular-router/ng-package.json",
+            "updateBuildableProjectDepsInPackageJson": false
           },
           "configurations": {
             "production": {
@@ -851,7 +854,8 @@
           "builder": "@nrwl/angular:package",
           "options": {
             "tsConfig": "libs/ngrx/tsconfig.lib.json",
-            "project": "libs/ngrx/ng-package.json"
+            "project": "libs/ngrx/ng-package.json",
+            "updateBuildableProjectDepsInPackageJson": false
           },
           "configurations": {
             "production": {
@@ -888,7 +892,8 @@
           "builder": "@nrwl/angular:package",
           "options": {
             "tsConfig": "libs/ngxs/tsconfig.lib.json",
-            "project": "libs/ngxs/ng-package.json"
+            "project": "libs/ngxs/ng-package.json",
+            "updateBuildableProjectDepsInPackageJson": false
           },
           "configurations": {
             "production": {
@@ -1059,7 +1064,8 @@
           "builder": "@nrwl/angular:package",
           "options": {
             "tsConfig": "libs/rxjs/tsconfig.lib.json",
-            "project": "libs/rxjs/ng-package.json"
+            "project": "libs/rxjs/ng-package.json",
+            "updateBuildableProjectDepsInPackageJson": false
           },
           "configurations": {
             "production": {
