@@ -6,6 +6,6 @@ export function useObservable<T>(obs$: Observable<T>) {
   useEffect(() => {
     const sub = obs$.subscribe(setState);
     return () => sub.unsubscribe();
-  }, []);
+  }, [obs$]);
   return state;
 }
