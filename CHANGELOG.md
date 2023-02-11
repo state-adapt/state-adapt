@@ -1,3 +1,11 @@
+## 0.62.0
+
+- Refactor(core): Deprecate mapPayloads
+- Refactor(rxjs/global-store)!: Create configureStateAdapt for more flexibility
+- Refactor(rxjs/http): Deprecate http sources, create simplified request sources
+- Feature(rxjs): Create mapEachWithEffect function for efficient side effects from arrays
+- Feature(react)!: Create useStore and make useAdapt more natural for React
+
 ## 0.61.0
 
 - Feature(core/adapters): Detect default Id type in EntityState
