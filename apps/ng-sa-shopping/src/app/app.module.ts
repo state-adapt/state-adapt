@@ -1,13 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { actionSanitizer, stateSanitizer } from '@state-adapt/core';
-import { createStore, Adapt } from '@state-adapt/rxjs';
 import { ShoppingSharedModule } from '../../../../libs/shopping/src';
-
-const enableReduxDevTools = (window as any).__REDUX_DEVTOOLS_EXTENSION__?.({
-  actionSanitizer,
-  stateSanitizer,
-});
+import { defaultStoreProvider } from '@state-adapt/angular';
 
 import { AppComponent } from './app.component';
 
@@ -15,6 +9,6 @@ import { AppComponent } from './app.component';
   imports: [BrowserModule, ShoppingSharedModule],
   bootstrap: [AppComponent],
   declarations: [AppComponent],
-  providers: [{ provide: Adapt, useValue: createStore(enableReduxDevTools) }],
+  providers: [defaultStoreProvider],
 })
 export class AppModule {}
