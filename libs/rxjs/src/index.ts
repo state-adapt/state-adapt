@@ -15,4 +15,6 @@ export * from './lib/stores/smart-store.interface';
 export * from './lib/stores/join-stores.function';
 
 
+export * from './lib/utils/map-each-with-effect.function';
+
 export * from './cheat-sheet.const';
