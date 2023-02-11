@@ -32,7 +32,9 @@ export class FrameworkRedirectGuard {
   constructor(private router: Router) {}
   canActivate() {
     const framework = localStorage.getItem('framework');
-    return this.router.createUrlTree([`/${framework}`]);
+    const definedFramework =
+      framework && framework !== 'null' ? framework : 'angular';
+    return this.router.createUrlTree([`/${definedFramework}`]);
   }
 }
 

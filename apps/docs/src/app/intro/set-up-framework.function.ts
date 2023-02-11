@@ -8,12 +8,14 @@ export function setUpFramework(activatedRoute: ActivatedRoute, router: Router) {
     .get('framework')
     ?.replace(/#.*/g, '');
   const framework = routeFramework || storedFramework || 'angular';
+  const definedFramework =
+    framework && framework !== 'null' ? framework : 'angular';
 
   if (!routeFramework) {
-    router.navigate([`/${framework}`], { replaceUrl: true });
+    router.navigate([`/${definedFramework}`], { replaceUrl: true });
   }
-  if (framework !== storedFramework) {
-    localStorage.setItem('framework', framework);
+  if (definedFramework !== storedFramework) {
+    localStorage.setItem('framework', definedFramework);
   }
 
   return defer(() => {
