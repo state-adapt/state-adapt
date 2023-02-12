@@ -22,7 +22,7 @@ import { Observable } from 'rxjs';
     toRequestSource('interval'),
   );
 
-  const { success$, error$ } = splitRequestSources(interval$, 'interval');
+  const { success$, error$ } = splitRequestSources('interval', interval$);
 
   success$.subscribe(console.log);
   // { type: 'interval.success$', payload: 0 }
@@ -33,11 +33,11 @@ import { Observable } from 'rxjs';
   ```
   */
 export function splitRequestSources<
-  A extends Action<any, `${TypePrefix}.success$` | `${TypePrefix}.error$`>,
   TypePrefix extends string,
+  A extends Action<any, `${TypePrefix}.success$` | `${TypePrefix}.error$`>,
 >(
-  obs$: Observable<A>,
   typePrefix: TypePrefix,
+  obs$: Observable<A>,
 ): {
   success$: Observable<
     A extends Action<infer Payload, `${TypePrefix}.success$`>

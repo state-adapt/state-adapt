@@ -1,3 +1,7 @@
+## 0.64.0
+
+- Refactor(rxjs)!: Flip the order of arguments for getRequestSources and splitRequestSources
+
 ## 0.63.0
 
 - Feature(rxjs): Change joinStores to work with useStore

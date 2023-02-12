@@ -20,7 +20,7 @@ import { splitRequestSources } from './split-request-sources.function';
 
   const interval$ = interval(1000).pipe(map(n => n < 2 ? n : n.fakeNumberMethod()));
 
-  const { success$, error$ } = getRequestSources(interval$, 'interval');
+  const { success$, error$ } = getRequestSources('interval', interval$);
 
   success$.subscribe(console.log);
   // { type: 'interval.success$', payload: 0 }
@@ -39,7 +39,7 @@ import { splitRequestSources } from './split-request-sources.function';
 
   const http$ = ajax('https://jsonplaceholder.typicode.com/todos/1');
 
-  const httpRequest = getRequestSources(http$, 'http');
+  const httpRequest = getRequestSources('http', http$);
 
   httpRequest.success$.subscribe(console.log);
   // { type: 'success$', payload: { ... } }
@@ -48,13 +48,13 @@ import { splitRequestSources } from './split-request-sources.function';
   // { type: 'error$', payload: { ... } }
   ```
  */
-export function getRequestSources<Payload, TypePrefix extends string>(
-  obs$: Observable<Payload>,
+export function getRequestSources<TypePrefix extends string, Payload>(
   typePrefix: TypePrefix,
+  obs$: Observable<Payload>,
 ): {
   success$: Observable<Action<Payload, `${TypePrefix}.success$`>>;
   error$: Observable<Action<any, `${TypePrefix}.error$`>>;
 } {
   const requestSources = obs$.pipe(toRequestSource(typePrefix));
-  return splitRequestSources(requestSources, typePrefix);
+  return splitRequestSources(typePrefix, requestSources);
 }
