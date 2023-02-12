@@ -100,7 +100,7 @@
     "@nrwl/web": "14.3.6",
     "@nrwl/webpack": "^14.8.6",
     "@nrwl/workspace": "14.3.6",
-    "@testing-library/react": "13.3.0",
+    "@testing-library/react": "^13.3.0",
     "@types/jest": "27.4.1",
     "@types/lodash": "^4.14.168",
     "@types/node": "18.0.0",

@@ -78,43 +78,68 @@ export function joinStores<SE extends StoreEntries>(
 
   const namespaces = Object.keys(storeEntries) as (string & keyof SE)[];
   const joinedSelectors: Selectors<any> = {};
+  const joinedFullSelectors: Selectors<any> = {};
 
-  const cache = createSelectorsCache();
+  const selectorsCache = createSelectorsCache();
+  // const fullSelectorsCache = createSelectorsCache();
   const getCacheOverride = (sharedChildCache: SelectorsCache) => {
     // Use this join's cache instead of the one from future joins
     // But register future joins' caches as children
     if (sharedChildCache) {
-      cache.__children[sharedChildCache.__id] = sharedChildCache;
+      selectorsCache.__children[sharedChildCache.__id] = sharedChildCache;
     }
-    return cache;
+    return selectorsCache;
+  };
+  // const getCacheOverride = createGetCacheOverride(selectorsCache);
+  // const getFullCacheOverride = createGetCacheOverride(fullSelectorsCache);
+
+  const getJoinedState = (state: any) => {
+    const newState = {} as any;
+    namespaces.forEach(key => {
+      newState[key] = state[key];
+    });
+    return newState;
   };
 
   joinedSelectors.state = memoizeWithProxy()(
     'state',
     joinedSelectors,
-    s => {
-      const newState = {} as any;
-      namespaces.forEach(key => {
-        newState[key] = s[key];
-      });
-      return newState;
-    },
+    getJoinedState,
     getCacheOverride,
   );
+
+  joinedFullSelectors.state = memoizeWithProxy()(
+    'state',
+    joinedFullSelectors,
+    getJoinedState,
+    getCacheOverride,
+  );
+
+  const joinedInitialState = {} as any;
 
   namespaces.forEach(namespace => {
     // Already cached selectors to be made available under new names
     // to be used in subsequent selector definitions.
+    joinedInitialState[namespace] = storeEntries[namespace].__.initialState;
+    const selectors = storeEntries[namespace].__.selectors;
     const fullSelectors = storeEntries[namespace].__.fullSelectors;
     for (const selectorName in fullSelectors) {
-      const selector = fullSelectors[selectorName];
+      const selector = selectors[selectorName];
+      const fullSelector = fullSelectors[selectorName];
       if (selectorName === 'state') {
-        joinedSelectors[namespace] = selector;
+        joinedSelectors[namespace] = (state: any) => state[namespace];
+        joinedFullSelectors[namespace] = fullSelector;
       } else {
         const newSelectorName = `${namespace}${
           selectorName.charAt(0).toUpperCase() + selectorName.substr(1)
         }`;
-        joinedSelectors[newSelectorName] = selector;
+        joinedSelectors[newSelectorName] = memoizeWithProxy()(
+          newSelectorName,
+          joinedSelectors,
+          s => selector(s[namespace]), // selector is already cached
+          getCacheOverride,
+        );
+        joinedFullSelectors[newSelectorName] = fullSelector;
       }
     }
   });
@@ -123,6 +148,8 @@ export function joinStores<SE extends StoreEntries>(
     storeEntries,
     namespaces,
     selectors: joinedSelectors,
+    fullSelectors: joinedFullSelectors,
+    initialState: joinedInitialState,
     getCacheOverride,
   });
 }
@@ -134,6 +161,13 @@ function addNewBlock<SB extends StoreBuilder<any, any, any>>(
     if (newS)
       return addNewBlock({
         ...builder,
+        fullSelectors: combineSelectors<any>()<any, any, any>(
+          builder.fullSelectors,
+          newS,
+          // These new selectors will ignore the cache objects (if any) given to them
+          // Instead, attach that cache object as a child of this joined store's cache object
+          builder.getCacheOverride,
+        ),
         selectors: combineSelectors<any>()<any, any, any>(
           builder.selectors,
           newS,
@@ -144,7 +178,7 @@ function addNewBlock<SB extends StoreBuilder<any, any, any>>(
       });
 
     // Done
-    const { namespaces, selectors, storeEntries } = builder;
+    const { namespaces, selectors, fullSelectors, initialState, storeEntries } = builder;
     const select = storeEntries[namespaces[0]].__.select;
 
     const requireAllSources$ = merge(
@@ -153,16 +187,18 @@ function addNewBlock<SB extends StoreBuilder<any, any, any>>(
 
     const joinedStore = {
       __: {
-        fullSelectors: selectors,
+        selectors,
+        fullSelectors,
         requireSources$: requireAllSources$,
+        initialState,
         select: select,
       },
     } as any;
 
-    for (const selectorName in selectors) {
+    for (const selectorName in fullSelectors) {
       joinedStore[selectorName + '$'] = using(
         () => requireAllSources$.subscribe(),
-        () => select(selectors[selectorName]),
+        () => select(fullSelectors[selectorName]),
       );
     }
 

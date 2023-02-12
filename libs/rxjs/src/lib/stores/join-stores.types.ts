@@ -54,7 +54,10 @@ export type StoreBuilder<State, S extends Selectors<State>, SE extends StoreEntr
   storeEntries: SE;
   namespaces: (string & keyof SE)[];
   selectors: S;
+  fullSelectors: S;
+  initialState: State;
   getCacheOverride: (c: SelectorsCache) => SelectorsCache;
+  // getFullCacheOverride: (c: SelectorsCache) => SelectorsCache;
 };
 
 type Prev = [never, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19];

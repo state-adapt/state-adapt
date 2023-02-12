@@ -1,3 +1,7 @@
+## 0.63.0
+
+- Feature(rxjs): Change joinStores to work with useStore
+
 ## 0.62.0
 
 - Refactor(core): Deprecate mapPayloads

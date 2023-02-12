@@ -6,6 +6,8 @@ export type JoinedStore<State, S1 extends AnySelectors> = Selections<State, S1> 
   __: {
     requireSources$: Observable<any>;
     fullSelectors: S1;
+    selectors: S1;
+    initialState: State;
     select: <State>(sel: any) => Observable<State>;
   };
 };
