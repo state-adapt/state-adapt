@@ -6,7 +6,7 @@
 
 [`buildAdapter`](/docs/core#buildadapter)
 
-[`joinAdpaters`](/docs/core#joinadapters)
+[`joinAdapters`](/docs/core#joinadapters)
 
 [`Action`](/docs/core#action)
 
