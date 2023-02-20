@@ -37,6 +37,10 @@ type PrefixedSelectors<
 
 type SelectorsOfState<State> = {
   [K in string & keyof State]: (state: State) => State[K];
+} & {
+  state: {
+    <K extends string & keyof State>(state: State, key: K): State[K];
+  };
 };
 
 export type JoinedSelectors<SE extends StoreEntries> = SelectorsOfState<
