@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { take } from 'rxjs/operators';
 import { SmartStore, StateAdapt } from '@state-adapt/rxjs';
-import { SelectorsFromStore } from './proxy-store-tuple.type';
+import { FilteredStoreSelectors } from './proxy-store-tuple.type';
+import { Subscription } from 'rxjs';
 
 /**
   ## ![StateAdapt](https://miro.medium.com/max/4800/1*qgM6mFM2Qj6woo5YxDMSrA.webp|width=14) `useStore`
@@ -72,33 +73,44 @@ import { SelectorsFromStore } from './proxy-store-tuple.type';
   }
   ```
   */
-export function useStore<Store extends SmartStore<any, any>>(
+export function useStore<
+  Store extends SmartStore<any, { state: any }>,
+  FilterSelectors extends (keyof Store['__']['selectors'])[],
+>(
   store: Store,
-): SelectorsFromStore<Store> {
-  const [{ initial }, setState] = useState({
-    initial: true,
-    state: (store.__ as any).initialState,
-  });
+  filterSelectors: FilterSelectors = ['state'] as FilterSelectors,
+): FilteredStoreSelectors<Store, Extract<FilterSelectors[number], string>> {
+  const [state, setState] = useState<any>();
 
   useEffect(() => {
-    const sub = store.state$.subscribe(setState);
+    const sub = new Subscription();
+    filterSelectors.forEach(selectorName => {
+      sub.add(
+        (store[((selectorName as string) + '$') as keyof Store] as any).subscribe(() =>
+          setState({}),
+        ),
+      );
+    });
     return () => sub.unsubscribe();
-  }, [store]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [store, filterSelectors.join()]);
 
   const proxy = useMemo(
     () =>
       new Proxy(store, {
         get: (target: any, prop: string) => {
-          if (initial) {
-            const initialResult = (store.__ as any).selectors[prop](
-              (store.__ as any).initialState,
-            );
+          const __ = target.__ as any;
+          if (!(prop in __.selectors)) {
+            return undefined;
+          }
+          if (state === undefined) {
+            const initialResult = __.selectors[prop](__.initialState);
             return initialResult;
           } else {
-            // Return value immediately
+            // Return value synchronously
             let val: any;
-            store.__.select((state: any) => {
-              const result = store.__.fullSelectors[prop](state);
+            __.select((state: any) => {
+              const result = __.fullSelectors[prop](state);
               return result;
             })
               .pipe(take(1))
@@ -107,7 +119,7 @@ export function useStore<Store extends SmartStore<any, any>>(
           }
         },
       }),
-    [store, initial],
+    [store, state],
   );
 
   return proxy;

@@ -82,4 +82,37 @@ describe('useStore', () => {
       'new1initial2initial3',
     ]);
   });
+
+  it('should have TS error when selector not in filter selectors list is used', () => {
+    const checkTypes = () => {
+      const { result } = renderHook(() => {
+        const joined123 = useStore(joined123Store, ['name3']);
+        // @ts-expect-error Should only be able to use selectors in filterSelectors
+        return joined123.name12Name1name2;
+      });
+    };
+    expect(true).toEqual(true);
+  });
+
+  it('should only rerender when filter selectors emit', () => {
+    const name3Results: string[] = [];
+    const { result } = renderHook(() => {
+      const { name3 } = useStore(joined123Store, ['name3']);
+      name3Results.push(name3);
+      return name3;
+    });
+    expect(name3Results).toEqual(['initial3', 'initial3']);
+    act(() => {
+      store1.set('new1');
+    });
+    expect(name3Results).toEqual(['initial3', 'initial3']);
+    act(() => {
+      store2.set('new2');
+    });
+    expect(name3Results).toEqual(['initial3', 'initial3']);
+    act(() => {
+      store3.set('new3');
+    });
+    expect(name3Results).toEqual(['initial3', 'initial3', 'new3']);
+  });
 });

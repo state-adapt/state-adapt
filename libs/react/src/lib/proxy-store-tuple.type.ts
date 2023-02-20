@@ -1,10 +1,15 @@
 import { SmartStore } from '@state-adapt/rxjs';
 
-export type SelectorsFromStore<Store extends SmartStore<any, any>> = {
-  [K in keyof Store['__']['selectors']]: ReturnType<Store['__']['selectors'][K]>;
+export type FilteredStoreSelectors<
+  Store extends SmartStore<any, any>,
+  SelectorNames extends string = Extract<keyof Store['__']['selectors'], string>,
+> = {
+  [K in keyof Store['__']['selectors'] as K extends SelectorNames
+    ? K
+    : never]: ReturnType<Store['__']['selectors'][K]>;
 };
 
 export type ProxyStoreTuple<Store extends SmartStore<any, any>> = [
-  SelectorsFromStore<Store>,
+  FilteredStoreSelectors<Store>,
   Store,
 ];

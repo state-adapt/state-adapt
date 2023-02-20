@@ -1,5 +1,6 @@
 ## 0.64.0
 
+- Feature(react): Add ability to prevent unnecessary renderings with useStore
 - Refactor(rxjs)!: Flip the order of arguments for getRequestSources and splitRequestSources
 
 ## 0.63.0
