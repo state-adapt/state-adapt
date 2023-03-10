@@ -938,6 +938,7 @@
             "external": ["react", "react-dom"],
             "babelConfig": "@nrwl/react/plugins/bundle-babel",
             "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
+            "updateBuildableProjectDepsInPackageJson": false,
             "assets": [
               {
                 "glob": "README.md",
