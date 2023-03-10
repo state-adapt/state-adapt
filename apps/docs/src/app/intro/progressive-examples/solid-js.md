@@ -47,13 +47,6 @@ function DerivedState() {
 
 ### Try it on [StackBlitz](https://stackblitz.com/edit/vitejs-vite-cwd8th?file=src%2F2DerivedState.tsx)
 
-<!--
-Need to figure out how to compile the markdown at build time.
-Maybe a custom builder like this:
-https://www.thisdot.co/blog/angular-custom-builders-markdown-angular
-https://github.com/flakolefluk/md-builder
- -->
-
 ## 3. Define state changes declaratively in stores
 
 Maintain separation of concerns by keeping state logic together instead of scattered.
