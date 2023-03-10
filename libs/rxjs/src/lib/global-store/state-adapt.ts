@@ -597,7 +597,7 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
         ...acc,
         [reactionName]: (payload: any) => {
           const update = this.getUpdate(path, reaction, payload);
-          const action = getAction(`[${pathAr.join('] [')}] ${reactionName}`, payload);
+          const action = getAction(`${path} ${reactionName}`, payload);
           this.commonStore.dispatch(createPatchState(action, [update]));
         },
       };
