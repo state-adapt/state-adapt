@@ -9,9 +9,10 @@ import { Subscription } from 'rxjs';
 
   > Copilot tip: Copy examples into your file or click to definition to open file with context for better Copilot suggestions.
 
-  `useStore` is a custom hook that takes in a store created outside a component with {@link StateAdapt.adapt}, subscribes to it,
+  `useStore` is a custom hook that takes in a store created with {@link StateAdapt.adapt}, subscribes to it,
   and returns a proxy that can be used as if it is an object with derived state itself from selectors.
   When the store's state changes, it will trigger the component to re-render, no matter what selectors are being accessed from the proxy.
+  To avoid unnecessary re-renders, you can pass in a list of selector names to only trigger re-renders when those specific selectors change.
   The selectors are evaluated lazily.
 
   #### Example: Basic useStore usage
@@ -29,6 +30,31 @@ import { Subscription } from 'rxjs';
 
   export function MyComponent() {
     const name = useStore(nameStore);
+    return (
+      <div>
+        <h1>Hello {name.uppercase}</h1>
+        <button onClick={() => nameStore.concat('!')}>Concat</button>
+      </div>
+    );
+  }
+  ```
+
+  #### Example: useStore with filter selectors
+
+  ```tsx
+  import { adapt } from '../store'; // Import from wherever you configure StateAdapt
+  import { useStore } from '@state-adapt/react';
+
+  const nameStore = adapt(['name', 'Bob'], {
+    concat: (state, name: string) => state + name,
+    selectors: {
+      uppercase: state => state.toUpperCase(),
+    }
+  });
+
+  export function MyComponent() {
+    // Only nameStore.uppercase$ will trigger re-renders
+    const name = useStore(nameStore, ['uppercase']]);
     return (
       <div>
         <h1>Hello {name.uppercase}</h1>
