@@ -130,7 +130,7 @@ export class IntroComponent implements AfterViewInit {
       href: 'https://dev.to/this-is-learning/how-i-got-selectors-in-redux-devtools-443j',
       svg: selectorsSvg,
       title: 'Concise and efficient selectors',
-      description: `StateAdapt uses proxies to memoize selectors and hook into Redux Devools, while enabling syntax that treats them like derived state itself.`,
+      description: `StateAdapt uses proxies to memoize selectors and hook into Redux DevTools, while enabling syntax that treats them like derived state itself.`,
     },
     {
       href: '',
