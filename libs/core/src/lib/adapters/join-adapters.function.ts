@@ -97,12 +97,12 @@ import { AdapterEntries, FlattendAdapters } from './join-adapters.types';
     },
   })(([selectors, reactions]) => ({
     // More reactions
-    addBToA: state => ({ ...state, a: selectors.b(state) }),
-    addAToB: state => ({ ...state, b: selectors.a(state) }),
+    addBToA: state => ({ ...state, a: state.a + selectors.b(state) }),
+    addAToB: state => ({ ...state, b: state.b + selectors.a(state) }),
   }))();
   ```
 
-  For more details, see {@link buildAdapters}.
+  For more details, see {@link buildAdapter}.
 
   #### Example: Auth
 
