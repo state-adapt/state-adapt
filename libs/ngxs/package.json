@@ -1,7 +1,7 @@
 {
   "name": "@state-adapt/ngxs",
   "description": "State management library built with RxJS and inspired by the adapter pattern introduced in NgRx/Entity.",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "homepage": "https://github.com/state-adapt/state-adapt",
   "author": "Mike Pearson",
   "license": "MIT",
@@ -23,7 +23,7 @@
   "peerDependencies": {
     "@angular/core": "^14.0.1 || ^15.0.0 || ^16.0.0",
     "@ngxs/store": "^3.7.1",
-    "@state-adapt/angular": "1.0.0"
+    "@state-adapt/angular": "1.1.0"
   },
   "dependencies": {
     "tslib": "^2.0.0"
