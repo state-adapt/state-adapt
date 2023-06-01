@@ -1,3 +1,7 @@
+## 1.1.0
+
+- Chore(angular): Allow version 16
+
 ## 1.0.0
 
 - Feature(react): Add ability to prevent unnecessary renderings with useStore
