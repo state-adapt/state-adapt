@@ -21,7 +21,7 @@ const SubjectWithoutNext: SubjectWithoutNext = Subject;
   ```typescript
   import { Source } from '@state-adapt/rxjs';
 
-  const add$ = new Source('add$');
+  const add$ = new Source<number>('add$');
 
   add$.subscribe(action => console.log(action));
   add$.next(1);
