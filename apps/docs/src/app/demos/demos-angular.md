@@ -14,6 +14,9 @@
 
 ## GitHub
 
+[Book list](https://github.com/mfp22/2023-fidelity-workshop/tree/state-adapt)
+A basic book list app with a couple of stores and a backend
+
 [Real World App](https://github.com/mfp22/stefanoslig-angular-14-ngrx-nx-realworld-example-app/tree/state-adapt) —
 A Medium clone originally created by Thinkster for demonstrating various technologies on a nontrivial scale — See [the original repo](https://github.com/gothinkster/realworld).
 
