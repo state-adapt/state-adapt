@@ -6,7 +6,7 @@ import {
   stateSanitizer,
 } from '@state-adapt/core';
 import { toSource } from '@state-adapt/rxjs';
-import { NEVER, interval } from 'rxjs';
+import { NEVER, interval, of } from 'rxjs';
 import { configureStateAdapt } from './configure-state-adapt.function';
 import { switchMap } from 'rxjs/operators';
 
@@ -138,5 +138,32 @@ describe('StateAdapt', () => {
       bOctuple = s;
     });
     expect(bOctuple).toBe(40);
+  });
+
+  // @ts-expect-error doubleB: watched.state$, should be Source
+  const store2 = adapt(['numberA2', initialState, numbersAdapter], watched => {
+    try {
+      const sub1 = watched.state$.subscribe(({ a, b }) => a * b * 3);
+      // @ts-expect-error watched.state$ should be Observable<{a: number; b: number}>
+      const sub2 = watched.state$.subscribe(({ a, b }) => a.split(''));
+    } catch (e) {
+      console.log(e);
+    }
+
+    return {
+      doubleA: of(1).pipe(toSource('watched doubleA')),
+    };
+    return {
+      doubleB: watched.state$, // Should be Source
+    };
+  });
+
+  it('should react to recursive source', () => {
+    let state;
+    store2.state$.subscribe(s => {
+      // Synchronous
+      state = s;
+    });
+    expect(state).toEqual({ a: 10, b: 5 });
   });
 });

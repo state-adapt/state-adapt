@@ -139,7 +139,7 @@ import { Source } from '@state-adapt/rxjs';
   ### Overload 3
   `adaptNgrx([path, initialState], sources)`
 
-  Sources allow the store to react to external events. There are 3 possible ways sources can be defined:
+  Sources allow the store to react to external events. There are 4 possible ways sources can be defined:
 
   1. A source can be a single {@link Source} or [Observable](https://rxjs.dev/guide/observable)<{@link Action}<{@link State}>>. When the source emits, it triggers the store's `set` method
   with the payload.
@@ -196,12 +196,30 @@ import { Source } from '@state-adapt/rxjs';
       reset: [this.nameReset$], // Can be array of sources too
     });
 
-    sub = name.state$.subscribe(console.log);
+    sub = this.name.state$.subscribe(console.log);
 
     constructor() {
       this.nameChange$.next('Johnsh'); // logs 'Johnsh'
       this.nameReset$.next(); // logs 'John'
     }
+  }
+  ```
+
+  4. A source can be a function that takes in a detached store (result of calling {@link watch}) and returns any of the above
+  types of sources.
+
+  #### Example: Function that returns sources
+
+  ```tsx
+  export class MyService {
+    name = adaptNgrx(['name', 'John'], store => store.state$.pipe(
+      delay(1000),
+      map(name => `${name}sh`),
+      toSource('recursive nameChange$'),
+    ));
+
+    sub = this.name.state$.subscribe(console.log);
+    // logs 'Johnsh' after 1 second, then 'Johnshsh' after 2 seconds, etc.
   }
   ```
 

@@ -1,3 +1,7 @@
+## 1.2.0
+
+- Refactor(core): Clean up types and allow sources factory
+
 ## 1.1.0
 
 - Chore(angular): Allow version 16

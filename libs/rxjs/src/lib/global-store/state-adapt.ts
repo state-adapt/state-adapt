@@ -3,8 +3,6 @@ import {
   createNoopReaction,
   createUpdateReaction,
   getId,
-} from '@state-adapt/core';
-import {
   Adapter,
   BasicAdapterMethods,
   createAdapter,
@@ -29,12 +27,21 @@ import { isSource } from '../sources/is-source.function';
 import { Selections } from '../stores/selections.type';
 import { SmartStore } from '../stores/smart-store.interface';
 import { Sources } from '../stores/sources.type';
-import { InitializedReactions, GlobalStoreMethods } from './state-adapt.types';
+import {
+  GlobalStoreMethods,
+  SourceArg,
+  InitializedSmartStore,
+} from './state-adapt.types';
 
 interface ParsedPath {
   path: string;
   pathAr: string[];
 }
+
+const isSourcesArg = (thing: any) =>
+  typeof thing === 'function' ||
+  isSource(thing) ||
+  isSource(Object.values(thing || {})[0]);
 
 const filterDefined = <T>(sel$: Observable<T>) =>
   sel$.pipe(
@@ -178,7 +185,7 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
   ### Overload 3
   `adapt([path, initialState], sources)`
 
-  Sources allow the store to react to external events. There are 3 possible ways sources can be defined:
+  Sources allow the store to react to external events. There are 4 possible ways sources can be defined:
 
   1. A source can be a single {@link Source} or [Observable](https://rxjs.dev/guide/observable)<{@link Action}<{@link State}>>. When the source emits, it triggers the store's `set` method
   with the payload.
@@ -229,6 +236,22 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
   nameReset$.next(); // logs 'John'
   ```
 
+  4. A source can be a function that takes in a detached store (result of calling {@link watch}) and returns any of the above
+  types of sources.
+
+  #### Example: Function that returns sources
+
+  ```tsx
+  name = adapt(['name', 'John'], store => store.state$.pipe(
+    delay(1000),
+    map(name => `${name}sh`),
+    toSource('recursive nameChange$'),
+  ));
+
+  const sub = name.state$.subscribe(console.log);
+  // logs 'Johnsh' after 1 second, then 'Johnshsh' after 2 seconds, etc.
+  ```
+
   Each selector's observable chains off of all the sources passed into the store. For example, if one of your sources
   is an observable of an HTTP request, that request will automatically be triggered as soon as you subscribe to any of
   the selector observables from the store. If necessary, you can access store selectors that do not chain off of any
@@ -264,38 +287,25 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
   The store needs to have subscribers in order to start managing state.
   */
   // adapt(path, initialState)
-  adapt<State>(
-    path: string,
-    initialState: State,
-  ): SmartStore<State, WithGetState<State>> &
-    SyntheticSources<InitializedReactions<State>>;
+  adapt<State>(path: string, initialState: State): InitializedSmartStore<State>;
 
   // adapt([path, initialState], adapter)
   adapt<State, S extends Selectors<State>, R extends ReactionsWithSelectors<State, S>>(
     [path, initialState]: [string, State],
     adapter: R & { selectors?: S },
-  ): SmartStore<State, S & WithGetState<State>> &
-    SyntheticSources<InitializedReactions<State, S, R>>;
+  ): InitializedSmartStore<State, S, R>;
 
   // adapt([path, initialState], sources);
   adapt<State, S extends Selectors<State>, R extends ReactionsWithSelectors<State, S>>(
     [path, initialState]: [string, State],
-    sources:
-      | Sources<State, S, InitializedReactions<State, S, R>>
-      | Observable<Action<State>>
-      | Observable<Action<State>>[],
-  ): SmartStore<State, S & WithGetState<State>> &
-    SyntheticSources<InitializedReactions<State, S, R>>;
+    sources: SourceArg<State, S, R>,
+  ): InitializedSmartStore<State, S, R>;
 
   // adapt([path, initialState, adapter], sources);
   adapt<State, S extends Selectors<State>, R extends ReactionsWithSelectors<State, S>>(
     [path, initialState, adapter]: [string, State, R & { selectors?: S }],
-    sources:
-      | Sources<State, S, InitializedReactions<State, S, R>>
-      | Observable<Action<State>>
-      | Observable<Action<State>>[],
-  ): SmartStore<State, S & WithGetState<State>> &
-    SyntheticSources<InitializedReactions<State, S, R>>;
+    sources: SourceArg<State, S, R>,
+  ): InitializedSmartStore<State, S, R>;
 
   // 1. adapt(path, initialState)
   // 2. adapt([path, initialState], sources)
@@ -306,42 +316,25 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
       | string
       | readonly [string, State]
       | readonly [string, State, R & { selectors?: S }] = '_',
-    second:
-      | State
-      | (R & { selectors?: S })
-      | Sources<State, S, R>
-      | Observable<Action<State>>
-      | Observable<Action<State>>[],
-    third?:
-      | (R & { selectors?: S })
-      | Sources<State, S, R>
-      | Observable<Action<State>>
-      | Observable<Action<State>>[],
-    fourth?:
-      | Sources<State, S, R>
-      | Observable<Action<State>>
-      | Observable<Action<State>>[],
+    second: State | (R & { selectors?: S }) | SourceArg<State, S, R>,
+    third?: (R & { selectors?: S }) | SourceArg<State, S, R>,
   ): SmartStore<State, S & WithGetState<State>> & SyntheticSources<R> {
     const arrayLength = Array.isArray(first) ? first.length : 0;
 
     let path;
     let initialState;
     let adapter;
-    let sources;
+    let sources: any;
 
     if (!arrayLength) {
       path = first;
       initialState = second;
-      const thirdIsSource = isSource(third);
-      adapter = thirdIsSource ? undefined : third;
-      sources = thirdIsSource ? third : fourth;
     }
 
     if (arrayLength === 2) {
       path = first[0];
       initialState = first[1];
-      const secondIsSources =
-        isSource(second) || isSource(Object.values(second || {})[0]);
+      const secondIsSources = isSourcesArg(second);
       adapter = !secondIsSources ? second : undefined;
       sources = secondIsSources ? second : third;
     }
@@ -353,8 +346,12 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
       sources = second;
     }
 
+    // Initialize parameters
+
     path = path as string;
+
     initialState = initialState as State;
+
     adapter = adapter
       ? createAdapter<State>()(adapter as R & { selectors?: S })
       : createAdapter<State>()({});
@@ -367,7 +364,11 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
     ) {
       (adapter as any).update = createUpdateReaction();
     }
-    const sourcesDefined = sources || ({} as any);
+
+    const sourcesDefined =
+      typeof sources === 'function'
+        ? sources(this.watch(path, adapter))
+        : sources || ({} as any);
     sources = isSource(sourcesDefined) // Single source or array
       ? { set: sourcesDefined }
       : sourcesDefined;

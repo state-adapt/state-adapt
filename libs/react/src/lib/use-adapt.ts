@@ -2,22 +2,19 @@ import { useContext, useState } from 'react';
 import { AdaptContext } from './adapt.context';
 import { useStore } from './use-store';
 import {
-  InitializedReactions,
-  SmartStore,
   Sources,
   Source,
   StateAdapt,
+  InitializedSmartStore,
+  SourceArg,
 } from '@state-adapt/rxjs';
 import {
   Action,
   ReactionsWithSelectors,
   Selectors,
-  SyntheticSources,
-  WithGetState,
   createAdapter,
 } from '@state-adapt/core';
 import { ProxyStoreTuple } from './proxy-store-tuple.type';
-import { Observable } from 'rxjs';
 
 // Differences between StateAdapt.adapt and useAdapt jsdoc:
 //  - Almost everything
@@ -160,7 +157,7 @@ import { Observable } from 'rxjs';
   ### Overload 3
   `useAdapt([path, initialState], sources)`
 
-  Sources allow the store to react to external events. There are 3 possible ways sources can be defined:
+  Sources allow the store to react to external events. There are 4 possible ways sources can be defined:
 
   ##### 1. A source can be a single {@link Source} or [`Observable`](https://rxjs.dev/guide/observable)<{@link Action}<{@link State}>>. When the source emits, it triggers the store's `set` method with the payload.
 
@@ -234,6 +231,27 @@ import { Observable } from 'rxjs';
   };
   ```
 
+  4. A source can be a function that takes in a detached store (result of calling {@link watch}) and returns any of the above
+  types of sources.
+
+  #### Example: Function that returns sources
+
+  ```tsx
+  export const MyComponent = () => {
+    const [name] = useAdapt(['name', 'John'], store => store.state$.pipe(
+      delay(1000),
+      map(name => `${name}sh`),
+      toSource('recursive nameChange$'),
+    ));
+
+    // Shows 'John' first
+    // Shows 'Johnsh' after 1 second, then 'Johnshsh' after 1 more second, etc.
+    return (
+      <div>{name.state}</div>
+    );
+  }
+  ```
+
   Each selector's observable chains off of all the sources passed into the store. For example, if one of your sources
   is an observable of an HTTP request, that request will triggered as soon as you call `useAdapt` or
   subscribe to any of the selector observables from the store. If necessary, you can access store selectors that do not
@@ -277,9 +295,7 @@ import { Observable } from 'rxjs';
 export function useAdapt<State>(
   path: string,
   initialState: State,
-): ProxyStoreTuple<
-  SmartStore<State, WithGetState<State>> & SyntheticSources<InitializedReactions<State>>
->;
+): ProxyStoreTuple<InitializedSmartStore<State>>;
 
 // useAdapt([path, initialState], adapter)
 export function useAdapt<
@@ -289,10 +305,7 @@ export function useAdapt<
 >(
   [path, initialState]: [string, State],
   adapter: R & { selectors?: S },
-): ProxyStoreTuple<
-  SmartStore<State, S & WithGetState<State>> &
-    SyntheticSources<InitializedReactions<State, S, R>>
->;
+): ProxyStoreTuple<InitializedSmartStore<State, S, R>>;
 
 // useAdapt([path, initialState], sources);
 export function useAdapt<
@@ -301,14 +314,8 @@ export function useAdapt<
   R extends ReactionsWithSelectors<State, S>,
 >(
   [path, initialState]: [string, State],
-  sources:
-    | Sources<State, S, InitializedReactions<State, S, R>>
-    | Observable<Action<State>>
-    | Observable<Action<State>>[],
-): ProxyStoreTuple<
-  SmartStore<State, S & WithGetState<State>> &
-    SyntheticSources<InitializedReactions<State, S, R>>
->;
+  sources: SourceArg<State, S, R>,
+): ProxyStoreTuple<InitializedSmartStore<State, S, R>>;
 
 // useAdapt([path, initialState, adapter], sources);
 export function useAdapt<
@@ -317,14 +324,8 @@ export function useAdapt<
   R extends ReactionsWithSelectors<State, S>,
 >(
   [path, initialState, adapter]: [string, State, R & { selectors?: S }],
-  sources:
-    | Sources<State, S, InitializedReactions<State, S, R>>
-    | Observable<Action<State>>
-    | Observable<Action<State>>[],
-): ProxyStoreTuple<
-  SmartStore<State, S & WithGetState<State>> &
-    SyntheticSources<InitializedReactions<State, S, R>>
->;
+  sources: SourceArg<State, S, R>,
+): ProxyStoreTuple<InitializedSmartStore<State, S, R>>;
 export function useAdapt<T extends any[]>(...args: T) {
   const stateAdapt = useContext(AdaptContext);
   const [store] = useState(() => (stateAdapt.adapt as any)(...args));
