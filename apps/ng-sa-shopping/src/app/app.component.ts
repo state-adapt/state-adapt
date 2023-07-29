@@ -1,6 +1,10 @@
-import { Component } from '@angular/core';
-import { ProductService } from './products/product.service';
-import { FilterService } from './filters/filter.service';
+import { Component, inject } from '@angular/core';
+import {
+  ProductService,
+  injectCartStore,
+  productSources,
+} from './products/product.service';
+import { injectFilterStore } from './filters/filter.service';
 
 @Component({
   selector: 'sa-root',
@@ -25,19 +29,14 @@ import { FilterService } from './filters/filter.service';
   `,
 })
 export class AppComponent {
-  quantityChange$ = this.productService.quantityChange$;
-  addToCart$ = this.productService.addToCart$;
-  removeFromCart$ = this.productService.removeFromCart$;
-  cartProducts$ = this.productService.cartStore.state$;
-  cartTotal$ = this.productService.cartStore.totalPrice$;
+  quantityChange$ = productSources.quantityChange$;
+  addToCart$ = productSources.addToCart$;
+  removeFromCart$ = productSources.removeFromCart$;
+  cartProducts$ = injectCartStore().state$;
+  cartTotal$ = injectCartStore().totalPrice$;
 
-  toggleFilter = this.filterService.filterStore.toggleFilter;
-  filters$ = this.filterService.filterStore.state$;
+  toggleFilter = injectFilterStore().toggleFilter;
+  filters$ = injectFilterStore().state$;
 
-  filteredProducts$ = this.productService.filteredProductStore.filteredProducts$;
-
-  constructor(
-    private productService: ProductService,
-    private filterService: FilterService,
-  ) {}
+  filteredProducts$ = inject(ProductService).filteredProductStore.filteredProducts$;
 }

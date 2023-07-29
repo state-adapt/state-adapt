@@ -1,6 +1,7 @@
 ## 1.2.0
 
 - Refactor(core): Clean up types and allow sources factory
+- Feature(core): Add experimental adaptInjectable function
 
 ## 1.1.0
 
