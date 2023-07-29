@@ -16,6 +16,8 @@
 
 [`watch`](/angular/docs/angular#watch)
 
+[`adaptInjectable`](/angular/docs/angular#adaptinjectable)
+
 <!-- include: '../../../../../libs/angular/src/lib/default-store-provider.const.ts#defaultStoreProvider' -->
 
 <!-- include: '../../../../../libs/angular/src/lib/provide-store.function.ts#provideStore' -->
