@@ -8,6 +8,8 @@ import { AdaptNgrx } from './adapt-ngrx.service';
 //  - Replace `watch` with `watchNgrx`
 //  - Replace watch( with watchNgrx(
 /**
+  @deprecated Use for debugging only. Prefer the {@link StateAdapt.adapt} sources syntax that exposes a detached store.
+
    ## ![StateAdapt](https://miro.medium.com/max/4800/1*qgM6mFM2Qj6woo5YxDMSrA.webp|width=14) `watchNgrx`
 
    > Copilot tip: Copy examples into your file or click to definition to open file with context for better Copilot suggestions.

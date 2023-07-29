@@ -139,7 +139,7 @@ import { Source } from '@state-adapt/rxjs';
 
   Sources allow the store to react to external events. There are 4 possible ways sources can be defined:
 
-  1. A source can be a single {@link Source} or [Observable](https://rxjs.dev/guide/observable)<{@link Action}<{@link State}>>. When the source emits, it triggers the store's `set` method
+  1\. A source can be a single {@link Source} or [Observable](https://rxjs.dev/guide/observable)<{@link Action}<{@link State}>>. When the source emits, it triggers the store's `set` method
   with the payload.
 
   #### Example: Single source
@@ -158,7 +158,7 @@ import { Source } from '@state-adapt/rxjs';
   }
   ```
 
-  2. A source can be an array of {@link Source} or [Observable](https://rxjs.dev/guide/observable)<{@link Action}<{@link State}>>. When any of the sources emit, it triggers the store's `set`
+  2\. A source can be an array of {@link Source} or [Observable](https://rxjs.dev/guide/observable)<{@link Action}<{@link State}>>. When any of the sources emit, it triggers the store's `set`
    method with the payload.
 
   #### Example: Array of sources
@@ -179,7 +179,7 @@ import { Source } from '@state-adapt/rxjs';
   }
   ```
 
-  3. A source can be an object with keys that match the names of the store's reactions, with a corresponding source or array of
+  3\. A source can be an object with keys that match the names of the store's reactions, with a corresponding source or array of
   sources that trigger the store's reaction with the payload.
 
   #### Example: Object of sources
@@ -203,10 +203,10 @@ import { Source } from '@state-adapt/rxjs';
   }
   ```
 
-  4. A source can be a function that takes in a detached store (result of calling {@link watch}) and returns any of the above
+  4\. A source can be a function that takes in a detached store (result of calling {@link watch}) and returns any of the above
   types of sources.
 
-  #### Example: Function that returns sources
+  #### Example: Function that returns a source
 
   ```tsx
   export class MyService {

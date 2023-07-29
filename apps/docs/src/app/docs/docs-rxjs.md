@@ -56,7 +56,7 @@
 
 <!-- include: '../../../../../libs/rxjs/src/lib/sources/get-request-sources.function.ts#getRequestSources' -->
 
-<!-- ## Stores -->
+<!-- ## Stores 1.2.0  -->
 
 <!-- include: '../../../../../libs/rxjs/src/lib/global-store/state-adapt.ts#StateAdapt.adapt' -->
 

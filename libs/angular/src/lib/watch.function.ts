@@ -5,6 +5,8 @@ import { StateAdapt } from '@state-adapt/rxjs';
 //  - The phrase "`watch` wraps {@link StateAdapt.watch}, calling `inject(StateAdapt)` to get the instance of {@link StateAdapt} to use."
 //  - Examples have been modified to show usage in classes
 /**
+  @deprecated Use for debugging only. Prefer the {@link StateAdapt.adapt} sources syntax that exposes a detached store.
+
    ## ![StateAdapt](https://miro.medium.com/max/4800/1*qgM6mFM2Qj6woo5YxDMSrA.webp|width=14) `watch`
 
    > Copilot tip: Copy examples into your file or click to definition to open file with context for better Copilot suggestions.

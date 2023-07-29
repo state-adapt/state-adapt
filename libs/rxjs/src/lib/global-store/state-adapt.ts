@@ -187,7 +187,7 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
 
   Sources allow the store to react to external events. There are 4 possible ways sources can be defined:
 
-  1. A source can be a single {@link Source} or [Observable](https://rxjs.dev/guide/observable)<{@link Action}<{@link State}>>. When the source emits, it triggers the store's `set` method
+  1\. A source can be a single {@link Source} or [Observable](https://rxjs.dev/guide/observable)<{@link Action}<{@link State}>>. When the source emits, it triggers the store's `set` method
   with the payload.
 
   #### Example: Single source
@@ -201,7 +201,7 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
   nameChange$.next('Johnsh'); // logs 'Johnsh'
   ```
 
-  2. A source can be an array of {@link Source} or [Observable](https://rxjs.dev/guide/observable)<{@link Action}<{@link State}>>. When any of the sources emit, it triggers the store's `set`
+  2\. A source can be an array of {@link Source} or [Observable](https://rxjs.dev/guide/observable)<{@link Action}<{@link State}>>. When any of the sources emit, it triggers the store's `set`
    method with the payload.
 
   #### Example: Array of sources
@@ -217,7 +217,7 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
   nameChange2$.next('Johnsh2'); // logs 'Johnsh2'
   ```
 
-  3. A source can be an object with keys that match the names of the store's reactions, with a corresponding source or array of
+  3\. A source can be an object with keys that match the names of the store's reactions, with a corresponding source or array of
   sources that trigger the store's reaction with the payload.
 
   #### Example: Object of sources
@@ -236,10 +236,10 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
   nameReset$.next(); // logs 'John'
   ```
 
-  4. A source can be a function that takes in a detached store (result of calling {@link watch}) and returns any of the above
+  4\. A source can be a function that takes in a detached store (result of calling {@link watch}) and returns any of the above
   types of sources.
 
-  #### Example: Function that returns sources
+  #### Example: Function that returns a source
 
   ```tsx
   name = adapt(['name', 'John'], store => store.state$.pipe(
@@ -410,6 +410,8 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
   }
 
   /**
+  @deprecated Use for debugging only. Prefer the {@link StateAdapt.adapt} sources syntax that exposes a detached store.
+
    ## ![StateAdapt](https://miro.medium.com/max/4800/1*qgM6mFM2Qj6woo5YxDMSrA.webp|width=14) `StateAdapt.watch`
 
    > Copilot tip: Copy examples into your file or click to definition to open file with context for better Copilot suggestions.

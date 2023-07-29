@@ -159,7 +159,7 @@ import { ProxyStoreTuple } from './proxy-store-tuple.type';
 
   Sources allow the store to react to external events. There are 4 possible ways sources can be defined:
 
-  ##### 1. A source can be a single {@link Source} or [`Observable`](https://rxjs.dev/guide/observable)<{@link Action}<{@link State}>>. When the source emits, it triggers the store's `set` method with the payload.
+  1\. A source can be a single {@link Source} or [`Observable`](https://rxjs.dev/guide/observable)<{@link Action}<{@link State}>>. When the source emits, it triggers the store's `set` method with the payload.
 
   #### Example: Single source
 
@@ -180,7 +180,7 @@ import { ProxyStoreTuple } from './proxy-store-tuple.type';
   };
   ```
 
-  ##### 2. A source can be an array of {@link Source} or [`Observable`](https://rxjs.dev/guide/observable)<{@link Action}<{@link State}>>. When any of the sources emit, it triggers the store's `set` method with the payload.
+  2\. A source can be an array of {@link Source} or [`Observable`](https://rxjs.dev/guide/observable)<{@link Action}<{@link State}>>. When any of the sources emit, it triggers the store's `set` method with the payload.
 
   #### Example: Array of sources
 
@@ -204,7 +204,7 @@ import { ProxyStoreTuple } from './proxy-store-tuple.type';
   };
   ```
 
-  ##### 3. A source can be an object with keys that match the names of the store's reactions, with a corresponding source or array of sources that trigger the store's reaction with the payload.
+  3\. A source can be an object with keys that match the names of the store's reactions, with a corresponding source or array of sources that trigger the store's reaction with the payload.
 
   #### Example: Object of sources
 
@@ -231,10 +231,10 @@ import { ProxyStoreTuple } from './proxy-store-tuple.type';
   };
   ```
 
-  4. A source can be a function that takes in a detached store (result of calling {@link watch}) and returns any of the above
+  4\. A source can be a function that takes in a detached store (result of calling {@link watch}) and returns any of the above
   types of sources.
 
-  #### Example: Function that returns sources
+  #### Example: Function that returns a source
 
   ```tsx
   export const MyComponent = () => {

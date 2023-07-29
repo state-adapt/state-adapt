@@ -23,3 +23,5 @@
 <!-- include: '../../../../../libs/angular/src/lib/adapt.function.ts#adapt' -->
 
 <!-- include: '../../../../../libs/angular/src/lib/watch.function.ts#watch' -->
+
+<!-- include: '../../../../../libs/angular/src/lib/adapt-injectable.function.ts#adaptInjectable' -->
