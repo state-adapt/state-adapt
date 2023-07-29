@@ -76,6 +76,19 @@
       </a>
     </div>
     <sa-html [html]="frameworkExampleDocs$ | async"></sa-html>
+    <h2 *ngIf="(framework$ | async) === 'angular'">Introduction Video</h2>
+    <p>
+      <iframe
+        *ngIf="(framework$ | async) === 'angular'"
+        width="560"
+        height="315"
+        src="https://www.youtube.com/embed/b687kMZDXTg"
+        title="YouTube video player"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen
+      ></iframe>
+    </p>
     <sa-html [html]="introGeneralDocs$ | async"></sa-html>
   </sa-content>
 </div>
