@@ -364,7 +364,7 @@ export class AdapterDocsComponent implements OnInit {
     map(
       ([adapter, [diff, selectorName]]) =>
         '<pre class="language-json">\n' +
-        toJson((adapter.selectors || {})[selectorName]?.(diff[1]) || diff[1]) +
+        toJson((adapter.selectors || {})[selectorName]?.(diff[1])) +
         '\n</pre>',
     ),
   );
