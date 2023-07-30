@@ -1,6 +1,6 @@
 import { InjectionToken, inject } from '@angular/core';
-import { ReactionsWithSelectors, Selectors } from '@state-adapt/core';
-import { InitializedSmartStore, SourceArg, StateAdapt } from '@state-adapt/rxjs';
+import { ReactionsWithSelectors, Selectors } from '../../../../libs/core/src';
+import { InitializedSmartStore, SourceArg, StateAdapt } from '../../../../libs/rxjs/src';
 import { adapt } from './adapt.function';
 
 export function adaptInjectable<State>(

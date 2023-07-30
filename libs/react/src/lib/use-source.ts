@@ -1,4 +1,4 @@
-import { Source } from '@state-adapt/rxjs';
+import { Source } from '../../../../libs/rxjs/src';
 import { useState } from 'react';
 
 export function useSource<T>(type: string): Source<T> {

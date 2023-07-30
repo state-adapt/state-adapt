@@ -1,5 +1,5 @@
 import { inject } from '@angular/core';
-import { StateAdapt } from '@state-adapt/rxjs';
+import { StateAdapt } from '../../../../libs/rxjs/src';
 import { AdaptNgxs } from './adapt-ngxs.service';
 
 // Differences between adaptNgxs and adaptNgxs jsdoc:

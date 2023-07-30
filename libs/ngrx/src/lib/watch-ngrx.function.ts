@@ -1,5 +1,5 @@
 import { inject } from '@angular/core';
-import { StateAdapt } from '@state-adapt/rxjs';
+import { StateAdapt } from '../../../../libs/rxjs/src';
 import { AdaptNgrx } from './adapt-ngrx.service';
 
 // Differences between watch and watchNgrx jsdoc:

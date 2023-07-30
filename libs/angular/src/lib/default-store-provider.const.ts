@@ -1,6 +1,6 @@
-import { actionSanitizer, stateSanitizer } from '@state-adapt/core';
+import { actionSanitizer, stateSanitizer } from '../../../../libs/core/src';
 import { provideStore } from './provide-store.function';
-import { StateAdapt } from '@state-adapt/rxjs';
+import { StateAdapt } from '../../../../libs/rxjs/src';
 import { adapt } from './adapt.function';
 import { watch } from './watch.function';
 
@@ -24,7 +24,7 @@ const enableReduxDevTools = (window as any).__REDUX_DEVTOOLS_EXTENSION__?.({
   ```ts
   import { NgModule } from '@angular/core';
   import { BrowserModule } from '@angular/platform-browser';
-  import { defaultStoreProvider } from '@state-adapt/angular';
+  import { defaultStoreProvider } from '../../../../libs/angular/src';
 
   import { AppComponent } from './app.component';
 
@@ -40,7 +40,7 @@ const enableReduxDevTools = (window as any).__REDUX_DEVTOOLS_EXTENSION__?.({
 
   ```ts
   import { bootstrapApplication } from '@angular/platform-browser';
-  import { defaultStoreProvider } from '@state-adapt/angular';
+  import { defaultStoreProvider } from '../../../../libs/angular/src';
 
   import { AppComponent } from './app/app.component';
 

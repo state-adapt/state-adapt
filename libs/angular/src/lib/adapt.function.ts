@@ -1,8 +1,8 @@
 import { inject } from '@angular/core';
-import { StateAdapt } from '@state-adapt/rxjs';
+import { StateAdapt } from '../../../../libs/rxjs/src';
 import { watch } from './watch.function';
-import { Action, Adapter, getId, createAdapter } from '@state-adapt/core';
-import { Source } from '@state-adapt/rxjs';
+import { Action, Adapter, getId, createAdapter } from '../../../../libs/core/src';
+import { Source } from '../../../../libs/rxjs/src';
 
 // Differences between StateAdapt.adapt and adapt jsdoc:
 //  - The phrase "`adapt` wraps {@link StateAdapt.adapt}, calling `inject(StateAdapt)` to get the instance of {@link StateAdapt} to use."
@@ -73,7 +73,7 @@ import { Source } from '@state-adapt/rxjs';
   #### Example: getId for unique paths
 
   ```typescript
-  import { getId } from '@state-adapt/core';
+  import { getId } from '../../../../libs/core/src';
   // ...
   export class MyComponent {
     store1 = adapt('number' + getId(), 0);

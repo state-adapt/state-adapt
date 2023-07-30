@@ -1,6 +1,6 @@
 import { Component, inject, Input, OnInit } from '@angular/core';
-import { Source, toSource } from '@state-adapt/rxjs';
-import { adapt, watch } from '@state-adapt/angular';
+import { Source, toSource } from '../../../../libs/rxjs/src';
+import { adapt, watch } from '../../../../libs/angular/src';
 import { TileSelection } from 'carbon-components-angular/tiles';
 import { combineLatest, Subject } from 'rxjs';
 import {
@@ -18,7 +18,7 @@ import { docsAdapter } from './docs.adapter';
 import { DropdownSelectedEvent } from './dropdown-selection-event.interface';
 import { EditorReadyService } from './editor-ready.service';
 import { getDiffHtml, toJson } from './get-diff-html.function';
-import { getId } from '@state-adapt/core';
+import { getId } from '../../../../libs/core/src';
 
 @Component({
   selector: 'sa-adapter-docs',

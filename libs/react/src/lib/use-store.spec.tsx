@@ -1,5 +1,5 @@
 import { act, renderHook } from '@testing-library/react';
-import { configureStateAdapt, joinStores } from '@state-adapt/rxjs';
+import { configureStateAdapt, joinStores } from '../../../../libs/rxjs/src';
 import { useStore } from './use-store';
 import { take } from 'rxjs/operators';
 

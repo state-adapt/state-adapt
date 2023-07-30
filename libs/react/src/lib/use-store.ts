@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { take } from 'rxjs/operators';
-import { SmartStore, StateAdapt } from '@state-adapt/rxjs';
+import { SmartStore, StateAdapt } from '../../../../libs/rxjs/src';
 import { FilteredStoreSelectors } from './proxy-store-tuple.type';
 import { Subscription } from 'rxjs';
 
@@ -19,7 +19,7 @@ import { Subscription } from 'rxjs';
 
   ```tsx
   import { adapt } from '../store'; // Import from wherever you configure StateAdapt
-  import { useStore } from '@state-adapt/react';
+  import { useStore } from '../../../../libs/react/src';
 
   const nameStore = adapt(['name', 'Bob'], {
     concat: (state, name: string) => state + name,
@@ -43,7 +43,7 @@ import { Subscription } from 'rxjs';
 
   ```tsx
   import { adapt } from '../store'; // Import from wherever you configure StateAdapt
-  import { useStore } from '@state-adapt/react';
+  import { useStore } from '../../../../libs/react/src';
 
   const nameStore = adapt(['name', 'Bob'], {
     concat: (state, name: string) => state + name,
@@ -68,7 +68,7 @@ import { Subscription } from 'rxjs';
 
   ```tsx
   import { adapt } from '../store'; // Import from wherever you configure StateAdapt
-  import { useStore } from '@state-adapt/react';
+  import { useStore } from '../../../../libs/react/src';
 
   const counterStore = adapt(['counter', 0], {
     increment: state => state + 1,

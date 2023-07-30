@@ -1,5 +1,5 @@
 import { inject } from '@angular/core';
-import { StateAdapt } from '@state-adapt/rxjs';
+import { StateAdapt } from '../../../../libs/rxjs/src';
 
 // Differences between StateAdapt.watch and watch jsdoc:
 //  - The phrase "`watch` wraps {@link StateAdapt.watch}, calling `inject(StateAdapt)` to get the instance of {@link StateAdapt} to use."

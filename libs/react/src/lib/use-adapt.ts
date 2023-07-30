@@ -7,13 +7,13 @@ import {
   StateAdapt,
   InitializedSmartStore,
   SourceArg,
-} from '@state-adapt/rxjs';
+} from '../../../../libs/rxjs/src';
 import {
   Action,
   ReactionsWithSelectors,
   Selectors,
   createAdapter,
-} from '@state-adapt/core';
+} from '../../../../libs/core/src';
 import { ProxyStoreTuple } from './proxy-store-tuple.type';
 
 // Differences between StateAdapt.adapt and useAdapt jsdoc:
@@ -84,7 +84,7 @@ import { ProxyStoreTuple } from './proxy-store-tuple.type';
   #### Example: getId for unique paths
 
   ```typescript
-  import { getId } from '@state-adapt/core';
+  import { getId } from '../../../../libs/core/src';
 
   const path0 = 'number' + getId();
   const path1 = 'number' + getId();

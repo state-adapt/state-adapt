@@ -1,9 +1,9 @@
 import { inject } from '@angular/core';
-import { StateAdapt } from '@state-adapt/rxjs';
+import { StateAdapt } from '../../../../libs/rxjs/src';
 import { AdaptNgxs } from './adapt-ngxs.service';
 import { watchNgxs } from './watch-ngxs.function';
-import { Action, Adapter, getId, createAdapter } from '@state-adapt/core';
-import { Source } from '@state-adapt/rxjs';
+import { Action, Adapter, getId, createAdapter } from '../../../../libs/core/src';
+import { Source } from '../../../../libs/rxjs/src';
 
 // Differences between adaptNgrx and adaptNgxs jsdoc:
 //  - Replace all `rxjs` with `RXJS`, case-sensitive // Fix this line after
@@ -74,7 +74,7 @@ import { Source } from '@state-adapt/rxjs';
   #### Example: getId for unique paths
 
   ```typescript
-  import { getId } from '@state-adapt/core';
+  import { getId } from '../../../../libs/core/src';
   // ...
   export class MyComponent {
     store1 = adaptNgxs('number' + getId(), 0);

@@ -2,7 +2,7 @@ import {
   StateAdapt,
   configureStateAdapt,
   ConfigureStateAdaptOptions,
-} from '@state-adapt/rxjs';
+} from '../../../../libs/rxjs/src';
 
 /**
   ## ![StateAdapt](https://miro.medium.com/max/4800/1*qgM6mFM2Qj6woo5YxDMSrA.webp|width=14) `provideStore`
@@ -17,8 +17,8 @@ import {
   ```ts
   import { NgModule } from '@angular/core';
   import { BrowserModule } from '@angular/platform-browser';
-  import { actionSanitizer, stateSanitizer } from '@state-adapt/core';
-  import { provideStore } from '@state-adapt/angular';
+  import { actionSanitizer, stateSanitizer } from '../../../../libs/core/src';
+  import { provideStore } from '../../../../libs/angular/src';
 
   import { AppComponent } from './app.component';
 
@@ -42,8 +42,8 @@ import {
 
   ```ts
   import { bootstrapApplication } from '@angular/platform-browser';
-  import { actionSanitizer, stateSanitizer } from '@state-adapt/core';
-  import { provideStore } from '@state-adapt/angular';
+  import { actionSanitizer, stateSanitizer } from '../../../../libs/core/src';
+  import { provideStore } from '../../../../libs/angular/src';
 
   import { AppComponent } from './app/app.component';
 

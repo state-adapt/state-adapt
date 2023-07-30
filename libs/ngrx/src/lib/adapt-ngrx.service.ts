@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { StateAdapt } from '@state-adapt/rxjs';
+import { StateAdapt } from '../../../../libs/rxjs/src';
 
 @Injectable({ providedIn: 'root' })
 export class AdaptNgrx extends StateAdapt<Store> {

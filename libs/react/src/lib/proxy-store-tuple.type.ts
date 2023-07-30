@@ -1,4 +1,4 @@
-import { SmartStore } from '@state-adapt/rxjs';
+import { SmartStore } from '../../../../libs/rxjs/src';
 
 export type FilteredStoreSelectors<
   Store extends SmartStore<any, any>,

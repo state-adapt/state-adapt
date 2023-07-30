@@ -1,9 +1,9 @@
 import { inject } from '@angular/core';
-import { StateAdapt } from '@state-adapt/rxjs';
+import { StateAdapt } from '../../../../libs/rxjs/src';
 import { AdaptNgrx } from './adapt-ngrx.service';
 import { watchNgrx } from './watch-ngrx.function';
-import { Action, Adapter, getId, createAdapter } from '@state-adapt/core';
-import { Source } from '@state-adapt/rxjs';
+import { Action, Adapter, getId, createAdapter } from '../../../../libs/core/src';
+import { Source } from '../../../../libs/rxjs/src';
 
 // Differences between adapt and adaptNgrx jsdoc:
 //  - The phrase "`adaptNgrx` wraps {@link StateAdapt.adapt}, calling `inject(AdaptNgrx)` to get an instance of {@link StateAdapt}
@@ -76,7 +76,7 @@ import { Source } from '@state-adapt/rxjs';
   #### Example: getId for unique paths
 
   ```typescript
-  import { getId } from '@state-adapt/core';
+  import { getId } from '../../../../libs/core/src';
   // ...
   export class MyComponent {
     store1 = adaptNgrx('number' + getId(), 0);

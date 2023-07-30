@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { State, StateContext, Action } from '@ngxs/store';
-import { updatePaths } from '@state-adapt/core';
+import { updatePaths } from '../../../../libs/core/src';
 import { PatchState } from './patch-state.action';
 
 export interface AdaptModel {
@@ -19,8 +19,8 @@ export interface AdaptModel {
   import { BrowserModule } from '@angular/platform-browser';
   import { NgxsModule } from '@ngxs/store';
   import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
-  import { AdaptState } from '@state-adapt/ngxs';
-  import { actionSanitizer, stateSanitizer } from '@state-adapt/core';
+  import { AdaptState } from '../../../../libs/ngxs/src';
+  import { actionSanitizer, stateSanitizer } from '../../../../libs/core/src';
 
   import { AppComponent } from './app.component';
 
@@ -47,8 +47,8 @@ export interface AdaptModel {
   import { bootstrapApplication } from '@angular/platform-browser';
   import { NgxsModule } from '@ngxs/store';
   import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
-  import { AdaptState } from '@state-adapt/ngxs';
-  import { actionSanitizer, stateSanitizer } from '@state-adapt/core';
+  import { AdaptState } from '../../../../libs/ngxs/src';
+  import { actionSanitizer, stateSanitizer } from '../../../../libs/core/src';
 
   import { AppComponent } from './app/app.component';
 
