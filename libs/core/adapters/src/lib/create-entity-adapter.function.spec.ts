@@ -3,13 +3,42 @@ import {
   createEntityAdapter,
   createEntityState,
   EntityState,
+  IndexableKeys,
 } from './create-entity-adapter.function';
 import { stringAdapter } from './string.adapter';
 import { booleanAdapter } from './boolean.adapter';
 
-type Id = string;
+// Basic type tests
+
+type Test = {
+  id: number;
+  name: string;
+  zeee: { a: any };
+};
+
+type IndexableOfTest = IndexableKeys<Test>;
+const i1: 'id' | 'name' = 2 as any as IndexableOfTest;
+type A1 = EntityState<Test>;
+type A2 = A1['entities'];
+// @ts-expect-error Should use 'id', which is number
+const a2: string = 4 as keyof A2;
+type A3 = A1['ids'];
+// @ts-expect-error Should use 'id', which is number
+const a3: string[] = [] as A3;
+
+type B1 = EntityState<Test, 'name'>;
+type B2 = B1['entities'];
+// @ts-expect-error Should use 'name', which is string
+const b2: number = 4 as any as keyof B2;
+type B3 = B1['ids'];
+// @ts-expect-error Should use 'name', which is string
+const b3: number[] = [] as B3;
+
+// Full tests
+
+type Id = 'uuid';
 interface Person {
-  id: Id;
+  uuid: string;
   name: string;
   married: boolean;
   deceased: boolean;
@@ -18,7 +47,7 @@ interface Person {
 
 let numberOfRuns = 0;
 
-const personAdapter = joinAdapters<Person, 'id'>()({
+const personAdapter = joinAdapters<Person, 'uuid'>()({
   name: stringAdapter,
   married: booleanAdapter,
   deceased: booleanAdapter,
@@ -32,13 +61,14 @@ const personAdapter = joinAdapters<Person, 'id'>()({
     numberOfRuns++;
     return s.state.married;
   },
+  id: s => s.state.uuid,
 })();
 
-type State = EntityState<Person>;
+type State = EntityState<Person, Id>;
 
 const initialState = createEntityState<Person, Id, State>();
 
-const personEntityAdapter = createEntityAdapter<Person>()(personAdapter, {
+const personEntityAdapter = createEntityAdapter<Person, Id>()(personAdapter, {
   filters: ['married', 'selected'], // 'deceased'
   sorters: ['name', 'married'],
   useCache: true,
@@ -55,21 +85,21 @@ describe('createEntityAdapter', () => {
   // - `${filter}By{Sorter}`: Person[]; // selectedByAge
   const entities = [
     {
-      id: '1',
+      uuid: '1',
       name: 'John',
       married: true,
       deceased: false,
       selected: false,
     },
     {
-      id: '2',
+      uuid: '2',
       name: 'Jane',
       married: true,
       deceased: false,
       selected: false,
     },
     {
-      id: '3',
+      uuid: '3',
       name: 'Jack',
       married: false,
       deceased: false,
@@ -159,7 +189,7 @@ describe('createEntityAdapter', () => {
     const state = personEntityAdapter.setAll(initialState, entities);
 
     const newEntity = {
-      id: '4',
+      uuid: '4',
       name: 'Jill',
       married: false,
       deceased: false,
@@ -177,14 +207,14 @@ describe('createEntityAdapter', () => {
 
     const newEntities = [
       {
-        id: '5',
+        uuid: '5',
         name: 'Jill',
         married: false,
         deceased: false,
         selected: false,
       },
       {
-        id: '6',
+        uuid: '6',
         name: 'Jill',
         married: false,
         deceased: false,
@@ -314,11 +344,11 @@ describe('createEntityAdapter', () => {
     const newEntities = [
       {
         ...entities[0],
-        id: '4',
+        uuid: '4',
       },
       {
         ...entities[1],
-        id: '5',
+        uuid: '5',
       },
     ];
     const updatedEntities = [

@@ -14,12 +14,31 @@ import { PrefixedAfterVerb } from '@state-adapt/core';
 
 type Index = number | string | symbol;
 
+export type IndexableKeys<T> = {
+  [K in keyof T]: T[K] extends Index ? K : never;
+}[keyof T];
+
+type IndexableWithId<Entity> = Entity extends { id: Index }
+  ? IndexableKeys<Entity>
+  : IndexableKeys<Entity>;
+
+type RecordWithIndex<Entity, Id extends keyof Entity> = Record<
+  Extract<Entity[Id], Index>,
+  Entity
+>;
+
+type DefaultId<Entity> = Entity extends {
+  id: Index;
+}
+  ? Extract<IndexableWithId<Entity>, 'id'>
+  : never;
+
 export interface EntityState<
   Entity,
-  Id extends Index = Entity extends { id: Index } ? Entity['id'] : never,
+  Id extends IndexableWithId<Entity> = DefaultId<Entity>,
 > {
-  ids: Id[];
-  entities: Record<Id, Entity>;
+  ids: Extract<Entity[Id], Index>[];
+  entities: RecordWithIndex<Entity, Id>;
 }
 
 export type EntityAdapterOptions<A extends Adapter<any, any, any>> = {
@@ -30,25 +49,25 @@ export type BooleanSelectorKeys<S extends Selectors<any>> = keyof {
   [K in Extract<keyof S, string>]: S[K] extends (state: any) => boolean ? K : never;
 };
 
-function getNewEntitiesCopy<Id extends Index, Entity>() {
-  return [[] as Id[], {} as Record<Id, Entity>] as const;
+function getNewEntitiesCopy<Id extends IndexableWithId<Entity>, Entity>() {
+  return [[] as Extract<Entity[Id], Index>[], {} as RecordWithIndex<Entity, Id>] as const;
 }
 
 export function createEntityState<
   Entity,
-  Id extends Index = Entity extends { id: Index } ? Entity['id'] : never,
+  Id extends IndexableWithId<Entity> = DefaultId<Entity>,
   State extends EntityState<Entity, Id> = EntityState<Entity, Id>,
 >(state: Partial<State> = {}): EntityState<Entity, Id> {
   return {
     ...state,
-    ids: state.ids || ([] as Id[]),
-    entities: state.entities || ({} as Record<Id, Entity>),
+    ids: state.ids || ([] as Extract<Entity[Id], Index>[]),
+    entities: state.entities || ({} as RecordWithIndex<Entity, Id>),
   };
 }
 
 type EntityStateReactions<
   Entity,
-  Id extends Index,
+  Id extends IndexableWithId<Entity>,
   State extends EntityState<Entity, Id>,
   R extends ReactionsWithSelectors<Entity, any>,
   Filters extends string[],
@@ -59,10 +78,9 @@ type EntityStateReactions<
     setOne: (state: State, payload: Entity) => State;
     setMany: (state: State, payload: Entity[]) => State;
     setAll: (state: State, payload: Entity[]) => State;
-    removeOne: (state: State, payload: Id) => State;
-    removeMany: (state: State, payload: Id[]) => State;
+    removeOne: (state: State, payload: Extract<Entity[Id], Index>) => State;
+    removeMany: (state: State, payload: Extract<Entity[Id], Index>[]) => State;
     removeAll: (state: State) => State;
-    updateOne: (state: State, payload: { id: Id; changes: Partial<Entity> }) => State;
     upsertOne: (state: State, payload: Entity) => State;
     upsertMany: (state: State, payload: Entity[]) => State;
   } & BasicAdapterMethods<State> & {
@@ -89,7 +107,9 @@ type EntityStateReactions<
       ) => any
         ? (
             state: State,
-            payload: Parameters<R[K]>[1] extends void ? Id : [Id, Parameters<R[K]>[1]],
+            payload: Parameters<R[K]>[1] extends void
+              ? Id
+              : [Extract<Entity[Id], Index>, Parameters<R[K]>[1]],
             initialState: State,
           ) => State
         : never;
@@ -104,8 +124,8 @@ type EntityStateReactions<
         ? (
             state: State,
             payload: Parameters<R[K]>[1] extends void
-              ? Id[]
-              : [Id, Parameters<R[K]>[1]][],
+              ? Extract<Entity[Id], Index>[]
+              : [Extract<Entity[Id], Index>, Parameters<R[K]>[1]][],
             initialState: State,
           ) => State
         : never;
@@ -114,15 +134,15 @@ type EntityStateReactions<
 
 type EntityStateSelectors<
   Entity,
-  Id extends Index,
+  Id extends IndexableWithId<Entity>,
   State extends EntityState<Entity, Id>,
   Filters extends string[],
   Sorters extends string[],
 > = {
   all: (state: State) => Entity[];
   count: (state: State) => number;
-  ids: (state: State) => Id[];
-  entities: (state: State) => Record<Id, Entity>;
+  ids: (state: State) => Extract<Entity[Id], Index>[];
+  entities: (state: State) => RecordWithIndex<Entity, Id>;
 } & {
   [K in Filters[number]]: (state: any) => Entity[];
 } & {
@@ -139,7 +159,7 @@ const ingoredKeys = ['selectors', 'set'] as const;
 
 export function createEntityAdapter<
   Entity,
-  Id extends Index = Entity extends { id: Index } ? Entity['id'] : never,
+  Id extends IndexableWithId<Entity> = DefaultId<Entity>,
   State extends EntityState<Entity, Id> = EntityState<Entity, Id>,
 >() {
   return <
@@ -158,9 +178,12 @@ export function createEntityAdapter<
     selectors: EntityStateSelectors<Entity, Id, State, Filters, Sorters>;
   } => {
     const fullAdapter = createAdapter<Entity>()(adapter);
-    const entitySelectors = fullAdapter.selectors as S & { id: (entity: Entity) => Id };
+    const entitySelectors = fullAdapter.selectors as S & {
+      id: (entity: Entity) => Extract<Entity[Id], Index>;
+    };
     entitySelectors.id =
-      entitySelectors.id || ((entity: Entity) => (entity as any).id as Id);
+      entitySelectors.id ||
+      ((entity: Entity) => (entity as any).id as Extract<Entity[Id], Index>);
     const useCache = options?.useCache ?? false;
 
     const getEntityCache = (entity: Entity, cache?: SelectorsCache) => {
@@ -221,7 +244,7 @@ export function createEntityAdapter<
         return { ...state, ids, entities };
       },
       setMany: (state, entities: Entity[]): State => {
-        const newIds = [] as Id[];
+        const newIds = [] as Extract<Entity[Id], Index>[];
         const newEntities = { ...state.entities };
         entities.forEach(entity => {
           const id = entitySelectors.id(entity);
@@ -250,7 +273,7 @@ export function createEntityAdapter<
           entities: newEntities,
         };
       },
-      removeOne: (state, id: Id, i, cache): State => {
+      removeOne: (state, id: Extract<Entity[Id], Index>, i, cache): State => {
         const newIds = state.ids.filter(entityId => entityId !== id);
         const newEntities = { ...state.entities };
         delete newEntities[id];
@@ -261,9 +284,9 @@ export function createEntityAdapter<
           entities: newEntities,
         };
       },
-      removeMany: (state, ids: Id[], i, cache): State => {
-        const newIds = [] as Id[];
-        const newEntities = {} as Record<Id, Entity>;
+      removeMany: (state, ids: Extract<Entity[Id], Index>[], i, cache): State => {
+        const newIds = [] as Extract<Entity[Id], Index>[];
+        const newEntities = {} as RecordWithIndex<Entity, Id>;
         state.ids.forEach(id => {
           if (!ids.includes(id)) {
             newIds.push(id);
@@ -371,7 +394,7 @@ export function createEntityAdapter<
         // One
         reactions[`${stateChangeVerb}One${stateChangeNoun}`] = (
           state: State,
-          [id, payload]: [Id, any],
+          [id, payload]: [Extract<Entity[Id], Index>, any],
           initialState: State,
           cache: SelectorsCache,
         ) => {
@@ -395,7 +418,7 @@ export function createEntityAdapter<
         // Many
         reactions[`${stateChangeVerb}Many${stateChangeNoun}`] = (
           state: State,
-          updates: [Id, any][],
+          updates: [Extract<Entity[Id], Index>, any][],
           initialState: State,
           cache: SelectorsCache,
         ) => {
