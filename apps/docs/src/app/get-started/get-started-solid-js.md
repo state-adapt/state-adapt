@@ -24,7 +24,7 @@ Configure StateAdapt in a file named `state-adapt.ts`:
 ```typescript
 // state-adapt.ts
 import { actionSanitizer, stateSanitizer } from '@state-adapt/core';
-import { configureStateAdapt, StateAdapt } from '@state-adapt/rxjs';
+import { configureStateAdapt } from '@state-adapt/rxjs';
 
 const enableReduxDevTools = (window as any).__REDUX_DEVTOOLS_EXTENSION__?.({
   actionSanitizer,
