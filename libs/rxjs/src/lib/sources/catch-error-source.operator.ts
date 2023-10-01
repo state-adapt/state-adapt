@@ -1,4 +1,4 @@
-import { Observable, of } from 'rxjs';
+import { concat, Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Action, getAction } from '@state-adapt/core';
 
@@ -31,5 +31,5 @@ export function catchErrorSource<Payload, TypePrefix extends string>(
   return (
     source$: Observable<Payload>,
   ): Observable<Payload | Action<any, `${TypePrefix}.error$`>> =>
-    source$.pipe(catchError(err => of(getAction(`${typePrefix}.error$`, err))));
+    source$.pipe(catchError((err, caught) => concat(of(getAction(`${typePrefix}.error$`, err)), caught)));
 }
