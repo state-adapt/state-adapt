@@ -122,6 +122,16 @@ export function buildAdapter<State>() {
   };
 }
 
+export type SelectorsWithNewBlock<
+  State,
+  S extends Selectors<State>,
+  NewBlock extends Selectors<SelectorReturnTypes<State, S>>,
+> = {} & ReturnTypeSelectors<
+  State,
+  {} & SelectorReturnTypes<State, S>,
+  {} & S & NewBlock
+>;
+
 type Prev = [never, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19];
 
 export type AddNewBlock<
@@ -139,7 +149,7 @@ export interface NewBlockAdder<
   R extends Reactions<State>,
   D extends Prev[number] = 19,
 > {
-  (): FlatAnyKey<BuiltAdapter<State, R, S>>;
+  (): { [K in keyof BuiltAdapter<State, R, S>]: BuiltAdapter<State, R, S>[K] };
 
   <NewBlock extends (ar: [S, R]) => Reactions<State>>(
     newBlock: NewBlock,
@@ -152,7 +162,14 @@ export interface NewBlockAdder<
   ): ReturnType<
     AddNewBlock<
       State,
-      FlatAnyKey<ReturnTypeSelectors<State, SelectorReturnTypes<State, S>, S & NewBlock>>,
+      {
+        [K in string &
+          keyof SelectorsWithNewBlock<State, S, NewBlock>]: SelectorsWithNewBlock<
+          State,
+          S,
+          NewBlock
+        >[K];
+      },
       R,
       Prev[D]
     >
@@ -170,7 +187,9 @@ export interface NewBlockAdder<
     },
   >(
     newBlock: NewBlock,
-  ): ReturnType<AddNewBlock<State, S, R & NestedReactions<State, NewBlock>, Prev[D]>>;
+  ): {} & ReturnType<
+    AddNewBlock<State, S, R & NestedReactions<State, NewBlock>, Prev[D]>
+  >;
 }
 
 type NestedReactions<

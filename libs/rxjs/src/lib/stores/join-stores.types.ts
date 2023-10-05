@@ -1,9 +1,8 @@
 import {
-  Flat,
-  ReturnTypeSelectors,
   SelectorReturnTypes,
   Selectors,
   SelectorsCache,
+  SelectorsWithNewBlock,
 } from '@state-adapt/core';
 
 import { JoinedStore } from './joined-store.interface';
@@ -85,10 +84,17 @@ export interface NewBlockAdder<
 
   <NewBlock extends Selectors<SelectorReturnTypes<State, S>>>(
     newBlock: NewBlock,
-  ): ReturnType<
+  ): {} & ReturnType<
     AddNewBlock<
       State,
-      Flat<ReturnTypeSelectors<State, SelectorReturnTypes<State, S>, Flat<S & NewBlock>>>,
+      {
+        [K in string &
+          keyof SelectorsWithNewBlock<State, S, NewBlock>]: SelectorsWithNewBlock<
+          State,
+          S,
+          NewBlock
+        >[K];
+      },
       SE,
       Prev[D]
     >

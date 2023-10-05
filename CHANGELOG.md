@@ -1,3 +1,7 @@
+## 2.0.0
+
+- Refactor(core,rxjs): Flatten types for joined adapters and stores
+
 ## 1.2.1
 
 - Bugfix(core/adapters): Fix TS issue with createEntityAdapter alt id

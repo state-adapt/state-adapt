@@ -39,7 +39,7 @@ export const serializeSelectorsCache = (c: SelectorsCache) => {
 export function memoizeSelectors<State, S extends Selectors<State>>(
   selectorDefinitions: S,
 ): WithStateSelector<State, S> {
-  if (selectorDefinitions.state) return selectorDefinitions as any; // Already went through this function
+  if (selectorDefinitions['state']) return selectorDefinitions as any; // Already went through this function
   const selectors = { state: (s: State) => s } as any;
   for (const name in selectorDefinitions) {
     const fn = selectorDefinitions[name];
@@ -60,8 +60,8 @@ export function getMemoizedSelector<State>(
       set: new Set(['state']),
       values: { state: undefined },
     });
-    if (s === values.state) return cache.__results[name]; // The only input "selector" returned the same thing
-    values.state = s;
+    if (s === values['state']) return cache.__results[name]; // The only input "selector" returned the same thing
+    values['state'] = s;
     return (cache.__results[name] = (fn as any)(s, cache));
   };
 }

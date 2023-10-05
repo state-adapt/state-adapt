@@ -270,9 +270,9 @@ export function joinAdapters<
         namespace,
         (state: any) => state[namespace],
       );
-      if (adapter.selectors) {
-        for (const selectorName in adapter.selectors) {
-          const selector = (adapter.selectors as any)[selectorName];
+      if (adapter['selectors']) {
+        for (const selectorName in adapter['selectors']) {
+          const selector = (adapter['selectors'] as any)[selectorName];
           const newSelectorName = `${namespace}${
             selectorName.charAt(0).toUpperCase() + selectorName.substring(1)
           }`;

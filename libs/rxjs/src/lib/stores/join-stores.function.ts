@@ -71,7 +71,11 @@ import {
 //
 export function joinStores<SE extends StoreEntries>(
   storeEntries: SE,
-): NewBlockAdder<Flat<EntriesState<SE>>, JoinedSelectors<SE>, SE> {
+): NewBlockAdder<
+  { [P in keyof EntriesState<SE>]: EntriesState<SE>[P] },
+  JoinedSelectors<SE>,
+  SE
+> {
   // The initial selectors defined in `combineSelectors` are selecting against State.
   // Here, we are defining the initial selectors. The result includes
   // a selector for each piece of state. The developer only defines the 2nd+ selector group.
@@ -101,14 +105,14 @@ export function joinStores<SE extends StoreEntries>(
     return newState;
   };
 
-  joinedSelectors.state = memoizeWithProxy()(
+  joinedSelectors['state'] = memoizeWithProxy()(
     'state',
     joinedSelectors,
     getJoinedState,
     getCacheOverride,
   );
 
-  joinedFullSelectors.state = memoizeWithProxy()(
+  joinedFullSelectors['state'] = memoizeWithProxy()(
     'state',
     joinedFullSelectors,
     getJoinedState,
