@@ -136,6 +136,30 @@ export class AppComponent {
     };
   }
 
+  urlVersion = this.location.path().includes('version')
+    ? this.location.path().split('/')[1]
+    : 'latest';
+  versions = fetch('/versions/index.csv')
+    .then(r => r.text())
+    .then(text => {
+      if (text.includes('<')) {
+        throw new Error('404');
+      }
+      // '1.2.1,1-2-2'
+      return [...text.split('\n'), 'latest,latest']
+        .map(line => {
+          const [version, versionDashed] = line.split(',');
+          return {
+            version,
+            route:
+              versionDashed === 'latest' ? '/' : `/versions/${versionDashed}/`,
+            active: this.urlVersion === versionDashed,
+          };
+        })
+        .reverse();
+    })
+    .catch(() => [{ version: 'latest', route: '/', active: true }]);
+
   constructor(
     private location: Location,
     private router: Router,

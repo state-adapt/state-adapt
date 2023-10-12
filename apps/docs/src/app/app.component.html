@@ -1,6 +1,6 @@
 <ng-template #brandTemplate>
   <a routerLink="/" class="brand" style="text-decoration: none">
-    <img src="../assets/sa3-3.svg" />
+    <img src="./assets/sa3-3.svg" />
     <span class="logo-state">State</span>
     <span class="logo-adapt">Adapt</span>
   </a>
@@ -70,6 +70,17 @@
   <!-- Each adapter library will export metadata with it to be easy to add to documentation. -->
   <!-- There will be a core adapter demo library with components for demoing. That will be loaded by this router -->
   <!-- and metadata from libraries will be passed in through dependency injection or loaded some other way. -->
+  <hr />
+  <!-- versions = [{version, versionDashed, active}] -->
+  <ng-container *ngFor="let version of versions | async">
+    <ibm-sidenav-item
+      [route]="['versions', version.route]"
+      [active]="version.active"
+      (navigation)="navigate(null)"
+    >
+      {{ version.version }}
+    </ibm-sidenav-item>
+  </ng-container>
 </ibm-sidenav>
 <main
   #main

@@ -23,7 +23,7 @@ Stores do 4 things:
 
 `init` is a method on `Adapt` that creates stores. There are 4 ways to use it:
 
-![Adapt['init'] Overloads](../assets/adapt-method-jsdoc.png)
+![Adapt['init'] Overloads](./assets/adapt-method-jsdoc.png)
 
 The `sources` parameter needs explaining. When it is an object, it maps relationships between state changes and the sources that should trigger them. This object is equivalent to a reducer in _Redux_ or _NgRx_. The property names of the object are the adapter's state change function names. The right-hand side of the object specifies one or more sources that should trigger the state change specified in the property name. To specify multiple sources, pass them in an array, like
 

@@ -45,7 +45,7 @@ import { toSource } from '@state-adapt/rxjs';
 const timer$ = timer(3000).pipe(toSource('timer$'));
 ```
 
-![Action Type in Redux Devtools](../assets/timer$.png)
+![Action Type in Redux Devtools](./assets/timer$.png)
 
 (Note: This will not occur until you use the source in a store and subscribe to its state.)
 
@@ -96,7 +96,7 @@ type WebsocketMessage = Message1 | Message2;
 const websocketMessages$: Observable<WebsocketMessage> = of(
   Math.random() < 0.5
     ? { type: MessageType.MESSAGE_1 }
-    : { type: MessageType.MESSAGE_2, data: 'asdfasdf' }
+    : { type: MessageType.MESSAGE_2, data: 'asdfasdf' },
 );
 
 const { message1$, message2$ } = splitSources(websocketMessages$, {
@@ -143,9 +143,9 @@ const httpActions$ = filters$.pipe(
     getHttpActions(
       fetchData(filters),
       res => [res.status === 200, res.body, res.error],
-      filters
-    )
-  )
+      filters,
+    ),
+  ),
 );
 ```
 
@@ -193,14 +193,14 @@ const httpActions$ = getHttpActions(fetchData(), res => [
 ]);
 const { request$, success$, error$ } = splitHttpSources(
   '[Some Data]',
-  httpActions$
+  httpActions$,
 );
 
 // 2. getHttpSoures
 const { request$, success$, error$ } = getHttpSources(
   '[Some Data]',
   fetchData(),
-  res => [res.status === 200, res.body, res.error]
+  res => [res.status === 200, res.body, res.error],
 );
 ```
 

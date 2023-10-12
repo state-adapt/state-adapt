@@ -9,7 +9,16 @@
   <script>
     const path = window.location.pathname.slice(1);
     const hash = window.location.hash;
-    localStorage.setItem('url', path + hash);
-    window.location.href = '../';
+    const versionPath = path.match(/(versions\/\d-\d-\d)/);
+    if (versionPath) {
+      // If version in path, redirect to versionPath root. e.g. /versions/1-2-1/404.html -> /versions/1-2-1/
+      // cut version from path, e.g. /versions/1-2-1/404.html -> /404.html
+      localStorage.setItem('url', path.replace(versionPath[0], '') + hash);
+      window.location.href = '/' + versionPath[0] + '/';
+    } else {
+      // else, window.location.href = "../";
+      localStorage.setItem('url', path + hash);
+      window.location.href = '../';
+    }
   </script>
 </head>
