@@ -17,6 +17,7 @@ export * from './lib/stores/selections.type';
 export * from './lib/stores/sources.type';
 export * from './lib/stores/smart-store.interface';
 export * from './lib/stores/join-stores.function';
+export * from './lib/stores/store-like.type';
 
 // export * from './lib/global-store/observable-store';
 export * from './lib/global-store/configure-state-adapt.options';

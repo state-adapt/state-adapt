@@ -17,16 +17,24 @@ const resetAll$ = new Source<void>('[App] resetAll$');
 const interval$ = interval(5_000).pipe(toSource('[App] interval$'));
 
 export function App() {
-  const [count1, count1Store] = useAdapt('count1', 0);
-  const [count2, count2Store] = useAdapt(['count2', 0], interval$);
-  const [count3, count3Store] = useAdapt(['count3', 0], countAdapter);
-  const [count4, count4Store] = useAdapt(['count4', 10], {
+  const [count1, count1Store] = useAdapt(0);
+  const [count2, count2Store] = useAdapt(0, { sources: interval$, path: 'count2' });
+  const [count3, count3Store] = useAdapt(0, countAdapter);
+  const [count4, count4Store] = useAdapt(10, {
     multiply: (state, n: number) => state * n,
   });
-  const [count5, count5Store] = useAdapt(['count5', 0, countAdapter], interval$);
-  const [count6, count6Store] = useAdapt(['count6', 0, countAdapter], {
-    set: interval$,
-    reset: resetAll$,
+  const [count5, count5Store] = useAdapt(0, {
+    adapter: countAdapter,
+    sources: interval$,
+    path: 'count5',
+  });
+  const [count6, count6Store] = useAdapt(0, {
+    adapter: countAdapter,
+    sources: {
+      set: interval$,
+      reset: resetAll$,
+    },
+    path: 'count6',
   });
 
   // count1Store.set();

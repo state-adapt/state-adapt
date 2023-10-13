@@ -13,6 +13,8 @@
           "options": {
             "tsConfig": "libs/adapter-docs/tsconfig.lib.json",
             "project": "libs/adapter-docs/ng-package.json",
+            "sourceMap": true,
+            "optimization": false,
             "updateBuildableProjectDepsInPackageJson": false
           },
           "configurations": {
@@ -492,6 +494,8 @@
             "main": "apps/ng-sa-counter/src/main.ts",
             "polyfills": "apps/ng-sa-counter/src/polyfills.ts",
             "tsConfig": "apps/ng-sa-counter/tsconfig.app.json",
+            "sourceMap": true,
+            "optimization": false,
             "aot": true,
             "assets": [
               "apps/ng-sa-counter/src/favicon.ico",

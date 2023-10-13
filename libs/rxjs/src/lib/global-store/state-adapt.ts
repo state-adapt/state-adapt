@@ -29,19 +29,18 @@ import { SmartStore } from '../stores/smart-store.interface';
 import { Sources } from '../stores/sources.type';
 import {
   GlobalStoreMethods,
-  SourceArg,
   InitializedSmartStore,
+  AdaptOptions,
+  isAdaptOptions,
+  NotAdaptOptions,
+  InitializedReactions,
 } from './state-adapt.types';
+import { Source } from '../sources/source';
 
 interface ParsedPath {
   path: string;
   pathAr: string[];
 }
-
-const isSourcesArg = (thing: any) =>
-  typeof thing === 'function' ||
-  isSource(thing) ||
-  isSource(Object.values(thing || {})[0]);
 
 const filterDefined = <T>(sel$: Observable<T>) =>
   sel$.pipe(
@@ -80,29 +79,152 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
 
   > Copilot tip: Copy examples into your file or click to definition to open file with context for better Copilot suggestions.
 
-  `adapt` creates a store that will manage state while it has subscribers. There are 4 overloads for `adapt`:
+  `adapt` creates a store that will manage state while it has subscribers.
 
-  ### Overloads
-  ```javascript
-  adapt(path, initialState)
-  adapt([path, initialState], adapter)
-  adapt([path, initialState], sources)
-  adapt([path, initialState, adapter], sources)
+  ### Example: initialState only
+  `adapt(initialState)`
+
+  The simplest way to use `adapt` is to only pass it an initial state. `adapt` returns a store object that is ready to start managing state once it has subscribers.
+  The store object comes with `set` and `reset` methods for updating state, and a `state$` observable of the store's state.
+
+  ```typescript
+  const name = adapt('John');
+
+  name.state$.subscribe(console.log); // logs 'John'
+
+  name.set('Johnsh'); // logs 'Johnsh'
+  name.reset(); // logs 'John'
   ```
 
-  path: `string` — Object path in Redux Devtools
+  Usually you won't manually subscribe to state like this, but you can if you want the store to immediately start managing state
+  and never clean it up.
 
-  initialState: {@link State} — Initial state of the store when it gets initialized with a subscription to its state
+  ### Example: Using an adapter
+  `adapt(initialState, adapter)`
 
-  adapter: {@link Adapter} — Object with state change functions and selectors
+  You can also pass in a state {@link Adapter} object to customize the state change functions and selectors.
 
-  sources:
-  - [Observable](https://rxjs.dev/guide/observable)<{@link Action}<{@link State}>> — Single source for `set` state change
-  - [Observable](https://rxjs.dev/guide/observable)<{@link Action}<{@link State}>>[] — Array of sources for `set` state change
-  - {@link Sources} — Object specifying sources for state change functions
+  ```typescript
+  const name = adapt('John', {
+    concat: (state, payload: string) => state + payload,
+    selectors: {
+      length: state => state.length,
+    },
+  });
 
-  ### Overload 1
-  `adapt(path, initialState)`
+  name.state$.subscribe(console.log); // Logs 'John'
+  name.length$.subscribe(console.log); // Logs 4
+
+  name.concat('sh'); // logs 'Johnsh' and 6
+  name.reset(); // logs 'John' and 4
+  ```
+
+  ### Example: Using {@link AdaptOptions}
+  `adapt(initialState, { adapter, sources, path })`
+
+  You can also define an adapter, sources, and/or a state path as part of an {@link AdaptOptions} object.
+
+  Sources allow the store to declaratively react to external events rather than being commanded
+  by imperative callback functions.
+
+  ```typescript
+  const tick$ = interval(1000).pipe(toSource('tick$'));
+
+  const clock = adapt(0, {
+    adapter: {
+      increment: state => state + 1,
+    },
+    sources: tick$, // or [tick$], or { set: tick$ }, or { set: [tick$] }
+    path: 'clock',
+  });
+
+  clock.state$.subscribe(console.log); // Logs 0, 1, 2, 3, etc.
+  ```
+
+  There are 4 possible ways sources can be defined:
+
+  1\. A source can be a single {@link Source} or [Observable](https://rxjs.dev/guide/observable)<{@link Action}<{@link State}>>. When the source emits, it triggers the store's `set` method
+  with the payload.
+
+  #### Example: Single source
+
+  ```typescript
+  const nameChange$ = new Source<string>('nameChange$');
+
+  const name = adapt('John', {
+    sources: nameChange$,
+    path: 'name',
+  });
+
+  name.state$.subscribe(console.log); // Logs 'John'
+
+  nameChange$.next('Johnsh'); // logs 'Johnsh'
+  ```
+
+  2\. A source can be an array of {@link Source} or [Observable](https://rxjs.dev/guide/observable)<{@link Action}<{@link State}>>. When any of the sources emit, it triggers the store's `set`
+   method with the payload.
+
+  #### Example: Array of sources
+
+  ```typescript
+  const nameChange$ = new Source<string>('nameChange$');
+  const nameChange2$ = new Source<string>('nameChange2$');
+
+  const name = adapt('John', {
+    sources: [nameChange$, nameChange2$],
+    path: 'name',
+  });
+
+  name.state$.subscribe(console.log); // Logs 'John'
+
+  nameChange$.next('Johnsh'); // logs 'Johnsh'
+  nameChange2$.next('Johnsh2'); // logs 'Johnsh2'
+  ```
+
+  3\. A source can be an object with keys that match the names of the {@link Adapter} state change functions, with a corresponding source or array of
+  sources that trigger the store's reaction with the payload.
+
+  #### Example: Object of sources
+
+  ```typescript
+  const nameChange$ = new Source<string>('nameChange$');
+  const nameReset$ = new Source<void>('nameReset$');
+
+  const name = adapt('John', {
+    sources: {
+      set: nameChange$,
+      reset: nameReset$,
+    },
+    path: 'name',
+  });
+
+  name.state$.subscribe(console.log); // Logs 'John'
+
+  nameChange$.next('Johnsh'); // logs 'Johnsh'
+  nameReset$.next(); // logs 'John'
+  ```
+
+  4\. A source can be a function that takes in a detached store (result of calling {@link StateAdapt.watch}) and returns any of the above
+  types of sources.
+
+  #### Example: Function that returns a source
+
+  ```typescript
+  const name = adapt('John', {
+    sources: store => store.state$.pipe(
+      delay(1000),
+      map(name => `${name}sh`),
+      toSource('recursive nameChange$'),
+    ),
+    path: 'name',
+  });
+
+  name.state$.subscribe(console.log); // Logs 'John'
+  // logs 'Johnsh' after 1 second, then 'Johnshsh' after 2 seconds, etc.
+  ```
+
+  Defining a path alongside sources is recommended to enable debugging with Redux DevTools. It's easy to trace
+  singular state changes caused by user events, but it's much harder to trace state changes caused by RxJS streams.
 
   The path string specifies the location in the global store you will find the state for the store being created
   (while the store has subscribers). StateAdapt splits this string at periods `'.'` to create an object path within
@@ -111,15 +233,19 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
   #### Example: Paths and global state
 
   ```typescript
-  const store = adapt('number', 0);
+  const store = adapt(0, { path: 'number' });
   store.state$.subscribe();
   // global state: { number: 0 }
+  ```
 
-  const store = adapt('featureA.number', 0);
+  ```typescript
+  const store = adapt(0, { path: 'featureA.number' });
   store.state$.subscribe();
   // global state: { featureA: { number: 0 } }
+  ```
 
-  const store = adapt('featureA.featureB.number', 0);
+  ```typescript
+  const store = adapt(0, { path: 'featureA.featureB.number' });
   store.state$.subscribe();
   // global state: { featureA: { featureB: { number: 0 } } }
   ```
@@ -138,222 +264,52 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
   ```typescript
   import { getId } from '@state-adapt/core';
 
-  const store1 = adapt('number' + getId(), 0);
+  const store1 = adapt(0, { path: 'number' + getId() });
   store1.state$.subscribe();
-  const store2 = adapt('number' + getId(), 0);
+  const store2 = adapt(0, { path: 'number' + getId() });
   store2.state$.subscribe();
-  // global state: { number0: 0, number1: 0 }
-  ```
-
-  `adapt` returns a store object that is ready to start managing state once it has subscribers. The store object comes with `set`
-  and `reset` methods for updating the state, and a `state$` observable of the store's state.
-
-  #### Example: `set`, `reset` and `state$`
-
-  ```tsx
-  const name = adapt('name', 'John');
-  name.state$.subscribe(console.log);
-  name.set('Johnsh'); // logs 'Johnsh'
-  name.reset(); // logs 'John'
-  ```
-
-  Usually you won't manually subscribe to state like this, but you can if you want the store to immediately start managing state
-  and never clean it up.
-
-  ### Overload 2
-  `adapt([path, initialState], adapter)`
-
-  The adapter is an object such as one created by {@link createAdapter}. It contains methods for updating state,
-  called "state changes" or "reactions", and optionally selectors for reading the state. Every reaction function becomes a method on
-  the store object, and every selector becomes an observable on the store object.
-
-  #### Example: Inlined adapter
-
-  ```tsx
-  const name = adapt(['name', 'John'], {
-    concat: (state, payload: string) => state + payload,
-    selectors: {
-      length: state => state.length,
-    },
-  });
-  name.state$.subscribe(console.log);
-  name.length$.subscribe(console.log);
-  name.concat('sh'); // logs 'Johnsh' and 6
-  name.reset(); // logs 'John' and 4
-  ```
-
-  ### Overload 3
-  `adapt([path, initialState], sources)`
-
-  Sources allow the store to react to external events. There are 4 possible ways sources can be defined:
-
-  1\. A source can be a single {@link Source} or [Observable](https://rxjs.dev/guide/observable)<{@link Action}<{@link State}>>. When the source emits, it triggers the store's `set` method
-  with the payload.
-
-  #### Example: Single source
-
-  ```tsx
-  const nameChange$ = new Source<string>('nameChange$');
-
-  const name = adapt(['name', 'John'], nameChange$);
-
-  name.state$.subscribe(console.log);
-  nameChange$.next('Johnsh'); // logs 'Johnsh'
-  ```
-
-  2\. A source can be an array of {@link Source} or [Observable](https://rxjs.dev/guide/observable)<{@link Action}<{@link State}>>. When any of the sources emit, it triggers the store's `set`
-   method with the payload.
-
-  #### Example: Array of sources
-
-  ```tsx
-  const nameChange$ = new Source<string>('nameChange$');
-  const nameChange2$ = new Source<string>('nameChange2$');
-
-  const name = adapt(['name', 'John'], [nameChange$, nameChange2$]);
-
-  name.state$.subscribe(console.log);
-  nameChange$.next('Johnsh'); // logs 'Johnsh'
-  nameChange2$.next('Johnsh2'); // logs 'Johnsh2'
-  ```
-
-  3\. A source can be an object with keys that match the names of the store's reactions, with a corresponding source or array of
-  sources that trigger the store's reaction with the payload.
-
-  #### Example: Object of sources
-
-  ```tsx
-  const nameChange$ = new Source<string>('nameChange$');
-  const nameReset$ = new Source<void>('nameReset$');
-
-  const name = adapt(['name', 'John'], {
-    set: nameChange$,
-    reset: [nameReset$], // Can be array of sources too
-  });
-
-  name.state$.subscribe(console.log);
-  nameChange$.next('Johnsh'); // logs 'Johnsh'
-  nameReset$.next(); // logs 'John'
-  ```
-
-  4\. A source can be a function that takes in a detached store (result of calling {@link watch}) and returns any of the above
-  types of sources.
-
-  #### Example: Function that returns a source
-
-  ```tsx
-  name = adapt(['name', 'John'], store => store.state$.pipe(
-    delay(1000),
-    map(name => `${name}sh`),
-    toSource('recursive nameChange$'),
-  ));
-
-  const sub = name.state$.subscribe(console.log);
-  // logs 'Johnsh' after 1 second, then 'Johnshsh' after 2 seconds, etc.
-  ```
-
-  Each selector's observable chains off of all the sources passed into the store. For example, if one of your sources
-  is an observable of an HTTP request, that request will automatically be triggered as soon as you subscribe to any of
-  the selector observables from the store. If necessary, you can access store selectors that do not chain off of any
-  sources by using the {@link StateAdapt.watch} function.
-
-  ### Overload 4
-  `adapt([path, initialState, adapter], sources)`
-
-  The adapter and sources can be combined in the same overload.
-
-  #### Example: Adapter and sources
-
-  ```tsx
-  const nameChange$ = new Source<string>('nameChange$');
-  const nameConcat$ = new Source<string>('nameConcat$');
-
-  const nameAdapter = createAdapter<string>()({
-    concat: (state, payload: string) => state + payload,
-  });
-
-  const name = adapt(['name', 'John', nameAdapter], {
-    set: nameChange$,
-    concat: nameConcat$,
-  });
-
-  name.state$.subscribe(console.log);
-  nameChange$.next('Johnsh'); // logs 'Johnsh'
-  nameConcat$.next('sh'); // logs 'Johnshsh' // Example suggested by Copilot :)
+  // global state includes both: { number0: 0, number1: 0 }
   ```
 
   ### Remember!
 
   The store needs to have subscribers in order to start managing state.
   */
-  // adapt(path, initialState)
-  adapt<State>(path: string, initialState: State): InitializedSmartStore<State>;
-
-  // adapt([path, initialState], adapter)
   adapt<State, S extends Selectors<State>, R extends ReactionsWithSelectors<State, S>>(
-    [path, initialState]: [string, State],
-    adapter: R & { selectors?: S },
-  ): InitializedSmartStore<State, S, R>;
-
-  // adapt([path, initialState], sources);
-  adapt<State, S extends Selectors<State>, R extends ReactionsWithSelectors<State, S>>(
-    [path, initialState]: [string, State],
-    sources: SourceArg<State, S, R>,
-  ): InitializedSmartStore<State, S, R>;
-
-  // adapt([path, initialState, adapter], sources);
-  adapt<State, S extends Selectors<State>, R extends ReactionsWithSelectors<State, S>>(
-    [path, initialState, adapter]: [string, State, R & { selectors?: S }],
-    sources: SourceArg<State, S, R>,
-  ): InitializedSmartStore<State, S, R>;
-
-  // 1. adapt(path, initialState)
-  // 2. adapt([path, initialState], sources)
-  // 3. adapt([path, initialState], adapter)
-  // 4. adapt([path, initialState, adapter], sources);
-  adapt<State, S extends Selectors<State>, R extends ReactionsWithSelectors<State, S>>(
-    first:
-      | string
-      | readonly [string, State]
-      | readonly [string, State, R & { selectors?: S }] = '_',
-    second: State | (R & { selectors?: S }) | SourceArg<State, S, R>,
-    third?: (R & { selectors?: S }) | SourceArg<State, S, R>,
-  ): SmartStore<State, S & WithGetState<State>> & SyntheticSources<R> {
-    const arrayLength = Array.isArray(first) ? first.length : 0;
-
-    let path;
-    let initialState;
-    let adapter;
+    initialState: State,
+    second: (R & { selectors?: S } & NotAdaptOptions) | AdaptOptions<State, S, R> = {}, // Default object required to make R = {} rather than indexed object
+  ): {} & InitializedSmartStore<State, S, R> {
     let sources: any;
 
-    if (!arrayLength) {
-      path = first;
-      initialState = second;
-    }
-
-    if (arrayLength === 2) {
-      path = first[0];
-      initialState = first[1];
-      const secondIsSources = isSourcesArg(second);
-      adapter = !secondIsSources ? second : undefined;
-      sources = secondIsSources ? second : third;
-    }
-
-    if (arrayLength === 3) {
-      path = first[0];
-      initialState = first[1];
-      adapter = first[2];
-      sources = second;
-    }
-
     // Initialize parameters
+    const options = isAdaptOptions(second) ? second : undefined;
 
-    path = path as string;
+    const path = options?.path || getId().toString();
 
-    initialState = initialState as State;
+    // const stackItems = {
+    //   Error: false,
+    //   'at StateAdapt.adapt': false,
+    //   'at adapt': false,
+    //   'at Object.adaptInjectableFactory [as factory]': 'adaptInjectableFactory',
+    // } as const;
 
-    adapter = adapter
-      ? createAdapter<State>()(adapter as R & { selectors?: S })
+    // const stackLines = new Error().stack
+    //   ?.split('\n')
+    //   .map(line => line.trim().split(' (http')[0]);
+
+    // const interestingLine = stackLines?.find(
+    //   line => (stackItems[line as keyof typeof stackItems] as any) !== false,
+    // );
+    // const stackPath =
+    //   stackItems[interestingLine as keyof typeof stackItems] || interestingLine;
+    // console.log(interestingLine);
+    // const path =
+    //   options?.path ||
+    //   this.adapt.caller.toString().replace(/\./g, '_') + getId().toString();
+
+    const adapterArg = options?.adapter || second;
+    const adapter = adapterArg
+      ? createAdapter<State>()(adapterArg as R & { selectors?: S })
       : createAdapter<State>()({});
     (adapter as any).noop = createNoopReaction();
     if (
@@ -365,10 +321,12 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
       (adapter as any).update = createUpdateReaction();
     }
 
+    const sourcesArg = options?.sources;
+
     const sourcesDefined =
-      typeof sources === 'function'
-        ? sources(this.watch(path, adapter))
-        : sources || ({} as any);
+      typeof sourcesArg === 'function'
+        ? sourcesArg(this.watch(path, adapter) as any)
+        : sourcesArg || ({} as any);
     sources = isSource(sourcesDefined) // Single source or array
       ? { set: sourcesDefined }
       : sourcesDefined;
@@ -397,21 +355,20 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
     );
 
     return {
-      ...syntheticSources,
+      ...(syntheticSources as SyntheticSources<InitializedReactions<State, S, R>>),
       ...selections,
       __: {
         requireSources$,
         selectors,
         fullSelectors,
         initialState, // added for React integration, which requires immediate access to initial state before subscribing
+        path,
         select: (sel: any) => filterDefined(this.commonStore.select(sel)),
       },
-    };
+    } as any;
   }
 
   /**
-  @deprecated Use for debugging only. Prefer the {@link StateAdapt.adapt} sources syntax that exposes a detached store.
-
    ## ![StateAdapt](https://miro.medium.com/max/4800/1*qgM6mFM2Qj6woo5YxDMSrA.webp|width=14) `StateAdapt.watch`
 
    > Copilot tip: Copy examples into your file or click to definition to open file with context for better Copilot suggestions.
@@ -429,10 +386,6 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
 
   ### Usage
 
-  `watch` is useful in 2 situations primarily: Accessing state without subscribing and accessing state for a source.
-
-  ### Accessing state without subscribing
-
   `watch` enables accessing state without subscribing to sources. For example, if your adapter manages the loading state
   for an HTTP request and you need to know if the request is loading before the user is interested in the data,
   `watch` can give you access to it without triggering the request.
@@ -442,29 +395,6 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
   ```tsx
   watch('data', httpAdapter).loading$.subscribe(console.log);
   ```
-
-  ### Accessing state for a source
-
-  It would be impossible for a source itself to access state from the store without `watch` because
-  it would require using the store before it had been defined. The solution is to use `watch`
-  to access the state needed by `dataReceived$`:
-
-  #### Example: Accessing state for a source
-
-  ```tsx
-  const path = 'data'; // Make sure the same path is used in both places
-
-  const dataReceived$ = watch(path, dataAdapter).dataNeeded$.pipe(
-    filter(needed => needed),
-    switchMap(() => dataService.fetchData()),
-    toSource('dataReceived$'),
-  );
-
-  const dataStore = adapt([path, initialState, dataAdapter], {
-    receive: dataReceived$,
-  });
-  ```
-
    */
   watch<State, S extends Selectors<State>, R extends ReactionsWithSelectors<State, S>>(
     path: string,
@@ -491,6 +421,7 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
         fullSelectors: fullSelectors,
         selectors,
         initialState: undefined as unknown as State, // added for React integration, which requires immediate access to initial state before subscribing,
+        path,
         select: (sel: any) => filterDefined(this.commonStore.select(sel)),
       },
     };

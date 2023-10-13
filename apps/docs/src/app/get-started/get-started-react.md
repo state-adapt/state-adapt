@@ -50,7 +50,7 @@ And now you can use it in your components:
 ```tsx
 import { useAdapt } from '@state-adapt/react';
 // ...
-const [name, nameStore] = useAdapt('name', '');
+const [name, nameStore] = useAdapt('Bob');
 console.log(name.state);
 ```
 
@@ -117,7 +117,7 @@ And now you can use it in your components:
 ```tsx
 import { useAdapt } from '@state-adapt/react';
 // ...
-const [name, nameStore] = useAdapt('name', '');
+const [name, nameStore] = useAdapt('Bob');
 console.log(name.state);
 ```
 

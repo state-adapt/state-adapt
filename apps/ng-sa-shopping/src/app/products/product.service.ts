@@ -12,23 +12,25 @@ export const productSources = {
   removeFromCart$: new Source<Product>('[Products] removeFromCart$'),
 };
 
-export const injectProductStore = adaptInjectable(
-  ['products', products, productAdapter],
-  {
+export const injectProductStore = adaptInjectable(products, {
+  adapter: productAdapter,
+  sources: {
     changeQuantity: productSources.quantityChange$,
     addProduct: productSources.removeFromCart$,
     removeProduct: productSources.addToCart$,
   },
-);
+  path: 'products',
+});
 
-export const injectCartStore = adaptInjectable(
-  ['cart', [] as Product[], productAdapter],
-  {
+export const injectCartStore = adaptInjectable([] as Product[], {
+  adapter: productAdapter,
+  sources: {
     changeQuantity: productSources.quantityChange$,
     addProduct: productSources.addToCart$,
     removeProduct: productSources.removeFromCart$,
   },
-);
+  path: 'cart',
+});
 
 @Injectable({ providedIn: 'root' })
 export class ProductService {

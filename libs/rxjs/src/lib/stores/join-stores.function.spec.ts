@@ -12,8 +12,8 @@ const { adapt, watch } = stateAdapt;
 
 describe('joinStores', () => {
   it('should evaluate combined selectors', () => {
-    const store1 = adapt('store1', 1);
-    const store2 = adapt('store2', 2);
+    const store1 = adapt(1);
+    const store2 = adapt(2);
     const joinedStore = joinStores({ store1, store2 })({
       sum: s => s.store1 + s.store2,
     })();

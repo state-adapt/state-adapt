@@ -39,7 +39,7 @@ And now you can use it in your components:
 
 ```tsx
 import { adapt } from '../state-adapt';
-const nameStore = adapt('name', '');
+const nameStore = adapt('Bob');
 ```
 
 Svelte doesn't currently have a dedicated library from StateAdapt, but it will. For now, for more configuration options, see [@state-adapt/rxjs](/docs/rxjs).

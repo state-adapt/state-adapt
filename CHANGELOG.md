@@ -1,6 +1,7 @@
 ## 2.0.0
 
 - Refactor(core,rxjs): Flatten types for joined adapters and stores
+- Refactor(rxjs,react,angular,ngrx,ngxs)!: Simplify StateAdapt.adapt syntax
 
 ## 1.2.1
 

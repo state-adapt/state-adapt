@@ -40,7 +40,7 @@ And now you can use it in your components:
 
 ```tsx
 import { adapt } from '../state-adapt.function';
-const stringStore = adapt('string', '');
+const nameStore = adapt('Bob');
 ```
 
 Additionally, you can create this helper function to get objects with only signals from stores:
@@ -77,14 +77,14 @@ SolidJS' `from` function immediately subscribes to observables, so it's good to 
 import { adapt } from '../adapt.function';
 import { fromAdapt } from '../from-adapt.function';
 
-const nameStore = adapt('name', '');
+const nameStore = adapt('Bob');
 
 export function Counter() {
   const name = fromAdapt(nameStore);
   return (
     <div>
       <h1>{name.state()}</h1>
-      <button onClick={() => nameStore.set('new name')}>Set name</button>
+      <button onClick={() => nameStore.set('new name')}>Set Name</button>
     </div>
   );
 }

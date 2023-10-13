@@ -6,7 +6,7 @@ StateAdapt stores start almost as simple as `useState`, but with Redux Devtools 
 
 ```tsx
 function SimpleState() {
-  const [name, nameStore] = useAdapt('name', 'Bob'); // 'name' is for Redux Devtools
+  const [name, nameStore] = useAdapt('Bob');
   return (
     <>
       <h2>Hello {name.state}!</h2>
@@ -19,7 +19,7 @@ function SimpleState() {
 ### Shared State
 
 ```tsx
-const nameStore = adapt('name1', 'Bob'); // 'name' is for Redux Devtools
+const nameStore = adapt('Bob');
 
 function SimpleState() {
   const name = useStore(nameStore);
@@ -33,7 +33,7 @@ function SimpleState() {
 ```
 
 <video controls loop>
-  <source src="../assets/demo-1-simple-state.mov" type="video/mp4"/>
+  <source src="./assets/demo-1-simple-state.mov" type="video/mp4"/>
 </video>
 
 ### Try it on [StackBlitz](https://stackblitz.com/edit/vitejs-vite-thndfy?file=src%2F1SimpleState.tsx)
@@ -41,7 +41,7 @@ function SimpleState() {
 ## 2. Add selectors for derived state
 
 ```tsx
-const nameStore = adapt(['name', 'Bob'], {
+const nameStore = adapt('Bob', {
   selectors: {
     yelledName: name => name.toUpperCase(), // Will be memoized
   },
@@ -60,7 +60,7 @@ function DerivedState() {
 ```
 
 <video controls loop>
-  <source src="../assets/demo-2-derived-state.mov" type="video/mp4" />
+  <source src="./assets/demo-2-derived-state.mov" type="video/mp4" />
 </video>
 
 ### Try it on [StackBlitz](https://stackblitz.com/edit/vitejs-vite-thndfy?file=src%2F2DerivedState.tsx)
@@ -70,7 +70,7 @@ function DerivedState() {
 Maintain separation of concerns by keeping state logic together instead of scattered.
 
 ```diff-tsx
- const nameStore = adapt(['name', 'Bob'], {
+ const nameStore = adapt('Bob', {
 +  reverseName: name => name.split('').reverse().join(''),
   selectors: {
     yelledName: name => name.toUpperCase(), // Will be memoized
@@ -90,7 +90,7 @@ function DerivedState() {
 ```
 
 <video controls loop>
-  <source src="../assets/demo-3-state-changes.mov" type="video/mp4" />
+  <source src="./assets/demo-3-state-changes.mov" type="video/mp4" />
 </video>
 
 ### Try it on [StackBlitz](https://stackblitz.com/edit/vitejs-vite-thndfy?file=src%2F3StateChanges.tsx)
@@ -98,15 +98,15 @@ function DerivedState() {
 ## 4. Reuse state patterns with state adapters
 
 ```diff-tsx
-- const nameStore = adapt(['name', 'Bob'], {
+- const nameStore = adapt('Bob', {
 + const nameAdapter = createAdapter<string>()({
   reverseName: name => name.split('').reverse().join(''),
   selectors: {
     yelledName: name => name.toUpperCase(), // Will be memoized
   },
 });
-+const name1Store = adapt(['name1', 'Bob'], nameAdapter);
-+const name2Store = adapt(['name2', 'Bob'], nameAdapter);
++const name1Store = adapt('Bob', nameAdapter);
++const name2Store = adapt('Bob', nameAdapter);
 
 function StateAdapters() {
 -  const name = useStore(nameStore);
@@ -127,7 +127,7 @@ function StateAdapters() {
 ```
 
 <video controls loop>
-  <source src="../assets/demo-4-state-adapters.mov" type="video/mp4" />
+  <source src="./assets/demo-4-state-adapters.mov" type="video/mp4" />
 </video>
 
 ### Try it on [StackBlitz](https://stackblitz.com/edit/vitejs-vite-thndfy?file=src%2F4StateAdapters.tsx)
@@ -150,12 +150,18 @@ Multiple stores might need to react to the same observable, so it needs independ
 +  toSource('[name] nameFromServer$'), // Annotate for Redux Devtools
 +);
 +
--  const name1Store = adapt(['name1', 'Bob'], nameAdapter);
-+  const name1Store = adapt(['name1', 'Bob', nameAdapter], nameFromServer$);//Set state
--  const name2Store = adapt(['name2', 'Bob'], nameAdapter);
-+  const name2Store = adapt(['name2', 'Bob', nameAdapter], {
+-const name1Store = adapt('Bob', nameAdapter);
++const name1Store = adapt('Bob', {
++  adapter: nameAdapter,
++  sources: nameFromServer$, // Set state
++});
+-const name2Store = adapt('Bob', nameAdapter);
++const name2Store = adapt('Bob', {
++  adapter: nameAdapter,
++  sources: {
 +    concatName: nameFromServer$, // Trigger a specific state reaction
-+  });
++  },
++});
 
 function ObservableSources() {
   const name1 = useStore(name1Store);
@@ -175,7 +181,7 @@ function ObservableSources() {
 ```
 
 <video controls loop>
-  <source src="../assets/demo-5-observable-sources.mov" type="video/mp4" />
+  <source src="./assets/demo-5-observable-sources.mov" type="video/mp4" />
 </video>
 
 ### Try it on [StackBlitz](https://stackblitz.com/edit/vitejs-vite-thndfy?file=src%2F5ObservableSources.tsx)
@@ -200,13 +206,20 @@ const nameFromServer$ = timer(3000).pipe(
 
 +const resetBoth$ = new Source<void>('[name] resetBoth$'); // Annotate for Redux Devtools
 +
-const name1Store = adapt(['name1', 'Bob', nameAdapter], {
-+  set: nameFromServer$, // `set` is provided with all adapters
-+  reset: resetBoth$, // `reset` is provided with all adapters
+const name1Store = adapt('Bob', {
+  adapter: nameAdapter,
+-   sources: nameFromServer$, // Set state
++   sources: {
++     set: nameFromServer$, // `set` is provided with all adapters
++     reset: resetBoth$, // `reset` is provided with all adapters
++   },
 });
-const name2Store = adapt(['name2', 'Bob', nameAdapter], {
-  concatName: nameFromServer$, // Trigger a specific state reaction
-+  reset: resetBoth$, // `reset` is provided with all adapters
+const name2Store = adapt('Bob', {
+  adapter: nameAdapter,
+   sources: {
+     concatName: nameFromServer$, // Trigger a specific state reaction
++     reset: resetBoth$, // `reset` is provided with all adapters
+   },
 });
 
 function SharedSources() {
@@ -229,7 +242,7 @@ function SharedSources() {
 ```
 
 <video controls loop>
-  <source src="../assets/demo-6-dom-sources.mov" type="video/mp4" />
+  <source src="./assets/demo-6-dom-sources.mov" type="video/mp4" />
 </video>
 
 ### Try it on [StackBlitz](https://stackblitz.com/edit/vitejs-vite-thndfy?file=src%2F6DomSources.tsx)
@@ -252,31 +265,31 @@ const nameFromServer$ = timer(3000).pipe(
 
 const resetBoth$ = new Source<void>('[name] resetBoth$'); // Annotate for Redux Devtools
 
-const name1Store = adapt(['name1', 'Bob', nameAdapter], {
-  set: nameFromServer$, // `set` is provided with all adapters
-  reset: resetBoth$, // `reset` is provided with all adapters
+const name1Store = adapt('Bob', {
+  adapter: nameAdapter,
+  sources: {
+    set: nameFromServer$, // `set` is provided with all adapters
+    reset: resetBoth$, // `reset` is provided with all adapters
+  },
 });
-const name2Store = adapt(['name2', 'Bob', nameAdapter], {
-  concatName: nameFromServer$, // Trigger a specific state reaction
-  reset: resetBoth$, // `reset` is provided with all adapters
+const name2Store = adapt('Bob', {
+  adapter: nameAdapter,
+  sources: {
+    concatName: nameFromServer$, // Trigger a specific state reaction
+    reset: resetBoth$, // `reset` is provided with all adapters
+  },
 });
 
 +const name12Store = joinStores({
 +  name1: name1Store,
 +  name2: name2Store,
 +})({
-+  bothBobs => state.name1 === 'Bob' && state.name2 === 'Bob'
++  bothBobs: s => s.name1 === 'Bob' && s.name2 === 'Bob'
 +})();
 +
 function SharedSources() {
-  const [name1, name1Store] = useAdapt(['name1', 'Bob', nameAdapter], {
-    set: nameFromServer$, // `set` is provided with all adapters
-    reset: resetBoth$, // `reset` is provided with all adapters
-  });//Set state
-  const [name2, name2Store] = useAdapt(['name2', 'Bob', nameAdapter], {
-    concatName: nameFromServer$, // Trigger a specific state reaction
-    reset: resetBoth$, // `reset` is provided with all adapters
-  });
+  const name1 = useStore(name1Store);
+  const name2 = useStore(name2Store);
 +  const { bothBobs } = useStore(name12Store);
   return (
     <>
@@ -297,7 +310,7 @@ function SharedSources() {
 ```
 
 <video controls loop>
-  <source src="../assets/demo-7-multi-store-selectors.mov" type="video/mp4" />
+  <source src="./assets/demo-7-multi-store-selectors.mov" type="video/mp4" />
 </video>
 
 ### Try it on [StackBlitz](https://stackblitz.com/edit/vitejs-vite-thndfy?file=src%2F7MultiStoreSelectors.tsx)

@@ -1,5 +1,9 @@
 # @state-adapt/core
 
+## Peer Dependencies
+
+## Index
+
 [`Adapter`](/docs/core#adapter)
 
 [`createAdapter`](/docs/core#createadapter)
@@ -14,6 +18,8 @@
 
 [`getId`](/docs/core#getid)
 
+## Migration Guide
+
 <!-- include: '../../../../../libs/core/src/lib/adapters/adapter.type.ts#Adapter' -->
 
 <!-- include: '../../../../../libs/core/src/lib/adapters/create-adapter.function.ts#createAdapter' -->
@@ -27,3 +33,5 @@
 <!-- include: '../../../../../libs/core/src/lib/actions/get-action.function.ts#getAction' -->
 
 <!-- include: '../../../../../libs/core/src/lib/utils/get-id.function.ts#getId' -->
+
+<!-- cache 2 -->

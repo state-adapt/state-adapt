@@ -3,7 +3,7 @@
 StateAdapt stores can be as simple as Svelte stores or RxJS `BehaviorSubject`s, but with Redux Devtools support!
 
 ```tsx
-const nameStore = adapt('name', 'Bob'); // 'name' is for Redux Devtools
+const nameStore = adapt('Bob'); // 'name' is for Redux Devtools
 const name$ = nameStore.state$;
 ```
 
@@ -15,7 +15,7 @@ const name$ = nameStore.state$;
 Here it is in Redux Devtools:
 
 <video controls loop>
-  <source src="../assets/demo-1-simple-state.mov" type="video/mp4"/>
+  <source src="./assets/demo-1-simple-state.mov" type="video/mp4"/>
 </video>
 
 ### Try it on [StackBlitz](https://stackblitz.com/edit/vitejs-vite-74p4ry?file=src%2Flib%2F1-simple-state.svelte&terminal=dev)
@@ -25,7 +25,7 @@ Here it is in Redux Devtools:
 Derived state defined in selectors can be moved outside of components without refactoring.
 
 ```typescript
-const nameStore = adapt(['name', 'Bob'], {
+const nameStore = adapt('Bob', {
   selectors: {
     yelledName: name => name.toUpperCase(), // Will be memoized
   },
@@ -41,7 +41,7 @@ const yelledName$ = nameStore.yelledName$;
 ```
 
 <video controls loop>
-  <source src="../assets/demo-2-derived-state.mov" type="video/mp4" />
+  <source src="./assets/demo-2-derived-state.mov" type="video/mp4" />
 </video>
 
 ### Try it on [StackBlitz](https://stackblitz.com/edit/vitejs-vite-74p4ry?file=src%2Flib%2F2-derived-state.svelte&terminal=dev)
@@ -51,7 +51,7 @@ const yelledName$ = nameStore.yelledName$;
 Maintain separation of concerns by keeping state logic together instead of scattered.
 
 ```diff-typescript
-const nameStore = adapt(['name', 'Bob'], {
+const nameStore = adapt('Bob', {
 +  reverseName: name => name.split('').reverse().join(''),
   selectors: {
     yelledName: name => name.toUpperCase(), // Will be memoized
@@ -67,7 +67,7 @@ const yelledName$ = nameStore.yelledName$;
 ```
 
 <video controls loop>
-  <source src="../assets/demo-3-state-changes.mov" type="video/mp4" />
+  <source src="./assets/demo-3-state-changes.mov" type="video/mp4" />
 </video>
 
 ### Try it on [StackBlitz](https://stackblitz.com/edit/vitejs-vite-74p4ry?file=src%2Flib%2F3-state-changes.svelte&terminal=dev)
@@ -77,7 +77,7 @@ const yelledName$ = nameStore.yelledName$;
 If you need to reuse state logic, it's as simple as dragging it outside the `adapt` call into a `createAdapter` call.
 
 ```diff-typescript
--  const nameStore = adapt(['name', 'Bob'], {
+-  const nameStore = adapt('Bob', {
 +  const nameAdapter = createAdapter<string>()({
     reverseName: name => name.split('').reverse().join(''),
     selectors: {
@@ -86,10 +86,10 @@ If you need to reuse state logic, it's as simple as dragging it outside the `ada
   });
 -  const yelledName$ = nameStore.yelledName$;
 +
-+  const nameStore1 = adapt(['name.1', 'Bob'], nameAdapter);
++  const nameStore1 = adapt('Bob', nameAdapter);
 +  const yelledName1$ = nameStore1.yelledName$;
 +
-+  const nameStore2 = adapt(['name.2', 'Bob'], nameAdapter);
++  const nameStore2 = adapt('Bob', nameAdapter);
 +  const yelledName2$ = nameStore2.yelledName$;
 ```
 
@@ -104,7 +104,7 @@ If you need to reuse state logic, it's as simple as dragging it outside the `ada
 ```
 
 <video controls loop>
-  <source src="../assets/demo-4-state-adapters.mov" type="video/mp4" />
+  <source src="./assets/demo-4-state-adapters.mov" type="video/mp4" />
 </video>
 
 ### Try it on [StackBlitz](https://stackblitz.com/edit/vitejs-vite-74p4ry?file=src%2Flib%2F4-state-adapters.svelte&terminal=dev)
@@ -127,13 +127,19 @@ Multiple stores might need to react to the same observable, so it needs independ
 +    toSource('[name] nameFromServer$'), // Annotate for Redux Devtools
 +  );
 +
--  const nameStore1 = adapt(['name.1', 'Bob'], nameAdapter);
-+  const nameStore1 = adapt(['name.1', 'Bob', nameAdapter], nameFromServer$);//Set state
+-  const nameStore1 = adapt('Bob', nameAdapter);
++  const nameStore1 = adapt('Bob', {
++    adapter: nameAdapter,
++    sources: nameFromServer$, // Set state
++  });
   const yelledName1$ = nameStore1.yelledName$;
 
--  const nameStore2 = adapt(['name.2', 'Bob'], nameAdapter);
-+  const nameStore2 = adapt(['name.2', 'Bob', nameAdapter], {
-+    concatName: nameFromServer$, // Trigger a specific state reaction
+-  const nameStore2 = adapt('Bob', nameAdapter);
++  const nameStore2 = adapt('Bob', {
++    adapter: nameAdapter,
++    sources: {
++      concatName: nameFromServer$, // Trigger a specific state reaction
++    },
 +  });
   const yelledName2$ = nameStore2.yelledName$;
 ```
@@ -149,7 +155,7 @@ Multiple stores might need to react to the same observable, so it needs independ
 ```
 
 <video controls loop>
-  <source src="../assets/demo-5-observable-sources.mov" type="video/mp4" />
+  <source src="./assets/demo-5-observable-sources.mov" type="video/mp4" />
 </video>
 
 ### Try it on [StackBlitz](https://stackblitz.com/edit/vitejs-vite-74p4ry?file=src%2Flib%2F5-observable-sources.svelte&terminal=dev)
@@ -174,15 +180,22 @@ Don't write callback functions to imperatively change state in multiple stores. 
     toSource('[name] nameFromServer$'), // Annotate for Redux Devtools
   );
 
-  const nameStore1 = adapt(['name4.1', 'Bob', nameAdapter], {
-+    set: nameFromServer$, // `set` is provided with all adapters
-+    reset: resetBoth$, // `reset` is provided with all adapters
-+  });
+  const nameStore1 = adapt('Bob', {
+    adapter: nameAdapter,
+-    sources: nameFromServer$, // Set state
++    sources: {
++      set: nameFromServer$, // `set` is provided with all adapters
++      reset: resetBoth$, // `reset` is provided with all adapters
++    },
+  });
   const yelledName1$ = nameStore1.yelledName$;
 
-  const nameStore2 = adapt(['name4.2', 'Bob', nameAdapter], {
-    concatName: nameFromServer$, // Trigger a specific state reaction
-+    reset: resetBoth$, // `reset` is provided with all adapters
+  const nameStore2 = adapt('Bob', {
+    adapter: nameAdapter,
+    sources: {
+      concatName: nameFromServer$, // Trigger a specific state reaction
++      reset: resetBoth$, // `reset` is provided with all adapters
+    },
   });
   const yelledName2$ = nameStore2.yelledName$;
 ```
@@ -200,7 +213,7 @@ Don't write callback functions to imperatively change state in multiple stores. 
 ```
 
 <video controls loop>
-  <source src="../assets/demo-6-dom-sources.mov" type="video/mp4" />
+  <source src="./assets/demo-6-dom-sources.mov" type="video/mp4" />
 </video>
 
 ### Try it on [StackBlitz](https://stackblitz.com/edit/vitejs-vite-74p4ry?file=src%2Flib%2F6-dom-sources.svelte&terminal=dev)
@@ -225,16 +238,22 @@ Don't write callback functions to imperatively change state in multiple stores. 
     toSource('[name] nameFromServer$'), // Annotate for Redux Devtools
   );
 
-  const nameStore1 = adapt(['name4.1', 'Bob', nameAdapter], {
-    set: nameFromServer$, // `set` is provided with all adapters
-    reset: resetBoth$, // `reset` is provided with all adapters
-  });
+  const nameStore1 = adapt('Bob', {
+    adapter: nameAdapter,
+    sources: {
+      set: nameFromServer$, // `set` is provided with all adapters
+      reset: resetBoth$, // `reset` is provided with all adapters
+    },
+  })
   const yelledName1$ = nameStore1.yelledName$;
 
-  const nameStore2 = adapt(['name4.2', 'Bob', nameAdapter], {
-    concatName: nameFromServer$, // Trigger a specific state reaction
-    reset: resetBoth$, // `reset` is provided with all adapters
-  });
+  const nameStore2 = adapt('Bob', {
+    adapter: nameAdapter,
+    sources: {
+      concatName: nameFromServer$, // Trigger a specific state reaction
+      reset: resetBoth$, // `reset` is provided with all adapters
+    },
+  })
   const yelledName2$ = nameStore2.yelledName$;
 +
 +  const bothBobs$ = joinStores({
@@ -262,7 +281,7 @@ Don't write callback functions to imperatively change state in multiple stores. 
 ```
 
 <video controls loop>
-  <source src="../assets/demo-7-multi-store-selectors.mov" type="video/mp4" />
+  <source src="./assets/demo-7-multi-store-selectors.mov" type="video/mp4" />
 </video>
 
 ### Try it on [StackBlitz](https://stackblitz.com/edit/vitejs-vite-74p4ry?file=src%2Flib%2F7-multi-store-selectors.svelte&terminal=dev)

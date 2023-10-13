@@ -4,7 +4,7 @@ StateAdapt stores can be as simple as RxJS `BehaviorSubject`s, but with Redux De
 
 ```tsx
 export class NameComponent {
-  nameStore = adapt('name', 'Bob'); // 'name' is for Redux Devtools
+  nameStore = adapt('Bob');
 }
 ```
 
@@ -16,7 +16,7 @@ export class NameComponent {
 Here it is in Redux Devtools:
 
 <video controls loop>
-  <source src="../assets/demo-1-simple-state.mov" type="video/mp4"/>
+  <source src="./assets/demo-1-simple-state.mov" type="video/mp4"/>
 </video>
 
 ### Try it on [StackBlitz](https://stackblitz.com/edit/angular-ivy-jwt8jh?file=src%2Fapp%2F1-simple-state.component.ts)
@@ -25,7 +25,7 @@ Here it is in Redux Devtools:
 
 ```typescript
 export class NameComponent {
-  nameStore = adapt(['name', 'Bob'], {
+  nameStore = adapt('Bob', {
     selectors: {
       yelledName: name => name.toUpperCase(), // Will be memoized
     },
@@ -40,7 +40,7 @@ export class NameComponent {
 ```
 
 <video controls loop>
-  <source src="../assets/demo-2-derived-state.mov" type="video/mp4" />
+  <source src="./assets/demo-2-derived-state.mov" type="video/mp4" />
 </video>
 
 ### Try it on [StackBlitz](https://stackblitz.com/edit/angular-ivy-jwt8jh?file=src%2Fapp%2F2-derived-state.component.ts)
@@ -51,7 +51,7 @@ Maintain separation of concerns by keeping state logic together instead of scatt
 
 ```diff-typescript
 export class NameComponent {
-  nameStore = adapt(['name', 'Bob'], {
+  nameStore = adapt('Bob', {
 +    reverseName: name => name.split('').reverse().join(''),
     selectors: {
       yelledName: name => name.toUpperCase(), // Will be memoized
@@ -67,7 +67,7 @@ export class NameComponent {
 ```
 
 <video controls loop>
-  <source src="../assets/demo-3-state-changes.mov" type="video/mp4" />
+  <source src="./assets/demo-3-state-changes.mov" type="video/mp4" />
 </video>
 
 ### Try it on [StackBlitz](https://stackblitz.com/edit/angular-ivy-jwt8jh?file=src%2Fapp%2F3-state-changes.component.ts)
@@ -78,7 +78,7 @@ If you need to reuse state logic, it's as simple as dragging it outside the `ada
 
 ```diff-typescript
 export class NameComponent {
--  nameStore = adapt(['name', 'Bob'], {
+-  nameStore = adapt('Bob', {
 +  nameAdapter = createAdapter<string>()({
     reverseName: name => name.split('').reverse().join(''),
     selectors: {
@@ -86,8 +86,8 @@ export class NameComponent {
     },
   });
 +
-+  name1Store = adapt(['name.1', 'Bob'], this.nameAdapter);
-+  name2Store = adapt(['name.2', 'Bob'], this.nameAdapter);
++  name1Store = adapt('Bob', this.nameAdapter);
++  name2Store = adapt('Bob', this.nameAdapter);
 }
 ```
 
@@ -102,7 +102,7 @@ export class NameComponent {
 ```
 
 <video controls loop>
-  <source src="../assets/demo-4-state-adapters.mov" type="video/mp4" />
+  <source src="./assets/demo-4-state-adapters.mov" type="video/mp4" />
 </video>
 
 ### Try it on [StackBlitz](https://stackblitz.com/edit/angular-ivy-jwt8jh?file=src%2Fapp%2F4-state-adapters.component.ts)
@@ -126,11 +126,17 @@ export class NameComponent {
 +    toSource('[name] nameFromServer$'), // Annotate for Redux Devtools
 +  );
 +
--  name1Store = adapt(['name.1', 'Bob'], this.nameAdapter);
-+  name1Store = adapt(['name.1', 'Bob', this.nameAdapter], this.nameFromServer$);//Set state
--  name2Store = adapt(['name.2', 'Bob'], this.nameAdapter);
-+  name2Store = adapt(['name.2', 'Bob', this.nameAdapter], {
-+    concatName: this.nameFromServer$, // Trigger a specific state reaction
+-  name1Store = adapt('Bob', this.nameAdapter);
++  name1Store = adapt('Bob', {
++    adapter: this.nameAdapter,
++    sources: this.nameFromServer$, // Set state
++  });
+-  name2Store = adapt('Bob', this.nameAdapter);
++  name2Store = adapt('Bob', {
++    adapter: this.nameAdapter,
++    sources: {
++      concatName: this.nameFromServer$, // Trigger a specific state reaction
++    },
 +  });
 }
 ```
@@ -146,7 +152,7 @@ export class NameComponent {
 ```
 
 <video controls loop>
-  <source src="../assets/demo-5-observable-sources.mov" type="video/mp4" />
+  <source src="./assets/demo-5-observable-sources.mov" type="video/mp4" />
 </video>
 
 ### Try it on [StackBlitz](https://stackblitz.com/edit/angular-ivy-jwt8jh?file=src%2Fapp%2F5-observable-sources.component.ts)
@@ -172,13 +178,20 @@ export class NameComponent {
     toSource('[name] nameFromServer$'), // Annotate for Redux Devtools
   );
 
-  name1Store = adapt(['name.1', 'Bob', this.nameAdapter], {
-+    set: this.nameFromServer$, // `set` is provided with all adapters
-+    reset: this.resetBoth$, // `reset` is provided with all adapters
-+  });
-  name2Store = adapt(['name.2', 'Bob', this.nameAdapter], {
-    concatName: this.nameFromServer$,
-+    reset: this.resetBoth$, // `reset` is provided with all adapters
+  name1Store = adapt('Bob', {
+    adapter: this.nameAdapter,
+-    sources: this.nameFromServer$, // Set state
++    sources: {
++      set: this.nameFromServer$, // `set` is provided with all adapters
++      reset: this.resetBoth$, // `reset` is provided with all adapters
++    },
+  });
+  name2Store = adapt('Bob', {
+    adapter: this.nameAdapter,
+    sources: {
+      concatName: this.nameFromServer$, // Trigger a specific state reaction
++      reset: this.resetBoth$, // `reset` is provided with all adapters
+    },
   });
 }
 ```
@@ -196,7 +209,7 @@ export class NameComponent {
 ```
 
 <video controls loop>
-  <source src="../assets/demo-6-dom-sources.mov" type="video/mp4" />
+  <source src="./assets/demo-6-dom-sources.mov" type="video/mp4" />
 </video>
 
 ### Try it on [StackBlitz](https://stackblitz.com/edit/angular-ivy-jwt8jh?file=src%2Fapp%2F6-dom-sources.component.ts)
@@ -220,13 +233,19 @@ export class NameComponent {
     toSource('[name] nameFromServer$'), // Annotate for Redux Devtools
   );
 
-  name1Store = adapt(['name.1', 'Bob', this.nameAdapter], {
-    set: this.nameFromServer$, // `set` is provided with all adapters
-    reset: this.resetBoth$, // `reset` is provided with all adapters
+  name1Store = adapt('Bob', {
+    adapter: this.nameAdapter,
+    sources: {
+      set: this.nameFromServer$, // `set` is provided with all adapters
+      reset: this.resetBoth$, // `reset` is provided with all adapters
+    },
   });
-  name2Store = adapt(['name.2', 'Bob', this.nameAdapter], {
-    concatName: this.nameFromServer$,
-    reset: this.resetBoth$, // `reset` is provided with all adapters
+  name2Store = adapt('Bob', {
+    adapter: this.nameAdapter,
+    sources: {
+      concatName: this.nameFromServer$, // Trigger a specific state reaction
+      reset: this.resetBoth$, // `reset` is provided with all adapters
+    },
   });
 +
 +  bothBobs$ = joinStores({
@@ -253,7 +272,7 @@ export class NameComponent {
 ```
 
 <video controls loop>
-  <source src="../assets/demo-7-multi-store-selectors.mov" type="video/mp4" />
+  <source src="./assets/demo-7-multi-store-selectors.mov" type="video/mp4" />
 </video>
 
 ### Try it on [StackBlitz](https://stackblitz.com/edit/angular-ivy-jwt8jh?file=src%2Fapp%2F7-multi-store-selectors.component.ts)

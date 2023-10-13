@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { take } from 'rxjs/operators';
-import { SmartStore, StateAdapt } from '@state-adapt/rxjs';
+import { SmartStore, StateAdapt, StoreLike } from '@state-adapt/rxjs';
 import { FilteredStoreSelectors } from './proxy-store-tuple.type';
 import { Subscription } from 'rxjs';
 
@@ -21,7 +21,7 @@ import { Subscription } from 'rxjs';
   import { adapt } from '../store'; // Import from wherever you configure StateAdapt
   import { useStore } from '@state-adapt/react';
 
-  const nameStore = adapt(['name', 'Bob'], {
+  const nameStore = adapt('Bob', {
     concat: (state, name: string) => state + name,
     selectors: {
       uppercase: state => state.toUpperCase(),
@@ -45,7 +45,7 @@ import { Subscription } from 'rxjs';
   import { adapt } from '../store'; // Import from wherever you configure StateAdapt
   import { useStore } from '@state-adapt/react';
 
-  const nameStore = adapt(['name', 'Bob'], {
+  const nameStore = adapt('Bob', {
     concat: (state, name: string) => state + name,
     selectors: {
       uppercase: state => state.toUpperCase(),
@@ -70,7 +70,7 @@ import { Subscription } from 'rxjs';
   import { adapt } from '../store'; // Import from wherever you configure StateAdapt
   import { useStore } from '@state-adapt/react';
 
-  const counterStore = adapt(['counter', 0], {
+  const counterStore = adapt(0, {
     increment: state => state + 1,
     decrement: state => state - 1,
     selectors: {
@@ -100,7 +100,7 @@ import { Subscription } from 'rxjs';
   ```
   */
 export function useStore<
-  Store extends SmartStore<any, { state: any }>,
+  Store extends StoreLike<any, any, any>,
   FilterSelectors extends (keyof Store['__']['selectors'])[],
 >(
   store: Store,

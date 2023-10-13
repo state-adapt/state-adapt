@@ -8,8 +8,6 @@ import { AdaptNgrx } from './adapt-ngrx.service';
 //  - Replace `watch` with `watchNgrx`
 //  - Replace watch( with watchNgrx(
 /**
-  @deprecated Use for debugging only. Prefer the {@link StateAdapt.adapt} sources syntax that exposes a detached store.
-
    ## ![StateAdapt](https://miro.medium.com/max/4800/1*qgM6mFM2Qj6woo5YxDMSrA.webp|width=14) `watchNgrx`
 
    > Copilot tip: Copy examples into your file or click to definition to open file with context for better Copilot suggestions.
@@ -30,10 +28,6 @@ import { AdaptNgrx } from './adapt-ngrx.service';
 
   ### Usage
 
-  `watchNgrx` is useful in 2 situations primarily: Accessing state without subscribing and accessing state for a source.
-
-  ### Accessing state without subscribing
-
   `watchNgrx` enables accessing state without subscribing to sources. For example, if your adapter manages the loading state
   for an HTTP request and you need to know if the request is loading before the user is interested in the data,
   `watchNgrx` can give you access to it without triggering the request.
@@ -42,30 +36,6 @@ import { AdaptNgrx } from './adapt-ngrx.service';
 
   ```tsx
   watchNgrx('data', httpAdapter).loading$.subscribe(console.log);
-  ```
-
-  ### Accessing state for a source
-
-  It would be impossible for a source itself to access state from the store without `watchNgrx` because
-  it would require using the store before it had been defined. The solution is to use `watchNgrx`
-  to access the state needed by `dataReceived$`:
-
-  #### Example: Accessing state for a source
-
-  ```tsx
-  export class MyComponent {
-    path = 'data'; // Make sure the same path is used in both places
-
-    dataReceived$ = watchNgrx(this.path, dataAdapter).dataNeeded$.pipe(
-      filter(needed => needed),
-      switchMap(() => this.dataService.fetchData()),
-      toSource('dataReceived$'),
-    );
-
-    dataStore = adapt([this.path, initialState, dataAdapter], {
-      receive: this.dataReceived$,
-    });
-  }
   ```
 */
 export const watchNgrx: StateAdapt['watch'] = <T extends any[]>(...args: T) => {

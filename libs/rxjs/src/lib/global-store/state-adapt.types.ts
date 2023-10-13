@@ -33,14 +33,38 @@ export type InitializedReactions<
   State,
   S extends Selectors<State> = {},
   R extends ReactionsWithSelectors<State, S> = {},
-> = R &
-  BasicAdapterMethods<State> &
-  (State extends object ? WithUpdateReaction<State> : {}) &
-  WithNoopReaction<State>;
+> = {} extends R
+  ? BasicAdapterMethods<State>
+  : R &
+      BasicAdapterMethods<State> &
+      (State extends object ? WithUpdateReaction<State> : {}) &
+      WithNoopReaction<State>;
 
 export type InitializedSmartStore<
   State,
   S extends Selectors<State> = {},
   R extends ReactionsWithSelectors<State, S> = {},
-> = SmartStore<State, S & WithGetState<State>> &
+> = SmartStore<State, {} extends S ? WithGetState<State> : S & WithGetState<State>> &
   SyntheticSources<InitializedReactions<State, S, R>>;
+
+export type AdaptOptions<
+  State,
+  S extends Selectors<State> = {},
+  R extends ReactionsWithSelectors<State, S> = {},
+> = {
+  path?: string;
+  adapter?: R & { selectors?: S };
+  sources?: SourceArg<State, S, R>;
+};
+
+export function isAdaptOptions<
+  State,
+  S extends Selectors<State> = {},
+  R extends ReactionsWithSelectors<State, S> = {},
+>(
+  options: AdaptOptions<State, S, R> | undefined | R,
+): options is AdaptOptions<State, S, R> {
+  return ['path', 'adapter', 'sources'].some(key => key in (options || {}));
+}
+
+export type NotAdaptOptions = { path?: never; adapter?: never; sources?: never };

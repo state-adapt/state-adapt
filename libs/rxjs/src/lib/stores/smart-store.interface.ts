@@ -11,6 +11,7 @@ export type SmartStore<State, S extends Selectors<State>> = Selections<State, S>
     fullSelectors: S;
     selectors: S;
     initialState: State;
+    path: string;
     select: <State>(sel: any) => Observable<State>;
   };
 };

@@ -82,11 +82,72 @@ const interval3$ = NEVER.pipe(
 );
 
 describe('StateAdapt', () => {
+  const store4 = adapt(10);
+
+  it('should take initial state as 1st argument', () => {
+    let state;
+    store4.state$.subscribe(s => {
+      // Synchronous
+      state = s;
+    });
+    expect(state).toBe(10);
+    store4.set(5);
+    expect(state).toBe(5);
+    store4.reset();
+    expect(state).toBe(10);
+    // @ts-expect-error Should take number
+    store4.set('5');
+    // @ts-expect-error Should not use index signature
+    store4.asdf$;
+  });
+
   const initialState = { a: 5, b: 5 };
-  const store = adapt(['numberA', initialState, numbersAdapter], {
-    doubleA: interval7$,
-    doubleB: interval3$,
-    noop: interval7$,
+
+  const store3 = adapt(initialState, numbersAdapter);
+  it('should take adapter as 2nd argument', () => {
+    let state;
+    store3.state$.subscribe(s => {
+      // Synchronous
+      state = s;
+    });
+    expect(state).toEqual({ a: 5, b: 5 });
+
+    let bOctuple;
+    store3.bOctuple$.subscribe(s => {
+      // Synchronous
+      bOctuple = s;
+    });
+    expect(bOctuple).toBe(40);
+
+    // check for methods
+    let aDouble;
+    store3.state$.subscribe(s => {
+      // Synchronous
+      aDouble = s.a;
+    });
+    store3.doubleA();
+    expect(aDouble).toBe(10);
+    store3.reset();
+    expect(aDouble).toBe(5);
+  });
+
+  const store3b = adapt(5, {
+    double: state => state * 2,
+    selectors: {
+      double: s => s * 2,
+    },
+  });
+  store3b.state$.subscribe();
+  // @ts-expect-error Should take number as payload
+  store3b.set('4');
+
+  const store = adapt(initialState, {
+    adapter: numbersAdapter,
+    sources: {
+      doubleA: interval7$,
+      doubleB: interval3$,
+      noop: interval7$,
+    },
   });
 
   // @ts-expect-error Property should be Observable<number> not Observable<any>
@@ -126,36 +187,39 @@ describe('StateAdapt', () => {
 
   it('should be availabe to watch', () => {
     let state;
-    watch('numberA', numbersAdapter).state$.subscribe(s => {
+    watch(store.__.path, numbersAdapter).state$.subscribe(s => {
       // Synchronous
       state = s;
     });
     expect(state).toBe(initialState);
 
     let bOctuple;
-    watch('numberA', numbersAdapter).bOctuple$.subscribe(s => {
+    watch(store.__.path, numbersAdapter).bOctuple$.subscribe(s => {
       // Synchronous
       bOctuple = s;
     });
     expect(bOctuple).toBe(40);
   });
 
-  // @ts-expect-error doubleB: watched.state$, should be Source
-  const store2 = adapt(['numberA2', initialState, numbersAdapter], watched => {
-    try {
-      const sub1 = watched.state$.subscribe(({ a, b }) => a * b * 3);
-      // @ts-expect-error watched.state$ should be Observable<{a: number; b: number}>
-      const sub2 = watched.state$.subscribe(({ a, b }) => a.split(''));
-    } catch (e) {
-      console.log(e);
-    }
+  const store2 = adapt(initialState, {
+    adapter: numbersAdapter,
+    // @ts-expect-error doubleB: watched.state$, should be Source
+    sources: watched => {
+      try {
+        const sub1 = watched.state$.subscribe(({ a, b }) => a * b * 3);
+        // @ts-expect-error watched.state$ should be Observable<{a: number; b: number}>
+        const sub2 = watched.state$.subscribe(({ a, b }) => a.split(''));
+      } catch (e) {
+        console.log(e);
+      }
 
-    return {
-      doubleA: of(1).pipe(toSource('watched doubleA')),
-    };
-    return {
-      doubleB: watched.state$, // Should be Source
-    };
+      return {
+        doubleA: of(1).pipe(toSource('watched doubleA')),
+      };
+      return {
+        doubleB: watched.state$, // Should be Source
+      };
+    },
   });
 
   it('should react to recursive source', () => {

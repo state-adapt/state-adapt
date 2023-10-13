@@ -4,9 +4,9 @@ import { useStore } from './use-store';
 import { take } from 'rxjs/operators';
 
 const { adapt } = configureStateAdapt({ devtools: null });
-const store1 = adapt('name1', 'initial1');
-const store2 = adapt('name2', 'initial2');
-const store3 = adapt('name3', 'initial3');
+const store1 = adapt('initial1');
+const store2 = adapt('initial2');
+const store3 = adapt('initial3');
 
 const joined12Store = joinStores({ name1: store1, name2: store2 })({
   name1name2: s => s.name1 + s.name2,

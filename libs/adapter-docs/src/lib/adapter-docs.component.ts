@@ -320,19 +320,23 @@ export class AdapterDocsComponent implements OnInit {
   );
   historyItemSelected$ = new Source<TileSelection>('historyItemSelected$');
 
-  docsStore = adapt([this.path, initialState, docsAdapter], {
-    receiveDocs: this.docsReceived$,
-    selectStateChangeFromDropdown: this.stateChangeSelection$,
-    selectStateChangeFromHistory: this.historyItemSelected$,
-    resetEditorRefresh: this.stateChangePayloadDelay$,
-    setPayload: this.payloadChangedDebounced$,
-    setDemoState: this.newStateCalculated$,
-    selectHistoryItemFromTile: [
-      this.historyItemSelected$,
-      this.payloadChangedDebounced$,
-      this.stateChangeSelection$,
-    ],
-    selectSelectorFromDropdown: this.selectorSelection$,
+  docsStore = adapt(initialState, {
+    adapter: docsAdapter,
+    sources: {
+      receiveDocs: this.docsReceived$,
+      selectStateChangeFromDropdown: this.stateChangeSelection$,
+      selectStateChangeFromHistory: this.historyItemSelected$,
+      resetEditorRefresh: this.stateChangePayloadDelay$,
+      setPayload: this.payloadChangedDebounced$,
+      setDemoState: this.newStateCalculated$,
+      selectHistoryItemFromTile: [
+        this.historyItemSelected$,
+        this.payloadChangedDebounced$,
+        this.stateChangeSelection$,
+      ],
+      selectSelectorFromDropdown: this.selectorSelection$,
+    },
+    path: this.path,
   });
 
   docs$ = this.docsStore.docs$;

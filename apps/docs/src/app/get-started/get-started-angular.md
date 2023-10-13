@@ -41,7 +41,7 @@ Now in a component or service:
 ```typescript
 import { adapt } from '@state-adapt/angular';
 // ...
-stringStore = adapt('string', '');
+stringStore = adapt('Bob');
 ```
 
 For more configuration options, see [@state-adapt/angular](/docs/angular).
@@ -80,7 +80,7 @@ Now in a component or service:
 ```typescript
 import { adaptNgrx } from '@state-adapt/ngrx';
 // ...
-stringStore = adaptNgrx('string', '');
+nameStore = adaptNgrx('Bob');
 ```
 
 Go to [Tutorials](angular/get-started#tutorials) for help on how to use StateAdapt after setup.
@@ -119,7 +119,7 @@ Now in a component or service:
 ```typescript
 import { adaptNgxs } from '@state-adapt/ngxs';
 // ...
-stringStore = adaptNgxs('string', '');
+nameStore = adaptNgxs('Bob');
 ```
 
 Go to [Tutorials](angular/get-started#tutorials) for help on how to use StateAdapt after setup.

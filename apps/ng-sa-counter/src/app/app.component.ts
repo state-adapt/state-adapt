@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Source, toSource } from '@state-adapt/rxjs';
 import { interval } from 'rxjs';
 import { countAdapter } from './count.adapter';
@@ -70,16 +70,19 @@ export class AppComponent {
   interval$ = interval(3000).pipe(toSource('[counts] interval$'));
   resetBoth$ = new Source<void>('[counts] resetBoth$');
 
-  store1 = adapt('count1', 0);
-  store2 = adapt(['count2', 0], this.interval$);
-  store3 = adapt(['count3', 0], countAdapter);
-  store4 = adapt(['count4', 10], {
+  store1 = adapt(0, {});
+  store2 = adapt(0, { sources: this.interval$ });
+  store3 = adapt(0, countAdapter);
+  store4 = adapt(10, {
     multiply: (state, n: number) => state * n,
   });
-  store5 = adapt(['count5', 0, countAdapter], this.interval$);
-  store6 = adapt(['count6', 0, countAdapter], {
-    set: this.interval$,
-    reset: this.resetBoth$,
+  store5 = adapt(0, { adapter: countAdapter, sources: this.interval$ });
+  store6 = adapt(0, {
+    adapter: countAdapter,
+    sources: {
+      set: this.interval$,
+      reset: this.resetBoth$,
+    },
   });
 
   doUnreasonableThings() {

@@ -34,8 +34,8 @@ import {
   import { joinStores } from '@state-adapt/rxjs';
   import { adapt } from '../configure-state-adapt.ts';
 
-  const store1 = adapt('store1', 1);
-  const store2 = adapt('store2', 2);
+  const store1 = adapt(1);
+  const store2 = adapt(2);
 
   const joinedStore = joinStores({ store1, store2 })();
 
@@ -56,8 +56,8 @@ import {
     }
   });
 
-  const store1 = adapt(['store1', 1], adapter);
-  const store2 = adapt(['store2', 2], adapter);
+  const store1 = adapt(1, adapter);
+  const store2 = adapt(2, adapter);
 
   const joinedStore = joinStores({ store1, store2 })({
     sum: s => s.store1Double + s.store2Double,
