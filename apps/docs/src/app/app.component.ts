@@ -6,7 +6,7 @@ import asleepIcon from 'raw-loader!../assets/asleep.svg';
 import awakeIcon from 'raw-loader!../assets/awake.svg';
 import fadeIcon from 'raw-loader!../assets/fade.svg';
 import githubIcon from 'raw-loader!../assets/github.svg';
-import { Subject, interval, merge } from 'rxjs';
+import { Subject, interval, merge, of } from 'rxjs';
 import { filter, map, startWith, take } from 'rxjs/operators';
 import { getColorScheme, setColorScheme } from './set-color-scheme.function';
 
@@ -28,14 +28,14 @@ export class AppComponent {
   getColorScheme = ((window as any).getColorScheme = getColorScheme);
 
   urlChange$ = new Subject<string>();
-  links$ = merge(
+  url$ = merge(
     this.urlChange$,
     this.router.events.pipe(
       filter((e: Event): e is RouterEvent => e instanceof RouterEvent),
       map(e => e.url),
     ),
-  ).pipe(
-    startWith(this.location.path()),
+  ).pipe(startWith(this.location.path()));
+  links$ = this.url$.pipe(
     map(url => [url, localStorage.getItem('framework')] as const),
     map(([url, framework]) => [
       {
@@ -136,29 +136,47 @@ export class AppComponent {
     };
   }
 
-  urlVersion = this.location.path().includes('version')
-    ? this.location.path().split('/')[1]
-    : 'latest';
+  urlVersion = this.getParsedUrl(this.location.path()).version;
   versions = fetch('/versions/index.csv')
     .then(r => r.text())
     .then(text => {
       if (text.includes('<')) {
         throw new Error('404');
       }
-      // '1.2.1,1-2-2'
+      // '1.2.1,1-2-1'
       return [...text.split('\n'), 'latest,latest']
         .map(line => {
           const [version, versionDashed] = line.split(',');
           return {
             version,
-            route:
-              versionDashed === 'latest' ? '/' : `/versions/${versionDashed}/`,
+            route$: this.url$.pipe(
+              map(url => {
+                const { route } = this.getParsedUrl(url);
+                const base =
+                  versionDashed === 'latest'
+                    ? ''
+                    : `/versions/${versionDashed}`;
+                return [base + route];
+              }),
+            ),
             active: this.urlVersion === versionDashed,
           };
         })
         .reverse();
     })
-    .catch(() => [{ version: 'latest', route: '/', active: true }]);
+    .catch(() => [{ version: 'latest', route$: of(['/']), active: true }]);
+
+  private getParsedUrl(url: string) {
+    return url.includes('version')
+      ? {
+          version: url.split('/')[1],
+          route: url.split('/').slice(2).join('/'),
+        }
+      : {
+          version: 'latest',
+          route: url,
+        };
+  }
 
   constructor(
     private location: Location,

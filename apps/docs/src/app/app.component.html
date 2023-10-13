@@ -74,11 +74,11 @@
   <!-- versions = [{version, versionDashed, active}] -->
   <ng-container *ngFor="let version of versions | async">
     <ibm-sidenav-item
-      [route]="['versions', version.route]"
+      [route]="version.route$ | async"
       [active]="version.active"
       (navigation)="navigate(null)"
     >
-      {{ version.version }}
+      {{ version.version }} {{ version.route$ | async }}
     </ibm-sidenav-item>
   </ng-container>
 </ibm-sidenav>
