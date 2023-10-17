@@ -279,7 +279,7 @@ export function useAdapt<
 >(
   initialState: State,
   second: (R & { selectors?: S } & NotAdaptOptions) | AdaptOptions<State, S, R> = {}, // Default object required to make R = {} rather than indexed object
-): ProxyStoreTuple<{} & InitializedSmartStore<State, S, R>> {
+): ProxyStoreTuple<InitializedSmartStore<State, S, R>> {
   const stateAdapt = useContext(AdaptContext);
   const [store] = useState(() => stateAdapt.adapt(initialState, second));
   const proxy = useStore(store);

@@ -278,7 +278,7 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
   adapt<State, S extends Selectors<State>, R extends ReactionsWithSelectors<State, S>>(
     initialState: State,
     second: (R & { selectors?: S } & NotAdaptOptions) | AdaptOptions<State, S, R> = {}, // Default object required to make R = {} rather than indexed object
-  ): {} & InitializedSmartStore<State, S, R> {
+  ): InitializedSmartStore<State, S, R> {
     let sources: any;
 
     // Initialize parameters
