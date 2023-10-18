@@ -1,9 +1,11 @@
-import { catchErrorSource } from "@state-adapt/rxjs";
-import { TestScheduler } from "rxjs/testing";
-import { getAction } from "@state-adapt/core";
-import { map } from "rxjs/operators";
+import { catchErrorSource } from '@state-adapt/rxjs';
+import { TestScheduler } from 'rxjs/testing';
+import { getAction } from '@state-adapt/core';
+import { map, switchMap } from 'rxjs/operators';
+import { of } from 'rxjs';
 
-const observableMatcher = (actual: any, expected: any) => expect(actual).toEqual(expected)
+const observableMatcher = (actual: any, expected: any) =>
+  expect(actual).toEqual(expected);
 
 const typePrefix = 'obs';
 const type = `${typePrefix}.error$`;
@@ -17,7 +19,7 @@ describe('catchErrorSource()', () => {
   });
 
   it('should pass regular values as is', () => {
-    testScheduler.run(({hot, expectObservable}) => {
+    testScheduler.run(({ hot, expectObservable }) => {
       const values = {
         a: 1,
         b: 2,
@@ -30,7 +32,7 @@ describe('catchErrorSource()', () => {
   });
 
   it('should catch errors and transform them into actions', () => {
-    testScheduler.run(({hot, expectObservable}) => {
+    testScheduler.run(({ hot, expectObservable }) => {
       const values = {
         a: 1,
         b: 2,
@@ -41,12 +43,14 @@ describe('catchErrorSource()', () => {
       };
       const throwIfGraterThan100 = (value: number) => {
         if (value > 100) {
-          throw (`e${value - 100}`);
+          throw `e${value - 100}`;
         } else {
           return value;
         }
-      }
-      const source = hot('abxcyd', values).pipe(map(throwIfGraterThan100), catchErrorSourceOp);
+      };
+      const source = hot('abxcyd', values).pipe(
+        switchMap(a => of(a).pipe(map(throwIfGraterThan100), catchErrorSourceOp)),
+      );
       const result = 'abxcyd';
       const resultValues = {
         ...values,
