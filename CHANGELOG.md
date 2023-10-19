@@ -1,3 +1,7 @@
+## 2.0.1
+
+- Bugfix(rxjs): Support adapter definition in AdaptOptions
+
 ## 2.0.0
 
 ### Breaking Changes

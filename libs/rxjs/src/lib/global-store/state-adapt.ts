@@ -275,10 +275,15 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
 
   The store needs to have subscribers in order to start managing state.
   */
-  adapt<State, S extends Selectors<State>, R extends ReactionsWithSelectors<State, S>>(
+  adapt<
+    State,
+    S extends Selectors<State>,
+    R extends ReactionsWithSelectors<State, S>,
+    R2 extends ReactionsWithSelectors<State, S>,
+  >(
     initialState: State,
-    second: (R & { selectors?: S } & NotAdaptOptions) | AdaptOptions<State, S, R> = {}, // Default object required to make R = {} rather than indexed object
-  ): InitializedSmartStore<State, S, R> {
+    second: (R & { selectors?: S } & NotAdaptOptions) | AdaptOptions<State, S, R2> = {}, // Default object required to make R = {} rather than indexed object
+  ): InitializedSmartStore<State, S, {} extends R ? R2 : R> {
     let sources: any;
 
     // Initialize parameters

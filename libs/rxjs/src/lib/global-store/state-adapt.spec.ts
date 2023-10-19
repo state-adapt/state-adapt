@@ -131,6 +131,40 @@ describe('StateAdapt', () => {
     expect(aDouble).toBe(5);
   });
 
+  it('should take adapter definition', () => {
+    const store3aa = adapt(1, {
+      add: (state, payload: number) => state + payload,
+      selectors: {
+        double: state => state * 2,
+      },
+    });
+    let double;
+    store3aa.double$.subscribe(s => {
+      // Synchronous
+      double = s;
+    });
+    expect(double).toBe(2);
+    store3aa.add(2);
+    expect(double).toBe(6);
+
+    const store3aa2 = adapt(1, {
+      adapter: {
+        add: (state, payload: number) => state + payload,
+        selectors: {
+          double: state => state * 2,
+        },
+      },
+    });
+    let double2;
+    store3aa2.double$.subscribe(s => {
+      // Synchronous
+      double2 = s;
+    });
+    expect(double2).toBe(2);
+    store3aa2.add(2);
+    expect(double2).toBe(6);
+  });
+
   const store3b = adapt(5, {
     double: state => state * 2,
     selectors: {
