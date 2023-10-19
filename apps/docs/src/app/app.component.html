@@ -73,12 +73,8 @@
   <hr />
   <!-- versions = [{version, versionDashed, active}] -->
   <ng-container *ngFor="let version of versions | async">
-    <ibm-sidenav-item
-      [route]="version.route$ | async"
-      [active]="version.active"
-      (navigation)="navigate(null)"
-    >
-      {{ version.version }} {{ version.route$ | async }}
+    <ibm-sidenav-item [active]="version.active" (navigation)="navigate(null)">
+      <a [href]="version.route$ | async">{{ version.version }}</a>
     </ibm-sidenav-item>
   </ng-container>
 </ibm-sidenav>

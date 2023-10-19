@@ -156,7 +156,7 @@ export class AppComponent {
                   versionDashed === 'latest'
                     ? ''
                     : `/versions/${versionDashed}`;
-                return [base + route];
+                return base + route;
               }),
             ),
             active: this.urlVersion === versionDashed,
@@ -164,7 +164,7 @@ export class AppComponent {
         })
         .reverse();
     })
-    .catch(() => [{ version: 'latest', route$: of(['/']), active: true }]);
+    .catch(() => [{ version: 'latest', route$: of('/'), active: true }]);
 
   private getParsedUrl(url: string) {
     return url.includes('version')
