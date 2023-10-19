@@ -1,5 +1,11 @@
 ## 2.0.0
 
+### Breaking Changes
+
+- [45](https://github.com/state-adapt/state-adapt/issues/45)
+
+### All Changes
+
 - Refactor(core,rxjs): Flatten types for joined adapters and stores
 - Refactor(rxjs,react,angular,ngrx,ngxs)!: Simplify StateAdapt.adapt syntax
 
