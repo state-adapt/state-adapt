@@ -39,7 +39,7 @@
     "pre-publish:major": "run-s bump-version:major build:lib-pack commit-git",
     "pre-publish:patch": "run-s bump-version:patch build:lib-pack commit-git",
     "docs:archiveVersion": "node ./scripts/archive-docs-version.js",
-    "docs:publish": "ng build docs --prod && cp ./apps/docs/src/404.html ./dist/apps/docs/ && find ../state-adapt.github.io -mindepth 1 ! -path '../state-adapt.github.io/versions' ! -path '../state-adapt.github.io/versions/*' -exec rm -rf {} + && cp -R ./dist/apps/docs/* ../state-adapt.github.io && cd ../state-adapt.github.io && git add . * && git commit -m 'Update' && git push origin master"
+    "docs:publish": "ng build docs --prod && cp ./apps/docs/src/404.html ./dist/apps/docs/ && find ../state-adapt.github.io -mindepth 1 ! -path '../state-adapt.github.io/.git' ! -path '../state-adapt.github.io/.git/*' ! -path '../state-adapt.github.io/versions' ! -path '../state-adapt.github.io/versions/*' -exec rm -rf {} + && cp -R ./dist/apps/docs/* ../state-adapt.github.io && cd ../state-adapt.github.io && git add . * && git commit -m 'Update' && git push origin master"
   },
   "private": true,
   "dependencies": {
