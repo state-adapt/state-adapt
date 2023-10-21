@@ -1,3 +1,7 @@
+## 2.0.2
+
+- Bugfix(react): Fix stale build cache issue
+
 ## 2.0.1
 
 - Bugfix(rxjs): Support adapter definition in AdaptOptions
