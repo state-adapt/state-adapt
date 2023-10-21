@@ -1,3 +1,4 @@
+import { Selectors, ReactionsWithSelectors } from '@state-adapt/core'; // Helps build output import correctly
 import {
   StateAdapt,
   configureStateAdapt,
