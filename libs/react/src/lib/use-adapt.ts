@@ -282,6 +282,6 @@ export function useAdapt<
 ): ProxyStoreTuple<InitializedSmartStore<State, S, R>> {
   const stateAdapt = useContext(AdaptContext);
   const [store] = useState(() => stateAdapt.adapt(initialState, second));
-  const proxy = useStore(store);
+  const proxy = useStore(store) as any;
   return [proxy, store];
 }
