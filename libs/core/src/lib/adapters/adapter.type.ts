@@ -13,7 +13,7 @@ export interface ReactionsWithSelectors<State, S extends Selectors<State>> {
     | S;
 }
 
-type WithSelectors<S> = { selectors?: S };
+export type WithSelectors<S> = { selectors?: S };
 
 /**
   ## ![StateAdapt](https://miro.medium.com/max/4800/1*qgM6mFM2Qj6woo5YxDMSrA.webp|width=14) `Adapter`
