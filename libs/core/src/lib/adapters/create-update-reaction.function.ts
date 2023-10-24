@@ -3,6 +3,6 @@ export function createUpdateReaction<State>(): UpdateReaction<State> {
 }
 
 export type UpdateReaction<State> = (s: State, u: Partial<State>) => State;
-export interface WithUpdateReaction<State> {
+export type WithUpdateReaction<State> = {
   update: UpdateReaction<State>;
-}
+};

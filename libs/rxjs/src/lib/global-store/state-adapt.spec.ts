@@ -99,6 +99,8 @@ describe('StateAdapt', () => {
     store4.set('5');
     // @ts-expect-error Should not use index signature
     store4.asdf$;
+    store4.state$;
+    store4.noop;
   });
 
   const initialState = { a: 5, b: 5 };
@@ -146,6 +148,8 @@ describe('StateAdapt', () => {
     expect(double).toBe(2);
     store3aa.add(2);
     expect(double).toBe(6);
+    store3aa.state$;
+    store3aa.noop;
 
     const store3aa2 = adapt(1, {
       adapter: {
@@ -163,6 +167,8 @@ describe('StateAdapt', () => {
     expect(double2).toBe(2);
     store3aa2.add(2);
     expect(double2).toBe(6);
+    store3aa2.state$;
+    store3aa2.noop;
   });
 
   const store3b = adapt(5, {

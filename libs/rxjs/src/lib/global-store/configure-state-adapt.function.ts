@@ -91,5 +91,6 @@ export function configureStateAdapt<
   return {
     adapt: stateAdapt.adapt.bind(stateAdapt),
     watch: stateAdapt.watch.bind(stateAdapt),
+    ['commonStore' as never]: (stateAdapt as any).commonStore,
   };
 }

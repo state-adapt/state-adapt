@@ -1,3 +1,9 @@
+## 2.0.3
+
+- Bugfix(core): Allow types to be portable
+- Bugfix(react): Loosen types for context
+- Bugfix(rxjs,react): When stores are inactive return initialState in state selectors
+
 ## 2.0.2
 
 - Bugfix(react): Fix stale build cache issue

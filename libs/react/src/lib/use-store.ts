@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useState } from 'react';
-import { take } from 'rxjs/operators';
+import { useContext, useEffect, useMemo, useState } from 'react';
 import { SmartStore, StateAdapt, StoreLike } from '@state-adapt/rxjs';
 import { FilteredStoreSelectors } from './proxy-store-tuple.type';
 import { Subscription } from 'rxjs';
+import { AdaptContext } from './adapt.context';
 
 /**
   ## ![StateAdapt](https://miro.medium.com/max/4800/1*qgM6mFM2Qj6woo5YxDMSrA.webp|width=14) `useStore`
@@ -121,6 +121,8 @@ export function useStore<
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [store, filterSelectors.join()]);
 
+  const stateAdapt = useContext(AdaptContext);
+
   const proxy = useMemo(
     () =>
       new Proxy(store, {
@@ -129,20 +131,13 @@ export function useStore<
           if (!(prop in __.selectors)) {
             return undefined;
           }
-          if (state === undefined) {
-            const initialResult = __.selectors[prop](__.initialState);
-            return initialResult;
-          } else {
-            // Return value synchronously
-            let val: any;
-            __.select((state: any) => {
-              const result = __.fullSelectors[prop](state);
-              return result;
-            })
-              .pipe(take(1))
-              .subscribe((v: any) => (val = v));
-            return val;
-          }
+          // State selectors now return initialState when inactive, so before useEffect runs this will not error.
+          // When useStore first runs for an already-active store, this approach allows it to use the current state
+          // instead of initialState.
+          const globalState = (stateAdapt as any).commonStore.value;
+          const storeState = __.fullSelectors.state(globalState, {});
+          const result = __.selectors[prop](storeState, {});
+          return result;
         },
       }),
     [store, state],

@@ -348,7 +348,7 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
     >(adapter as any, pathObj, sources, initialState);
 
     const getSelectorsCache = this.getSelectorsCacheFactory(path);
-    const getState = this.getStateSelector<State>(pathObj.pathAr);
+    const getState = this.getStateSelector<State>(pathObj.pathAr, initialState);
     const getStateSelector = getMemoizedSelector(path, getState, () =>
       this.getGlobalSelectorsCache(),
     ); // all state selectors go in global cache
@@ -592,9 +592,12 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
 
   private getStateSelector<State>(
     pathAr: string[],
+    initialState?: State,
   ): ({ adapt }: { adapt: any }) => State {
-    return ({ adapt }) =>
-      pathAr.reduce((state, segment) => state && state[segment], adapt);
+    return ({ adapt }) => {
+      const pathState = pathAr.reduce((state, segment) => state?.[segment], adapt);
+      return pathState === undefined ? initialState : pathState;
+    };
   }
 
   private getGlobalSelectorsCache() {
@@ -645,8 +648,8 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
         const pathState = getStateSelector(state);
         if (pathState !== undefined) {
           const cache = getSelectorsCache();
-          if (sharedChildCache) {
-            cache.__children[sharedChildCache.__id] = sharedChildCache;
+          if (cache && sharedChildCache) {
+            cache && (cache.__children[sharedChildCache.__id] = sharedChildCache);
           }
           return (selectors[key] as any)(pathState, cache);
         }

@@ -33,18 +33,16 @@ export type InitializedReactions<
   State,
   S extends Selectors<State> = {},
   R extends ReactionsWithSelectors<State, S> = {},
-> = {} extends R
-  ? BasicAdapterMethods<State>
-  : R &
-      BasicAdapterMethods<State> &
-      (State extends object ? WithUpdateReaction<State> : {}) &
-      WithNoopReaction<State>;
+> = ({} extends R ? {} : R) &
+  BasicAdapterMethods<State> &
+  (State extends object ? WithUpdateReaction<State> : {}) &
+  WithNoopReaction<State>;
 
 export type InitializedSmartStore<
   State,
   S extends Selectors<State> = {},
   R extends ReactionsWithSelectors<State, S> = {},
-> = SmartStore<State, {} extends S ? WithGetState<State> : S & WithGetState<State>> &
+> = SmartStore<State, ({} extends S ? {} : S) & WithGetState<State>> &
   SyntheticSources<InitializedReactions<State, S, R>>;
 
 export type AdaptOptions<
