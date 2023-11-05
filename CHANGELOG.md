@@ -1,3 +1,8 @@
+## 2.0.4
+
+- Bugfix(rxjs): Fix SSR bug
+- Chore(ngrx/ngxs): Update dependendency versions
+
 ## 2.0.3
 
 - Bugfix(core): Allow types to be portable
