@@ -1,7 +1,8 @@
 ## 2.0.4
 
 - Bugfix(rxjs): Fix SSR bug
-- Chore(ngrx/ngxs): Update dependendency versions
+- Bugfix(rxjs): Fix selector cache serialization
+- Bugfix(rxjs): Fix joinStores state selector type
 
 ## 2.0.3
 
