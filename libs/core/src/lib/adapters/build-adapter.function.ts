@@ -26,11 +26,11 @@ import { Reactions } from './reactions.interface';
   import { numberAdapter } from './number.adapter';
 
   const numberStringAdapter = buildAdapter<number>()(numberAdapter)({
-    // Define more stuff
+    // Define more selectors
   })(([selectors, reactions]) => ({
-    // Define more stuff
+    // Define more state changes
   }))({
-    // etc
+    // Define grouped state changes
   })(); // End
   ```
 
