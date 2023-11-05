@@ -72,10 +72,12 @@ export function configureStateAdapt<
   Store extends GlobalStore<any, any> = GlobalStore<any, any>,
 >(
   options: ConfigureStateAdaptOptions<Store> = {
-    devtools: (window as any).__REDUX_DEVTOOLS_EXTENSION__?.({
-      actionSanitizer,
-      stateSanitizer,
-    }),
+    devtools:
+      typeof window !== 'undefined' &&
+      (window as any).__REDUX_DEVTOOLS_EXTENSION__?.({
+        actionSanitizer,
+        stateSanitizer,
+      }),
   },
 ) {
   globalSelectorsOptions.devtools = options.showSelectors ?? true;
