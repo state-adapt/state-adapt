@@ -3,6 +3,7 @@ import { configureStateAdapt, joinStores } from '@state-adapt/rxjs';
 import { useStore } from './use-store';
 import { take } from 'rxjs/operators';
 import { AdaptContext } from './adapt.context';
+import { globalSelectorsCache, serializeSelectorsCache } from '@state-adapt/core';
 
 const stateAdapt = configureStateAdapt({ devtools: null });
 const { adapt } = stateAdapt;
@@ -16,6 +17,8 @@ const joined12Store = joinStores({ name1: store1, name2: store2 })({
 
 const joined123Store = joinStores({ name12: joined12Store, name3: store3 })({
   name12name3: s => s.name12Name1name2 + s.name3,
+})({
+  reverseName12name3: s => s.name12name3.split('').reverse().join(''),
 })();
 
 const wrapper = ({ children }: any) => (
@@ -165,5 +168,23 @@ describe('useStore', () => {
     );
     expect(result2.current).toEqual('new3');
     expect(results).toEqual(['initial3', 'initial3', 'new3', 'new3', 'new3']);
+  });
+
+  // reverseName12name3
+  it('should return correct combined selector result from joined123Store and not create infinite loop when globalSelectorsCache serialized', () => {
+    const joined123Results: string[] = [];
+    const { result } = renderHook(
+      () => {
+        const joined123 = useStore(joined123Store);
+        joined123Results.push(joined123.reverseName12name3);
+        return joined123;
+      },
+      { wrapper },
+    );
+    serializeSelectorsCache(globalSelectorsCache);
+    expect(joined123Results).toEqual([
+      '3laitini2laitini1laitini',
+      '3laitini2laitini1laitini',
+    ]);
   });
 });

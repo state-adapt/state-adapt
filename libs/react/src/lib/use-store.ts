@@ -135,8 +135,8 @@ export function useStore<
           // When useStore first runs for an already-active store, this approach allows it to use the current state
           // instead of initialState.
           const globalState = (stateAdapt as any).commonStore.value;
-          const storeState = __.fullSelectors.state(globalState, {});
-          const result = __.selectors[prop](storeState, {});
+          const storeState = __.fullSelectors.state(globalState);
+          const result = __.selectors[prop](storeState);
           return result;
         },
       }),

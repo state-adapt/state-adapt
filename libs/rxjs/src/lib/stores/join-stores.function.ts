@@ -89,7 +89,8 @@ export function joinStores<SE extends StoreEntries>(
   const getCacheOverride = (sharedChildCache: SelectorsCache) => {
     // Use this join's cache instead of the one from future joins
     // But register future joins' caches as children
-    if (sharedChildCache) {
+    // Skip if the child cache is the same as the parent cache—it's a selector from this joinStores call
+    if (sharedChildCache && sharedChildCache !== selectorsCache) {
       selectorsCache.__children[sharedChildCache.__id] = sharedChildCache;
     }
     return selectorsCache;
