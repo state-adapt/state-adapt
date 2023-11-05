@@ -3,6 +3,7 @@
 - Bugfix(rxjs): Fix SSR bug
 - Bugfix(rxjs): Fix selector cache serialization
 - Bugfix(rxjs): Fix joinStores state selector type
+- Bugfix(rxjs): Fix types for inline adapter definition
 
 ## 2.0.3
 

@@ -22,21 +22,22 @@ export type SourceArg<
   S extends Selectors<State>,
   R extends ReactionsWithSelectors<State, S>,
 > =
-  | Sources<State, S, InitializedReactions<State, S, R>>
+  | Sources<State, S, DefaultReactions<State> & R>
   | Observable<Action<State>>
   | Observable<Action<State>>[]
   | ((
       detachedStore: SmartStore<State, S & WithGetState<State>>,
     ) => SourceArg<State, S, R>);
 
+export type DefaultReactions<State> = BasicAdapterMethods<State> &
+  (State extends object ? WithUpdateReaction<State> : {}) &
+  WithNoopReaction<State>;
+
 export type InitializedReactions<
   State,
   S extends Selectors<State> = {},
   R extends ReactionsWithSelectors<State, S> = {},
-> = ({} extends R ? {} : R) &
-  BasicAdapterMethods<State> &
-  (State extends object ? WithUpdateReaction<State> : {}) &
-  WithNoopReaction<State>;
+> = ({} extends R ? {} : R) & DefaultReactions<State>;
 
 export type InitializedSmartStore<
   State,

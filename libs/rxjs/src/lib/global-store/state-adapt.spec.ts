@@ -169,6 +169,38 @@ describe('StateAdapt', () => {
     expect(double2).toBe(6);
     store3aa2.state$;
     store3aa2.noop;
+
+    const store3aa3 = adapt(1, {
+      adapter: {
+        increment: (state, n: number) => state + n,
+      },
+      sources: {
+        increment: interval7$,
+      },
+    });
+    let state3aa3 = 1;
+    store3aa3.state$.subscribe(s => {
+      // Synchronous
+      state3aa3 = s;
+    });
+    expect(state3aa3).toBe(1);
+    store3aa3.increment(1);
+    expect(state3aa3).toBe(2);
+    store3aa3.state$;
+    store3aa3.noop;
+
+    const store3aa4 = adapt(1, {
+      // @ts-expect-error Should take number as payload
+      sources: of('asdf').pipe(toSource('increment')),
+    });
+    const store3aa5 = adapt(1, {
+      sources: {
+        set: of(7).pipe(toSource('increment')),
+      },
+    });
+    store3aa5.set;
+    // @ts-expect-error Should expect number as payload
+    store3aa5.set = (payload: string) => {};
   });
 
   const store3b = adapt(5, {
