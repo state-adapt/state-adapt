@@ -20,7 +20,7 @@
 
 <!-- include: '../../../../../libs/react/src/lib/use-adapt.ts#useAdapt' -->
 
-<!-- cache 2 -->
+<!-- cache 3 -->
 
 ### 2.0.0
 

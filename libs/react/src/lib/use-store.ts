@@ -54,7 +54,7 @@ import { AdaptContext } from './adapt.context';
 
   export function MyComponent() {
     // Only nameStore.uppercase$ will trigger re-renders
-    const name = useStore(nameStore, ['uppercase']]);
+    const name = useStore(nameStore, ['uppercase']);
     return (
       <div>
         <h1>Hello {name.uppercase}</h1>
