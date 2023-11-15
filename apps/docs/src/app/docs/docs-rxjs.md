@@ -74,6 +74,9 @@
 
 ### 2.0.0
 
+[Here is a migrator in StackBlitz](https://stackblitz.com/edit/vitejs-vite-bca52l?file=src%2FApp.tsx,src%2FtransformCode.ts)
+for automatic migrating. Use Prettier to format the result.
+
 The 4 overloads of [`StateAdapt.adapt`](/docs/rxjs#stateadaptadapt) have been removed. Here is the new syntax for each overload:
 
 #### `1. adapt(path, initialState)`
