@@ -1,5 +1,6 @@
 import { memoizeSelectors } from '../selectors/memoize-selectors.function';
 import { Selectors } from '../selectors/selectors.interface';
+import { WithGetState } from '../selectors/with-get-state.type';
 import { Adapter, ReactionsWithSelectors } from './adapter.type';
 
 export type BasicAdapterMethods<State> = {
@@ -64,7 +65,7 @@ export type BasicAdapterMethods<State> = {
 export function createAdapter<State>() {
   return <S extends Selectors<State>, R extends ReactionsWithSelectors<State, S>>(
     adapter: Adapter<State, S, R>,
-  ): Adapter<State, S, R & BasicAdapterMethods<State>> => ({
+  ): InitializedAdapter<State, S, R> => ({
     set: (state, payload) => payload,
     // Add update reaction back if we ever pass in a default state
     reset: (state, payload, initialState) => initialState,
@@ -72,3 +73,11 @@ export function createAdapter<State>() {
     selectors: memoizeSelectors<State, S>((adapter.selectors as S) || ({} as S)), // New selectors object
   });
 }
+type InitializedAdapter<
+  State,
+  S extends Selectors<State>,
+  R extends ReactionsWithSelectors<State, S>,
+> = ({} extends S
+  ? R & { selectors: WithGetState<State> }
+  : R & { selectors: S & WithGetState<State> }) &
+  BasicAdapterMethods<State>;

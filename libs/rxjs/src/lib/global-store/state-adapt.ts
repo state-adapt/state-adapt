@@ -353,7 +353,7 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
       this.getGlobalSelectorsCache(),
     ); // all state selectors go in global cache
     const { fullSelectors, selections, selectors } = this.getSelections<State, S>(
-      adapter.selectors as S,
+      adapter.selectors as unknown as S,
       getStateSelector as (state: any) => State,
       requireSources$,
       getSelectorsCache,

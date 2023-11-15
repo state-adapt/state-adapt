@@ -16,6 +16,8 @@ describe('createAdapter', () => {
       const a: number = adapter.set(1, '1');
       // @ts-expect-error Should expect return to be number
       const b: string = adapter.set(1, 1);
+
+      const c: number = adapter.selectors.state(1);
     };
   });
 

@@ -175,7 +175,7 @@ export function createEntityAdapter<
     selectors: EntityStateSelectors<Entity, Id, State, Filters, Sorters>;
   } => {
     const fullAdapter = createAdapter<Entity>()(adapter);
-    const entitySelectors = fullAdapter.selectors as S & {
+    const entitySelectors = fullAdapter.selectors as unknown as S & {
       id: (entity: Entity) => Extract<Entity[Id], Index>;
     };
     entitySelectors.id =

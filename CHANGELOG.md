@@ -1,3 +1,7 @@
+## 2.0.5
+
+- Bugfix(core): Prevent index types in created adapters
+
 ## 2.0.4
 
 - Bugfix(rxjs): Fix SSR bug
