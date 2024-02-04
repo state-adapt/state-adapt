@@ -83,7 +83,7 @@ type EntityStateReactions<
   upsertMany: (state: State, payload: Entity[]) => State;
 } & BasicAdapterMethods<State> & {
     // }; //     : never; //     ? (state: State, payload: Payload, initialState: State) => State //   ) => any //     initialState: any, //     payload: any, //     state: any, //     : PrefixedAfterVerb<K, Prefix>]: R[K] extends ( //     ? never //   [K in Extract<keyof R, string> as K extends IgnoredKeys // > = { //   Payload, //   IgnoredKeys extends string, //   Prefix extends string, //   R extends ReactionsWithSelectors<any, any>, //   State extends EntityState<any, any>, // type EntityReaction< // This repo has a workaround, but it's currently returning a 500 error: https://gcanti.github.io/fp-ts/ // This is called 'higher-kinded types' https://github.com/microsoft/TypeScript/issues/44875 // `Payload` would need to take R[K] as a generic
-    [K in Extract<keyof R, string> as K extends typeof ingoredKeys[number]
+    [K in Extract<keyof R, string> as K extends typeof ignoredKeys[number]
       ? never
       : PrefixedAfterVerb<
           Exclude<K, 'set' | 'reset'>,
@@ -96,7 +96,7 @@ type EntityStateReactions<
         ) => State
       : never;
   } & {
-    [K in Extract<keyof R, string> as K extends typeof ingoredKeys[number]
+    [K in Extract<keyof R, string> as K extends typeof ignoredKeys[number]
       ? never
       : PrefixedAfterVerb<K, 'one'>]: R[K] extends (
       state: any,
@@ -112,7 +112,7 @@ type EntityStateReactions<
         ) => State
       : never;
   } & {
-    [K in Extract<keyof R, string> as K extends typeof ingoredKeys[number]
+    [K in Extract<keyof R, string> as K extends typeof ignoredKeys[number]
       ? never
       : PrefixedAfterVerb<K, 'many'>]: R[K] extends (
       state: any,
@@ -152,7 +152,7 @@ type EntityStateSelectors<
   ) => Entity[];
 };
 
-const ingoredKeys = ['selectors', 'set'] as const;
+const ignoredKeys = ['selectors', 'set'] as const;
 
 export function createEntityAdapter<
   Entity,
@@ -373,7 +373,7 @@ export function createEntityAdapter<
       );
 
     for (const stateChangeName in adapter) {
-      if (!ingoredKeys.includes(stateChangeName as any)) {
+      if (!ignoredKeys.includes(stateChangeName as any)) {
         const stateChange = adapter[stateChangeName] as Exclude<
           typeof adapter[keyof typeof adapter],
           S
