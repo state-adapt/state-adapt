@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "$id": "StateAdaptAngular",
+  "title": "StateAdapt Angular Schema",
+  "type": "object",
+  "properties": {
+    "skipInstall": {
+      "type": "boolean",
+      "default": false,
+      "description": "Do not install dependency packages."
+    }
+  },
+  "required": []
+}
