@@ -24,7 +24,7 @@
 
 First, `npm install`:
 
-```
+```sh
 npm i -s @state-adapt/{core,rxjs,angular}
 ```
 
@@ -54,7 +54,7 @@ Go to [Tutorials](angular/get-started#tutorials) for help on how to use StateAda
 
 First, `npm install`:
 
-```
+```sh
 npm i -s @state-adapt/{core,rxjs,angular,ngrx}
 ```
 
@@ -91,7 +91,7 @@ Go to [Tutorials](angular/get-started#tutorials) for help on how to use StateAda
 
 First, `npm install`:
 
-```
+```sh
 npm i -s @state-adapt/{core,rxjs,angular,ngxs}
 ```
 
