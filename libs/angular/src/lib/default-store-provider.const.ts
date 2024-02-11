@@ -4,10 +4,12 @@ import { StateAdapt } from '@state-adapt/rxjs';
 import { adapt } from './adapt.function';
 import { watch } from './watch.function';
 
-const enableReduxDevTools = (window as any).__REDUX_DEVTOOLS_EXTENSION__?.({
-  actionSanitizer,
-  stateSanitizer,
-});
+const enableReduxDevTools =
+  typeof window !== 'undefined' &&
+  (window as any).__REDUX_DEVTOOLS_EXTENSION__?.({
+    actionSanitizer,
+    stateSanitizer,
+  });
 
 /**
   ## ![StateAdapt](https://miro.medium.com/max/4800/1*qgM6mFM2Qj6woo5YxDMSrA.webp|width=14) `defaultStoreProvider`

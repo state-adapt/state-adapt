@@ -1,3 +1,7 @@
+## 2.0.6
+
+- Bugfix(angular): SSR
+
 ## 2.0.5
 
 - Bugfix(core): Prevent index types in created adapters
