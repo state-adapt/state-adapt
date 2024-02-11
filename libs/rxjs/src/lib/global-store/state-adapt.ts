@@ -34,6 +34,7 @@ import {
   isAdaptOptions,
   NotAdaptOptions,
   InitializedReactions,
+  SourceArg,
 } from './state-adapt.types';
 import { Source } from '../sources/source';
 
@@ -286,6 +287,7 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
     S extends Selectors<State>,
     R extends ReactionsWithSelectors<State, S>,
     R2 extends ReactionsWithSelectors<State, S>,
+    // ActualSourcesArg extends SourceArg<State, S, R2>,
   >(
     initialState: State,
     second: (R & { selectors?: S } & NotAdaptOptions) | AdaptOptions<State, S, R2> = {}, // Default object required to make R = {} rather than indexed object

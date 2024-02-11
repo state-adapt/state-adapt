@@ -17,17 +17,51 @@ export interface GlobalStoreMethods {
   dispatch: (action: any) => any;
 }
 
-export type SourceArg<
+export type ConcreteSourceArg<
   State,
   S extends Selectors<State>,
   R extends ReactionsWithSelectors<State, S>,
 > =
   | Sources<State, S, DefaultReactions<State> & R>
   | Observable<Action<State>>
-  | Observable<Action<State>>[]
+  | Observable<Action<State>>[];
+
+export type SourceArg<
+  State,
+  S extends Selectors<State>,
+  R extends ReactionsWithSelectors<State, S>,
+> =
+  | ConcreteSourceArg<State, S, R>
   | ((
       detachedStore: SmartStore<State, S & WithGetState<State>>,
-    ) => SourceArg<State, S, R>);
+    ) => ConcreteSourceArg<State, S, R>);
+// ) => {[K in keyof ConcreteSourceArg<State, S, R> as K extends keyof R ? K : never]: ConcreteSourceArg<State, S, R>[K]});
+
+// See https://github.com/state-adapt/state-adapt/issues/67
+// and https://stackblitz.com/edit/state-adapt-angular-38pewt?file=src%2Fapp%2Fcounter.component.ts
+// type Obj = {
+//   asdf: string;
+//   qwer: number;
+// };
+// type Obj2<O extends Obj> = { [index: string]: never } & {
+//   [K in keyof O]: O[K];
+// };
+// function doThing<T extends Obj, O extends Obj2<T>, GetObj extends () => Obj2<T>>(
+//   obj: T,
+//   getObj: ) | GetObj,
+//   // getObj: GetObj,
+// ) {
+//   return getObj();
+// }
+// doThing({ asdf: 'asdf', qwer: 1234, b: 'b' },
+//   () => ({
+//   // ({
+//   asdf: 'asdf', // This does not error, as expected
+//   qwer: 1234, // This does not error, as expected
+//   b: 'b', // TODO: Make this okay; thinks type needs to be `never`
+//   // @ts-expect-error Extra properties are unwanted
+//   1234: 'asdf', // This errors, as expected
+// }));
 
 export type DefaultReactions<State> = BasicAdapterMethods<State> &
   (State extends object ? WithUpdateReaction<State> : {}) &
@@ -50,10 +84,18 @@ export type AdaptOptions<
   State,
   S extends Selectors<State> = {},
   R extends ReactionsWithSelectors<State, S> = {},
+  // ActualSourceArg extends SourceArg<State, S, R> = SourceArg<State, S, R>,
 > = {
   path?: string;
   adapter?: R & { selectors?: S };
   sources?: SourceArg<State, S, R>;
+  // sources?: ActualSourceArg;
+  // sources?: ActualSourceArg extends ((
+  //     detachedStore: SmartStore<State, S & WithGetState<State>>,
+  //   ) => ConcreteSourceArg<State, S, R>)
+  //   ? true
+  //   // ? { [K in keyof ActualSourceArg as K extends keyof R ? never : K]?: ActualSourceArg[K] }
+  //   : SourceArg<State, S, R>;
 };
 
 export function isAdaptOptions<

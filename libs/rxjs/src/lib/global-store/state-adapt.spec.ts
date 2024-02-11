@@ -302,4 +302,30 @@ describe('StateAdapt', () => {
     });
     expect(state).toEqual({ a: 10, b: 5 });
   });
+
+  // See https://github.com/state-adapt/state-adapt/issues/67
+  // it('should not allow extra source properties in sources', () => {
+  //   const store3c = adapt(5, {
+  //     adapter: {
+  //       double: state => state * 2,
+  //     },
+  //     sources: {
+  //       double: interval7$,
+  //       // @ts-expect-error This reaction doesn't exist
+  //       ancramant: interval3$,
+  //     },
+  //   });
+
+  //   const store = adapt(1, {
+  //     adapter: {
+  //       increment: (state, n: number) => state + n,
+  //     },
+  //     sources: watched => ({
+  //       increment: interval7$,
+  //       // @ts-expect-error This reaction doesn't exist
+  //       ancramant: interval3$,
+  //     }),
+  //   });
+  //   expect(true).toBe(true);
+  // });
 });
