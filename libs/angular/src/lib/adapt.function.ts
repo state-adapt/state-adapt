@@ -149,6 +149,11 @@ Don't skip anything. Give me the entire documentation from start to end.
   }
   ```
 
+  When a store is subscribed to, it passes the subscriptions up the its sources.
+  For example, if a store has an HTTP source, it will be triggered when the store
+  receives its first subscriber, and it will be canceled when the store loses its
+  last subscriber.
+
   There are 4 possible ways sources can be defined:
 
   1\. A source can be a single {@link Source} or [Observable](https://rxjs.dev/guide/observable)<{@link Action}<{@link State}>>. When the source emits, it triggers the store's `set` method
@@ -314,7 +319,8 @@ Don't skip anything. Give me the entire documentation from start to end.
 
   ### Remember!
 
-  The store needs to have subscribers in order to start managing state.
+  The store needs to have subscribers in order to start managing state,
+  and it only subscribes to sources when it has subscribers itself.
   */
 export const adapt: StateAdapt['adapt'] = <T extends any[]>(...args: T) => {
   const adaptDep = inject(StateAdapt);
