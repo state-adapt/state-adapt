@@ -22,7 +22,13 @@
 
 [StackBlitz Demo](https://stackblitz.com/edit/state-adapt-angular?file=src%2Fapp%2Fapp.module.ts)
 
-First, `npm install`:
+First, add StateAdapt to your project using `ng add`:
+
+```sh
+ng add @state-adapt/angular
+```
+
+Alternatively, you can install the dependencies using a package manager:
 
 ```sh
 npm i -s @state-adapt/{core,rxjs,angular}
