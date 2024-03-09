@@ -1,5 +1,11 @@
-Thanks for your interest in contributing to StateAdapt!
+Thanks for contributing to StateAdapt!
 
-For now, submit an issue, whether it's for a question, a bug, or a feature request. I will get to it as soon as I can.
+Before opening a PR, make sure there's an issue describing the change you want:
 
-If there start to be too many issues for me to keep up with, I'll update this document. For now, it seems like a waste of time working on this documentation when I have plenty of time to get everything done myself.
+[Bug Report](https://github.com/state-adapt/state-adapt/issues/new?assignees=&labels=&projects=&template=bug_report.md&title=%5BBUG%5D%3A+)
+
+[Feature Request](https://github.com/state-adapt/state-adapt/issues/new?assignees=&labels=&projects=&template=feature_request.md&title=%5BFEATURE%5D%3A+)
+
+A well-written issue is more valuable than an unexpected pull request. We don't want you to waste time creating a pull request before we can discuss it. 
+
+Thank you!
