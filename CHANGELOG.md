@@ -1,6 +1,7 @@
 ## 2.0.6
 
 - Bugfix(angular): SSR
+- Bugfix(core): Allow undefined initialState in joinAdapters
 
 ## 2.0.5
 

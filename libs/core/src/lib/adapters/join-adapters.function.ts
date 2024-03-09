@@ -262,7 +262,7 @@ export function joinAdapters<
           [namespace]: (adapter[reactionName] as any)(
             state[namespace],
             payload,
-            initialState[namespace],
+            initialState?.[namespace],
           ),
         });
       }
