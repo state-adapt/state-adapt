@@ -8,6 +8,9 @@ export type BasicAdapterMethods<State> = {
   reset: (s: State, p: void, i: State) => State;
 };
 
+export type AdapterState<A extends Adapter<any, any, any>> =
+  A extends BasicAdapterMethods<infer S> ? S : never;
+
 /**
   ## ![StateAdapt](https://miro.medium.com/max/4800/1*qgM6mFM2Qj6woo5YxDMSrA.webp|width=10) `createAdapter`
 
