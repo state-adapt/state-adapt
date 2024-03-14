@@ -34,6 +34,8 @@ import {
   isAdaptOptions,
   NotAdaptOptions,
   InitializedReactions,
+  MaybeFactory,
+  Factory,
   SourceArg,
 } from './state-adapt.types';
 import { Source } from '../sources/source';
@@ -289,12 +291,17 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
     R2 extends ReactionsWithSelectors<State, S>,
     // ActualSourcesArg extends SourceArg<State, S, R2>,
   >(
-    initialState: State,
+    newInitialState: MaybeFactory<State>,
     second: (R & { selectors?: S } & NotAdaptOptions) | AdaptOptions<State, S, R2> = {}, // Default object required to make R = {} rather than indexed object
   ): InitializedSmartStore<State, S, {} extends R ? R2 : R> {
     let sources: any;
 
     // Initialize parameters
+    const getInitialState = typeof newInitialState === 'function'
+      ? newInitialState as Factory<State> : () => newInitialState;
+
+    const initialState = getInitialState();
+
     const options = isAdaptOptions(second) ? second : undefined;
 
     const path = options?.path || getId().toString();
@@ -356,7 +363,7 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
     >(adapter as any, pathObj, sources, initialState);
 
     const getSelectorsCache = this.getSelectorsCacheFactory(path);
-    const getState = this.getStateSelector<State>(pathObj.pathAr, initialState);
+    const getState = this.getStateSelector<State>(pathObj.pathAr, getInitialState);
     const getStateSelector = getMemoizedSelector(path, getState, () =>
       this.getGlobalSelectorsCache(),
     ); // all state selectors go in global cache
@@ -600,11 +607,11 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
 
   private getStateSelector<State>(
     pathAr: string[],
-    initialState?: State,
+    getInitialState?: Factory<State>,
   ): ({ adapt }: { adapt: any }) => State {
     return ({ adapt }) => {
       const pathState = pathAr.reduce((state, segment) => state?.[segment], adapt);
-      return pathState === undefined ? initialState : pathState;
+      return pathState === undefined ? getInitialState?.() : pathState;
     };
   }
 
