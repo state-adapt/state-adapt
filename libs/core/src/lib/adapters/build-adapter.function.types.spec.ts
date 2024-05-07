@@ -9,7 +9,11 @@ const adapter = buildAdapter<boolean>()(baseBooleanAdapter)({
   newProp2: s => s.newProp.split('')[0],
 })();
 
-function checkTypes() {
-  // @ts-expect-error: newProp does not return a number
-  const newProp: number = adapter.selectors.newProp(true);
-}
+describe('buildAdapter', () => {
+  it('should test types', () => {
+    function checkTypes() {
+      // @ts-expect-error: newProp does not return a number
+      const newProp: number = adapter.selectors.newProp(true);
+    }
+  });
+});
