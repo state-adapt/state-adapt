@@ -1,3 +1,7 @@
+## 2.0.7
+
+- Bugfix(core): Allow undefined initialState in buildAdapter
+
 ## 2.0.6
 
 - Bugfix(angular): SSR

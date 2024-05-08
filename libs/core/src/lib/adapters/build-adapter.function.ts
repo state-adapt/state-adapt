@@ -257,7 +257,11 @@ export function addNewBlock<AB extends AdapterBuilder<any, any, any>>(
         for (const subStateName in reactionGroup) {
           const subReaction = reactionGroup[subStateName] as any;
           const subState = state[subStateName];
-          const newSubState = subReaction(subState, payload, initialState[subStateName]);
+          const newSubState = subReaction(
+            subState,
+            payload,
+            initialState?.[subStateName],
+          );
           if (subState !== newSubState) {
             newState = newState || { ...state };
             newState[subStateName] = newSubState;
