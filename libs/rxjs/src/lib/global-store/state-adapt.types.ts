@@ -12,6 +12,9 @@ import { Observable } from 'rxjs';
 import { Sources } from '../stores/sources.type';
 import { SmartStore } from '../stores/smart-store.interface';
 
+export type Factory<T> = () => T;
+export type MaybeFactory<T> = Factory<T> | T;
+
 export interface GlobalStoreMethods {
   select: (sel: any) => Observable<any>;
   dispatch: (action: any) => any;
