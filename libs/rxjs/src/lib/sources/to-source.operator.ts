@@ -1,6 +1,8 @@
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Action } from '@state-adapt/core';
+import { Action, isAction } from '@state-adapt/core';
+
+type UnAction<T> = T extends Action<infer P> ? P : T;
 
 /**
   ## ![StateAdapt](https://miro.medium.com/max/4800/1*qgM6mFM2Qj6woo5YxDMSrA.webp|width=14) `toSource`
@@ -25,6 +27,12 @@ import { Action } from '@state-adapt/core';
   ```
  */
 export function toSource<Payload, Type extends string>(type: Type) {
-  return (source$: Observable<Payload>): Observable<Action<Payload, Type>> =>
-    source$.pipe(map(payload => ({ type, payload })));
+  return (source$: Observable<Payload>): Observable<Action<UnAction<Payload>, Type>> =>
+    source$.pipe(map(payload => {
+      if (isAction(payload)) {
+        return { type, payload: payload.payload };
+      }
+
+      return { type, payload };
+    }));
 }
