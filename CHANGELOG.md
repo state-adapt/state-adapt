@@ -1,3 +1,7 @@
+## 2.0.8
+
+- Feature(angular,ngrx,ngxs,angular-router): Allow @angular/core >=14.0.0
+
 ## 2.0.7
 
 - Bugfix(core): Allow undefined initialState in buildAdapter

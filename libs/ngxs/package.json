@@ -21,7 +21,7 @@
     "url": "https://github.com/state-adapt/state-adapt/issues"
   },
   "peerDependencies": {
-    "@angular/core": "^14.0.1 || ^15.0.0 || ^16.0.0 || ^17.0.0",
+    "@angular/core": ">=14.0.0",
     "@ngxs/store": "^3.7.1",
     "@state-adapt/angular": "2.0.7"
   },
