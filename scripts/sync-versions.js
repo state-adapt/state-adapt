@@ -21,8 +21,8 @@ packages.forEach(pkg => {
     lines = lines.map(line => {
       if (line.includes('@state-adapt/')) {
         return line.replace(
-          /"@state-adapt\/[^:]+": "[^"]+"/,
-          `"@state-adapt/${pkg}": "${newVersion}"`,
+          /"@state-adapt\/([^:]+)": "[^"]+"/,
+          `"@state-adapt/$1": "${newVersion}"`,
         );
       }
       return line;
