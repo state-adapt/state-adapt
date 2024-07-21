@@ -10,6 +10,7 @@ export * from './lib/actions/action.interface';
 export * from './lib/actions/prefixed-action.type';
 export * from './lib/actions/prefix-action.function';
 export * from './lib/actions/get-action.function';
+export * from './lib/actions/is-action.function';
 
 export * from './lib/selectors/selectors.interface';
 export * from './lib/selectors/any-selectors.interface';
