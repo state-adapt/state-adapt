@@ -55,7 +55,7 @@ pre {
     // font-weight: bold;
   }
   .removed {
-    color: var(--accent-01);
+    color: var(--accent-01-alpha);
     text-decoration: line-through;
     // font-weight: bold;
   }
@@ -87,7 +87,7 @@ pre {
 .token.tag,
 .token.constant,
 .token.symbol {
-  color: var(--accent-01);
+  color: var(--accent-01-alpha);
 }
 
 .token.deleted {
@@ -97,6 +97,9 @@ pre {
 .token.deleted,
 .token.inserted {
   display: block;
+  border-radius: 4px;
+  margin-top: 4px;
+  margin-bottom: 4px;
   // margin: 0 -1em;
   // padding: 0 1em;
 }
@@ -137,14 +140,14 @@ span.token.prefix.deleted {
 .token.atrule,
 .token.attr-value,
 .token.class-name {
-  color: var(--accent-01);
+  color: var(--accent-01-alpha);
   // font-weight: var(--code-bright-weight);
   // font-weight: bold;
 }
 
 .token.function {
   color: orange;
-  color: var(--accent-01);
+  color: var(--accent-01-alpha);
   // font-weight: var(--code-bright-weight);
 }
 

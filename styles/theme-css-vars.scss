@@ -14,11 +14,12 @@ html.light-theme {
 
   --code-bright-weight: bold;
   --code-dark-weight: 400;
-  --code-inserted: #00ff8038;
+  --code-inserted: #00ff0034;
   --code-deleted: #ff000038;
   --code-generic: #006768;
 
   --accent-01: #ff4500;
+  --accent-01-alpha: #ff4500dd;
   --accent-02: #800080;
   --interactive-01: #00ced1;
   --interactive-01b: #4ddddf;
@@ -104,11 +105,12 @@ html.dark-theme {
 
   --code-bright-weight: 400;
   --code-dark-weight: bold;
-  --code-inserted: #00ff801a;
-  --code-deleted: #ff00001a;
+  --code-inserted: #00ff001f;
+  --code-deleted: #ff000038;
   --code-generic: #7fe6e8;
 
   --accent-01: #ff4500;
+  --accent-01-alpha: #ff4500dd;
   --accent-02: #800080;
   --interactive-01: #00ced1;
   --interactive-01b: #4ddddf;
