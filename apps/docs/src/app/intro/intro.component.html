@@ -6,27 +6,59 @@
       <div id="inline-logo-container">
         <img src="./assets/sa3-3.svg" id="inline-logo" (click)="MOARRR()" />
       </div>
-      <span id="state">State</span>
-      <span id="adapt">Adapt</span>
+      <span id="stateadapt-text">
+        <span id="state">State</span>
+        <span id="adapt">Adapt</span>
+      </span>
     </h1>
     <h3 id="tagline">
-      Clean, Modern
-      <br id="tagline-break" />
       State Management
+      <br />
+      that adapts with complexity
     </h3>
-    <div class="frameworks-container">
+    <div id="purpose">
+      <p>
+        StateAdapt enables scalable state management from the very start of
+        every feature. No more boilerplate. No more big refactors.
+      </p>
+    </div>
+    <div style="display: flex; justify-content: center; margin-top: 40px">
       <a
-        *ngFor="let framework of frameworks"
-        [routerLink]="[framework.docsRouterLink]"
+        *ngIf="frameworkGetStartedLink$ | async; let frameworkGetStartedLink"
+        [routerLink]="[frameworkGetStartedLink]"
       >
-        <div class="framework-container">
-          <svg
-            [class.mono]="frameworksMono"
-            [innerHTML]="framework.svg"
-            class="framework-icon"
-            viewBox="0 0 900 900"
-          />
-        </div>
+        <button
+          ibmButton="primary"
+          style="
+            font-size: 20px;
+            font-weight: bold;
+            padding-right: 15px;
+            background: linear-gradient(
+              -30deg,
+              var(--active-primary),
+              var(--inverse-focus-ui)
+            );
+          "
+        >
+          Get Started
+        </button>
+      </a>
+      <a
+        *ngIf="framework$ | async as framework"
+        href="/{{ framework }}#stateadapts-purpose"
+      >
+        <button
+          ibmButton="tertiary"
+          style="
+            font-size: 20px;
+            font-weight: bold;
+            padding-right: 15px;
+            max-width: 30rem;
+            margin-left: 20px;
+          "
+        >
+          The Mission
+        </button>
       </a>
     </div>
   </div>
@@ -46,7 +78,7 @@
           viewBox="0 0 900 900"
         />
         <div class="feature-text">
-          <h4 class="feature-title">{{ feature.title }}</h4>
+          <h3 class="feature-title">{{ feature.title }}</h3>
           <div class="feature-description">
             {{ feature.description }}
           </div>
@@ -57,7 +89,7 @@
   </div>
 </div>
 
-<div class="content" [class.mono]="featuresMono">
+<div class="content" [class.mono]="featuresMono" id="main-content">
   <sa-content>
     <div class="frameworks-container">
       <a
@@ -76,19 +108,6 @@
       </a>
     </div>
     <sa-html [html]="frameworkExampleDocs$ | async"></sa-html>
-    <h2 *ngIf="(framework$ | async) === 'angular'">Introduction Video</h2>
-    <p>
-      <iframe
-        *ngIf="(framework$ | async) === 'angular'"
-        width="560"
-        height="315"
-        src="https://www.youtube.com/embed/b687kMZDXTg"
-        title="YouTube video player"
-        frameborder="0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-        allowfullscreen
-      ></iframe>
-    </p>
     <sa-html [html]="introGeneralDocs$ | async"></sa-html>
   </sa-content>
 </div>
