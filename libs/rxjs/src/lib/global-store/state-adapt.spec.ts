@@ -453,15 +453,19 @@ describe('StateAdapt with source', () => {
   it('should handle mixture of Source and source', () => {
     const onClick = source<number>('onClick');
     const click$ = new Source<number>('click$');
+    const onEvent = source<number>('onEvent');
+    const event$ = new Source<number>('event$');
 
     const store = adapt(1, {
       adapter: {
         add: (state, n: number) => state + n,
         subtract: (state, n: number) => state - n,
+        multiply: (state, n: number) => state * n,
       },
       sources: {
         add: onClick,
         subtract: click$,
+        multiply: [onEvent, event$],
       },
     });
     let result = 0;
@@ -474,5 +478,9 @@ describe('StateAdapt with source', () => {
     expect(result).toBe(2);
     click$.next(1);
     expect(result).toBe(1);
+    onEvent(2);
+    expect(result).toBe(2);
+    event$.next(3);
+    expect(result).toBe(6);
   });
 });
