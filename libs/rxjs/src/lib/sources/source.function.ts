@@ -62,5 +62,8 @@ export function source<T>(type = '') {
   onEvent.pipe = subject.pipe.bind(subject);
   onEvent.lift = subject.lift.bind(subject);
 
-  return onEvent as (unknown extends T ? () => void : (payload: T) => void) & Subject<T>;
+  return onEvent as SourceFn<T>;
 }
+
+export type SourceFn<T> = (unknown extends T ? () => void : (payload: T) => void) &
+  Subject<T>;
