@@ -32,7 +32,7 @@
 
 <!-- include: '../../../../../libs/angular/src/lib/adapt-injectable.function.ts#adaptInjectable' -->
 
-<!-- cache 6 -->
+<!-- cache 61 -->
 
 ### 2.0.0
 

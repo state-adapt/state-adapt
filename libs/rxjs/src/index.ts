@@ -1,5 +1,7 @@
 export * from './lib/sources/source';
+export * from './lib/sources/source.function';
 export * from './lib/sources/to-source.operator';
+export * from './lib/sources/type.operator';
 export * from './lib/sources/catch-error-source.operator';
 export * from './lib/sources/to-request-source.operator';
 export * from './lib/sources/split-sources.function';

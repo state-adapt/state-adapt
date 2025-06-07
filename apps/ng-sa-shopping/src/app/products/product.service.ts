@@ -5,9 +5,10 @@ import { Product, products, QuantityChange } from '../../../../../libs/shopping/
 import { injectFilterStore } from '../filters/filter.service';
 import { getFilteredProducts } from './filter-product.selectors';
 import { productAdapter } from './product.adapter';
+import { Subject } from 'rxjs';
 
 export const productSources = {
-  quantityChange$: new Source<QuantityChange>('[Products] quantityChange$'),
+  quantityChange$: new Subject<QuantityChange>(),
   addToCart$: new Source<Product>('[Products] addToCart$'),
   removeFromCart$: new Source<Product>('[Products] removeFromCart$'),
 };

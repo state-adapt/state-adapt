@@ -7,6 +7,7 @@ export * from './lib/utils/flat.type';
 export * from './lib/utils/prefixed-after-verb.type';
 
 export * from './lib/actions/action.interface';
+export * from './lib/actions/is-action.function';
 export * from './lib/actions/prefixed-action.type';
 export * from './lib/actions/prefix-action.function';
 export * from './lib/actions/get-action.function';

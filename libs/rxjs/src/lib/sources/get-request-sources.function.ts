@@ -6,47 +6,65 @@ import { splitRequestSources } from './split-request-sources.function';
 /**
   ## ![StateAdapt](https://miro.medium.com/max/4800/1*qgM6mFM2Qj6woo5YxDMSrA.webp|width=14) `getRequestSources`
 
-  `getRequestSources` is a function that combines the functionality of {@link toRequestSource} and {@link splitRequestSources}.
+  `getRequestSources` takes in a {@link TypePrefix} and an [Observable](https://rxjs.dev/guide/observable)
+  of values of type {@link Payload} (inferred) and returns an object with `success$` and `error$` propeties.
 
-  `getRequestSources` takes in an [Observable](https://rxjs.dev/guide/observable) and an {@link Action} type prefix
-  {@link TypePrefix} and splits the observable into two sources
-  that become available as properties on the returned object as `success$` and `error$`.
+  The `success$` property is an observable of values of type
 
-  #### Example: Converting an observable into success$ and error$ sources
+  ```ts
+  { type: `${TypePrefix}.success$`; payload: Payload }
+  ```
+
+  The `error$` property is an observable of values of type
+
+  ```ts
+  { type: `${TypePrefix}.error$`; payload: any }
+  ```
+
+  `getRequestSources` combines the functionality of {@link toRequestSource} and {@link splitRequestSources}.
+
+  Important: RxJS streams complete immediately after they error. For simple HTTP requests, this is fine.
+  But if you need to keep a stream alive, look into using {@link toRequestSource} and {@link splitRequestSources}
+  directly.
+
+  #### Example: Split an HTTP source into success$ and error$ sources
 
   ```typescript
-  import { interval } from 'rxjs';
+  import { ajax } from 'rxjs/ajax';
   import { getRequestSources } from '@state-adapt/rxjs';
 
-  const interval$ = interval(1000).pipe(map(n => n < 2 ? n : n.fakeNumberMethod()));
+  const http$ = ajax('https://jsonplaceholder.typicode.com/todos/1');
+
+  const todoRequest = getRequestSources('todo', http$);
+
+  todoRequest.success$.subscribe(console.log);
+  // { type: 'todo.success$', payload: { ... } }
+
+  todoRequest.error$.subscribe(console.log);
+  // { type: 'todo.error$', payload: { ... } }
+  ```
+
+  #### Example: Convert any observable into success$ and error$ sources
+
+  ```typescript
+  import { interval, map } from 'rxjs';
+  import { getRequestSources } from '@state-adapt/rxjs';
+
+  const interval$ = interval(1000).pipe(
+    map(n => n !== 2 ? n : (n as any).fakeNumberMethod()),
+  );
 
   const { success$, error$ } = getRequestSources('interval', interval$);
 
   success$.subscribe(console.log);
   // { type: 'interval.success$', payload: 0 }
   // { type: 'interval.success$', payload: 1 }
+  // Will not log anymore, after error
 
   error$.subscribe(console.log);
   // { type: 'interval.error$', payload: 'Error: n.fakeNumberMethod is not a function' }
   ```
 
-  #### Example: Conveniently splitting an HTTP source into success$ and error$ sources
-
-  ```typescript
-  import { getAction } from '@state-adapt/core';
-  import { toSource, getRequestSources } from '@state-adapt/rxjs';
-  import { ajax } from 'rxjs/ajax';
-
-  const http$ = ajax('https://jsonplaceholder.typicode.com/todos/1');
-
-  const httpRequest = getRequestSources('http', http$);
-
-  httpRequest.success$.subscribe(console.log);
-  // { type: 'success$', payload: { ... } }
-
-  httpRequest.error$.subscribe(console.log);
-  // { type: 'error$', payload: { ... } }
-  ```
  */
 export function getRequestSources<TypePrefix extends string, Payload>(
   typePrefix: TypePrefix,

@@ -1,6 +1,6 @@
 ## 1. Start with simple state
 
-StateAdapt stores can be as simple as `createSignal` or RxJS `BehaviorSubject`s, but with Redux Devtools support!
+StateAdapt stores can be as simple as `createSignal` or RxJS `BehaviorSubject`s:
 
 ```tsx
 function SimpleState() {
@@ -15,9 +15,9 @@ function SimpleState() {
 }
 ```
 
-<video controls loop>
+<!-- <video controls loop>
   <source src="./assets/demo-1-simple-state.mov" type="video/mp4"/>
-</video>
+</video> -->
 
 ### Try it on [StackBlitz](https://stackblitz.com/edit/vitejs-vite-cwd8th?file=src%2F1SimpleState.tsx)
 
@@ -41,9 +41,9 @@ function DerivedState() {
 }
 ```
 
-<video controls loop>
+<!-- <video controls loop>
   <source src="./assets/demo-2-derived-state.mov" type="video/mp4" />
-</video>
+</video> -->
 
 ### Try it on [StackBlitz](https://stackblitz.com/edit/vitejs-vite-cwd8th?file=src%2F2DerivedState.tsx)
 
@@ -70,9 +70,9 @@ function StateChanges() {
 }
 ```
 
-<video controls loop>
+<!-- <video controls loop>
   <source src="./assets/demo-3-state-changes.mov" type="video/mp4" />
-</video>
+</video> -->
 
 ### Try it on [StackBlitz](https://stackblitz.com/edit/vitejs-vite-cwd8th?file=src%2F3StateChanges.tsx)
 
@@ -85,7 +85,7 @@ function StateChanges() {
     yelledName: (name) => name.toUpperCase(), // Will be memoized
   },
 });
-+
+
 function StateAdapters() {
   const nameStore1 = adapt('Bob', nameAdapter);
   const name1 = fromAdapt(nameStore1);
@@ -97,7 +97,7 @@ function StateAdapters() {
       <h2>Hello {name1.yelledName()}!</h2>
       <button onClick={() => nameStore1.set('Bilbo')}>Change Name</button>
       <button onClick={() => nameStore1.reverseName()}>Reverse Name</button>
-+
+
 +      <h2>Hello {name2.yelledName()}!</h2>
 +      <button onClick={() => nameStore2.set('Bilbo')}>Change Name</button>
 +      <button onClick={() => nameStore2.reverseName()}>Reverse Name</button>
@@ -106,9 +106,9 @@ function StateAdapters() {
 }
 ```
 
-<video controls loop>
+<!-- <video controls loop>
   <source src="./assets/demo-4-state-adapters.mov" type="video/mp4" />
-</video>
+</video> -->
 
 ### Try it on [StackBlitz](https://stackblitz.com/edit/vitejs-vite-cwd8th?file=src%2F4StateAdapters.tsx)
 
@@ -125,16 +125,13 @@ const nameAdapter = createAdapter<string>()({
   },
 });
 
-+const nameFromServer$ = timer(1000).pipe(
-+  mapTo('Joel'),
-+  toSource('[name] nameFromServer$') // Annotate for Redux Devtools
-+);
-+
++const onNameFromServer = timer(3000).pipe(map(() => 'Joel'));
+
 function ObservableSources() {
 -  const nameStore1 = adapt('Bob', nameAdapter);
 +  const nameStore1 = adapt('Bob', {
 +    adapter: nameAdapter,
-+    sources: nameFromServer$, // Set state
++    sources: onNameFromServer, // Set state
 +  });
   const name1 = fromAdapt(nameStore1);
 
@@ -142,7 +139,7 @@ function ObservableSources() {
 +  const nameStore2 = adapt('Bob', {
 +    adapter: nameAdapter,
 +    sources: {
-+      concatName: nameFromServer$, // Trigger a specific state reaction
++      concatName: onNameFromServer, // Trigger a specific state reaction
 +    },
 +  });
   const name2 = fromAdapt(nameStore2);
@@ -160,9 +157,9 @@ function ObservableSources() {
 }
 ```
 
-<video controls loop>
+<!-- <video controls loop>
   <source src="./assets/demo-5-observable-sources.mov" type="video/mp4" />
-</video>
+</video> -->
 
 ### Try it on [StackBlitz](https://stackblitz.com/edit/vitejs-vite-cwd8th?file=src%2F5ObservableSources.tsx)
 
@@ -179,20 +176,17 @@ const nameAdapter = createAdapter<string>()({
   },
 });
 
-+const resetBoth$ = new Source<void>('[name] resetBoth$'); // Annotate for Redux Devtools
-+
-const nameFromServer$ = timer(1000).pipe(
-  mapTo('Joel'),
-  toSource('[name] nameFromServer$') // Annotate for Redux Devtools
-);
++const onResetBoth = source();
+
+const onNameFromServer = timer(3000).pipe(map(() => 'Joel'));
 
 function DomSources() {
   const nameStore1 = adapt('Bob', {
     adapter: nameAdapter,
--    sources: nameFromServer$, // Set state
+-    sources: onNameFromServer, // Set state
 +    sources: {
-+      set: nameFromServer$, // `set` is provided with all adapters
-+      reset: resetBoth$, // `reset` is provided with all adapters
++      set: onNameFromServer, // `set` is provided with all adapters
++      reset: onResetBoth, // `reset` is provided with all adapters
 +    },
   });
   const name1 = fromAdapt(nameStore1);
@@ -200,8 +194,8 @@ function DomSources() {
   const nameStore2 = adapt('Bob', {
     adapter: nameAdapter,
     sources: {
-      concatName: nameFromServer$, // Trigger a specific state reaction
-+      reset: resetBoth$, // `reset` is provided with all adapters
+      concatName: onNameFromServer, // Trigger a specific state reaction
++      reset: onResetBoth, // `reset` is provided with all adapters
     },
   });
   const name2 = fromAdapt(nameStore2);
@@ -214,16 +208,16 @@ function DomSources() {
       <h2>Hello {name2.yelledName()}!</h2>
       <button onClick={() => nameStore2.set('Bilbo')}>Change Name</button>
       <button onClick={() => nameStore2.reverseName()}>Reverse Name</button>
-+
-+      <button onClick={() => resetBoth$.next()}>Reset Both</button>
+
++      <button onClick={onResetBoth}>Reset Both</button>
     </>
   );
 }
 ```
 
-<video controls loop>
+<!-- <video controls loop>
   <source src="./assets/demo-6-dom-sources.mov" type="video/mp4" />
-</video>
+</video> -->
 
 ### Try it on [StackBlitz](https://stackblitz.com/edit/vitejs-vite-cwd8th?file=src%2F6DomSources.tsx)
 
@@ -238,19 +232,16 @@ const nameAdapter = createAdapter<string>()({
   },
 });
 
-const resetBoth$ = new Source<void>('[name] resetBoth$'); // Annotate for Redux Devtools
+const onResetBoth = source();
 
-const nameFromServer$ = timer(1000).pipe(
-  mapTo('Joel'),
-  toSource('[name] nameFromServer$') // Annotate for Redux Devtools
-);
+const onNameFromServer = timer(3000).pipe(map(() => 'Joel'));
 
 function MultiStoreSelectors() {
   const nameStore1 = adapt('Bob', {
     adapter: nameAdapter,
     sources: {
-      set: nameFromServer$, // `set` is provided with all adapters
-      reset: resetBoth$, // `reset` is provided with all adapters
+      set: onNameFromServer, // `set` is provided with all adapters
+      reset: onResetBoth, // `reset` is provided with all adapters
     },
   });
   const name1 = fromAdapt(nameStore1);
@@ -258,12 +249,12 @@ function MultiStoreSelectors() {
   const nameStore2 = adapt('Bob', {
     adapter: nameAdapter,
     sources: {
-      concatName: nameFromServer$, // Trigger a specific state reaction
-      reset: resetBoth$, // `reset` is provided with all adapters
+      concatName: onNameFromServer, // Trigger a specific state reaction
+      reset: onResetBoth, // `reset` is provided with all adapters
     },
   });
   const name2 = fromAdapt(nameStore2);
-+
+
 +  const bothBobs = () => name1.state() === 'Bob' && name2.state() === 'Bob';
 
   return (
@@ -276,16 +267,16 @@ function MultiStoreSelectors() {
       <button onClick={() => nameStore2.set('Bilbo')}>Change Name</button>
       <button onClick={() => nameStore2.reverseName()}>Reverse Name</button>
 
-      <button onClick={() => resetBoth$.next()}>Reset Both</button>
-+
+      <button onClick={onResetBoth}>Reset Both</button>
+
 +      {bothBobs() && <h2>Hello Bobs!</h2>}
     </>
   );
 }
 ```
 
-<video controls loop>
+<!-- <video controls loop>
   <source src="./assets/demo-7-multi-store-selectors.mov" type="video/mp4" />
-</video>
+</video> -->
 
 ### Try it on [StackBlitz](https://stackblitz.com/edit/vitejs-vite-cwd8th?file=src%2F7MultiStoreSelectors.tsx)

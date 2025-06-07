@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { Source } from '@state-adapt/rxjs';
 import { adaptNgxs } from '@state-adapt/ngxs';
+import { source } from '@state-adapt/rxjs';
 import { countAdapter } from './count.adapter';
 
 @Component({
@@ -24,12 +24,14 @@ import { countAdapter } from './count.adapter';
   `,
 })
 export class AppComponent {
-  resetBoth$ = new Source<void>('[counts] resetBoth$');
+  resetBoth$ = source('[counts] resetBoth$');
 
-  store1 = adaptNgxs(['count1', 0, countAdapter], {
-    reset: this.resetBoth$,
+  store1 = adaptNgxs(0, {
+    adapter: countAdapter,
+    sources: { reset: this.resetBoth$ },
   });
-  store2 = adaptNgxs(['count2', 0, countAdapter], {
-    reset: this.resetBoth$,
+  store2 = adaptNgxs(0, {
+    adapter: countAdapter,
+    sources: { reset: this.resetBoth$ },
   });
 }

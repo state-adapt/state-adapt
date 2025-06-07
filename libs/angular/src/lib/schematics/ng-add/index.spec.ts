@@ -17,7 +17,7 @@ const defaultSchematicOptions: Schema = {
   skipInstall: false,
 };
 
-export const defaultWorkspaceOptions: Schema = {
+export const defaultWorkspaceOptions = {
   name: 'workspace',
   newProjectRoot: 'projects',
   version: '0.0.0',

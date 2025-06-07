@@ -34,9 +34,8 @@ import {
   isAdaptOptions,
   NotAdaptOptions,
   InitializedReactions,
-  SourceArg,
 } from './state-adapt.types';
-import { Source } from '../sources/source';
+import { getPayload } from '../sources/get-payload.function';
 
 interface ParsedPath {
   path: string;
@@ -61,7 +60,7 @@ interface PathStates {
 }
 
 interface UpdaterStream {
-  source$: Observable<Action<any>>;
+  source$: Observable<any>;
   requireSources$: Observable<any>;
   reactions: {
     path: string;
@@ -126,10 +125,10 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
   You can also define an adapter, sources, and/or a state path as part of an {@link AdaptOptions} object.
 
   Sources allow the store to declaratively react to external events rather than being commanded
-  by imperative callback functions.
+  by imperative code in callback functions.
 
   ```typescript
-  const tick$ = interval(1000).pipe(toSource('tick$'));
+  const tick$ = interval(1000);
 
   const clock = adapt(0, {
     adapter: {
@@ -149,13 +148,13 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
 
   There are 4 possible ways sources can be defined:
 
-  1\. A source can be a single {@link Source} or [Observable](https://rxjs.dev/guide/observable)<{@link Action}<{@link State}>>. When the source emits, it triggers the store's `set` method
+  1\. A source can be a single source or [Observable](https://rxjs.dev/guide/observable)<{@link State}>. When the source emits, it triggers the store's `set` method
   with the payload.
 
-  #### Example: Single source
+  #### Example: Single source or observable
 
   ```typescript
-  const nameChange$ = new Source<string>('nameChange$');
+  const nameChange$ = source<string>();
 
   const name = adapt('John', {
     sources: nameChange$,
@@ -167,14 +166,14 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
   nameChange$.next('Johnsh'); // logs 'Johnsh'
   ```
 
-  2\. A source can be an array of {@link Source} or [Observable](https://rxjs.dev/guide/observable)<{@link Action}<{@link State}>>. When any of the sources emit, it triggers the store's `set`
+  2\. A source can be an array of sources or [Observable](https://rxjs.dev/guide/observable)<{@link State}>. When any of the sources emit, it triggers the store's `set`
    method with the payload.
 
-  #### Example: Array of sources
+  #### Example: Array of sources or observables
 
   ```typescript
-  const nameChange$ = new Source<string>('nameChange$');
-  const nameChange2$ = new Source<string>('nameChange2$');
+  const nameChange$ = source<string>();
+  const nameChange2$ = source<string>();
 
   const name = adapt('John', {
     sources: [nameChange$, nameChange2$],
@@ -190,11 +189,11 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
   3\. A source can be an object with keys that match the names of the {@link Adapter} state change functions, with a corresponding source or array of
   sources that trigger the store's reaction with the payload.
 
-  #### Example: Object of sources
+  #### Example: Object of sources or observables
 
   ```typescript
-  const nameChange$ = new Source<string>('nameChange$');
-  const nameReset$ = new Source<void>('nameReset$');
+  const nameChange$ = source<string>();
+  const nameReset$ = source<void>();
 
   const name = adapt('John', {
     sources: {
@@ -210,17 +209,16 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
   nameReset$.next(); // logs 'John'
   ```
 
-  4\. A source can be a function that takes in a detached store (result of calling {@link StateAdapt.watch}) and returns any of the above
-  types of sources.
+  4\. A source can be a function that takes in a detached store (doesn't chain off of sources) and returns any of the above
+  types of sources or observables.
 
-  #### Example: Function that returns a source
+  #### Example: Function that returns an observable
 
   ```typescript
   const name = adapt('John', {
     sources: store => store.state$.pipe(
       delay(1000),
       map(name => `${name}sh`),
-      toSource('recursive nameChange$'),
     ),
     path: 'name',
   });
@@ -276,6 +274,10 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
   store2.state$.subscribe();
   // global state includes both: { number0: 0, number1: 0 }
   ```
+
+  ### No path
+
+  If no path is provided, then the store's path defaults to the result of calling {@link getId}.
 
   ### Remember!
 
@@ -387,7 +389,7 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
    > Copilot tip: Copy examples into your file or click to definition to open file with context for better Copilot suggestions.
 
   `watch` returns a detached store (doesn't chain off of sources). This allows you to watch state without affecting anything.
-  It takes 2 arguments: The path of the state you are interested in, and the adapter containing the selectors you want to use.
+  It takes 2 arguments: The path of the state you are interested in, and the adapter you want to use.
 
   ```tsx
   watch(path, adapter)
@@ -470,15 +472,19 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
 
     const allUpdatesFromSources$ = allSourcesWithReactions.map(
       ({ source$, reaction }, i) => {
+        // (parameter) source$: Observable<Action<SecondParameterOrAny<Parameters<R[string]>>, string>>
+        const s$ = source$ as Observable<any>;
         // Source-grouped updates:
         return defer(() => {
           const updaterStream = this.getSourceUpdateStream(source$);
           const requireSources$ = updaterStream
             ? updaterStream.requireSources$
-            : source$.pipe(
+            : s$.pipe(
                 tap(action => {
-                  const updates = this.getAllSourceUpdates(source$, action);
-                  this.commonStore.dispatch(createPatchState(action, updates));
+                  const payload = getPayload(action);
+                  const updates = this.getAllSourceUpdates(source$, payload);
+                  const type = payload === action ? (source$ as any).type : action.type;
+                  this.commonStore.dispatch(createPatchState(action, updates, type));
                 }),
                 finalize(() => {
                   this.updaterStreams.splice(
@@ -568,16 +574,13 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
     );
   }
 
-  private getSourceUpdateStream(searchSource$: Observable<Action<any>>) {
+  private getSourceUpdateStream(searchSource$: Observable<any>) {
     return this.updaterStreams.find(
       ({ source$ }) => searchSource$ === source$,
     ) as UpdaterStream;
   }
 
-  private getAllSourceUpdates(
-    source$: Observable<Action<any>>,
-    { payload }: Action<any>,
-  ): [string[], any][] {
+  private getAllSourceUpdates(source$: Observable<any>, payload: any): [string[], any][] {
     return this.getSourceUpdateStream(source$).reactions.map(({ path, reaction }) =>
       this.getUpdate(path, reaction, payload),
     );

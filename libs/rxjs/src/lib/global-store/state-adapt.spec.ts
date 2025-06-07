@@ -9,6 +9,8 @@ import { toSource } from '@state-adapt/rxjs';
 import { NEVER, interval, of } from 'rxjs';
 import { configureStateAdapt } from './configure-state-adapt.function';
 import { switchMap } from 'rxjs/operators';
+import { source } from '../sources/source.function';
+import { Source } from '../sources/source';
 
 const enableReduxDevTools = (window as any).__REDUX_DEVTOOLS_EXTENSION__?.({
   actionSanitizer,
@@ -203,6 +205,104 @@ describe('StateAdapt', () => {
     store3aa5.set = (payload: string) => {};
   });
 
+  // Test simple Observable, Observable[], Source and Source[]
+  it('should take simple sources', () => {
+    const store3a = adapt(5, {
+      sources: of(2),
+    });
+    let state3a = 5;
+    store3a.state$.subscribe(s => {
+      // Synchronous
+      state3a = s;
+    });
+    expect(state3a).toBe(2);
+    const store3a2 = adapt(5, {
+      // @ts-expect-error Should take number as payload
+      sources: of('2'),
+    });
+
+    const store3b = adapt(5, {
+      sources: [of(3)],
+    });
+    let state3b = 5;
+    store3b.state$.subscribe(s => {
+      // Synchronous
+      state3b = s;
+    });
+    expect(state3b).toBe(3);
+    const store3b2 = adapt(5, {
+      // @ts-expect-error Should take number as payload
+      sources: [of('2'), of(3)],
+    });
+
+    const store3c = adapt(5, {
+      sources: of(2).pipe(toSource()),
+    });
+    let state3c = 5;
+    store3c.state$.subscribe(s => {
+      // Synchronous
+      state3c = s;
+    });
+    expect(state3c).toBe(2);
+    const store3c2 = adapt(5, {
+      // @ts-expect-error Should take number as payload
+      sources: of('2').pipe(toSource()),
+    });
+
+    const store3d = adapt(5, {
+      sources: [of(3)].map(toSource()),
+    });
+    let state3d = 5;
+    store3d.state$.subscribe(s => {
+      // Synchronous
+      state3d = s;
+    });
+    expect(state3d).toBe(3);
+    const store3d2 = adapt(5, {
+      // @ts-expect-error Should take number as payload
+      sources: [of('2'), of(3)].map(toSource()),
+    });
+  });
+
+  it('types should destinguish between plain observables and sources with complex sources object', () => {
+    const adapter = createAdapter<number>()({
+      add: (state, by: number) => state + by,
+      subtract: (state, by: number) => state - by,
+    });
+    const store3a = adapt(5, {
+      adapter,
+      sources: {
+        set: [of(4)],
+        add: of(2).pipe(toSource('asdf')),
+        subtract: interval7$,
+      },
+    });
+    const store3b = adapt(5, {
+      adapter,
+      // @ts-expect-error Should take number as payload
+      sources: {
+        set: [of(4)],
+        add: of('3'),
+      },
+    });
+    const store3c = adapt(5, {
+      adapter,
+      // @ts-expect-error Should take number as payload
+      sources: {
+        set: [of(4)],
+        subtract: [of('3').pipe(toSource('fdsa'))],
+      },
+    });
+    // TODO: Allow mixed array types
+    // const store3d = adapt(5, {
+    //   adapter,
+    //   sources: {
+    //     set: [of(4)],
+    //     add: [of(3), interval3$],
+    //   },
+    // });
+  });
+
   const store3b = adapt(5, {
     double: state => state * 2,
     selectors: {
@@ -275,7 +375,6 @@ describe('StateAdapt', () => {
 
   const store2 = adapt(initialState, {
     adapter: numbersAdapter,
-    // @ts-expect-error doubleB: watched.state$, should be Source
     sources: watched => {
       try {
         const sub1 = watched.state$.subscribe(({ a, b }) => a * b * 3);
@@ -328,4 +427,52 @@ describe('StateAdapt', () => {
   //   });
   //   expect(true).toBe(true);
   // });
+});
+
+describe('StateAdapt with source', () => {
+  it('should handle simple source', () => {
+    const onClick = source<number>('onClick');
+    const store = adapt(1, {
+      adapter: {
+        increment: (state, n: number) => state + n,
+      },
+      sources: {
+        increment: onClick,
+      },
+    });
+    let result = 0;
+    store.state$.subscribe(s => {
+      // Synchronous
+      result = s;
+    });
+    expect(result).toBe(1);
+    onClick(1);
+    expect(result).toBe(2);
+  });
+
+  it('should handle mixture of Source and source', () => {
+    const onClick = source<number>('onClick');
+    const click$ = new Source<number>('click$');
+
+    const store = adapt(1, {
+      adapter: {
+        add: (state, n: number) => state + n,
+        subtract: (state, n: number) => state - n,
+      },
+      sources: {
+        add: onClick,
+        subtract: click$,
+      },
+    });
+    let result = 0;
+    store.state$.subscribe(s => {
+      // Synchronous
+      result = s;
+    });
+    expect(result).toBe(1);
+    onClick(1);
+    expect(result).toBe(2);
+    click$.next(1);
+    expect(result).toBe(1);
+  });
 });

@@ -7,17 +7,15 @@ import { Action, getAction } from '@state-adapt/core';
 
   `catchErrorSource` is a custom RxJS [operator](https://rxjs.dev/guide/operators) that converts an RxJS [Observable](https://rxjs.dev/guide/observable)
   of any values into a source of errors, using RxJS' [catchError](https://rxjs.dev/api/operators/catchError) operator.
-  It takes one argument, {@link TypePrefix}, and prefixes it to create an object of type {@link Action}<any, \`${{@link TypePrefix}}.error$\`>.
+  It takes one argument, {@link TypePrefix}, and prefixes it to create an object of type {@link Action}<any, ${{@link TypePrefix}}.error$>.
 
   #### Example: Catching errors from a source
 
   ```typescript
   import { timer, map } from 'rxjs';
-  import { toSource } from '@state-adapt/rxjs';
 
   const timer$ = timer(1000).pipe(
-    map(n => n.fakeNumberMethod()),
-    toSource('timer$'),
+    map(n => ({ type: 'timer$', payload: n.fakeNumberMethod() })),
     catchErrorSource('timer'),
   );
 

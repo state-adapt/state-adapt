@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { interval } from 'rxjs';
+import { interval, Observable } from 'rxjs';
 import { createAdapter } from '@state-adapt/core';
-import { Source, toSource } from '@state-adapt/rxjs';
+import { source, Source, toSource, type } from '@state-adapt/rxjs';
 import { useAdapt, useObservable, useSource, useStore } from '@state-adapt/react';
 import { adapt } from '../store';
 
@@ -13,26 +13,26 @@ export const countAdapter = createAdapter<number>()({
   },
 });
 
-const resetAll$ = new Source<void>('[App] resetAll$');
-const interval$ = interval(5_000).pipe(toSource('[App] interval$'));
+const onResetAll = source('[App] onResetAll');
+const onInterval = interval(5_000).pipe(type('[App] onInterval'));
 
 export function App() {
   const [count1, count1Store] = useAdapt(0);
-  const [count2, count2Store] = useAdapt(0, { sources: interval$, path: 'count2' });
+  const [count2, count2Store] = useAdapt(0, { sources: onInterval, path: 'count2' });
   const [count3, count3Store] = useAdapt(0, countAdapter);
   const [count4, count4Store] = useAdapt(10, {
     multiply: (state, n: number) => state * n,
   });
   const [count5, count5Store] = useAdapt(0, {
     adapter: countAdapter,
-    sources: interval$,
+    sources: onInterval,
     path: 'count5',
   });
   const [count6, count6Store] = useAdapt(0, {
     adapter: countAdapter,
     sources: {
-      set: interval$,
-      reset: resetAll$,
+      set: onInterval,
+      reset: onResetAll,
     },
     path: 'count6',
   });
@@ -128,7 +128,7 @@ export function App() {
 
         <br />
         <br />
-        <button onClick={() => resetAll$.next()}>Reset Externally</button>
+        <button onClick={onResetAll}>Reset Externally</button>
       </main>
     </div>
   );

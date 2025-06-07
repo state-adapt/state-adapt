@@ -1,6 +1,6 @@
 import { StoreLike } from '@state-adapt/rxjs';
 
-export type FilteredStoreSelectors<
+export type StoreStates<
   Store extends StoreLike<any, any, any>,
   SelectorNames extends string = Extract<keyof Store['__']['selectors'], string>,
 > = {
@@ -9,7 +9,8 @@ export type FilteredStoreSelectors<
     : never]: ReturnType<Store['__']['selectors'][K]>;
 };
 
-export type ProxyStoreTuple<Store extends StoreLike<any, any, any>> = [
-  FilteredStoreSelectors<Store>,
-  Store,
-];
+export type ProxyStoreTuple<
+  State,
+  Store extends StoreLike<State, any, any>,
+  SelectorNames extends string = Extract<keyof Store['__']['selectors'], string>,
+> = [StoreStates<Store, SelectorNames>, ((newState: State) => void) & Store];

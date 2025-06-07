@@ -173,3 +173,25 @@ describe('mergeAdapters', () => {
     expect(payload).toBe(payload);
   });
 });
+
+// =============================== Group state changes ==================================
+describe('group state changes', () => {
+  const joinedAdapters = joinAdapters<{ a: number; b: number }>()({
+    a: createAdapter<number>()({}),
+    b: createAdapter<number>()({}),
+  })({
+    increment: {
+      a: n => n + 1,
+      b: n => n + 1,
+    },
+    // decrement: {
+    //   a: 'decrement',
+    //   b: 'decrement',
+    // }
+  })();
+
+  it('should work', () => {
+    const result = joinedAdapters.increment({ a: 1, b: 2 }, undefined, { a: 1, b: 2 });
+    expect(result).toEqual({ a: 2, b: 3 });
+  });
+});

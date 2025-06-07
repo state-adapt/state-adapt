@@ -1,3 +1,14 @@
+## 3.0.0
+
+### Breaking Changes
+
+- Refactor(react)!: Make `useStore` return a tuple
+
+### Other Changes
+
+- Feature(rxjs): Add `source` function
+- Feature(rxjs): Make `Action` objects optional in sources
+
 ## 2.0.8
 
 - Feature(angular,ngrx,ngxs,angular-router): Allow @angular/core >=14.0.0

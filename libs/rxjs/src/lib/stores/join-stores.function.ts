@@ -65,6 +65,7 @@ import {
 
   joinedStore.sum$.subscribe(console.log);
   // 6
+  ```
  */
 // state => easy
 // joined selectors => Map—Grab from each store, prefix object, do merge trick

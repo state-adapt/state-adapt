@@ -24,7 +24,9 @@ import { Action } from '@state-adapt/core';
   // { type: 'timer$', payload: 0 }
   ```
  */
-export function toSource<Payload, Type extends string>(type: Type) {
-  return (source$: Observable<Payload>): Observable<Action<Payload, Type>> =>
-    source$.pipe(map(payload => ({ type, payload })));
+export function toSource<Payload, Type extends string = ''>(type: Type = '' as Type) {
+  return (source$: Observable<Payload>): Observable<Action<Payload, Type>> => {
+    const sourceWithType$ = source$.pipe(map(payload => ({ type, payload })));
+    return sourceWithType$ as Observable<Action<Payload, Type>>;
+  };
 }

@@ -18,6 +18,7 @@ import {
   getId,
 } from '@state-adapt/core';
 import { ProxyStoreTuple } from './proxy-store-tuple.type';
+import { useProxyStates } from './use-proxy-states';
 
 // Differences between StateAdapt.adapt and useAdapt jsdoc:
 //  - Almost everything
@@ -26,9 +27,10 @@ import { ProxyStoreTuple } from './proxy-store-tuple.type';
 
   > Copilot tip: Copy examples into your file or click to definition to open file with context for better Copilot suggestions.
 
-  `useAdapt` is a hook that wraps {@link StateAdapt.adapt} and {@link useStore}.
-  It creates a store, immediately subscribes to it, and returns a `[proxy, store]` tuple, where
-  `proxy` is the return value of {@link useStore} and `store` is the return value of {@link StateAdapt.adapt}.
+  `useAdapt` is a hook that wraps {@link StateAdapt.adapt} and {@link useStore}. It creates a store, immediately subscribes to it,
+  and returns a tuple `[selectorResults, setState]` where `selectorResults` is a proxy object containing results from the store's selectors,
+  and `setState` is a function with additional properties assigned from the store created by {@link StateAdapt.adapt}.
+
 
   `useAdapt` is like an advanced version of [`useState`](https://beta.reactjs.org/reference/react/useState)
   or [`useReducer`](https://beta.reactjs.org/reference/react/useReducer). All of the values you pass into it
@@ -39,12 +41,12 @@ import { ProxyStoreTuple } from './proxy-store-tuple.type';
   ### Example: initialState only
   `useAdapt(initialState)`
 
-  The simplest way to use `useAdapt` is to only pass it an initial state. `useAdapt` returns a store object that is ready to start managing state once it has subscribers.
-  The store object comes with `set` and `reset` methods for updating state, and a `state$` observable of the store's state.
+  `useAdapt` starts with very similar syntax to `useState`'s. The main difference is that `state` is accessed
+  as a property of the first tuple element. Also, the `setState` function has a `reset` property function that resets the store's state.
 
   ```tsx
   export function MyComponent() {
-    const [name, nameStore] = useAdapt('John');
+    const [name, setName] = useAdapt('John');
 
     // Shows "John" first
     // Shows "Johnsh" when the "Set" button is clicked
@@ -52,8 +54,8 @@ import { ProxyStoreTuple } from './proxy-store-tuple.type';
     return (
       <>
         <div>{name.state}</div>
-        <button onClick={() => nameStore.set('Johnsh')}>Set</button>
-        <button onClick={() => nameStore.reset()}>Reset</button>
+        <button onClick={() => setName('Johnsh')}>Set</button>
+        <button onClick={() => setName.reset()}>Reset</button>
       </>
     );
   }
@@ -66,7 +68,7 @@ import { ProxyStoreTuple } from './proxy-store-tuple.type';
 
   ```tsx
   export function MyComponent() {
-    const [name, nameStore] = useAdapt('John', {
+    const [name, setName] = useAdapt('John', {
       concat: (state, payload: string) => state + payload,
       selectors: {
         length: state => state.length,
@@ -80,8 +82,8 @@ import { ProxyStoreTuple } from './proxy-store-tuple.type';
       <>
         <div>{name.state}</div>
         <div>{name.length}</div>
-        <button onClick={() => nameStore.concat('sh')}>Concat</button>
-        <button onClick={() => nameStore.reset()}>Reset</button>
+        <button onClick={() => setName.concat('sh')}>Concat</button>
+        <button onClick={() => setName.reset()}>Reset</button>
       </>
     );
   }
@@ -96,14 +98,14 @@ import { ProxyStoreTuple } from './proxy-store-tuple.type';
   by imperative callback functions.
 
   ```tsx
-  const tick$ = interval(1000).pipe(toSource('tick$'));
+  const onTick = interval(1000);
 
   export function MyComponent() {
-    const [clock] = adapt(0, {
+    const [clock] = useAdapt(0, {
       adapter: {
         increment: state => state + 1,
       },
-      sources: tick$, // or [tick$], or { set: tick$ }, or { set: [tick$] }
+      sources: onTick, // or [onTick], or { set: onTick }, or { set: [onTick] }
       path: 'clock',
     });
 
@@ -112,24 +114,24 @@ import { ProxyStoreTuple } from './proxy-store-tuple.type';
   }
   ```
 
-  When a store is subscribed to, it passes the subscriptions up the its sources.
+  When a store is subscribed to, it passes the subscriptions up to its sources.
   For example, if a store has an HTTP source, it will be triggered when the store
   receives its first subscriber, and it will be canceled when the store loses its
-  last subscriber.
+  last subscriber. `useAdapt` immediately subscribes.
 
   There are 4 possible ways sources can be defined:
 
-  1\. A source can be a single {@link Source} or [Observable](https://rxjs.dev/guide/observable)<{@link Action}<{@link State}>>. When the source emits, it triggers the store's `set` method
+  1\. A source can be a single source or [Observable](https://rxjs.dev/guide/observable)<{@link State}>. When the source emits, it triggers the store's `set` method
   with the payload.
 
-  #### Example: Single source
+  #### Example: Single source or observable
 
   ```tsx
-  const nameChange$ = new Source<string>('nameChange$');
+  const onNameChange = source<string>();
 
   export function MyComponent() {
     const [name] = useAdapt('John', {
-      sources: nameChange$,
+      sources: onNameChange,
       path: 'name',
     });
 
@@ -138,24 +140,24 @@ import { ProxyStoreTuple } from './proxy-store-tuple.type';
     return (
       <>
         <div>{name.state}</div>
-        <button onClick={() => nameChange$.next('Johnsh')}>Set</button>
+        <button onClick={() => onNameChange('Johnsh')}>Set</button>
       </>
     );
   }
   ```
 
-  2\. A source can be an array of {@link Source} or [Observable](https://rxjs.dev/guide/observable)<{@link Action}<{@link State}>>. When any of the sources emit, it triggers the store's `set`
+  2\. A source can be an array of sources or [Observable](https://rxjs.dev/guide/observable)<{@link State}>. When any of the sources emit, it triggers the store's `set`
    method with the payload.
 
-  #### Example: Array of sources
+  #### Example: Array of sources or observables
 
   ```tsx
-  const nameChange$ = new Source<string>('nameChange$');
-  const nameChange2$ = new Source<string>('nameChange2$');
+  const onNameChange = source<string>();
+  const onNameChange2 = source<string>();
 
   export function MyComponent() {
     const [name] = useAdapt('John', {
-      sources: [nameChange$, nameChange2$],
+      sources: [onNameChange, onNameChange2],
       path: 'name',
     });
 
@@ -165,8 +167,8 @@ import { ProxyStoreTuple } from './proxy-store-tuple.type';
     return (
       <>
         <div>{name.state}</div>
-        <button onClick={() => nameChange$.next('Johnsh')}>Set</button>
-        <button onClick={() => nameChange2$.next('Johnsh2')}>Set2</button>
+        <button onClick={() => onNameChange('Johnsh')}>Set</button>
+        <button onClick={() => onNameChange2('Johnsh2')}>Set2</button>
       </>
     );
   }
@@ -175,17 +177,17 @@ import { ProxyStoreTuple } from './proxy-store-tuple.type';
   3\. A source can be an object with keys that match the names of the {@link Adapter} state change functions, with a corresponding source or array of
   sources that trigger the store's reaction with the payload.
 
-  #### Example: Object of sources
+  #### Example: Object of sources or observables
 
   ```tsx
-  const nameChange$ = new Source<string>('nameChange$');
-  const nameReset$ = new Source<void>('nameReset$');
+  const onNameChange = source<string>();
+  const onNameReset = source<void>();
 
   export function MyComponent() {
     const [name] = useAdapt('John', {
       sources: {
-        set: nameChange$,
-        reset: [nameReset$], // Can be array of sources too
+        set: onNameChange,
+        reset: [onNameReset], // Can be array of sources too
       },
       path: 'name',
     });
@@ -196,17 +198,17 @@ import { ProxyStoreTuple } from './proxy-store-tuple.type';
     return (
       <>
         <div>{name.state}</div>
-        <button onClick={() => nameChange$.next('Johnsh')}>Set</button>
-        <button onClick={() => nameReset$.next()}>Reset</button>
+        <button onClick={() => onNameChange('Johnsh')}>Set</button>
+        <button onClick={onNameReset}>Reset</button>
       </>
     );
   }
   ```
 
-  4\. A source can be a function that takes in a detached store (result of calling {@link StateAdapt.watch}) and returns any of the above
-  types of sources.
+  4\. A source can be a function that takes in a detached store (doesn't chain off of sources) and returns any of the above
+  types of sources or observables.
 
-  #### Example: Function that returns a source
+  #### Example: Function that returns an observable
 
   ```tsx
   export function MyComponent() {
@@ -214,7 +216,7 @@ import { ProxyStoreTuple } from './proxy-store-tuple.type';
       sources: store => store.state$.pipe(
         delay(1000),
         map(name => `${name}sh`),
-        toSource('recursive nameChange$'),
+        toSource('recursive onNameChange'),
       ),
     });
 
@@ -273,6 +275,10 @@ import { ProxyStoreTuple } from './proxy-store-tuple.type';
   }
   ```
 
+  ### No path
+
+  If no path is provided, then the store's path defaults to the result of calling {@link getId}.
+
   ### Remember!
 
   The store needs to have subscribers in order to start managing state,
@@ -285,9 +291,13 @@ export function useAdapt<
 >(
   initialState: State,
   second: (R & { selectors?: S } & NotAdaptOptions) | AdaptOptions<State, S, R> = {}, // Default object required to make R = {} rather than indexed object
-): ProxyStoreTuple<InitializedSmartStore<State, S, R>> {
+): ProxyStoreTuple<State, InitializedSmartStore<State, S, R>> {
   const stateAdapt = useContext(AdaptContext);
   const [store] = useState(() => stateAdapt.adapt(initialState, second));
-  const proxy = useStore(store) as any;
-  return [proxy, store];
+  function setState(newState: State) {
+    store.set(newState);
+  }
+  Object.assign(setState, store);
+  const proxy = useProxyStates(store) as any;
+  return [proxy, setState as any];
 }

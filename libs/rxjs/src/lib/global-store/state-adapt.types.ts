@@ -23,6 +23,8 @@ export type ConcreteSourceArg<
   R extends ReactionsWithSelectors<State, S>,
 > =
   | Sources<State, S, DefaultReactions<State> & R>
+  | Observable<State>
+  | Observable<State>[]
   | Observable<Action<State>>
   | Observable<Action<State>>[];
 

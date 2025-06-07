@@ -26,10 +26,12 @@ import { countAdapter } from './count.adapter';
 export class AppComponent {
   resetBoth$ = new Source<void>('[counts] resetBoth$');
 
-  store1 = adaptNgrx(['count1', 0, countAdapter], {
-    reset: this.resetBoth$,
+  store1 = adaptNgrx(0, {
+    adapter: countAdapter,
+    sources: { reset: this.resetBoth$ },
   });
-  store2 = adaptNgrx(['count2', 0, countAdapter], {
-    reset: this.resetBoth$,
+  store2 = adaptNgrx(0, {
+    adapter: countAdapter,
+    sources: { reset: this.resetBoth$ },
   });
 }

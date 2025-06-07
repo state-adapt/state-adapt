@@ -18,5 +18,7 @@ export type Sources<
 > = {
   [K in keyof R]?:
     | Observable<Action<ActionPayload<R, K>>>[]
-    | Observable<Action<ActionPayload<R, K>>>;
+    | Observable<Action<ActionPayload<R, K>>>
+    | Observable<ActionPayload<R, K>>[]
+    | Observable<ActionPayload<R, K>>;
 };

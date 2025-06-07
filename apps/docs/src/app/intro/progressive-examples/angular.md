@@ -1,6 +1,6 @@
 ## 1. Start with simple state
 
-StateAdapt stores can be as simple as RxJS `BehaviorSubject`s, but with Redux Devtools support!
+StateAdapt stores can be as simple as RxJS `BehaviorSubject`s:
 
 ```tsx
 export class NameComponent {
@@ -13,11 +13,9 @@ export class NameComponent {
 <button (click)="nameStore.set('Bilbo')">Change Name</button>
 ```
 
-Here it is in Redux Devtools:
-
-<video controls loop>
+<!-- <video controls loop>
   <source src="./assets/demo-1-simple-state.mov" type="video/mp4"/>
-</video>
+</video> -->
 
 ### Try it on [StackBlitz](https://stackblitz.com/edit/angular-ivy-jwt8jh?file=src%2Fapp%2F1-simple-state.component.ts)
 
@@ -39,9 +37,9 @@ export class NameComponent {
 <button (click)="nameStore.set('Bilbo')">Change Name</button>
 ```
 
-<video controls loop>
+<!-- <video controls loop>
   <source src="./assets/demo-2-derived-state.mov" type="video/mp4" />
-</video>
+</video> -->
 
 ### Try it on [StackBlitz](https://stackblitz.com/edit/angular-ivy-jwt8jh?file=src%2Fapp%2F2-derived-state.component.ts)
 
@@ -66,9 +64,9 @@ export class NameComponent {
 + <button (click)="nameStore.reverseName()">Reverse Name</button>
 ```
 
-<video controls loop>
+<!-- <video controls loop>
   <source src="./assets/demo-3-state-changes.mov" type="video/mp4" />
-</video>
+</video> -->
 
 ### Try it on [StackBlitz](https://stackblitz.com/edit/angular-ivy-jwt8jh?file=src%2Fapp%2F3-state-changes.component.ts)
 
@@ -85,7 +83,7 @@ export class NameComponent {
       yelledName: name => name.toUpperCase(), // Will be memoized
     },
   });
-+
+
 +  name1Store = adapt('Bob', this.nameAdapter);
 +  name2Store = adapt('Bob', this.nameAdapter);
 }
@@ -95,15 +93,15 @@ export class NameComponent {
  <h1>Hello {{ name1Store.yelledName$ | async }}!</h1>
  <button (click)="name1Store.set('Bilbo')">Change Name</button>
  <button (click)="name1Store.reverseName()">Reverse Name</button>
-+
+
 + <h1>Hello {{ name2Store.yelledName$ | async }}!</h1>
 + <button (click)="name2Store.set('Bilbo')">Change Name</button>
 + <button (click)="name2Store.reverseName()">Reverse Name</button>
 ```
 
-<video controls loop>
+<!-- <video controls loop>
   <source src="./assets/demo-4-state-adapters.mov" type="video/mp4" />
-</video>
+</video> -->
 
 ### Try it on [StackBlitz](https://stackblitz.com/edit/angular-ivy-jwt8jh?file=src%2Fapp%2F4-state-adapters.component.ts)
 
@@ -121,11 +119,8 @@ export class NameComponent {
     },
   });
 
-+  nameFromServer$ = timer(3000).pipe(
-+    mapTo('Joel'),
-+    toSource('[name] nameFromServer$'), // Annotate for Redux Devtools
-+  );
-+
++  nameFromServer$ = timer(3000).pipe(map(() => 'Joel'));
+
 -  name1Store = adapt('Bob', this.nameAdapter);
 +  name1Store = adapt('Bob', {
 +    adapter: this.nameAdapter,
@@ -151,9 +146,9 @@ export class NameComponent {
 <button (click)="name2Store.reverseName()">Reverse Name</button>
 ```
 
-<video controls loop>
+<!-- <video controls loop>
   <source src="./assets/demo-5-observable-sources.mov" type="video/mp4" />
-</video>
+</video> -->
 
 ### Try it on [StackBlitz](https://stackblitz.com/edit/angular-ivy-jwt8jh?file=src%2Fapp%2F5-observable-sources.component.ts)
 
@@ -171,12 +166,9 @@ export class NameComponent {
     },
   });
 
-+  resetBoth$ = new Source<void>('[name] resetBoth$'); // Annotate for Redux Devtools
-+
-  nameFromServer$ = timer(3000).pipe(
-    mapTo('Joel'),
-    toSource('[name] nameFromServer$'), // Annotate for Redux Devtools
-  );
++  resetBoth$ = source();
+
+  nameFromServer$ = timer(3000).pipe(map(() => 'Joel'));
 
   name1Store = adapt('Bob', {
     adapter: this.nameAdapter,
@@ -204,13 +196,13 @@ export class NameComponent {
  <h1>Hello {{ name2Store.yelledName$ | async }}!</h1>
  <button (click)="name2Store.set('Bilbo')">Change Name</button>
  <button (click)="name2Store.reverseName()">Reverse Name</button>
-+
+
 + <button (click)="resetBoth$.next()">Reset Both</button>
 ```
 
-<video controls loop>
+<!-- <video controls loop>
   <source src="./assets/demo-6-dom-sources.mov" type="video/mp4" />
-</video>
+</video> -->
 
 ### Try it on [StackBlitz](https://stackblitz.com/edit/angular-ivy-jwt8jh?file=src%2Fapp%2F6-dom-sources.component.ts)
 
@@ -226,12 +218,9 @@ export class NameComponent {
     },
   });
 
-  resetBoth$ = new Source<void>('[name] resetBoth$'); // Annotate for Redux Devtools
+  resetBoth$ = source();
 
-  nameFromServer$ = timer(3000).pipe(
-    mapTo('Joel'),
-    toSource('[name] nameFromServer$'), // Annotate for Redux Devtools
-  );
+  nameFromServer$ = timer(3000).pipe(map(() => 'Joel'));
 
   name1Store = adapt('Bob', {
     adapter: this.nameAdapter,
@@ -247,7 +236,7 @@ export class NameComponent {
       reset: this.resetBoth$, // `reset` is provided with all adapters
     },
   });
-+
+
 +  bothBobs$ = joinStores({
 +    name1: this.name1Store,
 +    name2: this.name2Store,
@@ -267,12 +256,12 @@ export class NameComponent {
  <button (click)="name2Store.reverseName()">Reverse Name</button>
 
  <button (click)="resetBoth$.next()">Reset Both</button>
-+
+
 + <h2 *ngIf="bothBobs$ | async">Hello Bobs!</h2>
 ```
 
-<video controls loop>
+<!-- <video controls loop>
   <source src="./assets/demo-7-multi-store-selectors.mov" type="video/mp4" />
-</video>
+</video> -->
 
 ### Try it on [StackBlitz](https://stackblitz.com/edit/angular-ivy-jwt8jh?file=src%2Fapp%2F7-multi-store-selectors.component.ts)

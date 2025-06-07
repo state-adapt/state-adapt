@@ -21,8 +21,8 @@ Don't skip anything. Give me the entire documentation from start to end.
 Here's an example before:
 
 ```typescript
-  const nameChange$ = new Source<string>('nameChange$');
-  const nameReset$ = new Source<void>('nameReset$');
+  const nameChange$ = source<string>();
+  const nameReset$ = source<void>();
 
   const name = adapt('John', {
     sources: {
@@ -42,8 +42,8 @@ after:
 
 ```typescript
   export class MyService {
-    nameChange$ = new Source<string>('nameChange$');
-    nameReset$ = new Source<void>('nameReset$');
+    nameChange$ = source<string>();
+    nameReset$ = source<void>();
 
     name = adapt('John', {
       sources: {
@@ -75,7 +75,7 @@ Don't skip anything. Give me the entire documentation from start to end.
 
   > Copilot tip: Copy examples into your file or click to definition to open file with context for better Copilot suggestions.
 
-  `adapt` wraps {@link adapt}, calling `inject(StateAdapt)` to get the instance of {@link StateAdapt} to use.
+  `adapt` wraps {@link StateAdapt.adapt}, calling `inject(StateAdapt)` to get the instance of {@link StateAdapt} to use.
 
   `adapt` creates a store that will manage state while it has subscribers.
 
@@ -91,6 +91,7 @@ Don't skip anything. Give me the entire documentation from start to end.
 
     constructor() {
       this.name.state$.subscribe(console.log); // logs 'John'
+
       this.name.set('Johnsh'); // logs 'Johnsh'
       this.name.reset(); // logs 'John'
     }
@@ -117,6 +118,7 @@ Don't skip anything. Give me the entire documentation from start to end.
     constructor() {
       this.name.state$.subscribe(console.log); // Logs 'John'
       this.name.length$.subscribe(console.log); // Logs 4
+
       this.name.concat('sh'); // logs 'Johnsh' and 6
       this.name.reset(); // logs 'John' and 4
     }
@@ -129,11 +131,11 @@ Don't skip anything. Give me the entire documentation from start to end.
   You can also define an adapter, sources, and/or a state path as part of an {@link AdaptOptions} object.
 
   Sources allow the store to declaratively react to external events rather than being commanded
-  by imperative callback functions.
+  by imperative code in callback functions.
 
   ```typescript
   export class MyService {
-    tick$ = interval(1000).pipe(toSource('tick$'));
+    tick$ = interval(1000);
 
     clock = adapt(0, {
       adapter: {
@@ -149,21 +151,21 @@ Don't skip anything. Give me the entire documentation from start to end.
   }
   ```
 
-  When a store is subscribed to, it passes the subscriptions up the its sources.
+  When a store is subscribed to, it passes the subscriptions up to its sources.
   For example, if a store has an HTTP source, it will be triggered when the store
   receives its first subscriber, and it will be canceled when the store loses its
   last subscriber.
 
   There are 4 possible ways sources can be defined:
 
-  1\. A source can be a single {@link Source} or [Observable](https://rxjs.dev/guide/observable)<{@link Action}<{@link State}>>. When the source emits, it triggers the store's `set` method
+  1\. A source can be a single source or [Observable](https://rxjs.dev/guide/observable)<{@link State}>. When the source emits, it triggers the store's `set` method
   with the payload.
 
-  #### Example: Single source
+  #### Example: Single source or observable
 
   ```typescript
   export class MyService {
-    nameChange$ = new Source<string>('nameChange$');
+    nameChange$ = source<string>();
 
     name = adapt('John', {
       sources: this.nameChange$,
@@ -172,20 +174,21 @@ Don't skip anything. Give me the entire documentation from start to end.
 
     constructor() {
       this.name.state$.subscribe(console.log); // Logs 'John'
+
       this.nameChange$.next('Johnsh'); // logs 'Johnsh'
     }
   }
   ```
 
-  2\. A source can be an array of {@link Source} or [Observable](https://rxjs.dev/guide/observable)<{@link Action}<{@link State}>>. When any of the sources emit, it triggers the store's `set`
-    method with the payload.
+  2\. A source can be an array of sources or [Observable](https://rxjs.dev/guide/observable)<{@link State}>. When any of the sources emit, it triggers the store's `set`
+   method with the payload.
 
-  #### Example: Array of sources
+  #### Example: Array of sources or observables
 
   ```typescript
   export class MyService {
-    nameChange$ = new Source<string>('nameChange$');
-    nameChange2$ = new Source<string>('nameChange2$');
+    nameChange$ = source<string>();
+    nameChange2$ = source<string>();
 
     name = adapt('John', {
       sources: [this.nameChange$, this.nameChange2$],
@@ -194,6 +197,7 @@ Don't skip anything. Give me the entire documentation from start to end.
 
     constructor() {
       this.name.state$.subscribe(console.log); // Logs 'John'
+
       this.nameChange$.next('Johnsh'); // logs 'Johnsh'
       this.nameChange2$.next('Johnsh2'); // logs 'Johnsh2'
     }
@@ -203,12 +207,12 @@ Don't skip anything. Give me the entire documentation from start to end.
   3\. A source can be an object with keys that match the names of the {@link Adapter} state change functions, with a corresponding source or array of
   sources that trigger the store's reaction with the payload.
 
-  #### Example: Object of sources
+  #### Example: Object of sources or observables
 
   ```typescript
   export class MyService {
-    nameChange$ = new Source<string>('nameChange$');
-    nameReset$ = new Source<void>('nameReset$');
+    nameChange$ = source<string>();
+    nameReset$ = source<void>();
 
     name = adapt('John', {
       sources: {
@@ -220,16 +224,17 @@ Don't skip anything. Give me the entire documentation from start to end.
 
     constructor() {
       this.name.state$.subscribe(console.log); // Logs 'John'
+
       this.nameChange$.next('Johnsh'); // logs 'Johnsh'
       this.nameReset$.next(); // logs 'John'
     }
   }
   ```
 
-  4\. A source can be a function that takes in a detached store (result of calling {@link watch}) and returns any of the above
-  types of sources.
+  4\. A source can be a function that takes in a detached store (doesn't chain off of sources) and returns any of the above
+  types of sources or observables.
 
-  #### Example: Function that returns a source
+  #### Example: Function that returns an observable
 
   ```typescript
   export class MyService {
@@ -237,14 +242,13 @@ Don't skip anything. Give me the entire documentation from start to end.
       sources: store => store.state$.pipe(
         delay(1000),
         map(name => `${name}sh`),
-        toSource('recursive nameChange$'),
       ),
       path: 'name',
     });
 
     constructor() {
-      this.name.state$.subscribe(console.log); // Logs 'John'
-      // logs 'Johnsh' after 1 second, then 'Johnshsh' after 2 seconds, etc.
+      this.name.state$.subscribe(console.log);
+      // Logs 'John', then 'Johnsh' after 1 second, 'Johnshsh' after 2 seconds, etc.
     }
   }
   ```
@@ -295,7 +299,7 @@ Don't skip anything. Give me the entire documentation from start to end.
 
   `Path '${path}' collides with '${existingPath}', which has already been initialized as a state path.`
 
-  This applies both to paths that are identical as well as paths that are subtrings of each other. For example, if `'featureA'`
+  This applies both to paths that are identical as well as paths that are substrings of each other. For example, if `'featureA'`
   is already being used by a store and then another store tried to initialize at `'featureA.number'`, that error would be thrown.
 
   To help avoid this error, StateAdapt provides a {@link getId} function that can be used to generate unique paths:
@@ -305,7 +309,7 @@ Don't skip anything. Give me the entire documentation from start to end.
   ```typescript
   import { getId } from '@state-adapt/core';
 
-  export class MyService {
+  export class MyComponent {
     store1 = adapt(0, { path: 'number' + getId() });
     store2 = adapt(0, { path: 'number' + getId() });
 
@@ -316,6 +320,10 @@ Don't skip anything. Give me the entire documentation from start to end.
     }
   }
   ```
+
+  ### No path
+
+  If no path is provided, then the store's path defaults to the result of calling {@link getId}.
 
   ### Remember!
 

@@ -6,16 +6,67 @@ import { Observable } from 'rxjs';
 /**
   ## ![StateAdapt](https://miro.medium.com/max/4800/1*qgM6mFM2Qj6woo5YxDMSrA.webp|width=14) `splitRequestSources`
 
-  `splitRequestSources` is a function that takes in the type of [Observable](https://rxjs.dev/guide/observable)
-   returned by {@link toRequestSource}, and
-  a prefix {@link TypePrefix} to look for in the {@link Action} type, and returns an
-  object with two [Observables](https://rxjs-dev.firebaseapp.com/guide/observable) of {@link Action} objects:  `success$`, and `error$`.
+  `splitRequestSources` is a function that takes in a {@link TypePrefix} and an [Observable](https://rxjs.dev/guide/observable) with values of type
+
+  ```ts
+  | { type: `${TypePrefix}.success$`; payload: Payload }
+  | { type: `${TypePrefix}.error$`; payload: any }
+  ```
+
+  and returns an object with `success$` and `error$` propeties.
+
+  The `success$` property is an observable of values of type
+
+  ```ts
+  { type: `${TypePrefix}.success$`; payload: Payload }
+  ```
+
+  The `error$` property is an observable of values of type
+
+  ```ts
+  { type: `${TypePrefix}.error$`; payload: any }
+  ```
+
+  #### Example: Convert an HTTP POST observable into success$ and error$ sources
+
+  ```typescript
+  import { exhaustMap } from 'rxjs';
+  import { ajax } from 'rxjs/ajax';
+  import { splitRequestSources,  toRequestSource } from '@state-adapt/rxjs';
+
+  const deleteTodo$ = source<number>();
+
+  const deleteTodoRequest$ = deleteTodo$.pipe(
+    exhaustMap((id) =>
+      ajax({
+        url: `https://jsonplaceholder.typicode.com/todos/${id}`,
+        method: 'DELETE',
+      }).pipe(toRequestSource('todo.delete'))
+    )
+  );
+  const deleteTodoRequest = splitRequestSources('todo.delete', deleteTodoRequest$);
+
+  todoRequest.success$.subscribe(console.log);
+  todoRequest.error$.subscribe(console.log);
+
+  deleteTodo$.next(1);
+  // { type: 'todo.delete.success$', payload: AjaxResponse{…} }
+
+  deleteTodo$.next(Infinity);
+  // { type: 'todo.delete.error$', payload: 'AjaxErrorImpl{…} }
+
+  deleteTodo$.next(2);
+  // { type: 'todo.delete.success$', payload: AjaxResponse{…} }
+  ```
+
+  The main stream is not killed because `toRequestSource` operates on the request observable
+  instead of the outer observable.
 
   #### Example: Splitting an observable of request actions into success$ and error$ sources
 
   ```typescript
   import { interval } from 'rxjs';
-  import { splitRequestSources } from '@state-adapt/rxjs';
+  import { splitRequestSources, toRequestSource } from '@state-adapt/rxjs';
 
   const interval$ = interval(1000).pipe(
     map(n => n < 2 ? n : n.fakeNumberMethod()),
@@ -27,10 +78,15 @@ import { Observable } from 'rxjs';
   success$.subscribe(console.log);
   // { type: 'interval.success$', payload: 0 }
   // { type: 'interval.success$', payload: 1 }
+  // End
 
   error$.subscribe(console.log);
   // { type: 'interval.error$', payload: 'Error: n.fakeNumberMethod is not a function' }
   ```
+
+  The main stream is killed because `toRequestSource` operates directly on it
+  instead of on an inner observable.
+
   */
 export function splitRequestSources<
   TypePrefix extends string,

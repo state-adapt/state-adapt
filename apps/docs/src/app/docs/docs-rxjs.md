@@ -14,19 +14,15 @@
 
 ## Sources
 
-[`Source`](/docs/rxjs#source)
+[`source`](/docs/rxjs#source)
 
-[`toSource`](/docs/rxjs#tosource)
+[`type`](/docs/rxjs#type)
 
-[`catchErrorSource`](/docs/rxjs#catcherrorsource)
+[`getRequestSources`](/docs/rxjs#getrequestsources)
 
 [`toRequestSource`](/docs/rxjs#torequestsource)
 
-[`splitSources`](/docs/rxjs#splitsources)
-
 [`splitRequestSources`](/docs/rxjs#splitrequestsources)
-
-[`getRequestSources`](/docs/rxjs#getrequestsources)
 
 ## Stores
 
@@ -36,10 +32,21 @@
 
 [`joinStores`](/docs/rxjs#joinstores)
 
+## Sources (Advanced)
+
+[`splitSources`](/docs/rxjs#splitsources)
+
+[`catchErrorSource`](/docs/rxjs#catcherrorsource)
+
+[`toSource`](/docs/rxjs#tosource)
+
 ## Migration Guide
+
+[2.1.0](/docs/rxjs#210)
 
 [2.0.0](/docs/rxjs#200)
 
+<!--  -->
 <!-- ## Global Store -->
 
 <!-- include: '../../../../../libs/rxjs/src/lib/global-store/configure-state-adapt.options.ts#ConfigureStateAdaptOptions' -->
@@ -48,19 +55,15 @@
 
 <!-- ## Sources -->
 
-<!-- include: '../../../../../libs/rxjs/src/lib/sources/source.ts#Source' -->
+<!-- include: '../../../../../libs/rxjs/src/lib/sources/source.function.ts#source' -->
 
-<!-- include: '../../../../../libs/rxjs/src/lib/sources/to-source.operator.ts#toSource' -->
+<!-- include: '../../../../../libs/rxjs/src/lib/sources/type.operator.ts#type' -->
 
-<!-- include: '../../../../../libs/rxjs/src/lib/sources/catch-error-source.operator.ts#catchErrorSource' -->
+<!-- include: '../../../../../libs/rxjs/src/lib/sources/get-request-sources.function.ts#getRequestSources' -->
 
 <!-- include: '../../../../../libs/rxjs/src/lib/sources/to-request-source.operator.ts#toRequestSource' -->
 
-<!-- include: '../../../../../libs/rxjs/src/lib/sources/split-sources.function.ts#splitSources' -->
-
 <!-- include: '../../../../../libs/rxjs/src/lib/sources/split-request-sources.function.ts#splitRequestSources' -->
-
-<!-- include: '../../../../../libs/rxjs/src/lib/sources/get-request-sources.function.ts#getRequestSources' -->
 
 <!-- ## Stores 1.2.0  -->
 
@@ -68,9 +71,56 @@
 
 <!-- include: '../../../../../libs/rxjs/src/lib/global-store/state-adapt.ts#StateAdapt.watch' -->
 
-<!-- include: '../../../../../libs/rxjs/src/lib/stores/join-stores.function.ts#joinStores' -->````
+<!-- include: '../../../../../libs/rxjs/src/lib/stores/join-stores.function.ts#joinStores' -->
 
-<!-- cache 20 -->
+<!-- ## Sources (Advanced) -->
+
+<!-- include: '../../../../../libs/rxjs/src/lib/sources/split-sources.function.ts#splitSources' -->
+
+<!-- include: '../../../../../libs/rxjs/src/lib/sources/catch-error-source.operator.ts#catchErrorSource' -->
+
+<!-- include: '../../../../../libs/rxjs/src/lib/sources/to-source.operator.ts#toSource' -->
+
+<!-- cache 21 -->
+
+### 2.1.0
+
+#### `Source` and `toSource`
+
+`Source` and `toSource` have been deprecated and will be removed in 3.0.0 in favor of
+[`source`](/docs/rxjs#source) and [`type`](/docs/rxjs#type).
+
+A simple find/replace should work:
+
+```diff-typescript
+-new Source
++source
+```
+
+```diff-typescript
+-toSource(
++type(
+```
+
+But these change the structure of the values emitted, and there is no code mod that can handle every breaking change.
+You will have to rely on TypeScript to highlight issues to fix manually. However, the fixes should be fairly simple:
+
+```diff-typescript
+-  const deleteTodo$ = new Source<number>('deleteTodo$');
++  const deleteTodo$ = source<number>('deleteTodo$');
+
+  const deleteTodoRequest$ = deleteTodo$.pipe(
+-    exhaustMap(({ payload }) =>
++    exhaustMap((payload) =>
+      ajax({
+        url: `https://jsonplaceholder.typicode.com/todos/${payload}`,
+        method: 'DELETE',
+      }).pipe(toRequestSource('todo.delete'))
+// ...
+```
+
+Stores can accept observables of plain values, or, for backwards compatability, if they are wrapped in
+`{ type: string; payload: Payload }` objects, stores will access the `payload` property, as before.
 
 ### 2.0.0
 

@@ -7,7 +7,9 @@ import { globalSelectorsCache, serializeSelectorsCache } from '@state-adapt/core
 
 const stateAdapt = configureStateAdapt({ devtools: null });
 const { adapt } = stateAdapt;
-const store1 = adapt('initial1');
+const store1 = adapt('initial1', {
+  reverseWith: (state: string, delim: string) => state.split('').reverse().join(delim),
+});
 const store2 = adapt('initial2');
 const store3 = adapt('initial3');
 
@@ -25,14 +27,14 @@ const wrapper = ({ children }: any) => (
   <AdaptContext.Provider value={stateAdapt}>{children}</AdaptContext.Provider>
 );
 
-describe('useStore', () => {
+describe('useStore proxy states', () => {
   it('should return correct combined selector initial and after subscription results from joined12Store', () => {
     const joined12Results: string[] = [];
     const { result } = renderHook(
       () => {
-        const joined12 = useStore(joined12Store);
+        const [joined12] = useStore(joined12Store);
         joined12Results.push(joined12.name1name2);
-        return joined12;
+        return [joined12];
       },
       { wrapper },
     );
@@ -43,7 +45,7 @@ describe('useStore', () => {
     const joined123Results: string[] = [];
     const { result } = renderHook(
       () => {
-        const joined123 = useStore(joined123Store);
+        const [joined123] = useStore(joined123Store);
         joined123Results.push(joined123.name12name3);
         return joined123;
       },
@@ -59,7 +61,7 @@ describe('useStore', () => {
     const joined123Results: string[] = [];
     const { result } = renderHook(
       () => {
-        const joined123 = useStore(joined123Store);
+        const [joined123] = useStore(joined123Store);
         joined123Results.push(joined123.name12name3);
         return joined123;
       },
@@ -80,7 +82,7 @@ describe('useStore', () => {
     const joined123FullSelectorResults: string[] = [];
     const { result } = renderHook(
       () => {
-        const joined123 = useStore(joined123Store);
+        const [joined123] = useStore(joined123Store);
         joined123Results.push(joined123.name12name3);
         joined123Store.name12name3$
           .pipe(take(1))
@@ -108,7 +110,7 @@ describe('useStore', () => {
     const checkTypes = () => {
       const { result } = renderHook(
         () => {
-          const joined123 = useStore(joined123Store, ['name3']);
+          const [joined123] = useStore(joined123Store, ['name3']);
           // @ts-expect-error Should only be able to use selectors in filterSelectors
           return joined123.name12Name1name2;
         },
@@ -122,7 +124,7 @@ describe('useStore', () => {
     const name3Results: string[] = [];
     const { result } = renderHook(
       () => {
-        const { name3 } = useStore(joined123Store, ['name3']);
+        const [{ name3 }] = useStore(joined123Store, ['name3']);
         name3Results.push(name3);
         return name3;
       },
@@ -147,7 +149,7 @@ describe('useStore', () => {
     const results: string[] = [];
     const { result } = renderHook(
       () => {
-        const { name3 } = useStore(joined123Store, ['name3']);
+        const [{ name3 }] = useStore(joined123Store, ['name3']);
         results.push(name3);
         return name3;
       },
@@ -160,7 +162,7 @@ describe('useStore', () => {
 
     const { result: result2 } = renderHook(
       () => {
-        const { name3 } = useStore(joined123Store, ['name3']);
+        const [{ name3 }] = useStore(joined123Store, ['name3']);
         results.push(name3);
         return name3;
       },
@@ -175,7 +177,7 @@ describe('useStore', () => {
     const joined123Results: string[] = [];
     const { result } = renderHook(
       () => {
-        const joined123 = useStore(joined123Store);
+        const [joined123] = useStore(joined123Store);
         joined123Results.push(joined123.reverseName12name3);
         return joined123;
       },
@@ -186,5 +188,37 @@ describe('useStore', () => {
       '3laitini2laitini1laitini',
       '3laitini2laitini1laitini',
     ]);
+  });
+});
+
+describe('useStore setState/store', () => {
+  it('should set state', () => {
+    const store1Results: string[] = [];
+    let setState1: any;
+    let reverse1: any;
+    const { result } = renderHook(
+      () => {
+        const [state1, setState] = useStore(store1);
+        store1Results.push(state1.state);
+        setState1 = setState;
+        reverse1 = setState.reverseWith;
+        const typeTest = () => {
+          // @ts-expect-error Should only accept string
+          setState(2);
+          setState.reset();
+        };
+      },
+      { wrapper },
+    );
+    expect(store1Results).toEqual(['initial1', 'initial1']);
+    act(() => {
+      console.log('setState1', setState1);
+      setState1('asdf');
+    });
+    expect(store1Results).toEqual(['initial1', 'initial1', 'asdf']);
+    act(() => {
+      reverse1('-');
+    });
+    expect(store1Results).toEqual(['initial1', 'initial1', 'asdf', 'f-d-s-a']);
   });
 });

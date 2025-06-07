@@ -1,8 +1,8 @@
-import { Component, inject } from '@angular/core';
-import { Source, toSource } from '@state-adapt/rxjs';
+import { Component } from '@angular/core';
+import { adapt } from '@state-adapt/angular';
+import { source, toSource } from '@state-adapt/rxjs';
 import { interval } from 'rxjs';
 import { countAdapter } from './count.adapter';
-import { adapt } from '@state-adapt/angular';
 
 @Component({
   selector: 'sa-root',
@@ -68,7 +68,7 @@ import { adapt } from '@state-adapt/angular';
 })
 export class AppComponent {
   interval$ = interval(3000).pipe(toSource('[counts] interval$'));
-  resetBoth$ = new Source<void>('[counts] resetBoth$');
+  resetBoth$ = source('[counts] resetBoth$');
 
   store1 = adapt(0, {});
   store2 = adapt(0, { sources: this.interval$ });

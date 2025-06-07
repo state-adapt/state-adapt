@@ -1,3 +1,5 @@
+import { isAction } from '../actions/is-action.function';
+
 export interface CommonAction {
   type: string;
 }
@@ -12,31 +14,31 @@ export interface PatchState {
   payload: Update[];
 }
 
-export function isPatchState(
-  action: CommonAction | PatchState,
-): action is PatchState {
+export function isPatchState(action: CommonAction | PatchState): action is PatchState {
   return action.type === adaptType;
 }
 
 export function createPatchState(
-  source: CommonAction & { payload?: any },
+  value: any, // Either a payload, or an Action<Payload>
   payload: Update[],
+  type = value.type,
 ): PatchState {
   return {
     type: adaptType,
-    source,
+    source: isAction(value)
+      ? value
+      : {
+          type,
+          payload: value,
+        },
     payload,
   };
 }
 
 export function createInit(path: string, initialState: any) {
-  return createPatchState({ type: `INIT ${path}` }, [
-    [path.split('.'), initialState],
-  ]);
+  return createPatchState({ type: `INIT ${path}` }, [[path.split('.'), initialState]]);
 }
 
 export function createDestroy(path: string) {
-  return createPatchState({ type: `DESTROY ${path}` }, [
-    [path.split('.'), undefined],
-  ]);
+  return createPatchState({ type: `DESTROY ${path}` }, [[path.split('.'), undefined]]);
 }
