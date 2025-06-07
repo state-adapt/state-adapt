@@ -42,7 +42,7 @@
 
 ## Migration Guide
 
-[2.1.0](/docs/rxjs#210)
+[3.0.0](/docs/rxjs#210)
 
 [2.0.0](/docs/rxjs#200)
 
@@ -83,11 +83,11 @@
 
 <!-- cache 21 -->
 
-### 2.1.0
+### 3.0.0
 
 #### `Source` and `toSource`
 
-`Source` and `toSource` have been deprecated and will be removed in 3.0.0 in favor of
+`Source` and `toSource` have been deprecated and will be removed in 4.0.0 in favor of
 [`source`](/docs/rxjs#source) and [`type`](/docs/rxjs#type).
 
 A simple find/replace should work:
