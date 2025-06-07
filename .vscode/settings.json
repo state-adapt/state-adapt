@@ -1,4 +1,6 @@
 {
   "angular.enable-strict-mode-prompt": false,
-  "editor.detectIndentation": true
+  "editor.detectIndentation": true,
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "nxConsole.generateAiAgentRules": true
 }
