@@ -8,16 +8,18 @@ if (!version) {
 }
 
 const versionDashed = version.replace(/\./g, '-');
-const srcPath = path.resolve(__dirname, '../state-adapt.github.io');
-const destPath = path.resolve(__dirname, `./versions/${versionDashed}`);
+const srcPath = path.resolve(__dirname, '../../state-adapt.github.io');
+const destPath = path.resolve(srcPath, `./versions/${versionDashed}`);
 
 // Ensure the destination directory exists
 fs.ensureDirSync(destPath);
 
 // Move files from source to destination
-fs.readdirSync(srcPath).forEach(file => {
-  fs.moveSync(path.join(srcPath, file), path.join(destPath, file), { overwrite: true });
-});
+fs.readdirSync(srcPath)
+  .filter(file => !file.startsWith('.') && !['versions'].includes(file))
+  .forEach(file => {
+    fs.moveSync(path.join(srcPath, file), path.join(destPath, file), { overwrite: true });
+  });
 
 console.log(`Moved files to ${destPath}`);
 
