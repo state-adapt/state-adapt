@@ -21,7 +21,7 @@ export function isPatchState(action: CommonAction | PatchState): action is Patch
 export function createPatchState(
   value: any, // Either a payload, or an Action<Payload>
   payload: Update[],
-  type = value.type,
+  type = value?.type,
 ): PatchState {
   return {
     type: adaptType,
