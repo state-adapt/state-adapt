@@ -81,19 +81,19 @@ const features = [
     href: 'https://dev.to/this-is-angular/progressive-reactivity-in-angular-1d40',
     svg: declarativeSvg,
     title: 'Declarative',
-    description: `StateAdapt's APIs lets you describe your state and side-effects almost completely declaratively, with as little boilerplate as possible.`,
+    description: `StateAdapt lets you describe your state and side-effects almost completely declaratively, with as little boilerplate as possible.`,
+  },
+  {
+    href: 'https://dev.to/this-is-learning/exciting-possibilities-with-state-adapters-3cia',
+    svg: reusableLogicSvg,
+    title: 'Decoupled and Composable',
+    description: `State adapters are decoupled and composable, so state logic is reusable, focused and resilient across change.`,
   },
   {
     href: '',
     svg: lifecycleSvg,
     title: 'Automatic',
     description: `If a store runs out of subscribers, it clears its state. When it gets new subscribers, it re-initializes. No need for external management.`,
-  },
-  {
-    href: 'https://dev.to/this-is-learning/exciting-possibilities-with-state-adapters-3cia',
-    svg: reusableLogicSvg,
-    title: 'Reusable',
-    description: `Never write boolean toggle logic again. StateAdapt's utilities allow you to reuse state logic across your application.`,
   },
   {
     href: 'https://dev.to/this-is-learning/how-i-got-selectors-in-redux-devtools-443j',
