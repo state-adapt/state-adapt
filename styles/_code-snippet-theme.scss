@@ -87,7 +87,8 @@ pre {
 .token.tag,
 .token.constant,
 .token.symbol {
-  color: var(--accent-01-alpha);
+  color: var(--brand-01);
+  font-weight: var(--code-dark-weight);
 }
 
 .token.deleted {
@@ -115,8 +116,9 @@ pre {
 .token.string,
 .token.char,
 .token.builtin {
-  color: var(--brand-01);
-  font-weight: bold;
+  color: var(--accent-01-alpha);
+  // font-weight: bold;
+  font-weight: initial;
 }
 
 .token.inserted {
@@ -140,15 +142,14 @@ span.token.prefix.deleted {
 .token.atrule,
 .token.attr-value,
 .token.class-name {
-  color: var(--accent-01-alpha);
-  // font-weight: var(--code-bright-weight);
-  // font-weight: bold;
+  color: var(--brand-01);
+  font-weight: var(--code-dark-weight);
 }
 
 .token.function {
   color: orange;
-  color: var(--accent-01-alpha);
-  // font-weight: var(--code-bright-weight);
+  color: var(--brand-01);
+  font-weight: var(--code-dark-weight);
 }
 
 .token.generic {

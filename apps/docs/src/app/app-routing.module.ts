@@ -88,6 +88,13 @@ const routes: Routes = [
       ),
   },
   {
+    path: 'get-started',
+    loadComponent: () =>
+      import('./get-started/get-started.component').then(
+        m => m.GetStartedComponent,
+      ),
+  },
+  {
     path: 'docs',
     children: [
       {

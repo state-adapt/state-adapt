@@ -136,7 +136,7 @@ export class IntroComponent implements AfterViewInit {
   timeout1 = setTimeout(() => {
     this.frameworksMono = false;
     this.featuresMono = false;
-  }, 1_500);
+  }, 5_000);
   // m2 = import('./set-up-scroll-colors.function').then(m =>
   //   m.setUpScrollColors(this),
   // );

@@ -23,25 +23,8 @@
       </p>
     </div>
     <div style="display: flex; justify-content: center; margin-top: 40px">
-      <a
-        *ngIf="frameworkGetStartedLink$ | async; let frameworkGetStartedLink"
-        [routerLink]="[frameworkGetStartedLink]"
-      >
-        <button
-          ibmButton="primary"
-          style="
-            font-size: 20px;
-            font-weight: bold;
-            padding-right: 15px;
-            background: linear-gradient(
-              -30deg,
-              var(--active-primary),
-              var(--inverse-focus-ui)
-            );
-          "
-        >
-          Get Started
-        </button>
+      <a routerLink="/get-started">
+        <button ibmButton="primary" id="getStarted">Get Started</button>
       </a>
       <a
         *ngIf="framework$ | async as framework"
