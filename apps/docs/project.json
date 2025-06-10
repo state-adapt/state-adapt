@@ -1,0 +1,105 @@
+{
+  "name": "docs",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/docs/src",
+  "prefix": "sa",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/angular:webpack-browser",
+      "options": {
+        "outputPath": "dist/apps/docs",
+        "index": "apps/docs/src/index.html",
+        "main": "apps/docs/src/main.ts",
+        "polyfills": "apps/docs/src/polyfills.ts",
+        "tsConfig": "apps/docs/tsconfig.app.json",
+        "aot": true,
+        "assets": ["apps/docs/src/favicon.ico", "apps/docs/src/assets"],
+        "customWebpackConfig": {
+          "path": "apps/docs/webpack.config.js"
+        },
+        "styles": [
+          "apps/docs/src/styles.scss",
+          "node_modules/prismjs/plugins/diff-highlight/prism-diff-highlight.css"
+        ],
+        "scripts": [
+          "node_modules/prismjs/prism.js",
+          "node_modules/prismjs/components/prism-typescript.min.js",
+          "node_modules/prismjs/components/prism-diff.min.js",
+          "node_modules/prismjs/plugins/diff-highlight/prism-diff-highlight.min.js",
+          "node_modules/prismjs/components/prism-jsx.min.js",
+          "node_modules/prismjs/components/prism-tsx.min.js",
+          "node_modules/prismjs/components/prism-json.min.js",
+          "node_modules/prism-svelte/index.js"
+        ]
+      },
+      "configurations": {
+        "production": {
+          "fileReplacements": [
+            {
+              "replace": "apps/docs/src/environments/environment.ts",
+              "with": "apps/docs/src/environments/environment.prod.ts"
+            }
+          ],
+          "optimization": true,
+          "outputHashing": "all",
+          "sourceMap": false,
+          "namedChunks": false,
+          "extractLicenses": true,
+          "vendorChunk": false,
+          "buildOptimizer": true,
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "2mb",
+              "maximumError": "5mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "190kb",
+              "maximumError": "200kb"
+            }
+          ]
+        },
+        "development": {}
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/angular:webpack-dev-server",
+      "options": {
+        "browserTarget": "docs:build"
+      },
+      "configurations": {
+        "production": {
+          "browserTarget": "docs:build:production"
+        },
+        "development": {
+          "browserTarget": "docs:build:development"
+        }
+      },
+      "defaultConfiguration": "development"
+    },
+    "extract-i18n": {
+      "executor": "@angular-devkit/build-angular:extract-i18n",
+      "options": {
+        "browserTarget": "docs:build"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["apps/docs/src/**/*.ts", "apps/docs/src/**/*.html"]
+      },
+      "outputs": ["{options.outputFile}"]
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/apps/docs"],
+      "options": {
+        "jestConfig": "apps/docs/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}

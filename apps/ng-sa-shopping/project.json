@@ -1,0 +1,100 @@
+{
+  "name": "ng-sa-shopping",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/ng-sa-shopping/src",
+  "prefix": "sa",
+  "targets": {
+    "build": {
+      "executor": "@angular-devkit/build-angular:browser",
+      "options": {
+        "outputPath": "dist/apps/ng-sa-shopping",
+        "index": "apps/ng-sa-shopping/src/index.html",
+        "main": "apps/ng-sa-shopping/src/main.ts",
+        "polyfills": "apps/ng-sa-shopping/src/polyfills.ts",
+        "tsConfig": "apps/ng-sa-shopping/tsconfig.app.json",
+        "aot": true,
+        "assets": [
+          "apps/ng-sa-shopping/src/favicon.ico",
+          {
+            "glob": "*",
+            "input": "libs/shopping/src/lib/assets",
+            "output": "./assets"
+          }
+        ],
+        "styles": ["apps/ng-sa-shopping/src/styles.scss"],
+        "scripts": []
+      },
+      "configurations": {
+        "production": {
+          "fileReplacements": [
+            {
+              "replace": "apps/ng-sa-shopping/src/environments/environment.ts",
+              "with": "apps/ng-sa-shopping/src/environments/environment.prod.ts"
+            }
+          ],
+          "optimization": true,
+          "outputHashing": "all",
+          "sourceMap": false,
+          "namedChunks": false,
+          "extractLicenses": true,
+          "vendorChunk": false,
+          "buildOptimizer": true,
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "2mb",
+              "maximumError": "5mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "6kb",
+              "maximumError": "10kb"
+            }
+          ]
+        },
+        "development": {}
+      }
+    },
+    "serve": {
+      "executor": "@angular-devkit/build-angular:dev-server",
+      "options": {
+        "browserTarget": "ng-sa-shopping:build"
+      },
+      "configurations": {
+        "production": {
+          "browserTarget": "ng-sa-shopping:build:production"
+        },
+        "development": {
+          "browserTarget": "docs:build:development"
+        }
+      },
+      "defaultConfiguration": "development"
+    },
+    "extract-i18n": {
+      "executor": "@angular-devkit/build-angular:extract-i18n",
+      "options": {
+        "browserTarget": "ng-sa-shopping:build"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "apps/ng-sa-shopping/src/**/*.ts",
+          "apps/ng-sa-shopping/src/**/*.html"
+        ]
+      },
+      "outputs": ["{options.outputFile}"]
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/apps/ng-sa-shopping"],
+      "options": {
+        "jestConfig": "apps/ng-sa-shopping/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}

@@ -1,0 +1,31 @@
+{
+  "name": "ng-sa-component-store-e2e",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/ng-sa-component-store-e2e/src",
+  "projectType": "application",
+  "targets": {
+    "e2e": {
+      "executor": "@nrwl/cypress:cypress",
+      "options": {
+        "cypressConfig": "apps/ng-sa-component-store-e2e/cypress.json",
+        "tsConfig": "apps/ng-sa-component-store-e2e/tsconfig.e2e.json",
+        "devServerTarget": "ng-sa-component-store:serve"
+      },
+      "configurations": {
+        "production": {
+          "devServerTarget": "ng-sa-component-store:serve:production"
+        },
+        "development": {}
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["apps/ng-sa-component-store-e2e/**/*.{js,ts}"]
+      },
+      "outputs": ["{options.outputFile}"]
+    }
+  },
+  "tags": [],
+  "implicitDependencies": ["ng-sa-component-store"]
+}

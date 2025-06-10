@@ -1,0 +1,44 @@
+{
+  "name": "angular-router",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "library",
+  "sourceRoot": "libs/angular-router/src",
+  "prefix": "sa",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/angular:package",
+      "outputs": ["dist/libs/angular-router"],
+      "options": {
+        "project": "libs/angular-router/ng-package.json",
+        "updateBuildableProjectDepsInPackageJson": false
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "libs/angular-router/tsconfig.lib.prod.json"
+        },
+        "development": {
+          "tsConfig": "libs/angular-router/tsconfig.lib.json"
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/angular-router"],
+      "options": {
+        "jestConfig": "libs/angular-router/jest.config.ts",
+        "passWithNoTests": true
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/angular-router/**/*.ts",
+          "libs/angular-router/**/*.html"
+        ]
+      }
+    }
+  },
+  "tags": []
+}
