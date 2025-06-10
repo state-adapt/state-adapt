@@ -339,26 +339,26 @@ $customizations: (
   // container-04: 3rem,
   // container-05: 4rem,
   // icon-size-01: 1rem,
-  // icon-size-02: 1.25rem,,,,,,,,,,,,,,,,,,,,,
+  // icon-size-02: 1.25rem,,,,,,,,,,,,,,,,,,,,,,,,
 );
 
 $carbon--theme: map.merge($carbon--theme--g90, $customizations);
 @include carbon--theme();
 
-// @import '~carbon-components/scss/globals/scss/styles.scss';
+// @import 'carbon-components/scss/globals/scss/styles.scss';
 // Why import EVERY style up front? Will import that in the lazy-loaded module that uses more components
 // Base styles—import only once
-@import '~carbon-components/scss/globals/scss/feature-flags';
-@import '~carbon-components/scss/globals/scss/vars';
-@import '~carbon-components/scss/globals/scss/colors';
-@import '~carbon-components/scss/globals/scss/theme';
-@import '~carbon-components/scss/globals/scss/mixins';
-@import '~carbon-components/scss/globals/scss/layout';
-@import '~carbon-components/scss/globals/scss/layer';
-@import '~carbon-components/scss/globals/scss/spacing';
-@import '~carbon-components/scss/globals/scss/typography';
-@import '~carbon-components/scss/globals/scss/css--reset';
-@import '~carbon-components/scss/globals/scss/css--font-face';
-@import '~carbon-components/scss/globals/scss/css--helpers';
-@import '~carbon-components/scss/globals/scss/css--body';
-@import '~carbon-components/scss/globals/grid/grid';
+@import 'carbon-components/scss/globals/scss/feature-flags';
+@import 'carbon-components/scss/globals/scss/vars';
+@import 'carbon-components/scss/globals/scss/colors';
+@import 'carbon-components/scss/globals/scss/theme';
+@import 'carbon-components/scss/globals/scss/mixins';
+@import 'carbon-components/scss/globals/scss/layout';
+@import 'carbon-components/scss/globals/scss/layer';
+@import 'carbon-components/scss/globals/scss/spacing';
+@import 'carbon-components/scss/globals/scss/typography';
+@import 'carbon-components/scss/globals/scss/css--reset';
+@import 'carbon-components/scss/globals/scss/css--font-face';
+@import 'carbon-components/scss/globals/scss/css--helpers';
+@import 'carbon-components/scss/globals/scss/css--body';
+@import 'carbon-components/scss/globals/grid/grid';
