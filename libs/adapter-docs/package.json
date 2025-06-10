@@ -10,5 +10,46 @@
   "dependencies": {
     "tslib": "^2.0.0",
     "jsondiffpatch": "^0.4.1"
+  },
+  "nx": {
+    "targets": {
+      "build": {
+        "executor": "@nrwl/angular:package",
+        "options": {
+          "tsConfig": "libs/adapter-docs/tsconfig.lib.json",
+          "project": "libs/adapter-docs/ng-package.json",
+          "sourceMap": true,
+          "optimization": false,
+          "updateBuildableProjectDepsInPackageJson": false
+        },
+        "configurations": {
+          "production": {
+            "tsConfig": "libs/adapter-docs/tsconfig.lib.prod.json"
+          }
+        }
+      },
+      "lint": {
+        "executor": "@nrwl/linter:eslint",
+        "options": {
+          "lintFilePatterns": [
+            "libs/adapter-docs/src/**/*.ts",
+            "libs/adapter-docs/src/**/*.html"
+          ]
+        },
+        "outputs": [
+          "{options.outputFile}"
+        ]
+      },
+      "test": {
+        "executor": "@nrwl/jest:jest",
+        "outputs": [
+          "{workspaceRoot}/coverage/libs/adapter-docs"
+        ],
+        "options": {
+          "jestConfig": "libs/adapter-docs/jest.config.ts",
+          "passWithNoTests": true
+        }
+      }
+    }
   }
 }

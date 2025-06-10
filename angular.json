@@ -290,19 +290,24 @@
                   "maximumError": "200kb"
                 }
               ]
-            }
+            },
+            "development": {}
           }
         },
         "serve": {
-          "builder": "@nrwl/angular:webpack-server",
+          "builder": "@nrwl/angular:webpack-dev-server",
           "options": {
             "browserTarget": "docs:build"
           },
           "configurations": {
             "production": {
               "browserTarget": "docs:build:production"
+            },
+            "development": {
+              "browserTarget": "docs:build:development"
             }
-          }
+          },
+          "defaultConfiguration": "development"
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
@@ -344,7 +349,8 @@
           "configurations": {
             "production": {
               "devServerTarget": "docs:serve:production"
-            }
+            },
+            "development": {}
           }
         },
         "lint": {
@@ -408,7 +414,8 @@
                   "maximumError": "10kb"
                 }
               ]
-            }
+            },
+            "development": {}
           }
         },
         "serve": {
@@ -419,8 +426,12 @@
           "configurations": {
             "production": {
               "browserTarget": "ng-sa-component-store:build:production"
+            },
+            "development": {
+              "browserTarget": "docs:build:development"
             }
-          }
+          },
+          "defaultConfiguration": "development"
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
@@ -465,7 +476,8 @@
           "configurations": {
             "production": {
               "devServerTarget": "ng-sa-component-store:serve:production"
-            }
+            },
+            "development": {}
           }
         },
         "lint": {
@@ -531,7 +543,8 @@
                   "maximumError": "10kb"
                 }
               ]
-            }
+            },
+            "development": {}
           }
         },
         "serve": {
@@ -542,8 +555,12 @@
           "configurations": {
             "production": {
               "browserTarget": "ng-sa-counter:build:production"
+            },
+            "development": {
+              "browserTarget": "docs:build:development"
             }
-          }
+          },
+          "defaultConfiguration": "development"
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
@@ -622,7 +639,8 @@
                   "maximumError": "10kb"
                 }
               ]
-            }
+            },
+            "development": {}
           }
         },
         "serve": {
@@ -633,8 +651,12 @@
           "configurations": {
             "production": {
               "browserTarget": "ng-sa-ngrx-counter:build:production"
+            },
+            "development": {
+              "browserTarget": "docs:build:development"
             }
-          }
+          },
+          "defaultConfiguration": "development"
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
@@ -713,7 +735,8 @@
                   "maximumError": "10kb"
                 }
               ]
-            }
+            },
+            "development": {}
           }
         },
         "serve": {
@@ -724,8 +747,12 @@
           "configurations": {
             "production": {
               "browserTarget": "ng-sa-ngxs-counter:build:production"
+            },
+            "development": {
+              "browserTarget": "docs:build:development"
             }
-          }
+          },
+          "defaultConfiguration": "development"
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
@@ -808,7 +835,8 @@
                   "maximumError": "10kb"
                 }
               ]
-            }
+            },
+            "development": {}
           }
         },
         "serve": {
@@ -819,8 +847,12 @@
           "configurations": {
             "production": {
               "browserTarget": "ng-sa-shopping:build:production"
+            },
+            "development": {
+              "browserTarget": "docs:build:development"
             }
-          }
+          },
+          "defaultConfiguration": "development"
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
@@ -932,7 +964,7 @@
       "projectType": "library",
       "architect": {
         "build": {
-          "builder": "@nrwl/web:rollup",
+          "builder": "@nrwl/rollup:rollup",
           "outputs": ["{options.outputPath}"],
           "options": {
             "outputPath": "dist/libs/react",
@@ -982,7 +1014,7 @@
       "projectType": "application",
       "architect": {
         "build": {
-          "builder": "@nrwl/web:webpack",
+          "builder": "@nrwl/webpack:webpack",
           "outputs": ["{options.outputPath}"],
           "options": {
             "outputPath": "dist/apps/react-demo",
@@ -1028,7 +1060,7 @@
           "defaultConfiguration": "production"
         },
         "serve": {
-          "builder": "@nrwl/web:dev-server",
+          "builder": "@nrwl/webpack:dev-server",
           "options": {
             "buildTarget": "react-demo:build"
           },
