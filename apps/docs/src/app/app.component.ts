@@ -73,7 +73,7 @@ export class AppComponent {
         children: [
           ['/get-started', 'Get Started'],
           ['/demos', 'Demos'],
-          ['#1-start-with-simple-state', 'Tutorials'],
+          ['#usestate-without-regrets', 'Tutorials'],
           ['/docs/react', '@state-adapt/react'],
         ].map(child => this.mapToChildRoute(url, '/react', child)),
       },
