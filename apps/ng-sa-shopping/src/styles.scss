@@ -1,9 +1,9 @@
 @import '../../../styles/theme-css-vars';
-@import '../../../styles/carbon-sass-vars'; // Import every time before importing component styles from ~carbon-components;
+@import '../../../styles/carbon-sass-vars'; // Import every time before importing component styles from @carbon/styles;
 
-@import '~carbon-components/scss/components/button/button';
-@import '~carbon-components/scss/components/checkbox/checkbox';
-@import '~carbon-components/scss/components/number-input/number-input';
+@import '@carbon/styles/components/button/button';
+@import '@carbon/styles/components/checkbox/checkbox';
+@import '@carbon/styles/components/number-input/number-input';
 
 @import '../../../styles/spacing';
 @import '../../../styles/typography';

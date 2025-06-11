@@ -31,8 +31,8 @@ Import to prepare to import carbon component style and custom style imports:
 Now import carbon components that are needed on the home page:
 
 ```scss
-@import '~carbon-components/scss/components/button/button';
-@import '~carbon-components/scss/components/list/list';
+@import '@carbon/styles/components/button/button';
+@import '@carbon/styles/components/list/list';
 ```
 
 Import custom styles that are needed on the home page:

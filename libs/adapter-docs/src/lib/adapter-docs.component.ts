@@ -159,7 +159,7 @@ import { getId } from '@state-adapt/core';
         margin: 0;
         font-size: 1em;
       }
-      ::ng-deep section.bx--structured-list {
+      ::ng-deep section.cds--structured-list {
         margin-bottom: 0;
         margin-bottom: 1.6rem;
         margin-top: 0.8rem;
@@ -223,7 +223,7 @@ import { getId } from '@state-adapt/core';
         display: flex;
         align-items: stretch;
       }
-      ::ng-deep .state-change-panel button.bx--list-box__field {
+      ::ng-deep .state-change-panel button.cds--list-box__field {
         width: 100%;
       }
       ibm-dropdown {
@@ -234,18 +234,18 @@ import { getId } from '@state-adapt/core';
       ibm-tabs {
         width: 100%;
       }
-      ::ng-deep .state-change-panel ibm-tab .bx--tab-content {
+      ::ng-deep .state-change-panel ibm-tab .cds--tab-content {
         height: 160px;
         padding: 0;
         background-color: var(--ui-01b);
         border-left: 2px solid var(--brand-01);
       }
-      ::ng-deep ibm-tab.padded .bx--tab-content {
+      ::ng-deep ibm-tab.padded .cds--tab-content {
         padding: 1em !important;
       }
-      ::ng-deep .bx--tabs--scrollable__nav,
-      ::ng-deep .bx--tabs--scrollable__nav-item,
-      ::ng-deep .bx--tabs--scrollable__nav-link {
+      ::ng-deep .cds--tabs--scrollable__nav,
+      ::ng-deep .cds--tabs--scrollable__nav-item,
+      ::ng-deep .cds--tabs--scrollable__nav-link {
         width: 100% !important;
       }
       ::ng-deep #editor {
@@ -260,7 +260,7 @@ import { getId } from '@state-adapt/core';
       ::ng-deep .state-change-panel button {
         width: 33.333%;
       }
-      ::ng-deep .selector-panel ibm-tab .bx--tab-content {
+      ::ng-deep .selector-panel ibm-tab .cds--tab-content {
         height: 300px;
         padding: 0;
         background-color: var(--ui-01b);

@@ -3,11 +3,11 @@
 @import '../../../styles/theme-css-vars';
 @import '../../../styles/carbon-sass-vars'; // Import every time before importing component styles from carbon-components
 // Components
-@import 'carbon-components/scss/components/button/button';
-// @import 'carbon-components/scss/components/code-snippet/code-snippet';
-// @import 'carbon-components/scss/components/link/link';
-@import 'carbon-components/scss/components/list/list';
-@import 'carbon-components/scss/components/tile/tile';
+@import '@carbon/styles/scss/components/button/button';
+// @import '@carbon/styles/scss/components/code-snippet/code-snippet';
+// @import '@carbon/styles/scss/components/link/link';
+@import '@carbon/styles/scss/components/list/list';
+@import '@carbon/styles/scss/components/tile/tile';
 
 @import '../../../styles/ui-shell';
 @import '../../../styles/code-snippet-theme';

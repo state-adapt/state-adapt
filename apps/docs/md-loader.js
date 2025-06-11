@@ -13,9 +13,9 @@ const renderer = {
     const isNested = text.includes('[nested]');
     const orderedClassName = ordered ? 'ordered' : 'unordered';
     const className = isNested ? 'nested' : orderedClassName;
-    return `<ul class="bx--list--${className}">${text.replace('[nested]', '')}</ul>`;
+    return `<ul class="cds--list--${className}">${text.replace('[nested]', '')}</ul>`;
   },
-  listitem: text => `<li class="bx--list__item">${text}</li>`, // string
+  listitem: text => `<li class="cds--list__item">${text}</li>`, // string
   // heading: (text: string, level: number) => text;
   link: (href, title, text) => {
     //(href: string, title: string, text: string)
