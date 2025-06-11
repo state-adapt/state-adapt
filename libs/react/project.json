@@ -5,7 +5,7 @@
   "projectType": "library",
   "targets": {
     "build": {
-      "executor": "@nrwl/rollup:rollup",
+      "executor": "@nx/rollup:rollup",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/libs/react",
@@ -13,8 +13,8 @@
         "project": "libs/react/package.json",
         "entryFile": "libs/react/src/index.ts",
         "external": ["react", "react-dom"],
-        "babelConfig": "@nrwl/react/plugins/bundle-babel",
-        "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
+        "babelConfig": "@nx/react/plugins/bundle-babel",
+        "rollupConfig": "@nx/react/plugins/bundle-rollup",
         "updateBuildableProjectDepsInPackageJson": false,
         "assets": [
           {
@@ -31,14 +31,14 @@
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["libs/react/**/*.{ts,tsx,js,jsx}"]
       },
       "outputs": ["{options.outputFile}"]
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": ["coverage/libs/react"],
       "options": {
         "jestConfig": "libs/react/jest.config.ts",

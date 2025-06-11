@@ -6,7 +6,7 @@
   "prefix": "sa",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "libs/counter-ui/src/**/*.ts",
@@ -16,7 +16,7 @@
       "outputs": ["{options.outputFile}"]
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": ["coverage/libs/counter-ui"],
       "options": {
         "jestConfig": "libs/counter-ui/jest.config.ts",

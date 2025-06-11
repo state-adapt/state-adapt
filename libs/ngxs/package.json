@@ -31,7 +31,7 @@
   "nx": {
     "targets": {
       "build": {
-        "executor": "@nrwl/angular:package",
+        "executor": "@nx/angular:package",
         "options": {
           "tsConfig": "libs/ngxs/tsconfig.lib.json",
           "project": "libs/ngxs/ng-package.json",
@@ -44,7 +44,7 @@
         }
       },
       "lint": {
-        "executor": "@nrwl/linter:eslint",
+        "executor": "@nx/linter:eslint",
         "options": {
           "lintFilePatterns": [
             "libs/ngxs/src/**/*.ts",
@@ -56,7 +56,7 @@
         ]
       },
       "test": {
-        "executor": "@nrwl/jest:jest",
+        "executor": "@nx/jest:jest",
         "outputs": [
           "{workspaceRoot}/coverage/libs/ngxs"
         ],

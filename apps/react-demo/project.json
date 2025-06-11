@@ -5,7 +5,7 @@
   "projectType": "application",
   "targets": {
     "build": {
-      "executor": "@nrwl/webpack:webpack",
+      "executor": "@nx/webpack:webpack",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/apps/react-demo",
@@ -16,7 +16,7 @@
         "assets": ["apps/react-demo/src/favicon.ico", "apps/react-demo/src/assets"],
         "styles": ["apps/react-demo/src/styles.scss"],
         "scripts": [],
-        "webpackConfig": "@nrwl/react/plugins/webpack",
+        "webpackConfig": "@nx/react/plugins/webpack",
         "babelUpwardRootMode": true
       },
       "configurations": {
@@ -52,7 +52,7 @@
       "defaultConfiguration": "production"
     },
     "serve": {
-      "executor": "@nrwl/webpack:dev-server",
+      "executor": "@nx/webpack:dev-server",
       "options": {
         "buildTarget": "react-demo:build"
       },
@@ -67,14 +67,14 @@
       "defaultConfiguration": "development"
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["apps/react-demo/**/*.{ts,tsx,js,jsx}"]
       },
       "outputs": ["{options.outputFile}"]
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": ["coverage/apps/react-demo"],
       "options": {
         "jestConfig": "apps/react-demo/jest.config.ts",

@@ -6,7 +6,7 @@
   "prefix": "sa",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "libs/dashboards-feature/src/**/*.ts",
@@ -16,7 +16,7 @@
       "outputs": ["{options.outputFile}"]
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": ["coverage/libs/dashboards-feature"],
       "options": {
         "jestConfig": "libs/dashboards-feature/jest.config.ts",

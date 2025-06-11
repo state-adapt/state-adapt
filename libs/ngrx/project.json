@@ -6,7 +6,7 @@
   "prefix": "sa",
   "targets": {
     "build": {
-      "executor": "@nrwl/angular:package",
+      "executor": "@nx/angular:package",
       "options": {
         "tsConfig": "libs/ngrx/tsconfig.lib.json",
         "project": "libs/ngrx/ng-package.json",
@@ -19,14 +19,14 @@
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["libs/ngrx/src/**/*.ts", "libs/ngrx/src/**/*.html"]
       },
       "outputs": ["{options.outputFile}"]
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": ["coverage/libs/ngrx"],
       "options": {
         "jestConfig": "libs/ngrx/jest.config.ts",

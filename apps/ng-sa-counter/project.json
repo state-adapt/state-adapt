@@ -73,7 +73,7 @@
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "apps/ng-sa-counter/src/**/*.ts",
@@ -83,7 +83,7 @@
       "outputs": ["{options.outputFile}"]
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": ["coverage/apps/ng-sa-counter"],
       "options": {
         "jestConfig": "apps/ng-sa-counter/jest.config.ts",

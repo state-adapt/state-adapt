@@ -6,7 +6,7 @@
   "prefix": "sa",
   "targets": {
     "build": {
-      "executor": "@nrwl/angular:webpack-browser",
+      "executor": "@nx/angular:webpack-browser",
       "options": {
         "outputPath": "dist/apps/docs",
         "index": "apps/docs/src/index.html",
@@ -65,7 +65,7 @@
       }
     },
     "serve": {
-      "executor": "@nrwl/angular:webpack-dev-server",
+      "executor": "@nx/angular:webpack-dev-server",
       "options": {
         "browserTarget": "docs:build"
       },
@@ -86,14 +86,14 @@
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["apps/docs/src/**/*.ts", "apps/docs/src/**/*.html"]
       },
       "outputs": ["{options.outputFile}"]
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": ["coverage/apps/docs"],
       "options": {
         "jestConfig": "apps/docs/jest.config.ts",
