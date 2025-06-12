@@ -9,8 +9,7 @@
       "executor": "@nx/angular:package",
       "options": {
         "tsConfig": "libs/core/tsconfig.lib.json",
-        "project": "libs/core/ng-package.json",
-        "updateBuildableProjectDepsInPackageJson": false
+        "project": "libs/core/ng-package.json"
       },
       "configurations": {
         "production": {
@@ -19,23 +18,14 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "libs/core/src/**/*.ts",
-          "libs/core/src/**/*.html",
-          "libs/core/adapters/**/*.ts",
-          "libs/core/adapters/**/*.html"
-        ]
-      },
+      "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"]
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["coverage/libs/core"],
+      "outputs": ["{workspaceRoot}/coverage/libs/core"],
       "options": {
-        "jestConfig": "libs/core/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/core/jest.config.ts"
       }
     }
   },

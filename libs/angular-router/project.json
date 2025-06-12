@@ -7,10 +7,9 @@
   "targets": {
     "build": {
       "executor": "@nx/angular:package",
-      "outputs": ["dist/libs/angular-router"],
+      "outputs": ["{workspaceRoot}/dist/libs/angular-router"],
       "options": {
-        "project": "libs/angular-router/ng-package.json",
-        "updateBuildableProjectDepsInPackageJson": false
+        "project": "libs/angular-router/ng-package.json"
       },
       "configurations": {
         "production": {
@@ -24,20 +23,13 @@
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["coverage/libs/angular-router"],
+      "outputs": ["{workspaceRoot}/coverage/libs/angular-router"],
       "options": {
-        "jestConfig": "libs/angular-router/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/angular-router/jest.config.ts"
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "libs/angular-router/**/*.ts",
-          "libs/angular-router/**/*.html"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     }
   },
   "tags": []

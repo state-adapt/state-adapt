@@ -38,7 +38,7 @@
         }
       },
       "lint": {
-        "executor": "@nx/linter:eslint",
+        "executor": "@nx/eslint:eslint",
         "options": {
           "lintFilePatterns": [
             "libs/core/src/**/*.ts",

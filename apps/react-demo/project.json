@@ -67,18 +67,14 @@
       "defaultConfiguration": "development"
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["apps/react-demo/**/*.{ts,tsx,js,jsx}"]
-      },
+      "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"]
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["coverage/apps/react-demo"],
+      "outputs": ["{workspaceRoot}/coverage/apps/react-demo"],
       "options": {
-        "jestConfig": "apps/react-demo/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/react-demo/jest.config.ts"
       }
     }
   },

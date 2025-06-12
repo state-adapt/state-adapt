@@ -6,21 +6,14 @@
   "prefix": "sa",
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "libs/counter-ui/src/**/*.ts",
-          "libs/counter-ui/src/**/*.html"
-        ]
-      },
+      "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"]
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["coverage/libs/counter-ui"],
+      "outputs": ["{workspaceRoot}/coverage/libs/counter-ui"],
       "options": {
-        "jestConfig": "libs/counter-ui/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/counter-ui/jest.config.ts"
       }
     }
   },

@@ -61,7 +61,7 @@
         }
       },
       "lint": {
-        "executor": "@nx/linter:eslint",
+        "executor": "@nx/eslint:eslint",
         "options": {
           "lintFilePatterns": [
             "libs/react/**/*.{ts,tsx,js,jsx}"

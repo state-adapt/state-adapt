@@ -6,21 +6,14 @@
   "prefix": "sa",
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "libs/dashboards-feature/src/**/*.ts",
-          "libs/dashboards-feature/src/**/*.html"
-        ]
-      },
+      "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"]
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["coverage/libs/dashboards-feature"],
+      "outputs": ["{workspaceRoot}/coverage/libs/dashboards-feature"],
       "options": {
-        "jestConfig": "libs/dashboards-feature/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/dashboards-feature/jest.config.ts"
       }
     }
   },

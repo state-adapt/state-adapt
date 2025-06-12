@@ -6,18 +6,14 @@
   "prefix": "sa",
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["libs/shopping/src/**/*.ts", "libs/shopping/src/**/*.html"]
-      },
+      "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"]
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["coverage/libs/shopping"],
+      "outputs": ["{workspaceRoot}/coverage/libs/shopping"],
       "options": {
-        "jestConfig": "libs/shopping/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/shopping/jest.config.ts"
       }
     }
   },

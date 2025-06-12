@@ -59,14 +59,14 @@
     "serve": {
       "executor": "@angular-devkit/build-angular:dev-server",
       "options": {
-        "browserTarget": "ng-sa-shopping:build"
+        "buildTarget": "ng-sa-shopping:build"
       },
       "configurations": {
         "production": {
-          "browserTarget": "ng-sa-shopping:build:production"
+          "buildTarget": "ng-sa-shopping:build:production"
         },
         "development": {
-          "browserTarget": "docs:build:development"
+          "buildTarget": "docs:build:development"
         }
       },
       "defaultConfiguration": "development"
@@ -74,25 +74,18 @@
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",
       "options": {
-        "browserTarget": "ng-sa-shopping:build"
+        "buildTarget": "ng-sa-shopping:build"
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "apps/ng-sa-shopping/src/**/*.ts",
-          "apps/ng-sa-shopping/src/**/*.html"
-        ]
-      },
+      "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"]
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["coverage/apps/ng-sa-shopping"],
+      "outputs": ["{workspaceRoot}/coverage/apps/ng-sa-shopping"],
       "options": {
-        "jestConfig": "apps/ng-sa-shopping/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/ng-sa-shopping/jest.config.ts"
       }
     }
   },

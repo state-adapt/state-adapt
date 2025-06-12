@@ -15,7 +15,6 @@
         "external": ["react", "react-dom"],
         "babelConfig": "@nx/react/plugins/bundle-babel",
         "rollupConfig": "@nx/react/plugins/bundle-rollup",
-        "updateBuildableProjectDepsInPackageJson": false,
         "assets": [
           {
             "glob": "README.md",
@@ -31,18 +30,14 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["libs/react/**/*.{ts,tsx,js,jsx}"]
-      },
+      "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"]
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["coverage/libs/react"],
+      "outputs": ["{workspaceRoot}/coverage/libs/react"],
       "options": {
-        "jestConfig": "libs/react/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/react/jest.config.ts"
       }
     }
   },

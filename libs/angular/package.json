@@ -42,7 +42,7 @@
         }
       },
       "lint": {
-        "executor": "@nx/linter:eslint",
+        "executor": "@nx/eslint:eslint",
         "options": {
           "lintFilePatterns": [
             "libs/angular/**/*.ts",

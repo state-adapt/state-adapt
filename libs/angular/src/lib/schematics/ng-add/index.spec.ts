@@ -32,33 +32,28 @@ describe('StateAdapt ng-add Schematic', () => {
   let appTree: UnitTestTree;
 
   beforeEach(async () => {
-    appTree = await schematicRunner
-      .runExternalSchematicAsync(
-        '@schematics/angular',
-        'workspace',
-        defaultWorkspaceOptions,
-      )
-      .toPromise();
+    appTree = await schematicRunner.runExternalSchematic(
+      '@schematics/angular',
+      'workspace',
+      defaultWorkspaceOptions,
+    );
 
-    appTree = await schematicRunner
-      .runExternalSchematicAsync(
-        '@schematics/angular',
-        'application',
-        defaultAppOptions,
-        appTree,
-      )
-      .toPromise();
+    appTree = await schematicRunner.runExternalSchematic(
+      '@schematics/angular',
+      'application',
+      defaultAppOptions,
+      appTree,
+    );
   });
 
   it('should update package.json', async () => {
-    const options = { ...defaultSchematicOptions };
-
-    const tree = await schematicRunner
-      .runSchematicAsync('ng-add', options, appTree)
-      .toPromise();
+    const tree = await schematicRunner.runSchematic(
+      'ng-add',
+      defaultSchematicOptions,
+      appTree,
+    );
 
     const packageJson = JSON.parse(tree.readContent('/package.json'));
-
     expect(packageJson.dependencies['@state-adapt/core']).toBeDefined();
     expect(packageJson.dependencies['@state-adapt/rxjs']).toBeDefined();
     expect(packageJson.dependencies['@state-adapt/angular']).toBeDefined();

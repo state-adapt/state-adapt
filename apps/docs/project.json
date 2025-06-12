@@ -65,16 +65,16 @@
       }
     },
     "serve": {
-      "executor": "@nx/angular:webpack-dev-server",
+      "executor": "@nx/angular:dev-server",
       "options": {
-        "browserTarget": "docs:build"
+        "buildTarget": "docs:build"
       },
       "configurations": {
         "production": {
-          "browserTarget": "docs:build:production"
+          "buildTarget": "docs:build:production"
         },
         "development": {
-          "browserTarget": "docs:build:development"
+          "buildTarget": "docs:build:development"
         }
       },
       "defaultConfiguration": "development"
@@ -82,22 +82,18 @@
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",
       "options": {
-        "browserTarget": "docs:build"
+        "buildTarget": "docs:build"
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["apps/docs/src/**/*.ts", "apps/docs/src/**/*.html"]
-      },
+      "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"]
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["coverage/apps/docs"],
+      "outputs": ["{workspaceRoot}/coverage/apps/docs"],
       "options": {
-        "jestConfig": "apps/docs/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/docs/jest.config.ts"
       }
     }
   },

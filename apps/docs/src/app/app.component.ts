@@ -31,7 +31,9 @@ export class AppComponent {
   url$ = merge(
     this.urlChange$,
     this.router.events.pipe(
-      filter((e: Event): e is RouterEvent => e instanceof RouterEvent),
+      filter(
+        (e: Event | RouterEvent): e is RouterEvent => e instanceof RouterEvent,
+      ),
       map(e => e.url),
     ),
   ).pipe(startWith(this.location.path()));

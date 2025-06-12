@@ -21,7 +21,7 @@ import { HtmlComponent } from './html.component';
     DropdownModule,
     TabsModule,
     InputModule,
-    CodeEditorModule.forRoot(),
+    CodeEditorModule.forChild(),
     HtmlComponent,
   ],
   declarations: [AdapterDocsComponent],

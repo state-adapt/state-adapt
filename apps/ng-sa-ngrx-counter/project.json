@@ -55,14 +55,14 @@
     "serve": {
       "executor": "@angular-devkit/build-angular:dev-server",
       "options": {
-        "browserTarget": "ng-sa-ngrx-counter:build"
+        "buildTarget": "ng-sa-ngrx-counter:build"
       },
       "configurations": {
         "production": {
-          "browserTarget": "ng-sa-ngrx-counter:build:production"
+          "buildTarget": "ng-sa-ngrx-counter:build:production"
         },
         "development": {
-          "browserTarget": "docs:build:development"
+          "buildTarget": "docs:build:development"
         }
       },
       "defaultConfiguration": "development"
@@ -70,25 +70,18 @@
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",
       "options": {
-        "browserTarget": "ng-sa-ngrx-counter:build"
+        "buildTarget": "ng-sa-ngrx-counter:build"
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "apps/ng-sa-ngrx-counter/src/**/*.ts",
-          "apps/ng-sa-ngrx-counter/src/**/*.html"
-        ]
-      },
+      "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"]
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["coverage/apps/ng-sa-ngrx-counter"],
+      "outputs": ["{workspaceRoot}/coverage/apps/ng-sa-ngrx-counter"],
       "options": {
-        "jestConfig": "apps/ng-sa-ngrx-counter/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/ng-sa-ngrx-counter/jest.config.ts"
       }
     }
   },

@@ -11,8 +11,7 @@
         "tsConfig": "libs/adapter-docs/tsconfig.lib.json",
         "project": "libs/adapter-docs/ng-package.json",
         "sourceMap": true,
-        "optimization": false,
-        "updateBuildableProjectDepsInPackageJson": false
+        "optimization": false
       },
       "configurations": {
         "production": {
@@ -21,21 +20,14 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "libs/adapter-docs/src/**/*.ts",
-          "libs/adapter-docs/src/**/*.html"
-        ]
-      },
+      "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"]
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["coverage/libs/adapter-docs"],
+      "outputs": ["{workspaceRoot}/coverage/libs/adapter-docs"],
       "options": {
-        "jestConfig": "libs/adapter-docs/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/adapter-docs/jest.config.ts"
       }
     }
   },
