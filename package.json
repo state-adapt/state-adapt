@@ -56,6 +56,7 @@
     "@ngrx/store-devtools": "18.1.1",
     "@ngstack/code-editor": "^7.0.0",
     "@nx/angular": "19.6.7",
+    "@vue/theme": "^2.3.0",
     "carbon-components-angular": "^5.57.8",
     "core-js": "3.36.1",
     "document-register-element": "1.13.1",
@@ -72,6 +73,8 @@
     "regenerator-runtime": "0.13.7",
     "rxjs": "~6.6.3",
     "tslib": "^2.0.0",
+    "vitepress": "^1.6.3",
+    "vue": "^3.5.16",
     "zone.js": "0.14.10"
   },
   "devDependencies": {
