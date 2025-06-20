@@ -1,5 +1,43 @@
 :root {
-  --vp-c-brand-1: darkturquoise;
-  --vp-c-brand-2: orangered;
-  --vp-c-brand-3: purple;
+  --vp-c-brand-1: #00ced1;
+  /* https://maketintsandshades.com/#00ced1 */
+  /* 00CED1	00B9BC	00A5A7	009092	007C7D	006769	005254	003E3F	00292A	001515	000000 */
+  /* 00CED1	1AD3D6	33D8DA	4DDDDF	66E2E3	80E7E8	99EBED	B3F0F1	CCF5F6	E6FAFA	FFFFFF */
+
+  --vp-c-brand-2: #ff4500;
+  /* https://maketintsandshades.com/#ff4500 */
+  /* FF4500	E63E00	CC3700	B33000	992900	802300	661C00	4C1500	330E00	190700	000000 */
+  /* FF4500	FF581A	FF6A33	FF7D4D	FF8F66	FFA280	FFB599	FFC7B3	FFDACC	FFECE6	FFFFFF */
+  --vp-c-brand-2-light-4: #ff8f66;
+  --vp-c-brand-2-light-5: #ffa280;
+
+  --vp-c-brand-3: #b00050;
+  /* https://maketintsandshades.com/#b00050 */
+  /* B00050	9E0048	8D0040	7B0038	6A0030	580028	460020	350018	230010	120008	000000 */
+  /* B00050	B81A62	C03373	C84D85	D06696	D880A8	DF99B9	E7B3CB	EFCCDC	F7E6EE	FFFFFF */
+  --vp-c-brand-3-light-5: #d880a8;
+
+  --vp-home-hero-name-color: transparent;
+  /* --vp-home-hero-name-background: -webkit-linear-gradient(
+    120deg,
+    var(--vp-c-text-1),
+    var(--vp-c-brand-1)
+  ); */
+  --vp-home-hero-name-background: -webkit-linear-gradient(
+    90deg,
+    var(--vp-c-text-2) 10%,
+    var(--vp-c-text-1) 60%,
+    var(--vp-c-brand-1) 100%
+  );
+  --vp-home-hero-image-background-image: linear-gradient(
+    -45deg,
+    #00ced115 30%,
+    #00ced115 60%
+  );
+  --vp-home-hero-image-filter: blur(30px);
+}
+
+.is-home .VPFeature img {
+  width: 96px;
+  height: 96px;
 }

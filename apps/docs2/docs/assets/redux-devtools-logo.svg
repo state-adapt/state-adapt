@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 26.3.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 900 900" style="enable-background:new 0 0 2376 2500;" xml:space="preserve"><defs>
+  <style>
+    .redux-cls-4 {
+      fill: none;
+      stroke-miterlimit: 10;
+      stroke-width: 16px;
+    }
+    .primary-stroke{stroke:darkturquoise;}
+    .primary-fill{fill:darkturquoise;}
+    .accent-stroke{stroke:orangered;}
+    .accent-fill{fill:orangered;}
+    .tertiary-stroke{stroke:#b00050;}
+    .tertiary-fill{fill:#b00050;}
+  </style>
+</defs>
+<circle class="redux-cls-2 primary-fill" cx="448.58" cy="448.44" r="114.91" />
+<circle class="redux-cls-4 primary-stroke" cx="448.58" cy="448.44" r="281.58" />
+<circle class="redux-cls-4 primary-stroke" cx="448.58" cy="448.58" r="440.58" />
+<circle class="redux-cls-3 tertiary-fill" cx="658.23" cy="260.58" r="52.22" />
+<circle class="redux-cls-1 accent-fill" cx="243.07" cy="60.22" r="52.22" />
+</svg>

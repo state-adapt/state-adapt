@@ -18,7 +18,8 @@ import { AppComponent } from './app.component';
       logOnly: environment.production,
       actionSanitizer,
       stateSanitizer,
-    connectInZone: true}),
+      connectInZone: true,
+    }),
   ],
   bootstrap: [AppComponent],
 })
