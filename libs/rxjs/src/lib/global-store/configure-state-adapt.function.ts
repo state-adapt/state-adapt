@@ -14,15 +14,14 @@ function isStoreOptions(options: ConfigureStateAdaptOptions): options is { store
   return (options as any).store !== undefined;
 }
 
-// TODO: Write docs for angular, ngrx, ngxs, angular-router, react
-// TODO: Write script that exports only the examples onto a cheat-sheet, directly into a `cheat-sheet.ts` file with
-//   export function libNameExamples() { return { ... } }
+/**
+ * @internal
+ */
+export interface ConfiguredStateAdapt<
+  Store extends GlobalStore<any, any> = GlobalStore<any, any>,
+> extends Pick<StateAdapt<any>, 'adapt' | 'watch'> {}
 
 /**
-  ## ![StateAdapt](https://miro.medium.com/max/4800/1*qgM6mFM2Qj6woo5YxDMSrA.webp|width=14) `configureStateAdapt`
-
-  > Copilot tip: Copy examples into your file or click to definition to open file with context for better Copilot suggestions.
-
   `configureStateAdapt` takes in a {@link ConfigureStateAdaptOptions} object and returns a new instance of {@link StateAdapt}.
 
   ### Example: Standalone with default options
@@ -67,7 +66,6 @@ function isStoreOptions(options: ConfigureStateAdaptOptions): options is { store
   export const { adapt, watch } = stateAdapt;
   ```
 */
-
 export function configureStateAdapt<
   Store extends GlobalStore<any, any> = GlobalStore<any, any>,
 >(
@@ -79,7 +77,7 @@ export function configureStateAdapt<
         stateSanitizer,
       }),
   },
-) {
+): Pick<StateAdapt<any>, 'adapt' | 'watch'> {
   globalSelectorsOptions.devtools = options.showSelectors ?? true;
   const store = isStoreOptions(options)
     ? options.store

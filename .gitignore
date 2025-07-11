@@ -46,3 +46,5 @@ Thumbs.db
 .nx/
 
 **/.vitepress/cache
+**/.vitepress/dist
+apps/docs2/docs/api/typedoc/

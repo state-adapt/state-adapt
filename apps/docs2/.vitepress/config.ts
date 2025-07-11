@@ -2,6 +2,24 @@ import { DefaultTheme, defineConfig } from 'vitepress';
 
 import myCodeTheme from './theme/code-snippets/sa-dark.json';
 import { version } from '../../../package.json';
+import typedocSidebar from '../docs/api/typedoc/typedoc-sidebar.json';
+import corePaths from '../docs/api/core/src/symbol.paths';
+import rxjsPaths from '../docs/api/rxjs/index/symbol.paths';
+import angularPaths from '../docs/api/angular/index/symbol.paths';
+import reactPaths from '../docs/api/react/index/symbol.paths';
+import { Section } from 'section-paths';
+import { resolve } from 'path';
+
+function getLibSectionItems(sections: Section[]): DefaultTheme.SidebarItem[] {
+  return sections.map(({ name, items }) => ({
+    text: name,
+    collapsed: true,
+    items: items.map(item => ({
+      text: item.def.symbol.split('-')[0], // Source and source too similar, so source-1 is used
+      link: item.def.link,
+    })),
+  }));
+}
 
 const frameworks = {
   angular: 'Angular',
@@ -17,40 +35,38 @@ const frameworkKeys = Object.keys(frameworks) as FrameworkKey[];
 export default defineConfig({
   lang: 'en-US',
   head: [
-    [
-      'link',
-      { rel: 'icon', href: '/assets/sa3-3.svg', sizes: 'any', type: 'image/svg+xml' },
-    ],
-    ['link', { rel: 'mask-icon', href: '/assets/sa3-3.svg', color: '#ffffff' }],
+    ['link', { rel: 'icon', href: '/sa3-3.svg', sizes: 'any', type: 'image/svg+xml' }],
+    ['link', { rel: 'mask-icon', href: '/sa3-3.svg', color: '#ffffff' }],
+    ['link', { rel: 'icon', href: '/favicon.ico' }],
   ],
   title: 'StateAdapt',
   description: 'Vite & Vue powered static site generator.',
   srcDir: 'docs',
+  srcExclude: ['**/api/typedoc/**'],
   rewrites: {
-    'guide/:framework/examples/index.md':
-      'guide/:framework/examples/incremental-complexity.md',
+    // 'api/typedoc/:lib/src/:kind/:symbol': '/api/:lib/:symbol',
   },
   themeConfig: {
     logo: {
-      src: '/assets/sa3-3.svg',
+      src: '/sa3-3.svg',
       alt: 'StateAdapt Logo',
     },
     editLink: {
-      pattern: 'https://github.com/state-adapt/state-adapt/tree/main/apps/docs/:path',
+      pattern:
+        'https://github.com/state-adapt/state-adapt/tree/main/apps/docs2/docs/:path',
       text: 'Suggest changes to this page',
     },
     nav: [
       {
         text: 'Guide',
         activeMatch: '^/guide',
-        link: '/guide/',
+        link: '/guide/overview/',
       },
       {
         text: 'API',
         activeMatch: '^/api',
-        link: '/api/',
+        link: `/api/core/src/`,
       },
-
       {
         text: `v${version}`,
         items: [
@@ -64,13 +80,28 @@ export default defineConfig({
           },
           {
             items: [
+              // Next:
+              // {
+              //   text: 'v4.1.4',
+              //   link: 'https://state-adapt.github.io/v/4/',
+              // },
+              // Can make the link whatever. Just has to match the Nx command base.
+              // {
+              //   text: 'v3.2.0',
+              //   link: 'https://state-adapt.github.io/v/3-2-0/',
+              // },
+              //
+              {
+                text: 'v3.0.0',
+                link: 'https://state-adapt.github.io/versions/3-0-0/',
+              },
               {
                 text: 'v2.0.8',
-                link: '/2-0-8/',
+                link: 'https://state-adapt.github.io/versions/2-0-8/',
               },
               {
                 text: 'v1.2.1',
-                link: '/1-2-1/',
+                link: 'https://state-adapt.github.io/versions/1-2-1/',
               },
             ],
           },
@@ -122,6 +153,29 @@ function getGuideSidebar(): DefaultTheme.SidebarItem[] {
       link: '/guide/overview',
     },
     {
+      text: 'Thinking Reactively',
+      base: '/guide/thinking-reactively/',
+      collapsed: false,
+      items: [
+        {
+          text: 'The Imperative Trap',
+          link: 'imperative-trap',
+        },
+        {
+          text: 'Imperative Conditioning',
+          link: 'imperative-conditioning',
+        },
+        {
+          text: 'The Reactivity Rule',
+          link: 'the-reactivity-rule',
+        },
+        {
+          text: 'Practice',
+          link: 'practice',
+        },
+      ],
+    },
+    {
       text: 'Getting Started',
       link: `/guide/getting-started/`,
     },
@@ -130,7 +184,12 @@ function getGuideSidebar(): DefaultTheme.SidebarItem[] {
       link: '/guide/examples/',
     },
     ...getFrameworkSidebar('angular', []),
-    ...getFrameworkSidebar('react', []),
+    ...getFrameworkSidebar('react', [
+      {
+        text: 'Counter',
+        link: 'counter',
+      },
+    ]),
     ...getFrameworkSidebar('solid', []),
     ...getFrameworkSidebar('svelte', []),
     // ...getFrameworkSidebar('vue', []),
@@ -161,10 +220,7 @@ function getFrameworkSidebar(
               text: 'Incremental Complexity',
               link: `incremental-complexity`,
             },
-            // {
-            //   text: 'Counter',
-            //   link: `counter`,
-            // },
+            ...examples,
           ],
         },
       ],
@@ -176,38 +232,55 @@ function getApiSidebar(): DefaultTheme.SidebarItem[] {
   return [
     {
       text: '@state-adapt/core',
-      base: '/api/core/',
-      link: `/index`,
-      collapsed: false,
+      link: `/api/core/src/`,
+      collapsed: true,
       items: [
-        // {
-        //   text: '&nbsp;',
-        //   link: `index`,
-        // },
+        ...getLibSectionItems(corePaths.sections()),
         {
-          text: '/adapters',
-          base: `/api/core/adapters/`,
-          collapsed: true,
-          items: [
-            { text: 'base', link: `base` },
-            { text: 'boolean', link: `boolean` },
-            { text: 'number', link: `number` },
-            { text: 'string', link: `string` },
-            { text: 'array', link: `array` },
-            { text: 'entity', link: `entity` },
-            // { text: 'object', link: `object/` },
-            // { text: 'array', link: `array/` },
-            // { text: 'function', link: `function/` },
-            // { text: 'date', link: `date/` },
-          ],
+          text: 'Core Adapters',
+          // base: `/api/core/core-adapters/`,
+          link: `/api/core/adapters/`,
+          // collapsed: true,
+          // items: [
+          //   { text: 'base', link: `base` },
+          //   { text: 'boolean', link: `boolean` },
+          //   { text: 'number', link: `number` },
+          //   { text: 'string', link: `string` },
+          //   { text: 'array', link: `array` },
+          //   { text: 'entity', link: `entity` },
+          //   // { text: 'object', link: `object/` },
+          //   // { text: 'date', link: `date/` },
+          // ],
         },
       ],
     },
-    { text: '@state-adapt/rxjs', link: `api/rxjs` },
-    { text: '@state-adapt/angular', link: `api/angular` },
-    { text: '@state-adapt/react', link: `api/react` },
-    { text: '@state-adapt/solid', link: `api/solid` },
-    { text: '@state-adapt/svelte', link: `api/svelte` },
-    { text: '@state-adapt/vue', link: `api/vue` },
+    {
+      text: '@state-adapt/rxjs',
+      link: `/api/rxjs/index/`,
+      collapsed: true,
+      items: [...getLibSectionItems(rxjsPaths.sections())],
+    },
+    {
+      text: '@state-adapt/angular',
+      link: `/api/angular/index/`,
+      collapsed: true,
+      items: [...getLibSectionItems(angularPaths.sections())],
+    },
+    {
+      text: '@state-adapt/react',
+      link: `/api/react/index/`,
+      collapsed: true,
+      items: [...getLibSectionItems(reactPaths.sections())],
+    },
+    // { text: '@state-adapt/solid', link: `/api/solid` },
+    // { text: '@state-adapt/svelte', link: `/api/svelte` },
+    // { text: '@state-adapt/vue', link: `/api/vue` },
+    process.env.NODE_ENV === 'development'
+      ? {
+          text: 'TypeDoc',
+          link: '/api/typedoc/',
+          items: typedocSidebar,
+        }
+      : {},
   ];
 }

@@ -4,44 +4,44 @@ import { source } from './source.function';
 
 describe('source', () => {
   it('should expect number payload', () => {
-    const onClicko = source<number>('CLICKO');
+    const onClick = source<number>('CLICKO');
     let result = 0;
-    onClicko.subscribe(payload => (result = payload));
-    onClicko(4);
+    onClick.subscribe(payload => (result = payload));
+    onClick(4);
     expect(result).toBe(4);
     // @ts-expect-error Payload should be a number
-    onClicko('4');
+    onClick('4');
   });
 
   it('should handle regular .next()', () => {
-    const onClicko = source<number>('CLICKO');
+    const onClick = source<number>('CLICKO');
     let result = 0;
-    onClicko.subscribe(payload => (result = payload));
-    onClicko.next(4);
+    onClick.subscribe(payload => (result = payload));
+    onClick.next(4);
     expect(result).toBe(4);
   });
 
   it('should default to void', () => {
-    const onClicko = source('CLICKO');
+    const onClick = source('CLICKO');
     let result = 0;
-    onClicko.subscribe(() => (result = 4));
-    onClicko();
+    onClick.subscribe(() => (result = 4));
+    onClick();
     expect(result).toBe(4);
     // @ts-expect-error Payload should be void
-    onClicko(4);
+    onClick(4);
   });
 
   it('should allow RxJS operators', () => {
-    const onClicko = source<number>('CLICKO');
+    const onClick = source<number>('CLICKO');
     let result = 0;
-    onClicko.pipe(map(n => n * 2)).subscribe(payload => (result = payload));
-    onClicko(4);
+    onClick.pipe(map(n => n * 2)).subscribe(payload => (result = payload));
+    onClick(4);
     expect(result).toBe(8);
   });
 
   it('should be recognized by RxJS as an observable', () => {
-    const onClicko = source<number>('CLICKO');
+    const onClick = source<number>('CLICKO');
 
-    expect(isObservable(onClicko)).toBe(true);
+    expect(isObservable(onClick)).toBe(true);
   });
 });

@@ -10,8 +10,6 @@ import {
 import { adapt } from './adapt.function';
 
 /**
-  ## ![StateAdapt](https://miro.medium.com/max/4800/1*qgM6mFM2Qj6woo5YxDMSrA.webp|width=14) `adaptInjectable`
-
   @deprecated Use a service instead. This was an experimental pattern and will be removed in the future.
   Also see ngxtensions: https://github.com/nartc/ngxtension-platform/blob/main/libs/ngxtension/create-injection-token/src/create-injection-token.ts
 

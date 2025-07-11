@@ -20,8 +20,6 @@ import {
 } from './join-stores.types';
 
 /**
-  ## ![StateAdapt](https://miro.medium.com/max/4800/1*qgM6mFM2Qj6woo5YxDMSrA.webp|width=14) `joinStores`
-
   `joinStores` is a function that takes in a `StoreEntries extends { [index: string]: StoreLike }` object and returns a `StoreBuilder` function.
   The `StoreBuilder` function can be called again and again with more selector definitions, and finally with no arguments to create a store.
 

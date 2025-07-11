@@ -4,8 +4,6 @@ import { Action, getAction } from '@state-adapt/core';
 import { Source } from './source';
 
 /**
-  ## ![StateAdapt](https://miro.medium.com/max/4800/1*qgM6mFM2Qj6woo5YxDMSrA.webp|width=14) `splitSources`
-
   `splitSources` is a function that takes in an [Observable](https://rxjs.dev/guide/observable) that emits multiple types of {@link Action} objects and splits it into a source for each {@link Action} type.
   It takes two arguments:
   - `source$`: [Observable](https://rxjs.dev/guide/observable)<{@link CommonAction}>

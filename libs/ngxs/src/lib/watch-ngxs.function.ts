@@ -6,10 +6,6 @@ import { AdaptNgxs } from './adapt-ngxs.service';
 //  - Replace all `rx` with `xs`, case-sensitive // Fix this line after
 //  - Replace all `NgRx` with `NGXS`, case-sensitive // Fix this line after
 /**
-   ## ![StateAdapt](https://miro.medium.com/max/4800/1*qgM6mFM2Qj6woo5YxDMSrA.webp|width=14) `watchNgxs`
-
-   > Copilot tip: Copy examples into your file or click to definition to open file with context for better Copilot suggestions.
-
   `watchNgxs` wraps {@link StateAdapt.watch}, calling `inject(AdaptNgxs)` to get an instance of {@link StateAdapt}
   that uses NGXS for the global store.
 

@@ -4,8 +4,6 @@ import { toRequestSource } from './to-request-source.operator';
 import { splitRequestSources } from './split-request-sources.function';
 
 /**
-  ## ![StateAdapt](https://miro.medium.com/max/4800/1*qgM6mFM2Qj6woo5YxDMSrA.webp|width=14) `getRequestSources`
-
   `getRequestSources` takes in a {@link TypePrefix} and an [Observable](https://rxjs.dev/guide/observable)
   of values of type {@link Payload} (inferred) and returns an object with `success$` and `error$` propeties.
 

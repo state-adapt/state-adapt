@@ -11,10 +11,6 @@ import { Source } from '@state-adapt/rxjs';
 //  - Replace adapt( with adaptNgrx(
 //  - Import all the {@links to other functions and services
 /**
-  ## ![StateAdapt](https://miro.medium.com/max/4800/1*qgM6mFM2Qj6woo5YxDMSrA.webp|width=14) `adaptNgrx`
-
-  > Copilot tip: Copy examples into your file or click to definition to open file with context for better Copilot suggestions.
-
   `adaptNgrx` wraps {@link StateAdapt.adapt}, calling `inject(AdaptNgrx)` to get an instance of {@link StateAdapt} that uses NgRx for the global store.
 
   `adaptNgrx` creates a store that will manage state while it has subscribers.
@@ -98,7 +94,7 @@ import { Source } from '@state-adapt/rxjs';
 
   There are 4 possible ways sources can be defined:
 
-  1\. A source can be a single source or [Observable](https://rxjs.dev/guide/observable)<{@link State}>. When the source emits, it triggers the store's `set` method
+  1\. A source can be a single source or [Observable](https://rxjs.dev/guide/observable)<`State`>. When the source emits, it triggers the store's `set` method
   with the payload.
 
   #### Example: Single source or observable
@@ -120,7 +116,7 @@ import { Source } from '@state-adapt/rxjs';
   }
   ```
 
-  2\. A source can be an array of sources or [Observable](https://rxjs.dev/guide/observable)<{@link State}>. When any of the sources emit, it triggers the store's `set`
+  2\. A source can be an array of sources or [Observable](https://rxjs.dev/guide/observable)<`State`>. When any of the sources emit, it triggers the store's `set`
    method with the payload.
 
   #### Example: Array of sources or observables

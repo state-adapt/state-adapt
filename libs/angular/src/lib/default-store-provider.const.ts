@@ -12,8 +12,6 @@ const enableReduxDevTools =
   });
 
 /**
-  ## ![StateAdapt](https://miro.medium.com/max/4800/1*qgM6mFM2Qj6woo5YxDMSrA.webp|width=14) `defaultStoreProvider`
-
   `defaultStoreProvider` is the default provider for {@link StateAdapt}, and
   is the easiest way to get started with StateAdapt in Angular. Simply add
   `defaultStoreProvider` to your `providers` array in your `AppModule` or `main.ts` file,

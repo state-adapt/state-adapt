@@ -392,7 +392,7 @@ function SharedState() {
 
 ### Decoupled
 
-State logic that references [specific event sources](/react#a-smooth-path-to-reactive-state) and specific state can require major refactoring if multiple states end up needing it.
+State logic that references [specific event sources](#a-smooth-path-to-reactive-state) and specific state can require major refactoring if multiple states end up needing it.
 
 State adapters provide a smooth path to extracting logic away from specific event sources and state:
 
@@ -468,7 +468,7 @@ type State = {
 };
 ```
 
-You can reuse the simple boolean logic by creating a [joined adapter](/api/core/joinAdapters) that extends it:
+You can reuse the simple boolean logic by creating a [joined adapter](/api/core/src/joinAdapters.html) that extends it:
 
 ```ts
 const adapter = joinAdapters<State>()({
@@ -479,7 +479,7 @@ const adapter = joinAdapters<State>()({
 
 This creates reducers in `adapter` called `toggleIsActive` and `toggleIsVisible` that toggle the respective properties.
 
-State adapters are also an opportunity to share generic state management logic. Check out the adapters you can import from [@state-adapt/core/adapters](/api/core/adapters).
+State adapters are also an opportunity to share generic state management logic. Check out the adapters you can import from [@state-adapt/core/adapters](/api/core/adapters/).
 
 <!-- <video controls loop>
   <source src="./assets/demo-4-state-adapters.mov" type="video/mp4" />

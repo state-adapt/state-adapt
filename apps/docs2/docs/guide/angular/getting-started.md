@@ -34,7 +34,7 @@ bootstrapApplication(AppComponent, {
 
 ---
 
-For options, see [@state-adapt/angular](/docs/angular).
+For options, see [@state-adapt/angular](/api/angular/index/provideStore.html).
 
 [StackBlitz Starter](https://stackblitz.com/edit/state-adapt-angular?file=src%2Fapp%2Fapp.module.ts)
 

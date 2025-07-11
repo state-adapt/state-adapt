@@ -6,8 +6,6 @@ import {
 } from '@state-adapt/rxjs';
 
 /**
-  ## ![StateAdapt](https://miro.medium.com/max/4800/1*qgM6mFM2Qj6woo5YxDMSrA.webp|width=14) `provideStore`
-
   `provideStore` takes in a {@link ConfigureStateAdaptOptions} object and
   returns a provider for {@link StateAdapt} that you can add
   to the `providers` array in your `AppModule` or `main.ts` file to make

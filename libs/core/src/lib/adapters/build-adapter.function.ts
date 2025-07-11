@@ -16,8 +16,6 @@ import { BasicAdapterMethods, createAdapter } from './create-adapter.function';
 import { Reactions } from './reactions.interface';
 
 /**
-  ## ![StateAdapt](https://miro.medium.com/max/4800/1*qgM6mFM2Qj6woo5YxDMSrA.webp|width=14) `buildAdapter`
-
   `buildAdapter` is called with an initial adapter, then can be called again and again with more objects inheriting from previous objects,
   until a final empty call `()` to get the final built adapter:
 
@@ -36,7 +34,7 @@ import { Reactions } from './reactions.interface';
 
   The first call creates a new object, but after that, every object passed in is looped over and used to mutate the original new object.
 
-  [`buildAdapter`](/concepts/adapters#buildadapter) takes 3 possible arguments in each call (after the first):
+  {@link buildAdapter} takes 3 possible arguments in each call (after the first):
 
   1. A selectors object
   2. A function taking in a tuple of `[selectors, reactions]` and returning new reactions
@@ -44,7 +42,7 @@ import { Reactions } from './reactions.interface';
 
   ### 1. Selectors
 
-  [`buildAdapter`](/concepts/adapters#buildadapter) provides full selector memoization and a default `state` selector (after the first call).
+  `buildAdapter` provides full selector memoization and a default `state` selector (after the first call).
   The selectors defined in the first call each receive a state object to select against. Each subsequent selector block has access to all
   selectors previously defined. To return all the selectors combined into an adapter, call it a final time with no parameter.
 
@@ -61,7 +59,7 @@ import { Reactions } from './reactions.interface';
   ```
 
   `s` is typed as an object with properties with the same names as all the selectors defined previously, and typed with each corresponding selector's
-  return type. Internally, [`buildAdapter`](/concepts/adapters#buildadapter) uses a `Proxy` to detect which selectors your new selector functions are
+  return type. Internally, `buildAdapter` uses a `Proxy` to detect which selectors your new selector functions are
   accessing in order memoize them efficiently.
 
   ### 2. Reactions

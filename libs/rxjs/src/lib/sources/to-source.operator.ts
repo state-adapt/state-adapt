@@ -3,8 +3,6 @@ import { map } from 'rxjs/operators';
 import { Action } from '@state-adapt/core';
 
 /**
-  ## ![StateAdapt](https://miro.medium.com/max/4800/1*qgM6mFM2Qj6woo5YxDMSrA.webp|width=14) `toSource`
-
   `toSource` is a custom RxJS [operator](https://rxjs.dev/guide/operators) that converts an RxJS [Observable](https://rxjs.dev/guide/observable)
   of values of type {@link Payload} (inferred) into an observable of values of type {@link Action}<{@link Payload}, {@link Type}>.
   It takes one argument, `type`, which is the `type` property of the {@link Action} objects that will be emitted, and which will

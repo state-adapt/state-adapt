@@ -35,7 +35,7 @@ const name = $name$;
 ::: info Library Coming Soon
 StateAdapt doesn't currently have a dedicated library for Svelte, but it will.
 
-For now, for more configuration options, see [@state-adapt/rxjs](/docs/rxjs).
+For now, refer to [`configureStateAdapt`](/api/rxjs/index/configureStateAdapt) for options.
 
 ### Runes
 

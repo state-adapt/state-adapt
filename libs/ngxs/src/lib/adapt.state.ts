@@ -8,8 +8,6 @@ export interface AdaptModel {
 }
 
 /**
-  ## ![StateAdapt](https://miro.medium.com/max/4800/1*qgM6mFM2Qj6woo5YxDMSrA.webp|width=14) `AdaptState`
-
   `AdaptState` is a custom NGXS [state](https://www.ngxs.io/concepts/state) that is used to store the state from StateAdapt.
 
   #### Example: Using `AdaptState` in an AppModule

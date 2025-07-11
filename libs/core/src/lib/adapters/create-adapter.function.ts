@@ -12,8 +12,6 @@ export type AdapterState<A extends Adapter<any, any, any>> =
   A extends BasicAdapterMethods<infer S> ? S : never;
 
 /**
-  ## ![StateAdapt](https://miro.medium.com/max/4800/1*qgM6mFM2Qj6woo5YxDMSrA.webp|width=10) `createAdapter`
-
   `createAdapter` is a function that takes an {@link Adapter} object and returns a new {@link Adapter} object with the following state change functions added:
   - `set`: A reaction that sets the state to the payload
   - `reset`: A reaction that sets the state to the initial state
@@ -76,6 +74,7 @@ export function createAdapter<State>() {
     selectors: memoizeSelectors<State, S>((adapter.selectors as S) || ({} as S)), // New selectors object
   });
 }
+
 type InitializedAdapter<
   State,
   S extends Selectors<State>,

@@ -4,8 +4,6 @@ import { splitSources } from './split-sources.function';
 import { Observable } from 'rxjs';
 
 /**
-  ## ![StateAdapt](https://miro.medium.com/max/4800/1*qgM6mFM2Qj6woo5YxDMSrA.webp|width=14) `splitRequestSources`
-
   `splitRequestSources` is a function that takes in a {@link TypePrefix} and an [Observable](https://rxjs.dev/guide/observable) with values of type
 
   ```ts

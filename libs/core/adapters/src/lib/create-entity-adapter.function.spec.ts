@@ -178,7 +178,7 @@ describe('createEntityAdapter', () => {
     const checkTypes = () => {
       // @ts-expect-error Doesn't exist
       personEntityAdapter.asdf;
-      // @ts-expect-error Shouldn't exist; inititialState has no entities
+      // @ts-expect-error Shouldn't exist; initialState has no entities
       personEntityAdapter.resetAll;
     };
   });

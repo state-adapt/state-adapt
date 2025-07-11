@@ -4,8 +4,6 @@ import { toSource } from './to-source.operator';
 import { catchErrorSource } from './catch-error-source.operator';
 
 /**
-  ## ![StateAdapt](https://miro.medium.com/max/4800/1*qgM6mFM2Qj6woo5YxDMSrA.webp|width=14) `toRequestSource`
-
   `toRequestSource` takes in a {@link TypePrefix} and converts an RxJS [Observable](https://rxjs.dev/guide/observable)
   of values of type {@link Payload} (inferred) into an [Observable](https://rxjs.dev/guide/observable) of values of type
 

@@ -8,22 +8,22 @@ hero:
 features:
   - title: Angular
     icon:
-      src: /assets/angular.svg
-    link: /guide/angular/examples
+      src: /angular.svg
+    link: /guide/angular/examples/incremental-complexity
   - title: React
     icon:
-      src: /assets/react.svg
-    link: /guide/react/examples
+      src: /react.svg
+    link: /guide/react/examples/incremental-complexity
   - title: Svelte
     icon:
-      src: /assets/svelte.svg
-    link: /guide/svelte/examples
+      src: /svelte.svg
+    link: /guide/svelte/examples/incremental-complexity
   - title: Solid
     icon:
-      src: /assets/solidjs.svg
-    link: /guide/solid/examples
+      src: /solidjs.svg
+    link: /guide/solid/examples/incremental-complexity
   # - title: Vue
   #   icon:
-  #     src: /assets/vue.svg
-  #   link: /guide/vue/examples
+  #     src: /vue.svg
+  #   link: /guide/vue/examples/incremental-complexity
 ---

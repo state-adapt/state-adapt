@@ -8,10 +8,6 @@ import { AdaptNgrx } from './adapt-ngrx.service';
 //  - Replace `watch` with `watchNgrx`
 //  - Replace watch( with watchNgrx(
 /**
-   ## ![StateAdapt](https://miro.medium.com/max/4800/1*qgM6mFM2Qj6woo5YxDMSrA.webp|width=14) `watchNgrx`
-
-   > Copilot tip: Copy examples into your file or click to definition to open file with context for better Copilot suggestions.
-
   `watchNgrx` wraps {@link StateAdapt.watch}, calling `inject(AdaptNgrx)` to get an instance of {@link StateAdapt}
   that uses NgRx for the global store.
 

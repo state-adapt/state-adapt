@@ -5,11 +5,7 @@ import { StateAdapt } from '@state-adapt/rxjs';
 //  - The phrase "`watch` wraps {@link StateAdapt.watch}, calling `inject(StateAdapt)` to get the instance of {@link StateAdapt} to use."
 //  - Examples have been modified to show usage in classes
 /**
-   ## ![StateAdapt](https://miro.medium.com/max/4800/1*qgM6mFM2Qj6woo5YxDMSrA.webp|width=14) `watch`
-
-   > Copilot tip: Copy examples into your file or click to definition to open file with context for better Copilot suggestions.
-
-  `watch` wraps {@link StateAdapt.watch}, calling `inject(StateAdapt)` to get the instance of {@link StateAdapt} to use.
+  `watch` wraps {@link StateAdapt.watch} for Angular.
 
   `watch` returns a detached store (doesn't chain off of sources). This allows you to watch state without affecting anything.
   It takes 2 arguments: The path of the state you are interested in, and the adapter containing the selectors you want to use.

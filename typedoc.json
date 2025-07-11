@@ -1,0 +1,40 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "plugin": ["typedoc-plugin-markdown", "typedoc-vitepress-theme"],
+  "entryPointStrategy": "packages",
+  "entryPoints": [
+    "libs/core",
+    // "libs/core/adapters",
+    "libs/rxjs",
+    "libs/angular",
+    "libs/react"
+  ],
+  "sortEntryPoints": false,
+  "packageOptions": {
+    "sortEntryPoints": false,
+    "excludeNotDocumented": true,
+    "navigation": {
+      "includeCategories": false,
+      "includeGroups": false,
+      "includeFolders": false,
+      "compactFolders": false
+    },
+    "defaultCategory": "Misc",
+    "router": "structure",
+    "flattenOutputFiles": true
+  },
+  "out": "./apps/docs2/docs/api/typedoc",
+  "sidebar": { "pretty": true },
+  "docsRoot": "./apps/docs2/docs/",
+  "excludeInternal": true,
+  "excludeScopesInPaths": true,
+  "navigation": {
+    "includeCategories": false,
+    "includeGroups": false,
+    "includeFolders": false,
+    "compactFolders": false
+  },
+  "groupReferencesByType": true,
+  "router": "structure",
+  "hideBreadcrumbs": true
+}

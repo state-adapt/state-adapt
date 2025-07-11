@@ -23,10 +23,6 @@ import { useProxyStates } from './use-proxy-states';
 // Differences between StateAdapt.adapt and useAdapt jsdoc:
 //  - Almost everything
 /**
-  ## ![StateAdapt](https://miro.medium.com/max/4800/1*qgM6mFM2Qj6woo5YxDMSrA.webp|width=14) `useAdapt`
-
-  > Copilot tip: Copy examples into your file or click to definition to open file with context for better Copilot suggestions.
-
   `useAdapt` is a hook that wraps {@link StateAdapt.adapt} and {@link useStore}. It creates a store, immediately subscribes to it,
   and returns a tuple `[selectorResults, setState]` where `selectorResults` is a proxy object containing results from the store's selectors,
   and `setState` is a function with additional properties assigned from the store created by {@link StateAdapt.adapt}.
@@ -121,7 +117,7 @@ import { useProxyStates } from './use-proxy-states';
 
   There are 4 possible ways sources can be defined:
 
-  1\. A source can be a single source or [Observable](https://rxjs.dev/guide/observable)<{@link State}>. When the source emits, it triggers the store's `set` method
+  1\. A source can be a single source or [Observable](https://rxjs.dev/guide/observable)<`State`>. When the source emits, it triggers the store's `set` method
   with the payload.
 
   #### Example: Single source or observable
@@ -146,7 +142,7 @@ import { useProxyStates } from './use-proxy-states';
   }
   ```
 
-  2\. A source can be an array of sources or [Observable](https://rxjs.dev/guide/observable)<{@link State}>. When any of the sources emit, it triggers the store's `set`
+  2\. A source can be an array of sources or [Observable](https://rxjs.dev/guide/observable)<`State`>. When any of the sources emit, it triggers the store's `set`
    method with the payload.
 
   #### Example: Array of sources or observables

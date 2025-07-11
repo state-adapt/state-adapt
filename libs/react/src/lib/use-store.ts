@@ -12,10 +12,6 @@ import { ReactionsWithSelectors, Selectors } from '@state-adapt/core';
 import { useProxyStates } from './use-proxy-states';
 
 /**
-  ## ![StateAdapt](https://miro.medium.com/max/4800/1*qgM6mFM2Qj6woo5YxDMSrA.webp|width=14) `useStore`
-
-  > Copilot tip: Copy examples into your file or click to definition to open file with context for better Copilot suggestions.
-
   `useStore` is a custom hook that takes in a store created with {@link StateAdapt.adapt}, subscribes to it,
   and returns a tuple `[selectorResults, setState]` where `selectorResults` is a proxy object containing results from the store's selectors,
   and `setState` is a function with additional properties assigned from the store object that was passed into `useStore`.

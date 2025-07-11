@@ -3,8 +3,6 @@ import { catchError } from 'rxjs/operators';
 import { Action, getAction } from '@state-adapt/core';
 
 /**
-  ## ![StateAdapt](https://miro.medium.com/max/4800/1*qgM6mFM2Qj6woo5YxDMSrA.webp|width=14) `catchErrorSource`
-
   `catchErrorSource` is a custom RxJS [operator](https://rxjs.dev/guide/operators) that converts an RxJS [Observable](https://rxjs.dev/guide/observable)
   of any values into a source of errors, using RxJS' [catchError](https://rxjs.dev/api/operators/catchError) operator.
   It takes one argument, {@link TypePrefix}, and prefixes it to create an object of type {@link Action}<any, ${{@link TypePrefix}}.error$>.

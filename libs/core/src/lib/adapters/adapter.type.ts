@@ -16,8 +16,6 @@ export interface ReactionsWithSelectors<State, S extends Selectors<State>> {
 export type WithSelectors<S> = { selectors?: S };
 
 /**
-  ## ![StateAdapt](https://miro.medium.com/max/4800/1*qgM6mFM2Qj6woo5YxDMSrA.webp|width=14) `Adapter`
-
   `Adapter` is a type of object containing 2 kinds of reusable state management patterns: State changes and selectors.
 
   State change functions are pure functions that implement ways state can change. They take 3 arguments and return a new state:

@@ -38,9 +38,9 @@ function Name() {
 Solid's `from` function subscribes immediately, so it's good to use only in components.
 
 ::: info Library Coming Soon
-StateAdapt doesn't currently have a dedicated library for Svelte, but it will.
+StateAdapt doesn't currently have a dedicated library for Solid.
 
-For now, for more configuration options, see [@state-adapt/rxjs](/docs/rxjs).
+For now, refer to [`configureStateAdapt`](/api/rxjs/index/configureStateAdapt) for options.
 :::
 
 [StackBlitz demo](https://stackblitz.com/edit/solidjs-templates-oc7ivf?file=src%2Fadapt.function.ts)

@@ -14,8 +14,6 @@ import {
 import { AdapterEntries, FlattendAdapters } from './join-adapters.types';
 
 /**
-  ## ![StateAdapt](https://miro.medium.com/max/4800/1*qgM6mFM2Qj6woo5YxDMSrA.webp|width=14) `joinAdapters`
-
   {@link joinAdapters} creates a complex adapter from simpler adapters by taking each of their state change
   functions and selectors and adding them to the new adapter with more specific names to distinguish them from
   each other. All state reaction names have their adapter's namespaces inserted after the first word, and all selector names
@@ -222,9 +220,9 @@ import { AdapterEntries, FlattendAdapters } from './join-adapters.types';
  */
 export function joinAdapters<
   ParentState extends Record<string, any>,
-  ExtraProps extends string = '',
+  ExcludedProps extends string = '',
 >() {
-  return <AE extends AdapterEntries<Omit<ParentState, ExtraProps>>>(
+  return <AE extends AdapterEntries<Omit<ParentState, ExcludedProps>>>(
     adapterEntries: AE,
   ): NewBlockAdder<
     ParentState,

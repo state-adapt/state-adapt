@@ -1,8 +1,6 @@
 import { Observable } from 'rxjs';
 
 /**
-  ## ![StateAdapt](https://miro.medium.com/max/4800/1*qgM6mFM2Qj6woo5YxDMSrA.webp|width=14) `type`
-
   `type` is a custom RxJS [operator](https://rxjs.dev/guide/operators) that mutates an RxJS [Observable](https://rxjs.dev/guide/observable)
   by setting a `type` property. It takes one argument, which will appear as the action type in Redux DevTools:
 

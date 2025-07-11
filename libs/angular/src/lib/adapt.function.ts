@@ -71,11 +71,7 @@ Here are the docs:
 Don't skip anything. Give me the entire documentation from start to end.
 */
 /**
-  ## ![StateAdapt](https://miro.medium.com/max/4800/1*qgM6mFM2Qj6woo5YxDMSrA.webp|width=14) `adapt`
-
-  > Copilot tip: Copy examples into your file or click to definition to open file with context for better Copilot suggestions.
-
-  `adapt` wraps {@link StateAdapt.adapt}, calling `inject(StateAdapt)` to get the instance of {@link StateAdapt} to use.
+  `adapt` wraps {@link StateAdapt.adapt} for Angular.
 
   `adapt` creates a store that will manage state while it has subscribers.
 
@@ -158,7 +154,7 @@ Don't skip anything. Give me the entire documentation from start to end.
 
   There are 4 possible ways sources can be defined:
 
-  1\. A source can be a single source or [Observable](https://rxjs.dev/guide/observable)<{@link State}>. When the source emits, it triggers the store's `set` method
+  1\. A source can be a single source or [Observable](https://rxjs.dev/guide/observable)`<``State``>`. When the source emits, it triggers the store's `set` method
   with the payload.
 
   #### Example: Single source or observable
@@ -180,7 +176,7 @@ Don't skip anything. Give me the entire documentation from start to end.
   }
   ```
 
-  2\. A source can be an array of sources or [Observable](https://rxjs.dev/guide/observable)<{@link State}>. When any of the sources emit, it triggers the store's `set`
+  2\. A source can be an array of sources or [Observable](https://rxjs.dev/guide/observable)`<``State``>`. When any of the sources emit, it triggers the store's `set`
    method with the payload.
 
   #### Example: Array of sources or observables

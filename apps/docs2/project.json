@@ -3,18 +3,18 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
   "targets": {
-    "build": {
-      "executor": "nx:run-commands",
-      "outputs": ["{options.outputPath}"],
-      "options": {
-        "command": "vitepress build apps/docs2"
-      }
-    },
     "dev": {
       "executor": "nx:run-commands",
       "cache": false,
       "options": {
         "command": "vitepress dev apps/docs2"
+      }
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "command": "vitepress build apps/docs2 && vitepress build apps/docs2 --base /v/3/ --outDir apps/docs2/.vitepress/dist/v/3"
       }
     },
     "serve": {

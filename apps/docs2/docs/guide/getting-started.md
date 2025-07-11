@@ -8,22 +8,22 @@ hero:
 features:
   - title: Angular
     icon:
-      src: /assets/angular.svg
+      src: /angular.svg
     link: /guide/angular/getting-started
   - title: React
     icon:
-      src: /assets/react.svg
+      src: /react.svg
     link: /guide/react/getting-started
   - title: Svelte
     icon:
-      src: /assets/svelte.svg
+      src: /svelte.svg
     link: /guide/svelte/getting-started
   - title: Solid
     icon:
-      src: /assets/solidjs.svg
+      src: /solidjs.svg
     link: /guide/solid/getting-started
   # - title: Vue
   #   icon:
-  #     src: /assets/vue.svg
+  #     src: /vue.svg
   #   link: /guide/vue/getting-started
 ---

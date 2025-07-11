@@ -68,6 +68,9 @@ interface UpdaterStream {
   }[];
 }
 
+/**
+ *
+ */
 export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
   private pathStates: PathStates = {};
   private updaterStreams: UpdaterStream[] = [];
@@ -75,10 +78,6 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
   constructor(private commonStore: CommonStore) {}
 
   /**
-  ## ![StateAdapt](https://miro.medium.com/max/4800/1*qgM6mFM2Qj6woo5YxDMSrA.webp|width=14) `StateAdapt.adapt`
-
-  > Copilot tip: Copy examples into your file or click to definition to open file with context for better Copilot suggestions.
-
   `adapt` creates a store that will manage state while it has subscribers.
 
   ### Example: initialState only
@@ -148,7 +147,7 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
 
   There are 4 possible ways sources can be defined:
 
-  1\. A source can be a single source or [Observable](https://rxjs.dev/guide/observable)<{@link State}>. When the source emits, it triggers the store's `set` method
+  1\. A source can be a single source or [Observable](https://rxjs.dev/guide/observable)<`State`>. When the source emits, it triggers the store's `set` method
   with the payload.
 
   #### Example: Single source or observable
@@ -166,7 +165,7 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
   nameChange$.next('Johnsh'); // logs 'Johnsh'
   ```
 
-  2\. A source can be an array of sources or [Observable](https://rxjs.dev/guide/observable)<{@link State}>. When any of the sources emit, it triggers the store's `set`
+  2\. A source can be an array of sources or [Observable](https://rxjs.dev/guide/observable)<`State`>. When any of the sources emit, it triggers the store's `set`
    method with the payload.
 
   #### Example: Array of sources or observables
@@ -384,10 +383,6 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
   }
 
   /**
-   ## ![StateAdapt](https://miro.medium.com/max/4800/1*qgM6mFM2Qj6woo5YxDMSrA.webp|width=14) `StateAdapt.watch`
-
-   > Copilot tip: Copy examples into your file or click to definition to open file with context for better Copilot suggestions.
-
   `watch` returns a detached store (doesn't chain off of sources). This allows you to watch state without affecting anything.
   It takes 2 arguments: The path of the state you are interested in, and the adapter you want to use.
 
