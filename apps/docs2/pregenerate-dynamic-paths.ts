@@ -8,8 +8,6 @@ import { join } from 'path';
 function createMdFromContent(dir: string, paths: ReturnType<typeof angularConfig.paths>) {
   const fullDir = join((import.meta as any).dirname, dir);
   paths.forEach(path => {
-    console.log('path.def.path', path.def.path);
-    console.log('content', path.content);
     const symbol = path.params.symbol;
     const filename = `${symbol}.md`;
     writeFileSync(`${fullDir}/${filename}`, path.content, 'utf-8');
