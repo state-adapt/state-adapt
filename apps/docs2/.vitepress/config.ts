@@ -67,8 +67,12 @@ export default defineConfig({
       alt: 'StateAdapt Logo',
     },
     editLink: {
-      pattern:
-        'https://github.com/state-adapt/state-adapt/tree/main/apps/docs2/docs/:path',
+      pattern: ({ filePath, frontmatter }) =>
+        frontmatter.definedIn
+          ? 'https://github.com/state-adapt/state-adapt/tree/main/libs/' +
+            frontmatter.definedIn.split('/libs/')[1]
+          : 'https://github.com/state-adapt/state-adapt/tree/main/apps/docs2/docs/' +
+            filePath,
       text: 'Suggest changes to this page',
     },
     nav: [

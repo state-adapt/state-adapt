@@ -5,12 +5,26 @@ import reactConfig from './docs/api/react/index/symbol.paths';
 import rxjsConfig from './docs/api/rxjs/index/symbol.paths';
 import { join } from 'path';
 
+function getFrontmatter(url: string) {
+  return `---
+definedIn: ${url}
+---
+
+`;
+}
+
 function createMdFromContent(dir: string, paths: ReturnType<typeof angularConfig.paths>) {
   const fullDir = join((import.meta as any).dirname, dir);
   paths.forEach(path => {
     const symbol = path.params.symbol;
     const filename = `${symbol}.md`;
-    writeFileSync(`${fullDir}/${filename}`, path.content, 'utf-8');
+
+    // Find url from text that says `Defined in: [libs/rxjs/etc...](url)
+    const urlMatch = path.content.match(/Defined in: \[.*?\]\((.*?)\)/);
+    const url = urlMatch ? urlMatch[1] : '';
+    const frontmatter = getFrontmatter(url);
+
+    writeFileSync(`${fullDir}/${filename}`, frontmatter + path.content, 'utf-8');
   });
 }
 
