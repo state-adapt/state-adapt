@@ -38,6 +38,21 @@ export default defineConfig({
     ['link', { rel: 'icon', href: '/sa3-3.svg', sizes: 'any', type: 'image/svg+xml' }],
     ['link', { rel: 'mask-icon', href: '/sa3-3.svg', color: '#ffffff' }],
     ['link', { rel: 'icon', href: '/favicon.ico' }],
+    // basic OG
+    ['meta', { property: 'og:type', content: 'website' }],
+    ['meta', { property: 'og:title', content: 'StateAdapt' }],
+    [
+      'meta',
+      {
+        property: 'og:description',
+        content: 'State Management that adapts with complexity.',
+      },
+    ],
+    ['meta', { property: 'og:url', content: 'https://state-adapt.github.io/' }],
+    [
+      'meta',
+      { property: 'og:image', content: 'https://state-adapt.github.io/sa-cover2.png' },
+    ],
   ],
   title: 'StateAdapt',
   description: 'Vite & Vue powered static site generator.',
