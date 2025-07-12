@@ -10,12 +10,12 @@ hero:
   alt: Logo image
   tagline: 'Start every feature with scalable state management.<br>No boilerplate. No big refactors.'
   actions:
-    - theme: brand
-      text: Get Started
-      link: /guide/getting-started
     - theme: alt
       text: Examples
       link: /guide/examples
+    - theme: brand
+      text: Get Started
+      link: /guide/getting-started
 
 features:
   - title: Adaptive

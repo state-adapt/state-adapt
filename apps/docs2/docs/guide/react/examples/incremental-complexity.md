@@ -1,3 +1,5 @@
+# Incremental Complexity
+
 ## `useState` without regrets
 
 Clean state management should be easy, like `useState`.
@@ -54,7 +56,8 @@ function SimpleStateAdapt() {
 ```tsx
 function ReducedState() {
   const [name, setName] = useAdapt('Bob'); // [!code --]
-  const [name, setName] = useAdapt('Bob', {// [!code ++]
+  const [name, setName] = useAdapt('Bob', {
+    // [!code ++]
     reverse: name => name.split('').reverse().join(''), // name type inferred // [!code ++]
   }); // [!code ++]
   return (
@@ -91,12 +94,14 @@ Moving local state to shared state should be easy.
 `useAdapt` easily splits into `adapt` and `useStore`:
 
 ```tsx
-const nameStore = adapt('Bob', {// [!code ++]
+const nameStore = adapt('Bob', {
+  // [!code ++]
   reverse: name => name.split('').reverse().join(''), // [!code ++]
 }); // [!code ++]
 
 function SharedState() {
-  const [name, setName] = useAdapt('Bob', {// [!code --]
+  const [name, setName] = useAdapt('Bob', {
+    // [!code --]
     reverse: name => name.split('').reverse().join(''), // [!code --]
   }); // [!code --]
   const [name, setName] = useStore(nameStore); // [!code ++]
@@ -158,8 +163,11 @@ One way StateAdapt addresses this is by allowing selectors to be defined alongsi
 function SharedDerivedState() {
   const [name, setName] = useAdapt('Bob', {
     reverse: name => name.split('').reverse().join(''),
-    seletors: {// [!code ++]
-      randomCase: (name) =>// [!code ++]
+    seletors: {
+      // [!code ++]
+      randomCase: (
+        name, // [!code ++]
+      ) =>
         name // [!code ++]
           .split('') // [!code ++]
           .map(c => (Math.random() > 0.5 ? c : c.toUpperCase())) // [!code ++]
@@ -180,10 +188,14 @@ function SharedDerivedState() {
 Now if you need to share it, the selectors can just move with the state:
 
 ```tsx
-const nameStore = adapt('Bob', {// [!code ++]
+const nameStore = adapt('Bob', {
+  // [!code ++]
   reverse: name => name.split('').reverse().join(''), // [!code ++]
-  seletors: {// [!code ++]
-    randomCase: (name) =>// [!code ++]
+  seletors: {
+    // [!code ++]
+    randomCase: (
+      name, // [!code ++]
+    ) =>
       name // [!code ++]
         .split('') // [!code ++]
         .map(c => (Math.random() > 0.5 ? c : c.toUpperCase())) // [!code ++]
@@ -192,10 +204,14 @@ const nameStore = adapt('Bob', {// [!code ++]
 }); // [!code ++]
 
 function SharedDerivedState() {
-  const [name, setName] = useAdapt('Bob', {// [!code --]
+  const [name, setName] = useAdapt('Bob', {
+    // [!code --]
     reverse: name => name.split('').reverse().join(''), // [!code --]
-    seletors: {// [!code --]
-    randomCase: (name) =>// [!code --]
+    seletors: {
+      // [!code --]
+      randomCase: (
+        name, // [!code --]
+      ) =>
         name // [!code --]
           .split('') // [!code --]
           .map(c => (Math.random() > 0.5 ? c : c.toUpperCase())) // [!code --]
@@ -240,7 +256,8 @@ function SharedDerivedState() {
   );
 }
 ```
-<!-- 
+
+<!--
 But you will sometimes still need to refactor local derived state to shared derived state.
 
 An AI tool like [Copilot](https://github.com/features/copilot) completely solves this for StateAdapt,

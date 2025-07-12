@@ -1,4 +1,10 @@
-## React
+---
+next:
+  text: 'API Reference'
+  link: '/api/core/src/'
+---
+
+# Getting Started
 
 First, install:
 

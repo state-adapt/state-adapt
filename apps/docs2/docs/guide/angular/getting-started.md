@@ -1,3 +1,11 @@
+---
+next:
+  text: 'API Reference'
+  link: '/api/core/src/'
+---
+
+# Getting Started
+
 ## Angular
 
 <!-- TODO: Fix the Schematic publishing -->

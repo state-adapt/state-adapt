@@ -1,3 +1,5 @@
+# Incremental Complexity
+
 ## 1. Start with simple state
 
 StateAdapt stores can be as simple as RxJS `BehaviorSubject`s:

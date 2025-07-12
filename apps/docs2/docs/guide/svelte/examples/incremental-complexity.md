@@ -1,3 +1,5 @@
+# Incremental Complexity
+
 ## 1. Start with simple state
 
 StateAdapt stores can be as simple as Svelte stores or RxJS `BehaviorSubject`s:
@@ -22,7 +24,7 @@ const name$ = nameStore.state$;
 
 ### Runes
 
-Integration with runes coming soon. 
+Integration with runes coming soon.
 
 ## 2. Add selectors for derived state
 
@@ -118,31 +120,34 @@ If you need to reuse state logic, it's as simple as dragging it outside the `ada
 Multiple stores might need to react to the same observable, so it needs independent annotation.
 
 ```typescript
-  const nameAdapter = createAdapter<string>()({
-    reverseName: name => name.split('').reverse().join(''),
-    concatName: (name, anotherName: string) => `${name} ${anotherName}`, // [!code ++]
-    selectors: {
-      yelledName: name => name.toUpperCase(), // Will be memoized
-    },
-  });
+const nameAdapter = createAdapter<string>()({
+  reverseName: name => name.split('').reverse().join(''),
+  concatName: (name, anotherName: string) => `${name} ${anotherName}`, // [!code ++]
+  selectors: {
+    yelledName: name => name.toUpperCase(), // Will be memoized
+  },
+});
 
-  const onNameFromServer = timer(3000).pipe(map(() => 'Joel')); // [!code ++]
+const onNameFromServer = timer(3000).pipe(map(() => 'Joel')); // [!code ++]
 
-  const nameStore1 = adapt('Bob', nameAdapter); // [!code --]
-  const nameStore1 = adapt('Bob', { // [!code ++]
-    adapter: nameAdapter, // [!code ++]
-    sources: onNameFromServer, // Set state // [!code ++]
-  }); // [!code ++]
-  const yelledName1$ = nameStore1.yelledName$;
+const nameStore1 = adapt('Bob', nameAdapter); // [!code --]
+const nameStore1 = adapt('Bob', {
+  // [!code ++]
+  adapter: nameAdapter, // [!code ++]
+  sources: onNameFromServer, // Set state // [!code ++]
+}); // [!code ++]
+const yelledName1$ = nameStore1.yelledName$;
 
-  const nameStore2 = adapt('Bob', nameAdapter); // [!code --]
-  const nameStore2 = adapt('Bob', { // [!code ++]
-    adapter: nameAdapter, // [!code ++]
-    sources: { // [!code ++]
-      concatName: onNameFromServer, // Trigger a specific state reaction // [!code ++]
-    }, // [!code ++]
-  }); // [!code ++]
-  const yelledName2$ = nameStore2.yelledName$;
+const nameStore2 = adapt('Bob', nameAdapter); // [!code --]
+const nameStore2 = adapt('Bob', {
+  // [!code ++]
+  adapter: nameAdapter, // [!code ++]
+  sources: {
+    // [!code ++]
+    concatName: onNameFromServer, // Trigger a specific state reaction // [!code ++]
+  }, // [!code ++]
+}); // [!code ++]
+const yelledName2$ = nameStore2.yelledName$;
 ```
 
 ```svelte
@@ -166,36 +171,37 @@ Multiple stores might need to react to the same observable, so it needs independ
 Don't write callback functions to imperatively change state in multiple stores. Instead, declare the DOM event as an independent source that multiple stores can react to.
 
 ```typescript
-  const nameAdapter = createAdapter<string>()({
-    reverseName: name => name.split('').reverse().join(''),
-    concatName: (name, anotherName: string) => `${name} ${anotherName}`,
-    selectors: {
-      yelledName: name => name.toUpperCase(), // Will be memoized
-    },
-  });
+const nameAdapter = createAdapter<string>()({
+  reverseName: name => name.split('').reverse().join(''),
+  concatName: (name, anotherName: string) => `${name} ${anotherName}`,
+  selectors: {
+    yelledName: name => name.toUpperCase(), // Will be memoized
+  },
+});
 
-  const onResetBoth = source(); // [!code ++]
+const onResetBoth = source(); // [!code ++]
 
-  const onNameFromServer = timer(3000).pipe(map(() => 'Joel'));
+const onNameFromServer = timer(3000).pipe(map(() => 'Joel'));
 
-  const nameStore1 = adapt('Bob', {
-    adapter: nameAdapter,
-    sources: onNameFromServer, // Set state // [!code --]
-    sources: { // [!code ++]
-      set: onNameFromServer, // `set` is provided with all adapters // [!code ++]
-      reset: onResetBoth, // `reset` is provided with all adapters // [!code ++]
-    }, // [!code ++]
-  });
-  const yelledName1$ = nameStore1.yelledName$;
+const nameStore1 = adapt('Bob', {
+  adapter: nameAdapter,
+  sources: onNameFromServer, // Set state // [!code --]
+  sources: {
+    // [!code ++]
+    set: onNameFromServer, // `set` is provided with all adapters // [!code ++]
+    reset: onResetBoth, // `reset` is provided with all adapters // [!code ++]
+  }, // [!code ++]
+});
+const yelledName1$ = nameStore1.yelledName$;
 
-  const nameStore2 = adapt('Bob', {
-    adapter: nameAdapter,
-    sources: {
-      concatName: onNameFromServer, // Trigger a specific state reaction
-      reset: onResetBoth, // `reset` is provided with all adapters // [!code ++]
-    },
-  });
-  const yelledName2$ = nameStore2.yelledName$;
+const nameStore2 = adapt('Bob', {
+  adapter: nameAdapter,
+  sources: {
+    concatName: onNameFromServer, // Trigger a specific state reaction
+    reset: onResetBoth, // `reset` is provided with all adapters // [!code ++]
+  },
+});
+const yelledName2$ = nameStore2.yelledName$;
 ```
 
 ```svelte
@@ -221,42 +227,44 @@ Don't write callback functions to imperatively change state in multiple stores. 
 `joinStores` can define derived state from multiple stores that can be shared bewteen multiple components.
 
 ```typescript
-  const nameAdapter = createAdapter<string>()({
-    reverseName: name => name.split('').reverse().join(''),
-    concatName: (name, anotherName: string) => `${name} ${anotherName}`,
-    selectors: {
-      yelledName: name => name.toUpperCase(), // Will be memoized
-    },
-  });
+const nameAdapter = createAdapter<string>()({
+  reverseName: name => name.split('').reverse().join(''),
+  concatName: (name, anotherName: string) => `${name} ${anotherName}`,
+  selectors: {
+    yelledName: name => name.toUpperCase(), // Will be memoized
+  },
+});
 
-  const onResetBoth = source();
+const onResetBoth = source();
 
-  const onNameFromServer = timer(3000).pipe(map(() => 'Joel'));
+const onNameFromServer = timer(3000).pipe(map(() => 'Joel'));
 
-  const nameStore1 = adapt('Bob', {
-    adapter: nameAdapter,
-    sources: {
-      set: onNameFromServer, // `set` is provided with all adapters
-      reset: onResetBoth, // `reset` is provided with all adapters
-    },
-  })
-  const yelledName1$ = nameStore1.yelledName$;
+const nameStore1 = adapt('Bob', {
+  adapter: nameAdapter,
+  sources: {
+    set: onNameFromServer, // `set` is provided with all adapters
+    reset: onResetBoth, // `reset` is provided with all adapters
+  },
+});
+const yelledName1$ = nameStore1.yelledName$;
 
-  const nameStore2 = adapt('Bob', {
-    adapter: nameAdapter,
-    sources: {
-      concatName: onNameFromServer, // Trigger a specific state reaction
-      reset: onResetBoth, // `reset` is provided with all adapters
-    },
-  })
-  const yelledName2$ = nameStore2.yelledName$;
+const nameStore2 = adapt('Bob', {
+  adapter: nameAdapter,
+  sources: {
+    concatName: onNameFromServer, // Trigger a specific state reaction
+    reset: onResetBoth, // `reset` is provided with all adapters
+  },
+});
+const yelledName2$ = nameStore2.yelledName$;
 
-  const bothBobs$ = joinStores({ // [!code ++]
-    name1: nameStore1, // [!code ++]
-    name2: nameStore2, // [!code ++]
-  })({ // [!code ++]
-    bothBobs: s => s.name1 === 'Bob' && s.name2 === 'Bob', // [!code ++]
-  })().bothBobs$; // [!code ++]
+const bothBobs$ = joinStores({
+  // [!code ++]
+  name1: nameStore1, // [!code ++]
+  name2: nameStore2, // [!code ++]
+})({
+  // [!code ++]
+  bothBobs: s => s.name1 === 'Bob' && s.name2 === 'Bob', // [!code ++]
+})().bothBobs$; // [!code ++]
 ```
 
 ```svelte

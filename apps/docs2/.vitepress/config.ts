@@ -195,12 +195,12 @@ function getGuideSidebar(): DefaultTheme.SidebarItem[] {
       ],
     },
     {
-      text: 'Getting Started',
-      link: `/guide/getting-started/`,
-    },
-    {
       text: 'Examples',
       link: '/guide/examples/',
+    },
+    {
+      text: 'Getting Started',
+      link: `/guide/getting-started/`,
     },
     ...getFrameworkSidebar('angular', []),
     ...getFrameworkSidebar('react', [
@@ -226,10 +226,6 @@ function getFrameworkSidebar(
       base: `/guide/${framework}/`,
       items: [
         {
-          text: 'Getting Started',
-          link: `getting-started`,
-        },
-        {
           text: 'Examples',
           base: `/guide/${framework}/examples/`,
           link: 'incremental-complexity',
@@ -241,6 +237,10 @@ function getFrameworkSidebar(
             },
             ...examples,
           ],
+        },
+        {
+          text: 'Getting Started',
+          link: `getting-started`,
         },
       ],
     },
