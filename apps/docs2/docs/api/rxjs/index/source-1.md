@@ -1,8 +1,12 @@
+---
+definedIn: https://github.com/state-adapt/state-adapt/blob/4e457fa33331f265d75eaddb646761782498dd8e/libs/rxjs/src/lib/sources/source.function.ts#L44
+---
+
 # Function: source()
 
 > **source**\<`T`\>(`type`): `SourceFn`\<`T`\>
 
-Defined in: [libs/rxjs/src/lib/sources/source.function.ts:44](https://github.com/state-adapt/state-adapt/blob/4ff8540684d6d76a52452612f8fa44ffd7c6016a/libs/rxjs/src/lib/sources/source.function.ts#L44)
+Defined in: [libs/rxjs/src/lib/sources/source.function.ts:44](https://github.com/state-adapt/state-adapt/blob/4e457fa33331f265d75eaddb646761782498dd8e/libs/rxjs/src/lib/sources/source.function.ts#L44)
 
 `source` returns an object that extends an RxJS [Subject](https://rxjs.dev/guide/subject) with an extra `type: string` property, and is also callable directly.
  When using a `source`, you can provide a `type` argument, which will appear as the action type in Redux DevTools:

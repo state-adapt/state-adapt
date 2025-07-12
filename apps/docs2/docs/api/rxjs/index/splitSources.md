@@ -1,8 +1,12 @@
+---
+definedIn: https://github.com/state-adapt/state-adapt/blob/4e457fa33331f265d75eaddb646761782498dd8e/libs/rxjs/src/lib/sources/split-sources.function.ts#L77
+---
+
 # Function: splitSources()
 
 > **splitSources**\<`CommonAction`, `Aliases`\>(`source$`, `partitions?`): \{ \[K in string \| number \| symbol\]: ActionMap\<CommonAction\>\[Aliases\[K\]\] \} & `ActionMap`\<`CommonAction`\>
 
-Defined in: [libs/rxjs/src/lib/sources/split-sources.function.ts:77](https://github.com/state-adapt/state-adapt/blob/4ff8540684d6d76a52452612f8fa44ffd7c6016a/libs/rxjs/src/lib/sources/split-sources.function.ts#L77)
+Defined in: [libs/rxjs/src/lib/sources/split-sources.function.ts:77](https://github.com/state-adapt/state-adapt/blob/4e457fa33331f265d75eaddb646761782498dd8e/libs/rxjs/src/lib/sources/split-sources.function.ts#L77)
 
 `splitSources` is a function that takes in an [Observable](https://rxjs.dev/guide/observable) that emits multiple types of [Action](../../core/src/Action.md) objects and splits it into a source for each [Action](../../core/src/Action.md) type.
 It takes two arguments:

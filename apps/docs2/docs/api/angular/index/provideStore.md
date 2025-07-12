@@ -1,8 +1,12 @@
+---
+definedIn: https://github.com/state-adapt/state-adapt/blob/4e457fa33331f265d75eaddb646761782498dd8e/libs/angular/src/lib/provide-store.function.ts#L57
+---
+
 # Function: provideStore()
 
 > **provideStore**(`options`): `object`
 
-Defined in: [lib/provide-store.function.ts:57](https://github.com/state-adapt/state-adapt/blob/4ff8540684d6d76a52452612f8fa44ffd7c6016a/libs/angular/src/lib/provide-store.function.ts#L57)
+Defined in: [lib/provide-store.function.ts:57](https://github.com/state-adapt/state-adapt/blob/4e457fa33331f265d75eaddb646761782498dd8e/libs/angular/src/lib/provide-store.function.ts#L57)
 
 `provideStore` takes in a [ConfigureStateAdaptOptions](../../rxjs/index/ConfigureStateAdaptOptions.md) object and
 returns a provider for [StateAdapt](../../rxjs/index/StateAdapt.md) that you can add

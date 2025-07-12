@@ -1,8 +1,12 @@
+---
+definedIn: https://github.com/state-adapt/state-adapt/blob/4e457fa33331f265d75eaddb646761782498dd8e/libs/rxjs/src/lib/sources/split-request-sources.function.ts#L89
+---
+
 # Function: splitRequestSources()
 
 > **splitRequestSources**\<`TypePrefix`, `A`\>(`typePrefix`, `obs$`): `object`
 
-Defined in: [libs/rxjs/src/lib/sources/split-request-sources.function.ts:89](https://github.com/state-adapt/state-adapt/blob/4ff8540684d6d76a52452612f8fa44ffd7c6016a/libs/rxjs/src/lib/sources/split-request-sources.function.ts#L89)
+Defined in: [libs/rxjs/src/lib/sources/split-request-sources.function.ts:89](https://github.com/state-adapt/state-adapt/blob/4e457fa33331f265d75eaddb646761782498dd8e/libs/rxjs/src/lib/sources/split-request-sources.function.ts#L89)
 
 `splitRequestSources` is a function that takes in a [TypePrefix](#splitrequestsourcestypeprefix) and an [Observable](https://rxjs.dev/guide/observable) with values of type
 

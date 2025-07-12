@@ -1,8 +1,12 @@
+---
+definedIn: https://github.com/state-adapt/state-adapt/blob/4e457fa33331f265d75eaddb646761782498dd8e/libs/rxjs/src/lib/sources/type.operator.ts#L19
+---
+
 # Function: type()
 
 > **type**(`type`): \<`T`\>(`source$`) => `T` & `object`
 
-Defined in: [libs/rxjs/src/lib/sources/type.operator.ts:21](https://github.com/state-adapt/state-adapt/blob/4ff8540684d6d76a52452612f8fa44ffd7c6016a/libs/rxjs/src/lib/sources/type.operator.ts#L21)
+Defined in: [libs/rxjs/src/lib/sources/type.operator.ts:19](https://github.com/state-adapt/state-adapt/blob/4e457fa33331f265d75eaddb646761782498dd8e/libs/rxjs/src/lib/sources/type.operator.ts#L19)
 
 `type` is a custom RxJS [operator](https://rxjs.dev/guide/operators) that mutates an RxJS [Observable](https://rxjs.dev/guide/observable)
 by setting a `type` property. It takes one argument, which will appear as the action type in Redux DevTools:

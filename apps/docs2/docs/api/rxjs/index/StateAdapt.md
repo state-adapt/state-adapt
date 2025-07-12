@@ -1,6 +1,10 @@
+---
+definedIn: https://github.com/state-adapt/state-adapt/blob/4e457fa33331f265d75eaddb646761782498dd8e/libs/rxjs/src/lib/global-store/state-adapt.ts#L74
+---
+
 # Class: StateAdapt\<CommonStore\>
 
-Defined in: [libs/rxjs/src/lib/global-store/state-adapt.ts:74](https://github.com/state-adapt/state-adapt/blob/4ff8540684d6d76a52452612f8fa44ffd7c6016a/libs/rxjs/src/lib/global-store/state-adapt.ts#L74)
+Defined in: [libs/rxjs/src/lib/global-store/state-adapt.ts:74](https://github.com/state-adapt/state-adapt/blob/4e457fa33331f265d75eaddb646761782498dd8e/libs/rxjs/src/lib/global-store/state-adapt.ts#L74)
 
 ## Type Parameters
 
@@ -14,7 +18,7 @@ Defined in: [libs/rxjs/src/lib/global-store/state-adapt.ts:74](https://github.co
 
 > **adapt**\<`State`, `S`, `R`, `R2`\>(`initialState`, `second`): `InitializedSmartStore`\<`State`, `S`, `object` *extends* `R` ? `R2` : `R`\>
 
-Defined in: [libs/rxjs/src/lib/global-store/state-adapt.ts:286](https://github.com/state-adapt/state-adapt/blob/4ff8540684d6d76a52452612f8fa44ffd7c6016a/libs/rxjs/src/lib/global-store/state-adapt.ts#L286)
+Defined in: [libs/rxjs/src/lib/global-store/state-adapt.ts:286](https://github.com/state-adapt/state-adapt/blob/4e457fa33331f265d75eaddb646761782498dd8e/libs/rxjs/src/lib/global-store/state-adapt.ts#L286)
 
 `adapt` creates a store that will manage state while it has subscribers.
 
@@ -259,7 +263,7 @@ and it only subscribes to sources when it has subscribers itself.
 
 > **watch**\<`State`, `S`, `R`\>(`path`, `adapter`): `SmartStore`\<`State`, `S` & `WithGetState`\<`State`\>\>
 
-Defined in: [libs/rxjs/src/lib/global-store/state-adapt.ts:409](https://github.com/state-adapt/state-adapt/blob/4ff8540684d6d76a52452612f8fa44ffd7c6016a/libs/rxjs/src/lib/global-store/state-adapt.ts#L409)
+Defined in: [libs/rxjs/src/lib/global-store/state-adapt.ts:409](https://github.com/state-adapt/state-adapt/blob/4e457fa33331f265d75eaddb646761782498dd8e/libs/rxjs/src/lib/global-store/state-adapt.ts#L409)
 
 `watch` returns a detached store (doesn't chain off of sources). This allows you to watch state without affecting anything.
 It takes 2 arguments: The path of the state you are interested in, and the adapter you want to use.

@@ -1,10 +1,14 @@
+---
+definedIn: https://github.com/state-adapt/state-adapt/blob/4e457fa33331f265d75eaddb646761782498dd8e/libs/core/src/lib/actions/get-action.function.ts#L16
+---
+
 # Function: getAction()
 
 ## Call Signature
 
 > **getAction**\<`Type`\>(`type`): [`Action`](Action.md)\<`void`, `Type`\>
 
-Defined in: [src/lib/actions/get-action.function.ts:16](https://github.com/state-adapt/state-adapt/blob/4ff8540684d6d76a52452612f8fa44ffd7c6016a/libs/core/src/lib/actions/get-action.function.ts#L16)
+Defined in: [src/lib/actions/get-action.function.ts:16](https://github.com/state-adapt/state-adapt/blob/4e457fa33331f265d75eaddb646761782498dd8e/libs/core/src/lib/actions/get-action.function.ts#L16)
 
 `getAction` is a function that takes in an action [Type](#getactiontype) and optionally Payload and creates an [Action](Action.md) object.
 
@@ -38,7 +42,7 @@ const action = getAction('ADD', 1);
 
 > **getAction**\<`Type`, `Payload`\>(`type`, `payload`): [`Action`](Action.md)\<`Payload`, `Type`\>
 
-Defined in: [src/lib/actions/get-action.function.ts:17](https://github.com/state-adapt/state-adapt/blob/4ff8540684d6d76a52452612f8fa44ffd7c6016a/libs/core/src/lib/actions/get-action.function.ts#L17)
+Defined in: [src/lib/actions/get-action.function.ts:17](https://github.com/state-adapt/state-adapt/blob/4e457fa33331f265d75eaddb646761782498dd8e/libs/core/src/lib/actions/get-action.function.ts#L17)
 
 `getAction` is a function that takes in an action [Type](#getactiontype) and optionally Payload and creates an [Action](Action.md) object.
 

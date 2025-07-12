@@ -1,6 +1,10 @@
+---
+definedIn: https://github.com/state-adapt/state-adapt/blob/4e457fa33331f265d75eaddb646761782498dd8e/libs/rxjs/src/lib/sources/source.ts#L14
+---
+
 # Class: ~~Source\<T\>~~
 
-Defined in: [libs/rxjs/src/lib/sources/source.ts:14](https://github.com/state-adapt/state-adapt/blob/4ff8540684d6d76a52452612f8fa44ffd7c6016a/libs/rxjs/src/lib/sources/source.ts#L14)
+Defined in: [libs/rxjs/src/lib/sources/source.ts:14](https://github.com/state-adapt/state-adapt/blob/4e457fa33331f265d75eaddb646761782498dd8e/libs/rxjs/src/lib/sources/source.ts#L14)
 
 ## Deprecated
 

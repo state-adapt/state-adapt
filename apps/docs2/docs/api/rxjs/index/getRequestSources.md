@@ -1,8 +1,12 @@
+---
+definedIn: https://github.com/state-adapt/state-adapt/blob/4e457fa33331f265d75eaddb646761782498dd8e/libs/rxjs/src/lib/sources/get-request-sources.function.ts#L67
+---
+
 # Function: getRequestSources()
 
 > **getRequestSources**\<`TypePrefix`, `Payload`\>(`typePrefix`, `obs$`): `object`
 
-Defined in: [libs/rxjs/src/lib/sources/get-request-sources.function.ts:67](https://github.com/state-adapt/state-adapt/blob/4ff8540684d6d76a52452612f8fa44ffd7c6016a/libs/rxjs/src/lib/sources/get-request-sources.function.ts#L67)
+Defined in: [libs/rxjs/src/lib/sources/get-request-sources.function.ts:67](https://github.com/state-adapt/state-adapt/blob/4e457fa33331f265d75eaddb646761782498dd8e/libs/rxjs/src/lib/sources/get-request-sources.function.ts#L67)
 
 `getRequestSources` takes in a [TypePrefix](#getrequestsourcestypeprefix) and an [Observable](https://rxjs.dev/guide/observable)
 of values of type [Payload](#getrequestsourcespayload) (inferred) and returns an object with `success$` and `error$` propeties.

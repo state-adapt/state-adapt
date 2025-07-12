@@ -1,8 +1,12 @@
+---
+definedIn: https://github.com/state-adapt/state-adapt/blob/4e457fa33331f265d75eaddb646761782498dd8e/libs/core/src/lib/adapters/create-adapter.function.ts#L66
+---
+
 # Function: createAdapter()
 
 > **createAdapter**\<`State`\>(): \<`S`, `R`\>(`adapter`) => `InitializedAdapter`\<`State`, `S`, `R`\>
 
-Defined in: [src/lib/adapters/create-adapter.function.ts:66](https://github.com/state-adapt/state-adapt/blob/4ff8540684d6d76a52452612f8fa44ffd7c6016a/libs/core/src/lib/adapters/create-adapter.function.ts#L66)
+Defined in: [src/lib/adapters/create-adapter.function.ts:66](https://github.com/state-adapt/state-adapt/blob/4e457fa33331f265d75eaddb646761782498dd8e/libs/core/src/lib/adapters/create-adapter.function.ts#L66)
 
 `createAdapter` is a function that takes an [Adapter](Adapter.md) object and returns a new [Adapter](Adapter.md) object with the following state change functions added:
 - `set`: A reaction that sets the state to the payload

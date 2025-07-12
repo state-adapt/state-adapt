@@ -1,8 +1,12 @@
+---
+definedIn: https://github.com/state-adapt/state-adapt/blob/4e457fa33331f265d75eaddb646761782498dd8e/libs/angular/src/lib/default-store-provider.const.ts#L55
+---
+
 # Variable: defaultStoreProvider
 
 > `const` **defaultStoreProvider**: `object`
 
-Defined in: [lib/default-store-provider.const.ts:55](https://github.com/state-adapt/state-adapt/blob/4ff8540684d6d76a52452612f8fa44ffd7c6016a/libs/angular/src/lib/default-store-provider.const.ts#L55)
+Defined in: [lib/default-store-provider.const.ts:55](https://github.com/state-adapt/state-adapt/blob/4e457fa33331f265d75eaddb646761782498dd8e/libs/angular/src/lib/default-store-provider.const.ts#L55)
 
 `defaultStoreProvider` is the default provider for [StateAdapt](../../rxjs/index/StateAdapt.md), and
 is the easiest way to get started with StateAdapt in Angular. Simply add

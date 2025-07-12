@@ -1,8 +1,12 @@
+---
+definedIn: https://github.com/state-adapt/state-adapt/blob/4e457fa33331f265d75eaddb646761782498dd8e/libs/rxjs/src/lib/global-store/configure-state-adapt.function.ts#L69
+---
+
 # Function: configureStateAdapt()
 
 > **configureStateAdapt**\<`Store`\>(`options`): `Pick`\<[`StateAdapt`](StateAdapt.md)\<`any`\>, `"adapt"` \| `"watch"`\>
 
-Defined in: [libs/rxjs/src/lib/global-store/configure-state-adapt.function.ts:69](https://github.com/state-adapt/state-adapt/blob/4ff8540684d6d76a52452612f8fa44ffd7c6016a/libs/rxjs/src/lib/global-store/configure-state-adapt.function.ts#L69)
+Defined in: [libs/rxjs/src/lib/global-store/configure-state-adapt.function.ts:69](https://github.com/state-adapt/state-adapt/blob/4e457fa33331f265d75eaddb646761782498dd8e/libs/rxjs/src/lib/global-store/configure-state-adapt.function.ts#L69)
 
 `configureStateAdapt` takes in a [ConfigureStateAdaptOptions](ConfigureStateAdaptOptions.md) object and returns a new instance of [StateAdapt](StateAdapt.md).
 

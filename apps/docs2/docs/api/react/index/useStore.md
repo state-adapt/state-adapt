@@ -1,8 +1,12 @@
+---
+definedIn: https://github.com/state-adapt/state-adapt/blob/4e457fa33331f265d75eaddb646761782498dd8e/libs/react/src/lib/use-store.ts#L107
+---
+
 # Function: useStore()
 
 > **useStore**\<`Store`, `FilterSelectors`\>(`store`, `filterSelectors`): `ProxyStoreTuple`\<`Store`\[`"__"`\]\[`"initialState"`\], `Store`, `Extract`\<`FilterSelectors`\[`number`\], `string`\>\>
 
-Defined in: [lib/use-store.ts:107](https://github.com/state-adapt/state-adapt/blob/4ff8540684d6d76a52452612f8fa44ffd7c6016a/libs/react/src/lib/use-store.ts#L107)
+Defined in: [lib/use-store.ts:107](https://github.com/state-adapt/state-adapt/blob/4e457fa33331f265d75eaddb646761782498dd8e/libs/react/src/lib/use-store.ts#L107)
 
 `useStore` is a custom hook that takes in a store created with [StateAdapt.adapt](../../rxjs/index/StateAdapt.md#adapt), subscribes to it,
 and returns a tuple `[selectorResults, setState]` where `selectorResults` is a proxy object containing results from the store's selectors,

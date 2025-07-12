@@ -1,8 +1,12 @@
+---
+definedIn: https://github.com/state-adapt/state-adapt/blob/4e457fa33331f265d75eaddb646761782498dd8e/libs/rxjs/src/lib/stores/join-stores.function.ts#L71
+---
+
 # Function: joinStores()
 
 > **joinStores**\<`SE`\>(`storeEntries`): `NewBlockAdder`\<`{ [P in string]: EntriesState<SE>[P] }`, `JoinedSelectors`\<`SE`\>, `SE`\>
 
-Defined in: [libs/rxjs/src/lib/stores/join-stores.function.ts:71](https://github.com/state-adapt/state-adapt/blob/4ff8540684d6d76a52452612f8fa44ffd7c6016a/libs/rxjs/src/lib/stores/join-stores.function.ts#L71)
+Defined in: [libs/rxjs/src/lib/stores/join-stores.function.ts:71](https://github.com/state-adapt/state-adapt/blob/4e457fa33331f265d75eaddb646761782498dd8e/libs/rxjs/src/lib/stores/join-stores.function.ts#L71)
 
 `joinStores` is a function that takes in a `StoreEntries extends { [index: string]: StoreLike }` object and returns a `StoreBuilder` function.
 The `StoreBuilder` function can be called again and again with more selector definitions, and finally with no arguments to create a store.

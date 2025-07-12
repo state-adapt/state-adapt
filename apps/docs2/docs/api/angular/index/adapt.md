@@ -1,8 +1,12 @@
+---
+definedIn: https://github.com/state-adapt/state-adapt/blob/4e457fa33331f265d75eaddb646761782498dd8e/libs/angular/src/lib/adapt.function.ts#L329
+---
+
 # Variable: adapt
 
 > `const` **adapt**: [`StateAdapt`](../../rxjs/index/StateAdapt.md)\[`"adapt"`\]
 
-Defined in: [lib/adapt.function.ts:329](https://github.com/state-adapt/state-adapt/blob/4ff8540684d6d76a52452612f8fa44ffd7c6016a/libs/angular/src/lib/adapt.function.ts#L329)
+Defined in: [lib/adapt.function.ts:329](https://github.com/state-adapt/state-adapt/blob/4e457fa33331f265d75eaddb646761782498dd8e/libs/angular/src/lib/adapt.function.ts#L329)
 
 `adapt` wraps [StateAdapt.adapt](../../rxjs/index/StateAdapt.md#adapt) for Angular.
 
