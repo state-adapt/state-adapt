@@ -55,7 +55,7 @@ export default defineConfig({
     ],
   ],
   title: 'StateAdapt',
-  description: 'Vite & Vue powered static site generator.',
+  description: 'State Management that adapts with complexity.',
   srcDir: 'docs',
   srcExclude: ['**/api/typedoc/**'],
   rewrites: {
