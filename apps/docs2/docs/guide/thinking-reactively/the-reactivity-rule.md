@@ -37,24 +37,12 @@ You can see the similarities between `Count` and `Double`, right? `Double` chang
 
 Developers used to put this kind of logic inside event handlers.
 
-If `Double` were instead `Debounced`, many developers today would still put its logic in a callback function:
+If `Double` were instead `Debounced`, many developers today would still put its logic in a callback function inside a `setTimeout` and probably a `useEffect`.
+
+But RxJS or custom React hooks (or signals) allow deriving `Debounced` instead:
 
 ```tsx
-const [debouncedCount, setDebouncedCount] = useState(count);
-
-useEffect(() => {
-  const timer = setTimeout(() => {
-    setDebouncedCount(count);
-  }, 1000);
-
-  return () => clearTimeout(timer);
-}, [count]);
-```
-
-But RxJS or custom React hooks (or signals) allow deriving `Derived` instead:
-
-```tsx
-const delayedCount = useDebounce(count, 1000);
+const debouncedCount = useDebounce(count, 1000);
 ```
 
 ::: details `useDebounce`
