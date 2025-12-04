@@ -1,5 +1,3 @@
-import { Observable } from 'rxjs';
-
 /**
   `type` is a custom RxJS [operator](https://rxjs.dev/guide/operators) that mutates an RxJS [Observable](https://rxjs.dev/guide/observable)
   by setting a `type` property. It takes one argument, which will appear as the action type in Redux DevTools:
@@ -19,8 +17,8 @@ import { Observable } from 'rxjs';
   ```
  */
 export function type(type: string) {
-  return function <T>(source$: Observable<T>) {
+  return function <T>(source$: T): T & { type: string } {
     (source$ as any).type = type;
-    return source$;
+    return source$ as any;
   };
 }
