@@ -16,8 +16,7 @@
           "{workspaceRoot}/dist/libs/angular-router"
         ],
         "options": {
-          "project": "libs/angular-router/ng-package.json",
-          "updateBuildableProjectDepsInPackageJson": false
+          "project": "libs/angular-router/ng-package.json"
         },
         "configurations": {
           "production": {

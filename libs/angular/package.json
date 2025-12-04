@@ -18,8 +18,7 @@
         ],
         "options": {
           "tsConfig": "libs/angular/tsconfig.lib.json",
-          "project": "libs/angular/ng-package.json",
-          "updateBuildableProjectDepsInPackageJson": false
+          "project": "libs/angular/ng-package.json"
         },
         "configurations": {
           "production": {

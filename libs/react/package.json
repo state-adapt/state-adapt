@@ -45,7 +45,6 @@
           ],
           "babelConfig": "@nx/react/plugins/bundle-babel",
           "rollupConfig": "@nx/react/plugins/bundle-rollup",
-          "updateBuildableProjectDepsInPackageJson": false,
           "assets": [
             {
               "glob": "README.md",

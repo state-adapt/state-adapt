@@ -33,8 +33,7 @@
         "executor": "@nx/angular:package",
         "options": {
           "tsConfig": "libs/rxjs/tsconfig.lib.json",
-          "project": "libs/rxjs/ng-package.json",
-          "updateBuildableProjectDepsInPackageJson": false
+          "project": "libs/rxjs/ng-package.json"
         },
         "configurations": {
           "production": {

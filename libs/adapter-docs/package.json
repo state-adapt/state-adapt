@@ -19,8 +19,7 @@
           "tsConfig": "libs/adapter-docs/tsconfig.lib.json",
           "project": "libs/adapter-docs/ng-package.json",
           "sourceMap": true,
-          "optimization": false,
-          "updateBuildableProjectDepsInPackageJson": false
+          "optimization": false
         },
         "configurations": {
           "production": {
