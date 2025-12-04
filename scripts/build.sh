@@ -20,8 +20,6 @@ npm run ng build angular --prod
 sleep 2
 npm run ng build ngrx --prod
 sleep 2
-npm run ng build ngxs --prod
-sleep 2
 npm run ng build angular-router --prod
 sleep 2
 npm run copy-files
