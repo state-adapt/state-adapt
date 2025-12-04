@@ -62,7 +62,7 @@
           "buildTarget": "ng-sa-ngrx-counter:build:production"
         },
         "development": {
-          "buildTarget": "docs:build:development"
+          "buildTarget": "ng-sa-ngrx-counter:build:development"
         }
       },
       "defaultConfiguration": "development"

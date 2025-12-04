@@ -66,7 +66,7 @@
           "buildTarget": "ng-sa-shopping:build:production"
         },
         "development": {
-          "buildTarget": "docs:build:development"
+          "buildTarget": "ng-sa-shopping:build:development"
         }
       },
       "defaultConfiguration": "development"
