@@ -5,12 +5,13 @@ import { QuantityChange } from './quantity-change.interface';
 @Component({
   selector: 'sa-products',
   template: `
+    @for (product of products; track product.name) {
     <sa-product
-      *ngFor="let product of products"
       [product]="product"
       (inCartChange)="inCartChange.emit(product)"
       (quantityChange)="quantityChange.emit($event)"
     ></sa-product>
+    }
   `,
   styles: [
     `

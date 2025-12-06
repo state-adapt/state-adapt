@@ -6,9 +6,9 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
     <div style="width: 500px; margin: auto">
       <h1>{{ count }}</h1>
       <p>
-        <button ibmButton="primary" (click)="increment.next(3)">Increment by 3</button>
-        <button ibmButton="primary" (click)="double.next()">Double</button>
-        <button ibmButton="primary" (click)="resetCount.next()">Reset</button>
+        <button (click)="increment.next(3)">Increment by 3</button>
+        <button (click)="double.next()">Double</button>
+        <button (click)="resetCount.next()">Reset</button>
       </p>
     </div>
   `,

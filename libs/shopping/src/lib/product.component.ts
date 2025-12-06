@@ -13,17 +13,23 @@ import { QuantityChange } from './quantity-change.interface';
           product.img
         "
       />
-      <ibm-number
-        [label]="product.price | currency | qtyLabel"
-        [ngModel]="product.quantity"
-        (ngModelChange)="quantityChange.emit({ name: product.name, quantity: $event })"
-      ></ibm-number>
-      <button ibmButton="primary" *ngIf="!inCart" (click)="inCartChange.emit()">
-        Add to Cart
-      </button>
-      <button ibmButton="secondary" *ngIf="inCart" (click)="inCartChange.emit()">
-        Remove from Cart
-      </button>
+      <div class="input-row">
+        <label>
+          {{ product.price | currency }} -
+          <input
+            type="number"
+            [value]="product.quantity"
+            (input)="
+              quantityChange.emit({
+                name: product.name,
+                quantity: $any($event.target).valueAsNumber
+              })
+            "
+          />
+        </label>
+      </div>
+      <button *ngIf="!inCart" (click)="inCartChange.emit()">Add to Cart</button>
+      <button *ngIf="inCart" (click)="inCartChange.emit()">Remove from Cart</button>
     </div>
   `,
   styles: [
@@ -48,8 +54,8 @@ import { QuantityChange } from './quantity-change.interface';
       .input-row {
         width: 100%;
       }
-      ibm-number {
-        width: 100%;
+      input[type='number'] {
+        width: 50px;
       }
       button {
         width: 100%;

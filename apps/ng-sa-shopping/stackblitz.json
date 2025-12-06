@@ -6,13 +6,10 @@
     "@angular/platform-browser",
     "@state-adapt/angular",
     "@angular/common",
-    "carbon-components-angular",
     "rxjs",
     "reselect",
     "@angular/compiler",
     "@angular/animations",
-    "carbon-components",
-    "@carbon/icons",
     "@angular/router",
     "@angular/forms"
   ]

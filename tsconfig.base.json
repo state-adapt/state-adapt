@@ -17,7 +17,6 @@
     "allowSyntheticDefaultImports": true,
     "baseUrl": ".",
     "paths": {
-      "@state-adapt/adapter-docs": ["libs/adapter-docs/src/index.ts"],
       "@state-adapt/angular": ["libs/angular/src/index.ts"],
       "@state-adapt/angular-router": ["libs/angular-router/src/index.ts"],
       "@state-adapt/core": ["libs/core/src/index.ts"],

@@ -47,6 +47,20 @@ export function App() {
   return (
     <div>
       <main>
+        <a href="https://reactjs.org" target="_blank">
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/a/a7/React-icon.svg"
+            className="logo react"
+            alt="React logo"
+          />
+        </a>
+        <a href="https://state-adapt.github.io/" target="_blank" rel="noreferrer">
+          <img
+            src="https://state-adapt.github.io/sa3-3.svg"
+            className="logo stateadapt"
+            alt="StateAdapt Logo"
+          />
+        </a>
         <div>
           <h2>Counter 1</h2>
           <p>

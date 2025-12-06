@@ -1,0 +1,54 @@
+body {
+  background-color: #161618;
+  color: #fff;
+}
+
+input {
+  background-color: #1e1e1e;
+  color: #fff;
+  border: 1px solid #333;
+  padding: 8px;
+  border-radius: 4px;
+}
+
+button {
+  background-color: #333;
+  color: #fff;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  &:hover {
+    background-color: darkturquoise;
+    color: #000;
+  }
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.svelte:hover {
+  filter: drop-shadow(0 0 2em #ff3e00aa);
+}
+.logo.angular {
+  height: 6.8em;
+  margin-bottom: -4px;
+}
+.logo.angular:hover {
+  filter: drop-shadow(0 0 2em #ff0010aa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dbfbaa);
+}
+.logo.redux:hover {
+  filter: drop-shadow(0 0 2em #7749bdaa);
+}
+.logo.stateadapt:hover {
+  filter: drop-shadow(0 0 2em #00ced1aa);
+}

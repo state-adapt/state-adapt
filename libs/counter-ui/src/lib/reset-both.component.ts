@@ -4,7 +4,7 @@ import { Component, EventEmitter, Output } from '@angular/core';
   selector: 'sa-reset-both',
   template: `
     <div style="width: 500px; margin: 100px auto">
-      <button ibmButton="primary" (click)="resetBoth.next()">Reset Externally</button>
+      <button (click)="resetBoth.next()">Reset Externally</button>
     </div>
   `,
 })
