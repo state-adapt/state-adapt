@@ -11,6 +11,7 @@
   ],
   "sortEntryPoints": false,
   "packageOptions": {
+    "gitRevision": "main",
     "sortEntryPoints": false,
     "excludeNotDocumented": true,
     "navigation": {
