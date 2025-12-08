@@ -1,10 +1,13 @@
 #!/bin/bash
 
-grep -Rn "$previous_sa_version.*$" dist/libs/
-echo "dist/libs/ Previous version checked"
+grep -Rn "$old_sa_version.*$" dist/libs/
+echo "dist/libs/ Old version printed"
 
-grep -Rn "$current_sa_version.*$" dist/libs/
-echo "dist/libs/ Current version checked"
+if grep -Rn "$new_sa_version.*$" dist/libs/; then
+  echo "⚠️  New version $new_sa_version found in existing dist/libs/"
+else
+  echo "✅ New version $new_sa_version not found in existing dist/libs/"
+fi
 
 npm run nx reset
 
@@ -31,15 +34,17 @@ echo "Build complete"
 sleep 1
 
 # Check Build Output
-grep -Rn "$previous_sa_version.*$" dist/libs/
-echo "dist/libs/ Previous version checked"
+if grep -Rn "$old_sa_version.*$" dist/libs/; then
+  echo "❌ dist/libs/ Previous version $old_sa_version found"
+else
+  echo "✅ dist/libs/ Previous version $old_sa_version not found"
+fi
 
-grep -Rn "$current_sa_version.*$" dist/libs/
-echo "dist/libs/ Current version checked"
+grep -Rn "$new_sa_version.*$"  dist/libs/;
+echo "dist/libs/ New version printed"
 
-echo "Versions checked"
-
-grep -Rn "../dist" dist/libs/
-
-echo "Checked for ../dist"
-
+if grep -Rn "\.\./dist" dist/libs/; then
+  echo "❌ ../dist found in dist/libs/"
+else
+  echo "✅ ../dist not found in dist/libs/";
+fi
