@@ -14,7 +14,7 @@
       "executor": "nx:run-commands",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "command": "vitepress build apps/docs2 && vitepress build apps/docs2 --base /v/3/ --outDir apps/docs2/.vitepress/dist/v/3"
+        "command": "vitepress build apps/docs2 && vitepress build apps/docs2 --base /v/4/ --outDir apps/docs2/.vitepress/dist/v/3"
       }
     },
     "serve": {

@@ -23,7 +23,6 @@
       "@state-adapt/core/adapters": ["libs/core/adapters/src/index.ts"],
       "@state-adapt/counter-ui": ["libs/counter-ui/src/index.ts"],
       "@state-adapt/dashboards-feature": ["libs/dashboards-feature/src/index.ts"],
-      "@state-adapt/ngrx": ["libs/ngrx/src/index.ts"],
       "@state-adapt/react": ["libs/react/src/index.ts"],
       "@state-adapt/rxjs": ["libs/rxjs/src/index.ts"],
       "@state-adapt/shopping": ["libs/shopping/src/index.ts"]

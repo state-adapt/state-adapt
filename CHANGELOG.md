@@ -1,3 +1,7 @@
+## 4.0.0
+
+- Refactor(ngrx)!: Remove direct support for NgRx
+
 ## 3.1.0
 
 - Feature(angular): Handle default provider internally and deprecate `defaultStoreProvider`
