@@ -82,6 +82,9 @@ export type InitializedSmartStore<
 > = SmartStore<State, ({} extends S ? {} : S) & WithGetState<State>> &
   SyntheticSources<InitializedReactions<State, S, R>>;
 
+/**
+ * AdaptOptions
+ */
 export type AdaptOptions<
   State,
   S extends Selectors<State> = {},

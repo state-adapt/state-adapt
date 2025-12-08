@@ -1,12 +1,12 @@
 ---
-definedIn: https://github.com/state-adapt/state-adapt/blob/4e457fa33331f265d75eaddb646761782498dd8e/libs/react/src/lib/use-adapt.ts#L283
+definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/react/src/lib/use-adapt.ts#L283
 ---
 
 # Function: useAdapt()
 
 > **useAdapt**\<`State`, `S`, `R`\>(`initialState`, `second`): `ProxyStoreTuple`\<`State`, `InitializedSmartStore`\<`State`, `S`, `R`\>\>
 
-Defined in: [lib/use-adapt.ts:283](https://github.com/state-adapt/state-adapt/blob/4e457fa33331f265d75eaddb646761782498dd8e/libs/react/src/lib/use-adapt.ts#L283)
+Defined in: [lib/use-adapt.ts:283](https://github.com/state-adapt/state-adapt/blob/main/libs/react/src/lib/use-adapt.ts#L283)
 
 `useAdapt` is a hook that wraps [StateAdapt.adapt](../../rxjs/index/StateAdapt.md#adapt) and [useStore](useStore.md). It creates a store, immediately subscribes to it,
 and returns a tuple `[selectorResults, setState]` where `selectorResults` is a proxy object containing results from the store's selectors,
@@ -69,10 +69,10 @@ export function MyComponent() {
 }
 ```
 
-### Example: Using AdaptOptions
+### Example: Using [AdaptOptions](../../rxjs/index/AdaptOptions.md)
 `useAdapt(initialState, { adapter, sources, path })`
 
-You can also define an adapter, sources, and/or a state path as part of an AdaptOptions object.
+You can also define an adapter, sources, and/or a state path as part of an [AdaptOptions](../../rxjs/index/AdaptOptions.md) object.
 
 Sources allow the store to declaratively react to external events rather than being commanded
 by imperative callback functions.
@@ -286,7 +286,7 @@ and it only subscribes to sources when it has subscribers itself.
 
 ### second
 
-`R` & `object` & `NotAdaptOptions` | `AdaptOptions`\<`State`, `S`, `R`\>
+`R` & `object` & `NotAdaptOptions` | [`AdaptOptions`](../../rxjs/index/AdaptOptions.md)\<`State`, `S`, `R`\>
 
 ## Returns
 

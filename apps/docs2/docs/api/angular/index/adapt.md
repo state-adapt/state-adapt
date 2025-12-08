@@ -1,12 +1,12 @@
 ---
-definedIn: https://github.com/state-adapt/state-adapt/blob/4e457fa33331f265d75eaddb646761782498dd8e/libs/angular/src/lib/adapt.function.ts#L329
+definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/angular/src/lib/adapt.function.ts#L330
 ---
 
 # Variable: adapt
 
 > `const` **adapt**: [`StateAdapt`](../../rxjs/index/StateAdapt.md)\[`"adapt"`\]
 
-Defined in: [lib/adapt.function.ts:329](https://github.com/state-adapt/state-adapt/blob/4e457fa33331f265d75eaddb646761782498dd8e/libs/angular/src/lib/adapt.function.ts#L329)
+Defined in: [lib/adapt.function.ts:330](https://github.com/state-adapt/state-adapt/blob/main/libs/angular/src/lib/adapt.function.ts#L330)
 
 `adapt` wraps [StateAdapt.adapt](../../rxjs/index/StateAdapt.md#adapt) for Angular.
 
@@ -58,10 +58,10 @@ export class MyComponent {
 }
 ```
 
-### Example: Using AdaptOptions
+### Example: Using [AdaptOptions](../../rxjs/index/AdaptOptions.md)
 `adapt(initialState, { adapter, sources, path })`
 
-You can also define an adapter, sources, and/or a state path as part of an AdaptOptions object.
+You can also define an adapter, sources, and/or a state path as part of an [AdaptOptions](../../rxjs/index/AdaptOptions.md) object.
 
 Sources allow the store to declaratively react to external events rather than being commanded
 by imperative code in callback functions.

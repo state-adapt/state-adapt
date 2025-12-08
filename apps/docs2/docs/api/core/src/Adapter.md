@@ -1,12 +1,12 @@
 ---
-definedIn: https://github.com/state-adapt/state-adapt/blob/4e457fa33331f265d75eaddb646761782498dd8e/libs/core/src/lib/adapters/adapter.type.ts#L53
+definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/core/src/lib/adapters/adapter.type.ts#L53
 ---
 
 # Type Alias: Adapter\<State, S, R\>
 
 > **Adapter**\<`State`, `S`, `R`\> = `R` & `WithSelectors`\<`S`\>
 
-Defined in: [src/lib/adapters/adapter.type.ts:53](https://github.com/state-adapt/state-adapt/blob/4e457fa33331f265d75eaddb646761782498dd8e/libs/core/src/lib/adapters/adapter.type.ts#L53)
+Defined in: [src/lib/adapters/adapter.type.ts:53](https://github.com/state-adapt/state-adapt/blob/main/libs/core/src/lib/adapters/adapter.type.ts#L53)
 
 `Adapter` is a type of object containing 2 kinds of reusable state management patterns: State changes and selectors.
 

@@ -1,12 +1,12 @@
 ---
-definedIn: https://github.com/state-adapt/state-adapt/blob/4e457fa33331f265d75eaddb646761782498dd8e/libs/rxjs/src/lib/sources/catch-error-source.operator.ts#L24
+definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/rxjs/src/lib/sources/catch-error-source.operator.ts#L24
 ---
 
 # Function: catchErrorSource()
 
 > **catchErrorSource**\<`Payload`, `TypePrefix`\>(`typePrefix`): (`source$`) => `Observable`\<`Payload` \| [`Action`](../../core/src/Action.md)\<`any`, `` `${TypePrefix}.error$` ``\>\>
 
-Defined in: [libs/rxjs/src/lib/sources/catch-error-source.operator.ts:24](https://github.com/state-adapt/state-adapt/blob/4e457fa33331f265d75eaddb646761782498dd8e/libs/rxjs/src/lib/sources/catch-error-source.operator.ts#L24)
+Defined in: [libs/rxjs/src/lib/sources/catch-error-source.operator.ts:24](https://github.com/state-adapt/state-adapt/blob/main/libs/rxjs/src/lib/sources/catch-error-source.operator.ts#L24)
 
 `catchErrorSource` is a custom RxJS [operator](https://rxjs.dev/guide/operators) that converts an RxJS [Observable](https://rxjs.dev/guide/observable)
 of any values into a source of errors, using RxJS' [catchError](https://rxjs.dev/api/operators/catchError) operator.

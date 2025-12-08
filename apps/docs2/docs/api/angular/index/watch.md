@@ -1,12 +1,12 @@
 ---
-definedIn: https://github.com/state-adapt/state-adapt/blob/4e457fa33331f265d75eaddb646761782498dd8e/libs/angular/src/lib/watch.function.ts#L33
+definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/angular/src/lib/watch.function.ts#L34
 ---
 
 # Variable: watch
 
 > `const` **watch**: [`StateAdapt`](../../rxjs/index/StateAdapt.md)\[`"watch"`\]
 
-Defined in: [lib/watch.function.ts:33](https://github.com/state-adapt/state-adapt/blob/4e457fa33331f265d75eaddb646761782498dd8e/libs/angular/src/lib/watch.function.ts#L33)
+Defined in: [lib/watch.function.ts:34](https://github.com/state-adapt/state-adapt/blob/main/libs/angular/src/lib/watch.function.ts#L34)
 
 `watch` wraps [StateAdapt.watch](../../rxjs/index/StateAdapt.md#watch) for Angular.
 

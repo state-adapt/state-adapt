@@ -1,12 +1,12 @@
 ---
-definedIn: https://github.com/state-adapt/state-adapt/blob/4e457fa33331f265d75eaddb646761782498dd8e/libs/angular/src/lib/provide-store.function.ts#L57
+definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/angular/src/lib/provide-store.function.ts#L58
 ---
 
 # Function: provideStore()
 
-> **provideStore**(`options`): `object`
+> **provideStore**(`options?`): `object`
 
-Defined in: [lib/provide-store.function.ts:57](https://github.com/state-adapt/state-adapt/blob/4e457fa33331f265d75eaddb646761782498dd8e/libs/angular/src/lib/provide-store.function.ts#L57)
+Defined in: [lib/provide-store.function.ts:58](https://github.com/state-adapt/state-adapt/blob/main/libs/angular/src/lib/provide-store.function.ts#L58)
 
 `provideStore` takes in a [ConfigureStateAdaptOptions](../../rxjs/index/ConfigureStateAdaptOptions.md) object and
 returns a provider for [StateAdapt](../../rxjs/index/StateAdapt.md) that you can add
@@ -58,7 +58,7 @@ bootstrapApplication(AppComponent, {
 
 ## Parameters
 
-### options
+### options?
 
 [`ConfigureStateAdaptOptions`](../../rxjs/index/ConfigureStateAdaptOptions.md)
 
@@ -68,8 +68,12 @@ bootstrapApplication(AppComponent, {
 
 ### provide
 
-> **provide**: *typeof* [`StateAdapt`](../../rxjs/index/StateAdapt.md) = `StateAdapt`
+> **provide**: `InjectionToken`\<[`StateAdapt`](../../rxjs/index/StateAdapt.md)\<`any`\>\> = `StateAdaptToken`
 
-### useValue
+### useFactory()
 
-> **useValue**: `Pick`\<[`StateAdapt`](../../rxjs/index/StateAdapt.md)\<`any`\>, `"adapt"` \| `"watch"`\>
+> **useFactory**: () => `Pick`\<[`StateAdapt`](../../rxjs/index/StateAdapt.md)\<`any`\>, `"adapt"` \| `"watch"`\>
+
+#### Returns
+
+`Pick`\<[`StateAdapt`](../../rxjs/index/StateAdapt.md)\<`any`\>, `"adapt"` \| `"watch"`\>

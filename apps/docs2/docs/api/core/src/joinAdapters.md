@@ -1,12 +1,12 @@
 ---
-definedIn: https://github.com/state-adapt/state-adapt/blob/4e457fa33331f265d75eaddb646761782498dd8e/libs/core/src/lib/adapters/join-adapters.function.ts#L221
+definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/core/src/lib/adapters/join-adapters.function.ts#L221
 ---
 
 # Function: joinAdapters()
 
 > **joinAdapters**\<`ParentState`, `ExcludedProps`\>(): \<`AE`\>(`adapterEntries`) => `NewBlockAdder`\<`ParentState`, `FlattendAdapters`\<`AE`, `ParentState`\> *extends* `object` ? `S` *extends* `Selectors`\<`ParentState`\> ? `WithStateSelector`\<`ParentState`, `S`\<`S`\>\> : `WithStateSelector`\<`ParentState`, `Record`\<`string`, (`state`) => `any`\>\> : `object`, `ReactionsWithoutSelectors`\<`ParentState`, `FlattendAdapters`\<`AE`, `ParentState`\> & `BasicAdapterMethods`\<`ParentState`\> & `WithUpdateReaction`\<`ParentState`\>\>\>
 
-Defined in: [src/lib/adapters/join-adapters.function.ts:221](https://github.com/state-adapt/state-adapt/blob/4e457fa33331f265d75eaddb646761782498dd8e/libs/core/src/lib/adapters/join-adapters.function.ts#L221)
+Defined in: [src/lib/adapters/join-adapters.function.ts:221](https://github.com/state-adapt/state-adapt/blob/main/libs/core/src/lib/adapters/join-adapters.function.ts#L221)
 
 joinAdapters creates a complex adapter from simpler adapters by taking each of their state change
 functions and selectors and adding them to the new adapter with more specific names to distinguish them from

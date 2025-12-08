@@ -1,12 +1,12 @@
 ---
-definedIn: https://github.com/state-adapt/state-adapt/blob/4e457fa33331f265d75eaddb646761782498dd8e/libs/rxjs/src/lib/global-store/configure-state-adapt.options.ts#L12
+definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/rxjs/src/lib/global-store/configure-state-adapt.options.ts#L12
 ---
 
 # Type Alias: ConfigureStateAdaptOptions\<Store\>
 
 > **ConfigureStateAdaptOptions**\<`Store`\> = `object` & \{ `store`: `Store`; \} \| \{ `devtools`: `any`; `preloadedState?`: `any`; \}
 
-Defined in: [libs/rxjs/src/lib/global-store/configure-state-adapt.options.ts:12](https://github.com/state-adapt/state-adapt/blob/4e457fa33331f265d75eaddb646761782498dd8e/libs/rxjs/src/lib/global-store/configure-state-adapt.options.ts#L12)
+Defined in: [libs/rxjs/src/lib/global-store/configure-state-adapt.options.ts:12](https://github.com/state-adapt/state-adapt/blob/main/libs/rxjs/src/lib/global-store/configure-state-adapt.options.ts#L12)
 
 `ConfigureStateAdaptOptions` has 4 possible properties:
 - `showSelectors?: boolean` (default: `true`) - determines whether to show StateAdapt selectors in Redux DevTools
