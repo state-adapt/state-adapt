@@ -58,10 +58,10 @@ export class MyComponent {
 }
 ```
 
-### Example: Using [AdaptOptions](../../rxjs/index/AdaptOptions.md)
+### Example: Using AdaptOptions
 `adapt(initialState, { adapter, sources, path })`
 
-You can also define an adapter, sources, and/or a state path as part of an [AdaptOptions](../../rxjs/index/AdaptOptions.md) object.
+You can also define an adapter, sources, and/or a state path as part of an AdaptOptions object.
 
 Sources allow the store to declaratively react to external events rather than being commanded
 by imperative code in callback functions.

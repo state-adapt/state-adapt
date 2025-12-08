@@ -82,15 +82,12 @@ export type InitializedSmartStore<
 > = SmartStore<State, ({} extends S ? {} : S) & WithGetState<State>> &
   SyntheticSources<InitializedReactions<State, S, R>>;
 
-/**
- * AdaptOptions
- */
-export type AdaptOptions<
+export interface AdaptOptions<
   State,
   S extends Selectors<State> = {},
   R extends ReactionsWithSelectors<State, S> = {},
   // ActualSourceArg extends SourceArg<State, S, R> = SourceArg<State, S, R>,
-> = {
+> {
   path?: string;
   adapter?: R & { selectors?: S };
   sources?: SourceArg<State, S, R>;
@@ -101,7 +98,7 @@ export type AdaptOptions<
   //   ? true
   //   // ? { [K in keyof ActualSourceArg as K extends keyof R ? never : K]?: ActualSourceArg[K] }
   //   : SourceArg<State, S, R>;
-};
+}
 
 export function isAdaptOptions<
   State,

@@ -60,10 +60,10 @@ name.concat('sh'); // logs 'Johnsh' and 6
 name.reset(); // logs 'John' and 4
 ```
 
-### Example: Using [AdaptOptions](AdaptOptions.md)
+### Example: Using AdaptOptions
 `adapt(initialState, { adapter, sources, path })`
 
-You can also define an adapter, sources, and/or a state path as part of an [AdaptOptions](AdaptOptions.md) object.
+You can also define an adapter, sources, and/or a state path as part of an AdaptOptions object.
 
 Sources allow the store to declaratively react to external events rather than being commanded
 by imperative code in callback functions.
@@ -251,7 +251,7 @@ and it only subscribes to sources when it has subscribers itself.
 
 ##### second
 
-`R` & `object` & `NotAdaptOptions` | [`AdaptOptions`](AdaptOptions.md)\<`State`, `S`, `R2`\>
+`R` & `object` & `NotAdaptOptions` | `AdaptOptions`\<`State`, `S`, `R2`\>
 
 #### Returns
 
