@@ -1,3 +1,7 @@
+## 3.1.0
+
+- Feature(angular): Handle default provider internally and deprecate `defaultStoreProvider`
+
 ## 3.0.0
 
 ### Breaking Changes

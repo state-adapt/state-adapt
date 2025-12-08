@@ -1,9 +1,10 @@
 import { inject } from '@angular/core';
-import { StateAdapt } from '@state-adapt/rxjs';
+import { AdaptOptions, StateAdapt } from '@state-adapt/rxjs';
 // Import all the {@links to other functions and services
 import { watch } from './watch.function';
 import { Action, Adapter, getId, createAdapter } from '@state-adapt/core';
 import { Source } from '@state-adapt/rxjs';
+import { StateAdaptToken } from './state-adapt-token.const';
 
 /*
 Ask ChatGPT:
@@ -327,6 +328,6 @@ Don't skip anything. Give me the entire documentation from start to end.
   and it only subscribes to sources when it has subscribers itself.
   */
 export const adapt: StateAdapt['adapt'] = <T extends any[]>(...args: T) => {
-  const adaptDep = inject(StateAdapt);
+  const adaptDep = inject(StateAdaptToken);
   return (adaptDep.adapt as any)(...args);
 };

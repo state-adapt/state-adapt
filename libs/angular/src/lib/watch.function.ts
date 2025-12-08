@@ -1,5 +1,6 @@
 import { inject } from '@angular/core';
 import { StateAdapt } from '@state-adapt/rxjs';
+import { StateAdaptToken } from './state-adapt-token.const';
 
 // Differences between StateAdapt.watch and watch jsdoc:
 //  - The phrase "`watch` wraps {@link StateAdapt.watch}, calling `inject(StateAdapt)` to get the instance of {@link StateAdapt} to use."
@@ -31,6 +32,6 @@ import { StateAdapt } from '@state-adapt/rxjs';
   ```
   */
 export const watch: StateAdapt['watch'] = <T extends any[]>(...args: T) => {
-  const adaptDep = inject(StateAdapt);
+  const adaptDep = inject(StateAdaptToken);
   return (adaptDep.watch as any)(...args);
 };

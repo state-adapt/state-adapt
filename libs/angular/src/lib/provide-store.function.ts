@@ -4,6 +4,7 @@ import {
   configureStateAdapt,
   ConfigureStateAdaptOptions,
 } from '@state-adapt/rxjs';
+import { StateAdaptToken } from './state-adapt-token.const';
 
 /**
   `provideStore` takes in a {@link ConfigureStateAdaptOptions} object and
@@ -54,9 +55,9 @@ import {
   });
   ```
  */
-export function provideStore(options: ConfigureStateAdaptOptions) {
+export function provideStore(options?: ConfigureStateAdaptOptions) {
   return {
-    provide: StateAdapt,
-    useValue: configureStateAdapt(options),
+    provide: StateAdaptToken,
+    useFactory: () => configureStateAdapt(options),
   };
 }

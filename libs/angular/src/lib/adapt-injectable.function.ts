@@ -5,9 +5,9 @@ import {
   InitializedSmartStore,
   NotAdaptOptions,
   SourceArg,
-  StateAdapt,
 } from '@state-adapt/rxjs';
 import { adapt } from './adapt.function';
+import { StateAdaptToken } from './state-adapt-token.const';
 
 /**
   @deprecated Use a service instead. This was an experimental pattern and will be removed in the future.
@@ -56,7 +56,7 @@ export function adaptInjectable<
   const token = new InjectionToken(path, {
     providedIn: 'root',
     factory: function adaptInjectableFactory() {
-      const adaptDep = inject(StateAdapt);
+      const adaptDep = inject(StateAdaptToken);
       const store = (adaptDep.adapt as any)(initialState, second);
       return store;
     },
