@@ -3,7 +3,7 @@ import { NodePackageInstallTask } from '@angular-devkit/schematics/tasks';
 
 import { Schema } from './schema';
 
-const version = '^2.0.0';
+const version = '^3.1.0';
 const corePackages = ['@state-adapt/core', '@state-adapt/rxjs', '@state-adapt/angular'];
 
 /** Represents an entry in the package.json */
