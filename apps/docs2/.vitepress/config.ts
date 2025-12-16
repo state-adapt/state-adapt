@@ -1,6 +1,7 @@
 import { DefaultTheme, defineConfig } from 'vitepress';
 
-import myCodeTheme from './theme/code-snippets/sa-dark.json';
+import saDark from './theme/code-snippets/sa-dark.json';
+import saLight from './theme/code-snippets/sa-light.json';
 import { version } from '../../../package.json';
 import typedocSidebar from '../docs/api/typedoc/typedoc-sidebar.json';
 import corePaths from '../docs/api/core/src/symbol.paths';
@@ -9,6 +10,7 @@ import angularPaths from '../docs/api/angular/index/symbol.paths';
 import reactPaths from '../docs/api/react/index/symbol.paths';
 import { Section } from 'section-paths';
 import { resolve } from 'path';
+import { mdCodeDirectiveOffsetPlugin } from '../md-code-directive-offset.plugin';
 
 function getLibSectionItems(sections: Section[]): DefaultTheme.SidebarItem[] {
   return sections.map(({ name, items }) => ({
@@ -33,6 +35,9 @@ type FrameworkKey = keyof typeof frameworks;
 const frameworkKeys = Object.keys(frameworks) as FrameworkKey[];
 
 export default defineConfig({
+  vite: {
+    plugins: [mdCodeDirectiveOffsetPlugin()],
+  },
   lang: 'en-US',
   head: [
     ['link', { rel: 'icon', href: '/sa3-3.svg', sizes: 'any', type: 'image/svg+xml' }],
@@ -143,8 +148,12 @@ export default defineConfig({
       // dark: 'dark-plus',
       dark: {
         name: 'sa-dark',
-        settings: myCodeTheme.tokenColors,
+        settings: saDark.tokenColors,
       },
+      // light: {
+      //   name: 'sa-light',
+      //   settings: saLight.tokenColors,
+      // },
       light: 'light-plus',
     },
   },

@@ -3,11 +3,15 @@
   /* https://maketintsandshades.com/#00ced1 */
   /* 00CED1	00B9BC	00A5A7	009092	007C7D	006769	005254	003E3F	00292A	001515	000000 */
   /* 00CED1	1AD3D6	33D8DA	4DDDDF	66E2E3	80E7E8	99EBED	B3F0F1	CCF5F6	E6FAFA	FFFFFF */
+  --vp-c-brand-1-dark-1: #00b9bc;
+  --vp-c-brand-1-dark-2: #00a5a7;
+  --vp-c-brand-1-dark-3: #009092;
 
   --vp-c-brand-2: #ff4500;
   /* https://maketintsandshades.com/#ff4500 */
   /* FF4500	E63E00	CC3700	B33000	992900	802300	661C00	4C1500	330E00	190700	000000 */
   /* FF4500	FF581A	FF6A33	FF7D4D	FF8F66	FFA280	FFB599	FFC7B3	FFDACC	FFECE6	FFFFFF */
+  --vp-c-brand-2-light-1: #ff581a;
   --vp-c-brand-2-light-4: #ff8f66;
   --vp-c-brand-2-light-5: #ffa280;
 
