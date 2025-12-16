@@ -150,11 +150,11 @@ export default defineConfig({
         name: 'sa-dark',
         settings: saDark.tokenColors,
       },
-      // light: {
-      //   name: 'sa-light',
-      //   settings: saLight.tokenColors,
-      // },
-      light: 'light-plus',
+      light: {
+        name: 'sa-light',
+        settings: saLight.tokenColors,
+      },
+      // light: 'light-plus',
     },
   },
 });

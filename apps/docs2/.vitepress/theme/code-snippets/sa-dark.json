@@ -284,7 +284,7 @@
     {
       "scope": "variable.other.generic-type.haskell",
       "settings": {
-        "foreground": "var(--vp-c-brand-1)"
+        "foreground": "var(--vp-c-brand-1);font-weight:var(--vp-c-brand-1-code-weight)"
       }
     },
     {
@@ -338,7 +338,7 @@
     {
       "scope": "support.constant.edge",
       "settings": {
-        "foreground": "var(--vp-c-brand-1)"
+        "foreground": "var(--vp-c-brand-1);font-weight:var(--vp-c-brand-1-code-weight)"
       }
     },
     {
@@ -473,7 +473,7 @@
     {
       "scope": "keyword.operator.instanceof.java",
       "settings": {
-        "foreground": "var(--vp-c-brand-1)"
+        "foreground": "var(--vp-c-brand-1);font-weight:var(--vp-c-brand-1-code-weight)"
       }
     },
     {
@@ -569,7 +569,7 @@
         "keyword.operator.expression.keyof"
       ],
       "settings": {
-        "foreground": "var(--vp-c-brand-1)"
+        "foreground": "var(--vp-c-brand-1);font-weight:var(--vp-c-brand-1-code-weight)"
       }
     },
     {
@@ -599,13 +599,13 @@
     {
       "scope": "keyword.operator.sigil.rust",
       "settings": {
-        "foreground": "var(--vp-c-brand-1)"
+        "foreground": "var(--vp-c-brand-1);font-weight:var(--vp-c-brand-1-code-weight)"
       }
     },
     {
       "scope": "keyword.operator.delete",
       "settings": {
-        "foreground": "var(--vp-c-brand-1)"
+        "foreground": "var(--vp-c-brand-1);font-weight:var(--vp-c-brand-1-code-weight)"
       }
     },
     {
@@ -629,7 +629,7 @@
     {
       "scope": "keyword.operator.assignment.c,keyword.operator.comparison.c,keyword.operator.c,keyword.operator.increment.c,keyword.operator.decrement.c,keyword.operator.bitwise.shift.c,keyword.operator.assignment.cpp,keyword.operator.comparison.cpp,keyword.operator.cpp,keyword.operator.increment.cpp,keyword.operator.decrement.cpp,keyword.operator.bitwise.shift.cpp",
       "settings": {
-        "foreground": "var(--vp-c-brand-1)"
+        "foreground": "var(--vp-c-brand-1);font-weight:var(--vp-c-brand-1-code-weight)"
       }
     },
     {
@@ -641,7 +641,7 @@
     {
       "scope": "punctuation.separator.c,punctuation.separator.cpp",
       "settings": {
-        "foreground": "var(--vp-c-brand-1)"
+        "foreground": "var(--vp-c-brand-1);font-weight:var(--vp-c-brand-1-code-weight)"
       }
     },
     {
@@ -653,7 +653,7 @@
     {
       "scope": "keyword.operator.sizeof.c,keyword.operator.sizeof.cpp",
       "settings": {
-        "foreground": "var(--vp-c-brand-1)"
+        "foreground": "var(--vp-c-brand-1);font-weight:var(--vp-c-brand-1-code-weight)"
       }
     },
     {
@@ -671,7 +671,7 @@
     {
       "scope": "keyword.operator.logical.python",
       "settings": {
-        "foreground": "var(--vp-c-brand-1)"
+        "foreground": "var(--vp-c-brand-1);font-weight:var(--vp-c-brand-1-code-weight)"
       }
     },
     {
@@ -707,7 +707,7 @@
     {
       "scope": "keyword.operator.assignment.compound",
       "settings": {
-        "foreground": "var(--vp-c-brand-1)"
+        "foreground": "var(--vp-c-brand-1);font-weight:var(--vp-c-brand-1-code-weight)"
       }
     },
     {
@@ -719,7 +719,7 @@
     {
       "scope": "keyword",
       "settings": {
-        "foreground": "var(--vp-c-brand-1)"
+        "foreground": "var(--vp-c-brand-1);font-weight:var(--vp-c-brand-1-code-weight)"
       }
     },
     {
@@ -761,7 +761,7 @@
     {
       "scope": "token.package.keyword",
       "settings": {
-        "foreground": "var(--vp-c-brand-1)"
+        "foreground": "var(--vp-c-brand-1);font-weight:var(--vp-c-brand-1-code-weight)"
       }
     },
     {
@@ -824,7 +824,7 @@
     {
       "scope": "keyword.control",
       "settings": {
-        "foreground": "var(--vp-c-brand-1)"
+        "foreground": "var(--vp-c-brand-1);font-weight:var(--vp-c-brand-1-code-weight)"
       }
     },
     {
@@ -842,19 +842,19 @@
     {
       "scope": "storage",
       "settings": {
-        "foreground": "var(--vp-c-brand-1)"
+        "foreground": "var(--vp-c-brand-1);font-weight:var(--vp-c-brand-1-code-weight)"
       }
     },
     {
       "scope": "token.storage",
       "settings": {
-        "foreground": "var(--vp-c-brand-1)"
+        "foreground": "var(--vp-c-brand-1);font-weight:var(--vp-c-brand-1-code-weight)"
       }
     },
     {
       "scope": "keyword.operator.expression.delete,keyword.operator.expression.in,keyword.operator.expression.of,keyword.operator.expression.instanceof,keyword.operator.new,keyword.operator.expression.typeof,keyword.operator.expression.void",
       "settings": {
-        "foreground": "var(--vp-c-brand-1)"
+        "foreground": "var(--vp-c-brand-1);font-weight:var(--vp-c-brand-1-code-weight)"
       }
     },
     {
@@ -932,7 +932,7 @@
     {
       "scope": "entity.name.tag",
       "settings": {
-        "foreground": "var(--vp-c-brand-1)"
+        "foreground": "var(--vp-c-brand-1);font-weight:var(--vp-c-brand-1-code-weight)"
       }
     },
     {
@@ -977,7 +977,7 @@
     {
       "scope": "meta.selector",
       "settings": {
-        "foreground": "var(--vp-c-brand-1)"
+        "foreground": "var(--vp-c-brand-1);font-weight:var(--vp-c-brand-1-code-weight)"
       }
     },
     {
@@ -1013,13 +1013,13 @@
     {
       "scope": "markup.italic, punctuation.definition.italic,todo.emphasis",
       "settings": {
-        "foreground": "var(--vp-c-brand-1)"
+        "foreground": "var(--vp-c-brand-1);font-weight:var(--vp-c-brand-1-code-weight)"
       }
     },
     {
       "scope": "emphasis md",
       "settings": {
-        "foreground": "var(--vp-c-brand-1)"
+        "foreground": "var(--vp-c-brand-1);font-weight:var(--vp-c-brand-1-code-weight)"
       }
     },
     {
@@ -1097,7 +1097,7 @@
     {
       "scope": "markup.underline.link.markdown,markup.underline.link.image.markdown",
       "settings": {
-        "foreground": "var(--vp-c-brand-1)"
+        "foreground": "var(--vp-c-brand-1);font-weight:var(--vp-c-brand-1-code-weight)"
       }
     },
     {
@@ -1127,7 +1127,7 @@
     {
       "scope": "punctuation.section.embedded.begin,punctuation.section.embedded.end",
       "settings": {
-        "foreground": "var(--vp-c-brand-1)"
+        "foreground": "var(--vp-c-brand-1);font-weight:var(--vp-c-brand-1-code-weight)"
       }
     },
     {
@@ -1199,13 +1199,13 @@
     {
       "scope": "text.html.laravel-blade source.php.embedded.line.html entity.name.tag.laravel-blade",
       "settings": {
-        "foreground": "var(--vp-c-brand-1)"
+        "foreground": "var(--vp-c-brand-1);font-weight:var(--vp-c-brand-1-code-weight)"
       }
     },
     {
       "scope": "text.html.laravel-blade source.php.embedded.line.html support.constant.laravel-blade",
       "settings": {
-        "foreground": "var(--vp-c-brand-1)"
+        "foreground": "var(--vp-c-brand-1);font-weight:var(--vp-c-brand-1-code-weight)"
       }
     },
     {
@@ -1217,13 +1217,13 @@
     {
       "scope": "keyword.operator.error-control.php",
       "settings": {
-        "foreground": "var(--vp-c-brand-1)"
+        "foreground": "var(--vp-c-brand-1);font-weight:var(--vp-c-brand-1-code-weight)"
       }
     },
     {
       "scope": "keyword.operator.type.php",
       "settings": {
-        "foreground": "var(--vp-c-brand-1)"
+        "foreground": "var(--vp-c-brand-1);font-weight:var(--vp-c-brand-1-code-weight)"
       }
     },
     {
@@ -1289,7 +1289,7 @@
     {
       "scope": "keyword.operator.regexp.php",
       "settings": {
-        "foreground": "var(--vp-c-brand-1)"
+        "foreground": "var(--vp-c-brand-1);font-weight:var(--vp-c-brand-1-code-weight)"
       }
     },
     {
@@ -1301,7 +1301,7 @@
     {
       "scope": "keyword.operator.heredoc.php,keyword.operator.nowdoc.php",
       "settings": {
-        "foreground": "var(--vp-c-brand-1)"
+        "foreground": "var(--vp-c-brand-1);font-weight:var(--vp-c-brand-1-code-weight)"
       }
     },
     {
@@ -1409,7 +1409,7 @@
     {
       "scope": "token.debug-token",
       "settings": {
-        "foreground": "var(--vp-c-brand-1)"
+        "foreground": "var(--vp-c-brand-1);font-weight:var(--vp-c-brand-1-code-weight)"
       }
     },
     {
@@ -1419,7 +1419,7 @@
         "punctuation.section.embedded"
       ],
       "settings": {
-        "foreground": "var(--vp-c-brand-1)"
+        "foreground": "var(--vp-c-brand-1);font-weight:var(--vp-c-brand-1-code-weight)"
       }
     },
     {
@@ -1435,7 +1435,7 @@
         "keyword.operator.module"
       ],
       "settings": {
-        "foreground": "var(--vp-c-brand-1)"
+        "foreground": "var(--vp-c-brand-1);font-weight:var(--vp-c-brand-1-code-weight)"
       }
     },
     {
@@ -1524,7 +1524,7 @@
         "keyword.operator.address.go"
       ],
       "settings": {
-        "foreground": "var(--vp-c-brand-1)"
+        "foreground": "var(--vp-c-brand-1);font-weight:var(--vp-c-brand-1-code-weight)"
       }
     },
     {
@@ -1556,7 +1556,7 @@
         "punctuation.quasi.element"
       ],
       "settings": {
-        "foreground": "var(--vp-c-brand-1)"
+        "foreground": "var(--vp-c-brand-1);font-weight:var(--vp-c-brand-1-code-weight)"
       }
     },
     {
@@ -1683,7 +1683,7 @@
         "support.type.object.hlsl"
       ],
       "settings": {
-        "foreground": "var(--vp-c-brand-1)"
+        "foreground": "var(--vp-c-brand-1);font-weight:var(--vp-c-brand-1-code-weight)"
       }
     },
     {
@@ -1733,7 +1733,7 @@
         "constant.regexp.xi"
       ],
       "settings": {
-        "foreground": "var(--vp-c-brand-1)"
+        "foreground": "var(--vp-c-brand-1);font-weight:var(--vp-c-brand-1-code-weight)"
       }
     },
     {

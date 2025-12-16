@@ -5,7 +5,7 @@ const map = {
   '#BBBBBB': '#FFFFFF',
 
   // Blue
-  '#54B9FF': 'var(--vp-c-brand-1)',
+  '#54B9FF': 'var(--vp-c-brand-1);font-weight:var(--vp-c-brand-1-code-weight)',
 
   // Purple
   '#ACAFFF': 'var(--vp-c-brand-3-light-5)',
