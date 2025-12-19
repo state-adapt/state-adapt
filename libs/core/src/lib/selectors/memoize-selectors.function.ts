@@ -56,10 +56,13 @@ export function getMemoizedSelector<State>(
   return (s: State, parentCache?: SelectorsCache) => {
     const cache = toChildCache ? toChildCache(parentCache) : parentCache;
     if (!cache) return (fn as any)(s);
-    const { values } = (cache.__inputs[name] = cache.__inputs[name] || {
-      set: new Set(['state']),
-      values: { state: undefined },
-    });
+    cache.__inputs[name] = cache.__inputs[name]?.values // Check for our shape because some selector names collide with default Object prop names, like toString.
+      ? cache.__inputs[name]
+      : {
+          set: new Set(['state']),
+          values: { state: undefined },
+        };
+    const { values } = cache.__inputs[name];
     if (s === values['state']) return cache.__results[name]; // The only input "selector" returned the same thing
     values['state'] = s;
     return (cache.__results[name] = (fn as any)(s, cache));

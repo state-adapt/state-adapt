@@ -1,6 +1,7 @@
 ## 4.0.0
 
 - Refactor(ngrx)!: Remove direct support for NgRx
+- Bugfix(rxjs): Guard against selectors named after object prototype properties
 
 ## 3.1.0
 
