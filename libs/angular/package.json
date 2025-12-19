@@ -2,7 +2,7 @@
   "name": "@state-adapt/angular",
   "version": "3.1.0",
   "peerDependencies": {
-    "@angular/core": ">=14.0.0",
+    "@angular/core": ">=17.0.0",
     "@state-adapt/rxjs": "3.1.0"
   },
   "dependencies": {

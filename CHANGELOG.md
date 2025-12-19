@@ -2,6 +2,7 @@
 
 - Refactor(ngrx)!: Remove direct support for NgRx
 - Bugfix(rxjs): Guard against selectors named after object prototype properties
+- Refactor(angular)!: Require Angular 17+
 
 ## 3.1.0
 
