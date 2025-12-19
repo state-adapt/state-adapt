@@ -222,28 +222,26 @@ import { useProxyStates } from './use-proxy-states';
   }
   ```
 
-  Defining a path alongside sources is recommended to enable debugging with Redux DevTools. It's easy to trace
-  singular state changes caused by user events, but it's much harder to trace state changes caused by RxJS streams.
+  Defining a path alongside sources is recommended to enable easier debugging with Redux DevTools. It's easy to trace state changes
+  caused by user events, but it's much harder to trace state changes caused by spontaneous RxJS streams.
 
-  The path string specifies the location in the global store you will find the state for the store being created
-  (while the store has subscribers). StateAdapt splits this string at periods `'.'` to create an object path within
+  The path specifies the location in the global store you will find the state for the store
+  (while it is being used). StateAdapt splits this string at periods `'.'` to create an object path within
   the global store. Here are some example paths and the resulting global state objects:
 
   #### Example: Paths and global state
 
   ```tsx
-  const [states, store] = useAdapt(0, { path: 'number' });
-  // global state: { number: 0 }
-  ```
+  const [count1] = useAdapt(0, { path: 'count.1' });
+  const [count2] = useAdapt(0, { path: 'count.2' });
 
-  ```typescript
-  const [states, store] = useAdapt(0, { path: 'featureA.number' });
-  // global state: { featureA: { number: 0 } }
-  ```
-
-  ```typescript
-  const [states, store] = useAdapt(0, { path: 'featureA.featureB.number' });
-  // global state: { featureA: { featureB: { number: 0 } } }
+  // global state:
+  // {
+  //   count: {
+  //     1: 0,
+  //     2: 0,
+  //   }
+  // }
   ```
 
   Each store completely owns its own state. If more than one store tries to use the same path, StateAdapt will throw this error:
@@ -277,8 +275,7 @@ import { useProxyStates } from './use-proxy-states';
 
   ### Remember!
 
-  The store needs to have subscribers in order to start managing state,
-  and it only subscribes to sources when it has subscribers itself.
+  Stores need to have subscribers in order to activate and subscribe to their sources.
   */
 export function useAdapt<
   State,

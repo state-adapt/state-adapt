@@ -6,19 +6,14 @@ import {
 } from '@state-adapt/core';
 
 import { JoinedStore } from './joined-store.interface';
-import { StoreLike } from './store-like.type';
+import { WithCoreStoreProps } from './core-store-props.type';
 
 export type StoreEntries = {
-  [index: string]: StoreLike<any, any, any>;
+  [index: string]: WithCoreStoreProps<any, any>;
 };
 
-type StoreState<Store extends StoreLike<any, any, any>> = Store extends StoreLike<
-  infer State,
-  any,
-  any
->
-  ? State
-  : never;
+type StoreState<Store extends WithCoreStoreProps<any, any>> =
+  Store extends WithCoreStoreProps<infer State, any> ? State : never;
 
 export type EntriesState<SE extends StoreEntries> = {
   [K in string & keyof SE]: StoreState<SE[K]>;

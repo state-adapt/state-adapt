@@ -226,31 +226,35 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
   // logs 'Johnsh' after 1 second, then 'Johnshsh' after 2 seconds, etc.
   ```
 
-  Defining a path alongside sources is recommended to enable debugging with Redux DevTools. It's easy to trace
-  singular state changes caused by user events, but it's much harder to trace state changes caused by RxJS streams.
+  Defining a path alongside sources is recommended to enable easier debugging with Redux DevTools. It's easy to trace state changes
+  caused by user events, but it's much harder to trace state changes caused by spontaneous RxJS streams.
 
-  The path string specifies the location in the global store you will find the state for the store being created
-  (while the store has subscribers). StateAdapt splits this string at periods `'.'` to create an object path within
+  The path string specifies the location in the global store you will find the state for the store
+  (while it is being used). StateAdapt splits this string at periods `'.'` to create an object path within
   the global store. Here are some example paths and the resulting global state objects:
 
   #### Example: Paths and global state
 
-  ```typescript
-  const store = adapt(0, { path: 'number' });
-  store.state$.subscribe();
-  // global state: { number: 0 }
-  ```
+  ```ts
+  const count1 = adapt(0, { path: 'count.1' });
+  const count2 = adapt(0, { path: 'count.2' });
 
-  ```typescript
-  const store = adapt(0, { path: 'featureA.number' });
-  store.state$.subscribe();
-  // global state: { featureA: { number: 0 } }
-  ```
+  this.count1.state$.subscribe();
+  // global state:
+  // {
+  //   count: {
+  //     1: 0,
+  //   }
+  // }
 
-  ```typescript
-  const store = adapt(0, { path: 'featureA.featureB.number' });
-  store.state$.subscribe();
-  // global state: { featureA: { featureB: { number: 0 } } }
+  this.count2.state$.subscribe();
+  // global state:
+  // {
+  //   count: {
+  //     1: 0,
+  //     2: 0,
+  //   }
+  // }
   ```
 
   Each store completely owns its own state. If more than one store tries to use the same path, StateAdapt will throw this error:
@@ -377,6 +381,8 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
         fullSelectors,
         initialState, // added for React integration, which requires immediate access to initial state before subscribing
         path,
+        getCurrentState: () =>
+          this.pathStates[path] ? this.pathStates[path].lastState : initialState, // With signals, we use default state when inactive
         select: (sel: any) => filterDefined(this.commonStore.select(sel)),
       },
     } as any;
@@ -432,6 +438,7 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
         selectors,
         initialState: undefined as unknown as State, // added for React integration, which requires immediate access to initial state before subscribing,
         path,
+        getCurrentState: () => this.pathStates[path]?.lastState, // For signals - not needed here, but to satisfy type
         select: (sel: any) => filterDefined(this.commonStore.select(sel)),
       },
     };

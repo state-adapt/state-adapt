@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
+import { TestBed } from '@angular/core/testing';
 import { createAdapter, joinAdapters } from '@state-adapt/core';
 import {
   EntityState,
   createEntityAdapter,
   createEntityState,
 } from '@state-adapt/core/adapters';
-import { adapt } from './adapt.function';
 import { joinStores } from '@state-adapt/rxjs';
 import { Observable } from 'rxjs';
+import { adapt } from './adapt.function';
 
 export enum ProductionProcess {
   Peeled = 'peeled',
@@ -168,30 +169,31 @@ export class SmoothieStore {
   })({
     allProductionProcessesDefined3: state => state.allProductionProcessesDefined2,
   })({
-    allProductionProcessesDefined4: state => state.allProductionProcessesDefined2,
+    allProductionProcessesDefined4: state => state.allProductionProcessesDefined3,
   })({
-    allProductionProcessesDefined5: state => state.allProductionProcessesDefined2,
+    allProductionProcessesDefined5: state => state.allProductionProcessesDefined4,
   })({
-    allProductionProcessesDefined6: state => state.allProductionProcessesDefined2,
+    allProductionProcessesDefined6: state => state.allProductionProcessesDefined5,
   })({
-    allProductionProcessesDefined7: state => state.allProductionProcessesDefined2,
+    allProductionProcessesDefined7: state => state.allProductionProcessesDefined6,
   })({
-    allProductionProcessesDefined8: state => state.allProductionProcessesDefined2,
+    allProductionProcessesDefined8: state => state.allProductionProcessesDefined7,
   })({
-    allProductionProcessesDefined9: state => state.allProductionProcessesDefined2,
+    allProductionProcessesDefined9: state => state.allProductionProcessesDefined8,
   })({
-    allProductionProcessesDefined10: state => state.allProductionProcessesDefined2,
+    allProductionProcessesDefined10: state => state.allProductionProcessesDefined9,
   })();
 
   b = this.store.allProductionProcessesDefined10$;
-
   // @ts-expect-error, should be Observable<boolean>
-  a = expectType<Observable<boolean>>()(this.store.allProductionProcessesDefined10$)
-    .result;
+  a: Observable<number> = this.store.allProductionProcessesDefined10$;
 }
 
 describe('adapt Angular wrapper function', () => {
   it('should compile', () => {
-    expect(true).toBeTruthy();
+    TestBed.runInInjectionContext(() => {
+      const count = adapt(0);
+      expect(true).toBeTruthy();
+    });
   });
 });

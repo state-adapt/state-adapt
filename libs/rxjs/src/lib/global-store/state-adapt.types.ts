@@ -98,6 +98,7 @@ export interface AdaptOptions<
   //   ? true
   //   // ? { [K in keyof ActualSourceArg as K extends keyof R ? never : K]?: ActualSourceArg[K] }
   //   : SourceArg<State, S, R>;
+  signalPing?: number;
 }
 
 export function isAdaptOptions<
@@ -107,7 +108,12 @@ export function isAdaptOptions<
 >(
   options: AdaptOptions<State, S, R> | undefined | R,
 ): options is AdaptOptions<State, S, R> {
-  return ['path', 'adapter', 'sources'].some(key => key in (options || {}));
+  return ['path', 'adapter', 'sources', 'signalPing'].some(key => key in (options || {}));
 }
 
-export type NotAdaptOptions = { path?: never; adapter?: never; sources?: never };
+export type NotAdaptOptions = {
+  path?: never;
+  adapter?: never;
+  sources?: never;
+  signalPing?: never;
+};

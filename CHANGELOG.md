@@ -1,5 +1,6 @@
 ## 4.0.0
 
+- Feature(angular)!: Add signals to stores created with `adapt` function
 - Refactor(ngrx)!: Remove direct support for NgRx
 - Bugfix(rxjs): Guard against selectors named after object prototype properties
 - Refactor(angular)!: Require Angular 17+
