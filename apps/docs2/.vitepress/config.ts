@@ -11,6 +11,7 @@ import reactPaths from '../docs/api/react/index/symbol.paths';
 import { Section } from 'section-paths';
 import { resolve } from 'path';
 import { mdCodeDirectiveOffsetPlugin } from '../md-code-directive-offset.plugin';
+import { mdAngularTemplatesPlugin } from '../md-angular-templates.plugin';
 
 function getLibSectionItems(sections: Section[]): DefaultTheme.SidebarItem[] {
   return sections.map(({ name, items }) => ({
@@ -36,7 +37,7 @@ const frameworkKeys = Object.keys(frameworks) as FrameworkKey[];
 
 export default defineConfig({
   vite: {
-    plugins: [mdCodeDirectiveOffsetPlugin()],
+    plugins: [mdCodeDirectiveOffsetPlugin(), mdAngularTemplatesPlugin()],
   },
   lang: 'en-US',
   head: [
