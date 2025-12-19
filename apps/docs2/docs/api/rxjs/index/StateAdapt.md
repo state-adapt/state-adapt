@@ -18,7 +18,7 @@ Defined in: [libs/rxjs/src/lib/global-store/state-adapt.ts:74](https://github.co
 
 > **adapt**\<`State`, `S`, `R`, `R2`\>(`initialState`, `second`): `InitializedSmartStore`\<`State`, `S`, `object` *extends* `R` ? `R2` : `R`\>
 
-Defined in: [libs/rxjs/src/lib/global-store/state-adapt.ts:286](https://github.com/state-adapt/state-adapt/blob/main/libs/rxjs/src/lib/global-store/state-adapt.ts#L286)
+Defined in: [libs/rxjs/src/lib/global-store/state-adapt.ts:290](https://github.com/state-adapt/state-adapt/blob/main/libs/rxjs/src/lib/global-store/state-adapt.ts#L290)
 
 `adapt` creates a store that will manage state while it has subscribers.
 
@@ -168,31 +168,35 @@ name.state$.subscribe(console.log); // Logs 'John'
 // logs 'Johnsh' after 1 second, then 'Johnshsh' after 2 seconds, etc.
 ```
 
-Defining a path alongside sources is recommended to enable debugging with Redux DevTools. It's easy to trace
-singular state changes caused by user events, but it's much harder to trace state changes caused by RxJS streams.
+Defining a path alongside sources is recommended to enable easier debugging with Redux DevTools. It's easy to trace state changes
+caused by user events, but it's much harder to trace state changes caused by spontaneous RxJS streams.
 
-The path string specifies the location in the global store you will find the state for the store being created
-(while the store has subscribers). StateAdapt splits this string at periods `'.'` to create an object path within
+The path string specifies the location in the global store you will find the state for the store
+(while it is being used). StateAdapt splits this string at periods `'.'` to create an object path within
 the global store. Here are some example paths and the resulting global state objects:
 
 #### Example: Paths and global state
 
-```typescript
-const store = adapt(0, { path: 'number' });
-store.state$.subscribe();
-// global state: { number: 0 }
-```
+```ts
+const count1 = adapt(0, { path: 'count.1' });
+const count2 = adapt(0, { path: 'count.2' });
 
-```typescript
-const store = adapt(0, { path: 'featureA.number' });
-store.state$.subscribe();
-// global state: { featureA: { number: 0 } }
-```
+this.count1.state$.subscribe();
+// global state:
+// {
+//   count: {
+//     1: 0,
+//   }
+// }
 
-```typescript
-const store = adapt(0, { path: 'featureA.featureB.number' });
-store.state$.subscribe();
-// global state: { featureA: { featureB: { number: 0 } } }
+this.count2.state$.subscribe();
+// global state:
+// {
+//   count: {
+//     1: 0,
+//     2: 0,
+//   }
+// }
 ```
 
 Each store completely owns its own state. If more than one store tries to use the same path, StateAdapt will throw this error:
@@ -263,7 +267,7 @@ and it only subscribes to sources when it has subscribers itself.
 
 > **watch**\<`State`, `S`, `R`\>(`path`, `adapter`): `SmartStore`\<`State`, `S` & `WithGetState`\<`State`\>\>
 
-Defined in: [libs/rxjs/src/lib/global-store/state-adapt.ts:409](https://github.com/state-adapt/state-adapt/blob/main/libs/rxjs/src/lib/global-store/state-adapt.ts#L409)
+Defined in: [libs/rxjs/src/lib/global-store/state-adapt.ts:415](https://github.com/state-adapt/state-adapt/blob/main/libs/rxjs/src/lib/global-store/state-adapt.ts#L415)
 
 `watch` returns a detached store (doesn't chain off of sources). This allows you to watch state without affecting anything.
 It takes 2 arguments: The path of the state you are interested in, and the adapter you want to use.

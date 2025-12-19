@@ -1,72 +1,71 @@
 ---
-definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/angular/src/lib/adapt.function.ts#L330
+definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/angular/src/lib/adapt.function.ts#L291
 ---
 
-# Variable: adapt
+# Function: adapt()
 
-> `const` **adapt**: [`StateAdapt`](../../rxjs/index/StateAdapt.md)\[`"adapt"`\]
+> **adapt**\<`State`, `S`, `R`, `R2`\>(`initialState`, `second`): \{ \[P in string \| number \| symbol as \`$\{P extends string ? P\<P\> : never\}$\`\]: Observable\<Exclude\<ReturnType\<((\{\} extends S ? S & \{\} : S) & WithGetState\<State\>)\[P\]\>, undefined\>\> \} & `object` & `object` & `SyntheticSources`\<`InitializedReactions`\<`State`, `S`, `object` *extends* `R` ? `R2` : `R`\>\> & \{(): `State`; `readOnce`: () => `State`; \} & \{ \[K in string \| number \| symbol\]: () =\> ReturnType\<S\[K\]\> \}
 
-Defined in: [lib/adapt.function.ts:330](https://github.com/state-adapt/state-adapt/blob/main/libs/angular/src/lib/adapt.function.ts#L330)
+Defined in: [angular/src/lib/adapt.function.ts:291](https://github.com/state-adapt/state-adapt/blob/main/libs/angular/src/lib/adapt.function.ts#L291)
 
-`adapt` wraps [StateAdapt.adapt](../../rxjs/index/StateAdapt.md#adapt) for Angular.
-
-`adapt` creates a store that will manage state while it has subscribers.
+`adapt` wraps [StateAdapt.adapt](../../rxjs/index/StateAdapt.md#adapt) and adds signals for the store's selectors.
 
 ### Example: initialState only
+
 `adapt(initialState)`
 
-The simplest way to use `adapt` is to only pass it an initial state. `adapt` returns a store object that is ready to start managing state once it has subscribers.
-The store object comes with `set` and `reset` methods for updating state, and a `state$` observable of the store's state.
+The simplest way to use `adapt` is to only pass it an initial state. `adapt` creates a store that can be used just like an Angular signal.
 
-```typescript
+In addition to the regular `set` method on signals, stores have a `reset` method, and a `state$` observable of the store's state.
+
+```ts
+@Component({
+  template: `
+    <div>Count is {{ count() }}</div>
+    <div>Count is {{ count.state$ | async }}</div> <!-- Same -->
+    <button (click)="count.set(5)">Set to 5</button>
+    <button (click)="count.reset()">Reset Count</button>
+  `,
+})
 export class MyComponent {
-  name = adapt('John');
-
-  constructor() {
-    this.name.state$.subscribe(console.log); // logs 'John'
-
-    this.name.set('Johnsh'); // logs 'Johnsh'
-    this.name.reset(); // logs 'John'
-  }
+  count = adapt(0);
 }
 ```
-
-Usually you won't manually subscribe to state like this, but you can if you want the store to immediately start managing state
-and never clean it up.
 
 ### Example: Using an adapter
 `adapt(initialState, adapter)`
 
 You can also pass in a state [Adapter](../../core/src/Adapter.md) object to customize the state change functions and selectors.
 
-```typescript
+```ts
+@Component({
+  template: `
+    <div>Count is {{ count() }}</div>
+    <div>Double count is {{ count.double() }}</div>
+    <div>Double count is {{ count.double$ | async }}</div> <!-- Same -->
+    <button (click)="count.increment()">Increment</button>
+  `,
+})
 export class MyComponent {
-  name = adapt('John', {
-    concat: (state, payload: string) => state + payload,
+  count = adapt(0, {
+    increment: state => state + 1,
     selectors: {
-      length: state => state.length,
+      double: state => state * 2,
     },
   });
-
-  constructor() {
-    this.name.state$.subscribe(console.log); // Logs 'John'
-    this.name.length$.subscribe(console.log); // Logs 4
-
-    this.name.concat('sh'); // logs 'Johnsh' and 6
-    this.name.reset(); // logs 'John' and 4
-  }
 }
 ```
 
 ### Example: Using AdaptOptions
-`adapt(initialState, { adapter, sources, path })`
+`adapt(initialState, { adapter, sources, path, signalPing })`
 
-You can also define an adapter, sources, and/or a state path as part of an AdaptOptions object.
+You can also define an adapter, sources, a state path and a signal ping interval as part of an AdaptOptions object.
 
-Sources allow the store to declaratively react to external events rather than being commanded
+Sources allow the store to declaratively react to external events rather than be commanded
 by imperative code in callback functions.
 
-```typescript
+```ts
+@Injectable({ providedIn: 'root' })
 export class MyService {
   tick$ = interval(1000);
 
@@ -74,29 +73,39 @@ export class MyService {
     adapter: {
       increment: state => state + 1,
     },
-    sources: this.tick$, // or [this.tick$], or { set: this.tick$ }, or { set: [this.tick$] }
+    sources: this.tick$,
+    // Alternatives:
+    // sources: [this.tick$],
+    // sources: { set: this.tick$ },
+    // sources: { set: [this.tick$] },
     path: 'clock',
+    signalPing: 500, // Default 1000 ms
   });
 
-  constructor() {
-    this.clock.state$.subscribe(console.log); // Logs 0, 1, 2, 3, etc.
-  }
+  logSub = this.clock.state$.subscribe(console.log); // Logs 0, 1, 2, etc.
 }
 ```
 
-When a store is subscribed to, it passes the subscriptions up to its sources.
-For example, if a store has an HTTP source, it will be triggered when the store
-receives its first subscriber, and it will be canceled when the store loses its
-last subscriber.
+When a store is being used, it subscribes to its sources. When it goes back to unused, it resets its state and unsubscribes from its sources.
 
-There are 4 possible ways sources can be defined:
+When created in a component (or service provided directly in a component), it is assumed that stores will be in use until that component is destroyed.
 
-1\. A source can be a single source or [Observable](https://rxjs.dev/guide/observable)`<``State``>`. When the source emits, it triggers the store's `set` method
+In shared services with `providedIn: 'root'`, the store is initialized when a signal is read or a selector observable is subscribed to.
+The first time a store signal is read, it kicks off an interval (default `1000` ms, determined by `signalPing`) to ping the signal graph to see if anyone is listening.
+When it detects nobody listening, and there are no subscriptions from store observables, the store is deactivated: Its state resets and
+its sources are unsubscribed from. For example, if a store has an HTTP source, it will be triggered when the store
+receives its first subscriber or signal read, and it will be canceled when the store loses its
+last subscriber, or detects no effects listening to its signals.
+
+Sources can be defined in 4 ways:
+
+1\. A source can be a single [Source](../../rxjs/index/Source.md)`<State>` or [Observable](https://rxjs.dev/guide/observable)`<State>`. When the source emits, it triggers the store's `set` method
 with the payload.
 
 #### Example: Single source or observable
 
-```typescript
+```ts
+@Injectable({ providedIn: 'root' })
 export class MyService {
   nameChange$ = source<string>();
 
@@ -108,17 +117,18 @@ export class MyService {
   constructor() {
     this.name.state$.subscribe(console.log); // Logs 'John'
 
-    this.nameChange$.next('Johnsh'); // logs 'Johnsh'
+    this.nameChange$.next('Bilbo'); // logs 'Bilbo'
   }
 }
 ```
 
-2\. A source can be an array of sources or [Observable](https://rxjs.dev/guide/observable)`<``State``>`. When any of the sources emit, it triggers the store's `set`
+2\. A source can be an array of [Source](../../rxjs/index/Source.md)`<State>` or [Observable](https://rxjs.dev/guide/observable)`<State>`. When any of the sources emit, it triggers the store's `set`
  method with the payload.
 
 #### Example: Array of sources or observables
 
-```typescript
+```ts
+@Injectable({ providedIn: 'root' })
 export class MyService {
   nameChange$ = source<string>();
   nameChange2$ = source<string>();
@@ -131,18 +141,19 @@ export class MyService {
   constructor() {
     this.name.state$.subscribe(console.log); // Logs 'John'
 
-    this.nameChange$.next('Johnsh'); // logs 'Johnsh'
-    this.nameChange2$.next('Johnsh2'); // logs 'Johnsh2'
+    this.nameChange$.next('Bilbo'); // logs 'Bilbo'
+    this.nameChange2$.next('Frodo'); // logs 'Frodo'
   }
 }
 ```
 
-3\. A source can be an object with keys that match the names of the [Adapter](../../core/src/Adapter.md) state change functions, with a corresponding source or array of
-sources that trigger the store's reaction with the payload.
+3\. A source can be an object with keys that match the names of the [Adapter](../../core/src/Adapter.md) state change functions, with a corresponding [Source](../../rxjs/index/Source.md)`<State>` or array of
+[Source](../../rxjs/index/Source.md)`<State>` that trigger the store's reaction with the payload.
 
 #### Example: Object of sources or observables
 
-```typescript
+```ts
+@Injectable({ providedIn: 'root' })
 export class MyService {
   nameChange$ = source<string>();
   nameReset$ = source<void>();
@@ -158,7 +169,7 @@ export class MyService {
   constructor() {
     this.name.state$.subscribe(console.log); // Logs 'John'
 
-    this.nameChange$.next('Johnsh'); // logs 'Johnsh'
+    this.nameChange$.next('Bilbo'); // logs 'Bilbo'
     this.nameReset$.next(); // logs 'John'
   }
 }
@@ -169,61 +180,55 @@ types of sources or observables.
 
 #### Example: Function that returns an observable
 
-```typescript
+```ts
+@Injectable({ providedIn: 'root' })
 export class MyService {
-  name = adapt('John', {
+  name = adapt('John ', {
     sources: store => store.state$.pipe(
       delay(1000),
-      map(name => `${name}sh`),
+      map(name => `${name}I`),
     ),
     path: 'name',
   });
 
   constructor() {
     this.name.state$.subscribe(console.log);
-    // Logs 'John', then 'Johnsh' after 1 second, 'Johnshsh' after 2 seconds, etc.
+    // Logs 'John ', then 'John I' after 1 second, 'John II' after 2, etc.
   }
 }
 ```
 
-Defining a path alongside sources is recommended to enable debugging with Redux DevTools. It's easy to trace
-singular state changes caused by user events, but it's much harder to trace state changes caused by RxJS streams.
+Defining a path alongside sources is recommended to enable easier debugging with Redux DevTools. It's easy to trace state changes
+caused by user events, but it's much harder to trace state changes caused by spontaneous RxJS streams.
 
-The path string specifies the location in the global store you will find the state for the store being created
-(while the store has subscribers). StateAdapt splits this string at periods `'.'` to create an object path within
+The path specifies the location in the global store you will find the state for the store
+(while it is being used). StateAdapt splits this string at periods `'.'` to create an object path within
 the global store. Here are some example paths and the resulting global state objects:
 
 #### Example: Paths and global state
 
-```typescript
+```ts
 export class MyComponent {
-  store = adapt(0, { path: 'number' });
+  count1 = adapt(0, { path: 'count.1' });
+  count2 = adapt(0, { path: 'count.2' });
 
   constructor() {
-    this.store.state$.subscribe();
-    // global state: { number: 0 }
-  }
-}
-```
+    this.count1.state$.subscribe();
+    // global state:
+    // {
+    //   count: {
+    //     1: 0,
+    //   }
+    // }
 
-```typescript
-export class MyComponent {
-  store = adapt(0, { path: 'featureA.number' });
-
-  constructor() {
-    this.store.state$.subscribe();
-    // global state: { featureA: { number: 0 } }
-  }
-}
-```
-
-```typescript
-export class MyComponent {
-  store = adapt(0, { path: 'featureA.featureB.number' });
-
-  constructor() {
-    this.store.state$.subscribe();
-    // global state: { featureA: { featureB: { number: 0 } } }
+    this.count2.state$.subscribe();
+    // global state:
+    // {
+    //   count: {
+    //     1: 0,
+    //     2: 0,
+    //   }
+    // }
   }
 }
 ```
@@ -260,5 +265,34 @@ If no path is provided, then the store's path defaults to the result of calling 
 
 ### Remember!
 
-The store needs to have subscribers in order to start managing state,
-and it only subscribes to sources when it has subscribers itself.
+Stores provided in `'root'` need to have subscribers or signal reads in order to activate and subscribe to their sources.
+
+## Type Parameters
+
+### State
+
+`State`
+
+### S
+
+`S` *extends* `Selectors`\<`State`\>
+
+### R
+
+`R` *extends* `ReactionsWithSelectors`\<`State`, `S`\>
+
+### R2
+
+`R2` *extends* `ReactionsWithSelectors`\<`State`, `S`\>
+
+## Parameters
+
+### initialState
+
+`State`
+
+### second
+
+`R` & `object` & `NotAdaptOptions` | `AdaptOptions`\<`State`, `S`, `R2`\>
+
+## Returns

@@ -6,7 +6,7 @@ definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/angular/src
 
 > `const` **defaultStoreProvider**: `object`
 
-Defined in: [lib/default-store-provider.const.ts:9](https://github.com/state-adapt/state-adapt/blob/main/libs/angular/src/lib/default-store-provider.const.ts#L9)
+Defined in: [angular/src/lib/default-store-provider.const.ts:9](https://github.com/state-adapt/state-adapt/blob/main/libs/angular/src/lib/default-store-provider.const.ts#L9)
 
 ## Type declaration
 

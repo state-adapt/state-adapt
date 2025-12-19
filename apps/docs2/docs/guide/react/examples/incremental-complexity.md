@@ -4,14 +4,11 @@
 
 Clean state management should be easy, like `useState`.
 
-Developers should feel completely free to use `useState` for simple features.
+Developers should feel completely free to use `useState` for simple features, even if they might become more complex later.
 
 ## A smooth path to reducers
 
-But when state needs to change in more complex ways, there are 2 approaches:
-
-<!-- 1. Event handlers
-2. Reducers -->
+When state needs to change in more complex ways, there are 2 approaches:
 
 > **Event handlers**—scattered state logic ❌
 
@@ -56,8 +53,8 @@ function SimpleStateAdapt() {
 ```tsx
 function ReducedState() {
   const [name, setName] = useAdapt('Bob'); // [!code --]
+  // [!code ++ 1]
   const [name, setName] = useAdapt('Bob', {
-    // [!code ++]
     reverse: name => name.split('').reverse().join(''), // name type inferred // [!code ++]
   }); // [!code ++]
   return (
@@ -94,14 +91,14 @@ Moving local state to shared state should be easy.
 `useAdapt` easily splits into `adapt` and `useStore`:
 
 ```tsx
+// [!code ++ 1]
 const nameStore = adapt('Bob', {
-  // [!code ++]
   reverse: name => name.split('').reverse().join(''), // [!code ++]
 }); // [!code ++]
 
 function SharedState() {
+  // [!code -- 1]
   const [name, setName] = useAdapt('Bob', {
-    // [!code --]
     reverse: name => name.split('').reverse().join(''), // [!code --]
   }); // [!code --]
   const [name, setName] = useStore(nameStore); // [!code ++]
@@ -163,8 +160,8 @@ One way StateAdapt addresses this is by allowing selectors to be defined alongsi
 function SharedDerivedState() {
   const [name, setName] = useAdapt('Bob', {
     reverse: name => name.split('').reverse().join(''),
+    // [!code ++ 1]
     seletors: {
-      // [!code ++]
       randomCase: (
         name, // [!code ++]
       ) =>
@@ -188,11 +185,11 @@ function SharedDerivedState() {
 Now if you need to share it, the selectors can just move with the state:
 
 ```tsx
+// [!code ++ 1]
 const nameStore = adapt('Bob', {
-  // [!code ++]
   reverse: name => name.split('').reverse().join(''), // [!code ++]
+  // [!code ++ 1]
   seletors: {
-    // [!code ++]
     randomCase: (
       name, // [!code ++]
     ) =>
@@ -204,11 +201,11 @@ const nameStore = adapt('Bob', {
 }); // [!code ++]
 
 function SharedDerivedState() {
+  // [!code -- 1]
   const [name, setName] = useAdapt('Bob', {
-    // [!code --]
     reverse: name => name.split('').reverse().join(''), // [!code --]
+    // [!code -- 1]
     seletors: {
-      // [!code --]
       randomCase: (
         name, // [!code --]
       ) =>
@@ -297,7 +294,8 @@ function SharedDerivedState() {
 <!-- The only way to share this logic with multiple components without refactoring is to create a custom hook. But this still takes work, because you need to return everything, and destructure it:
 
 ```tsx
-function useCountWithDouble(initialCount: 0) { // [!code ++]
+// [!code ++ 1]
+function useCountWithDouble(initialCount: 0) {
   const [count, setCount] = useAdapt(0);
 
   const doubleCount = count.state * 2;
@@ -313,7 +311,8 @@ function useCountWithDouble(initialCount: 0) { // [!code ++]
 Or you could try creating a hook for just `doubleCount`:
 
 ```tsx
-function useDoubleCount(count: { state: number }) { // [!code ++]
+// [!code ++ 1]
+function useDoubleCount(count: { state: number }) {
   const doubleCount = count.state * 2;
   return doubleCount; // [!code ++]
 } // [!code ++]
@@ -328,7 +327,8 @@ function useDoubleCount(count: { state: number }) { // [!code ++]
 ```tsx
 const nameStore = adapt('Bob', {
   reverse: name => name.split('').reverse().join(''),
-  selectors: { // [!code ++]
+  // [!code ++ 1]
+  selectors: {
     yelled: name => name.toUpperCase(), // Will be memoized // [!code ++]
   }, // [!code ++]
 });
@@ -409,13 +409,15 @@ function SharedState() {
 
 ### Decoupled
 
-State logic that references [specific event sources](#a-smooth-path-to-reactive-state) and specific state can require major refactoring if multiple states end up needing it.
+In most state management libraries, state logic is tied to specific instances of state. This can require major refactoring if multiple states end up needing the same logic.
 
 State adapters provide a smooth path to extracting logic away from specific event sources and state:
 
 ```tsx
-const nameStore = adapt('Bob', { // [!code --]
-const nameAdapter = createAdapter<string>()({ // [!code ++]
+// [!code -- 1]
+const nameStore = adapt('Bob', {
+// [!code ++ 1]
+const nameAdapter = createAdapter<string>()({
   reverse: name => name.split('').reverse().join(''),
   selectors: {
     randomCase: name =>
@@ -496,7 +498,7 @@ const adapter = joinAdapters<State>()({
 
 This creates reducers in `adapter` called `toggleIsActive` and `toggleIsVisible` that toggle the respective properties.
 
-State adapters are also an opportunity to share generic state management logic. Check out the adapters you can import from [@state-adapt/core/adapters](/api/core/adapters/).
+StateAdapt exports some adapters for some common types. Check out the adapters you can import from [@state-adapt/core/adapters](/api/core/adapters/).
 
 <!-- <video controls loop>
   <source src="./assets/demo-4-state-adapters.mov" type="video/mp4" />
@@ -512,22 +514,24 @@ When multiple states need to change after an event, there are 2 approaches:
 
 > **States reacting to events**—colocated state changes ✅
 
-Reactive state is great, but it takes a lot of work to refactor to a state management library that supports event-driven state.
+Reactive state is great, but it takes a lot of work to refactor to a state management library that supports event-driven state, like Redux.
 
 StateAdapt provides a smooth path to reactive state:
 
 ```tsx
 // ...
 
-const onResetAll = source(); // Event source // [!code ++]
+const onResetAll = source(); // Shared event source // [!code ++]
 
 const name1Store = adapt('Bob', nameAdapter); // [!code --]
-const name1Store = adapt('Bob', { // [!code ++]
+// [!code ++ 1]
+const name1Store = adapt('Bob', {
   adapter: nameAdapter, // [!code ++]
   sources: { reset: onResetAll }, // calls `reset` reducer (included) // [!code ++]
 }); // [!code ++]
 const name2Store = adapt('Kat', nameAdapter); // [!code --]
-const name2Store = adapt('Kat', { // [!code ++]
+// [!code ++ 1]
+const name2Store = adapt('Kat', {
   adapter: nameAdapter, // [!code ++]
   sources: { reset: onResetAll }, // calls `reset` reducer (included) // [!code ++]
 }); // [!code ++]
@@ -601,10 +605,12 @@ But StateAdapt's `joinStores` is glitch-free and efficient, preventing the need 
 ```tsx
 // ...
 
-const name12Store = joinStores({ // [!code ++]
+// [!code ++ 1]
+const name12Store = joinStores({
   name1: name1Store, // [!code ++]
   name2: name2Store, // [!code ++]
-})({ // [!code ++]
+  // [!code ++ 1]
+})({
   bobcat: s => s.name1 === 'Bob' && s.name2 === 'Kat' // [!code ++]
 })(); // [!code ++]
 
@@ -695,7 +701,8 @@ const onResetBoth = source('[name] onResetBoth'); // Annotate for Redux Devtools
 const name1Store = adapt('Bob', {
   adapter: nameAdapter,
    sources: onNameFromServer, // Set state // [!code --]
-   sources: { // [!code ++]
+   // [!code ++ 1]
+   sources: {
      set: onNameFromServer, // `set` is provided with all adapters // [!code ++]
      reset: onResetBoth, // `reset` is provided with all adapters // [!code ++]
    }, // [!code ++]
@@ -742,20 +749,26 @@ StateAdapt sources extend RxJS observables, and StateAdapt stores directly refer
 ```tsx
 // ...
 
-const name1Store = adapt('Bob', { // [!code --]
-const name1Store = adapt('Loading...', { // [!code ++]
+// [!code -- 1]
+const name1Store = adapt('Bob', {
+// [!code ++ 1]
+const name1Store = adapt('Loading...', {
   adapter: nameAdapter,
   sources: { reset: onResetAll }, // [!code --]
-  sources: { // [!code ++]
+  // [!code ++ 1]
+  sources: {
     set: of('Bob').pipe(delay(3000)), // Any observable // [!code ++]
     reset: onResetAll, // [!code ++]
   }, // [!code ++]
 });
-const name2Store = adapt('Kat', { // [!code --]
-const name2Store = adapt('Loading...', { // [!code ++]
+// [!code -- 1]
+const name2Store = adapt('Kat', {
+// [!code ++ 1]
+const name2Store = adapt('Loading...', {
   adapter: nameAdapter,
   sources: { reset: onResetAll }, // [!code --]
-  sources: { // [!code ++]
+  // [!code ++ 1]
+  sources: {
     set: of('Kat').pipe(delay(3000)), // Any observable // [!code ++]
     reset: onResetAll, // [!code ++]
   }, // [!code ++]
@@ -832,9 +845,9 @@ function DerivedEvents() {
   res => 'error' in res,
 ); -->
 
-## Automatic State Lifecycle
+## Automatic State Lifecycle and Unsubscriptions
 
-For state to be fully reactive, it cannot rely on external control code, including initialization and cleanup code.
+For state to be fully reactive, it cannot rely on any external control code, including initialization and cleanup code.
 
 StateAdapt stores know when they are being used, and automatically initialize and cleanup their state.
 
