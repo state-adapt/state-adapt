@@ -5,4 +5,6 @@ export * from './lib/adapt.function';
 export * from './lib/watch.function';
 export * from './lib/adapt-injectable.function';
 
+export * from './lib/scoped-injectable/scoped-injectable.decorator';
+
 export * from './cheat-sheet.const';
