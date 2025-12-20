@@ -4,6 +4,7 @@ import { CounterUiModule } from '@state-adapt/counter-ui';
 import { AppComponent } from './app.component';
 import { defaultStoreProvider, provideStore } from '@state-adapt/angular';
 import { actionSanitizer, stateSanitizer } from '@state-adapt/core';
+import { SaCountDirective } from './count.directive';
 
 const enableReduxDevTools =
   typeof window !== 'undefined' &&
@@ -14,7 +15,7 @@ const enableReduxDevTools =
 
 @NgModule({
   imports: [BrowserModule, CounterUiModule],
-  declarations: [AppComponent],
+  declarations: [AppComponent, SaCountDirective],
   // providers: [defaultStoreProvider],
   providers: [provideStore({ devtools: enableReduxDevTools, showSelectors: false })],
   bootstrap: [AppComponent],

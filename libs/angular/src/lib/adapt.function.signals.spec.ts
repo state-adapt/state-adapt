@@ -205,6 +205,7 @@ describe('adapt signals', () => {
           });
 
           constructor() {
+            this.count.set(0); // Errors if store is not active immediately
             effect(() => this.count());
 
             inject(DestroyRef).onDestroy(() => {
@@ -225,6 +226,7 @@ describe('adapt signals', () => {
           });
 
           constructor() {
+            this.count.set(0); // Errors if store is not active immediately
             effect(() => this.count());
 
             inject(DestroyRef).onDestroy(() => {
@@ -251,6 +253,7 @@ describe('adapt signals', () => {
           });
 
           constructor() {
+            this.count.set(0); // Errors if store is not active immediately
             inject(DestroyRef).onDestroy(() => {
               destroyed.component = true;
             });
@@ -286,7 +289,7 @@ describe('adapt signals', () => {
         return { fixture };
       };
 
-      it(`should subscribe to shared dependency store on first read, then immediately unsubscribe on destroy, zoneless=${zoneless}, signalPing=${signalPing}`, fakeAsync(() => {
+      it(`should each immediately subscribe to sources from shared dependency store, then immediately unsubscribe on destroy, zoneless=${zoneless}, signalPing=${signalPing}`, fakeAsync(() => {
         const lifecycleCheckpoints = {
           component: 'initial',
           directive: 'initial',
@@ -345,9 +348,6 @@ describe('adapt signals', () => {
         });
       }));
     });
-    // Test local immediate cleanup
-    // Test that shared service is using a ping. Tear down one component, then the other // Just check the timing of all of it.
-    // For that matter, remove the filtering of undefined and test that timing too. Fix the bug if it still exists.
   });
 
   describe('store computeds', () => {
