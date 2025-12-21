@@ -314,19 +314,25 @@ export const adapt = <
 
   let sub: Subscription | undefined;
 
-  const pong = () => {
-    if (!valueRequested) {
-      if (hasListeners) {
-        onLast();
-      }
-      hasListeners = false;
-    }
-  };
   const ping = () => {
     valueRequested = false;
     state.set({} as State);
 
-    zone.runOutsideAngular(() => setTimeout(pong));
+    // Just detecting if anyone is listening.
+    // If they are, nothing changes, no need to run CD.
+    // If they are not, then tearing down state doesn't matter - nobody is listening.
+    // Even if global state is being watched, states emitted while the store is inactive will be filtered out.
+    // If the state reactivates, that is when the watch will see initial state again.
+    zone.runOutsideAngular(() =>
+      setTimeout(() => {
+        if (!valueRequested) {
+          if (hasListeners) {
+            onLast();
+          }
+          hasListeners = false;
+        }
+      }),
+    );
   };
 
   let intvl: any;
@@ -334,7 +340,10 @@ export const adapt = <
     sub = storeObj.state$.subscribe(() => {
       if (!readInProgress) state.set({} as State);
     });
-    if (!isLocal) intvl = zone.runOutsideAngular(() => setInterval(ping, signalPing));
+    // Allow change detection, because in Angular 17, setting a signal does not.
+    // View effects only pull values during change detection, apparently.
+    // Angular 18+ triggers change detection on signal sets anyway (when it has listeners - so, during this time).
+    if (!isLocal) intvl = setInterval(ping, signalPing);
   };
   const onLast = () => {
     !isLocal && clearInterval(intvl);
