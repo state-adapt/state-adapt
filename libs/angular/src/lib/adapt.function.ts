@@ -1,12 +1,4 @@
-import {
-  computed,
-  DestroyRef,
-  inject,
-  NgZone,
-  signal,
-  untracked,
-  ViewContainerRef,
-} from '@angular/core';
+import { computed, inject } from '@angular/core';
 import {
   AdaptOptions,
   InitializedSmartStore,
@@ -25,8 +17,8 @@ import {
 } from '@state-adapt/core';
 import { Source } from '@state-adapt/rxjs';
 import { StateAdaptToken } from './state-adapt-token.const';
-import { Subscription } from 'rxjs';
 import { StoreSignals } from './store-signals.type';
+import { toSignal } from './to-signal.function';
 
 /**
   `adapt` wraps {@link StateAdapt.adapt} and adds signals for the store's selectors.
@@ -78,9 +70,9 @@ import { StoreSignals } from './store-signals.type';
   ```
 
   ### Example: Using {@link AdaptOptions}
-  `adapt(initialState, { adapter, sources, path, signalPing })`
+  `adapt(initialState, { adapter, sources, path })`
 
-  You can also define an adapter, sources, a state path and a signal ping interval as part of an {@link AdaptOptions} object.
+  You can also define an adapter, sources, and a state path as part of an {@link AdaptOptions} object.
 
   Sources allow the store to declaratively react to external events rather than be commanded
   by imperative code in callback functions.
@@ -100,7 +92,6 @@ import { StoreSignals } from './store-signals.type';
       // sources: { set: this.tick$ },
       // sources: { set: [this.tick$] },
       path: 'clock',
-      signalPing: 500, // Default 1000 ms
     });
 
     logSub = this.clock.state$.subscribe(console.log); // Logs 0, 1, 2, etc.
@@ -111,12 +102,11 @@ import { StoreSignals } from './store-signals.type';
 
   When created in a component (or service provided directly in a component), it is assumed that stores will be in use until that component is destroyed.
 
-  In shared services with `providedIn: 'root'`, the store is initialized when a signal is read or a selector observable is subscribed to.
-  The first time a store signal is read, it kicks off an interval (default `1000` ms, determined by `signalPing`) to ping the signal graph to see if anyone is listening.
-  When it detects nobody listening, and there are no subscriptions from store observables, the store is deactivated: Its state resets and
-  its sources are unsubscribed from. For example, if a store has an HTTP source, it will be triggered when the store
-  receives its first subscriber or signal read, and it will be canceled when the store loses its
-  last subscriber, or detects no effects listening to its signals.
+  In shared services with `providedIn: 'root'`, a one-off signal read does not activate the store.
+  After rendering stabilizes, State Adapt checks which store signals are still consumed by a template or effect and subscribes only to those stores.
+  When a later render shows that a store signal is no longer consumed, and there are no subscriptions to its observables, the store is deactivated:
+  Its state resets and its sources are unsubscribed. For example, an HTTP source is started for a rendered signal consumer and canceled after
+  that consumer is removed.
 
   Sources can be defined in 4 ways:
 
@@ -299,86 +289,17 @@ export const adapt = <
   second: (R & { selectors?: S } & NotAdaptOptions) | AdaptOptions<State, S, R2> = {}, // Default object required to make R = {} rather than indexed object
 ): InitializedSmartStore<State, S, {} extends R ? R2 : R> & StoreSignals<State, S> => {
   const adaptDep = inject(StateAdaptToken);
-  const signalPing = typeof second.signalPing === 'number' ? second.signalPing : 1000;
   const storeObj = adaptDep.adapt(initialState, second);
-
-  const isLocal = !!inject(ViewContainerRef, { optional: true });
-  const destroyRef = inject(DestroyRef, { optional: true });
-  const zone = inject(NgZone);
-
-  const getCurrentState = storeObj.__.getCurrentState;
-
-  let hasListeners = false;
-  let valueRequested = false; // since last ping
-  let readInProgress = false;
-
-  let sub: Subscription | undefined;
-
-  const ping = () => {
-    valueRequested = false;
-    state.set({} as State);
-
-    // Just detecting if anyone is listening.
-    // If they are, nothing changes, no need to run CD.
-    // If they are not, then tearing down state doesn't matter - nobody is listening.
-    // Even if global state is being watched, states emitted while the store is inactive will be filtered out.
-    // If the state reactivates, that is when the watch will see initial state again.
-    zone.runOutsideAngular(() =>
-      setTimeout(() => {
-        if (!valueRequested) {
-          if (hasListeners) {
-            onLast();
-          }
-          hasListeners = false;
-        }
-      }),
-    );
-  };
-
-  let intvl: any;
-  const onFirst = () => {
-    sub = storeObj.state$.subscribe(() => {
-      if (!readInProgress) state.set({} as State);
-    });
-    // Allow change detection, because in Angular 17, setting a signal does not.
-    // View effects only pull values during change detection, apparently.
-    // Angular 18+ triggers change detection on signal sets anyway (when it has listeners - so, during this time).
-    if (!isLocal) intvl = setInterval(ping, signalPing);
-  };
-  const onLast = () => {
-    !isLocal && clearInterval(intvl);
-    sub?.unsubscribe();
-  };
-
-  const state = signal(initialState);
-  const compute = computed(() => {
-    state(); // Mark dependency
-    valueRequested = true;
-    readInProgress = true;
-    zone.runOutsideAngular(() => queueMicrotask(() => (readInProgress = false)));
-
-    if (!hasListeners) {
-      hasListeners = true;
-      untracked(onFirst);
-    }
-
-    return getCurrentState();
-  });
-
-  destroyRef?.onDestroy(onLast);
-  if (isLocal) {
-    hasListeners = true;
-    onFirst();
-  }
+  const state = toSignal(storeObj.state$, { initialValue: initialState });
 
   const store: any = function () {
-    return compute();
+    return state();
   };
-  Object.assign(store, storeObj, { readOnce: getCurrentState });
+  Object.assign(store, storeObj);
 
   const selectors = storeObj.__.selectors;
   for (const prop in selectors) {
-    const value = computed(() => selectors[prop](compute()));
+    const value = computed(() => selectors[prop](state()));
     if (fnOverrideProps.includes(prop)) {
       Object.defineProperty(store, prop, { value });
     } else {

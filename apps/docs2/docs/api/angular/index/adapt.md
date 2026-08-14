@@ -1,12 +1,12 @@
 ---
-definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/angular/src/lib/adapt.function.ts#L291
+definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/angular/src/lib/adapt.function.ts#L281
 ---
 
 # Function: adapt()
 
-> **adapt**\<`State`, `S`, `R`, `R2`\>(`initialState`, `second`): \{ \[P in string \| number \| symbol as \`$\{P extends string ? P\<P\> : never\}$\`\]: Observable\<Exclude\<ReturnType\<((\{\} extends S ? S & \{\} : S) & WithGetState\<State\>)\[P\]\>, undefined\>\> \} & `object` & `object` & `SyntheticSources`\<`InitializedReactions`\<`State`, `S`, `object` *extends* `R` ? `R2` : `R`\>\> & \{(): `State`; `readOnce`: () => `State`; \} & \{ \[K in string \| number \| symbol\]: () =\> ReturnType\<S\[K\]\> \}
+> **adapt**\<`State`, `S`, `R`, `R2`\>(`initialState`, `second`): \{ \[P in string \| number \| symbol as \`$\{P extends string ? P\<P\> : never\}$\`\]: Observable\<ReturnType\<((\{\} extends S ? S & \{\} : S) & WithGetState\<State\>)\[P\]\>\> \} & `object` & `object` & `SyntheticSources`\<`InitializedReactions`\<`State`, `S`, `object` *extends* `R` ? `R2` : `R`\>\> & `WritableSignal`\<`State`\> & \{ \[K in string \| number \| symbol\]: () =\> ReturnType\<S\[K\]\> \}
 
-Defined in: [angular/src/lib/adapt.function.ts:291](https://github.com/state-adapt/state-adapt/blob/main/libs/angular/src/lib/adapt.function.ts#L291)
+Defined in: [angular/src/lib/adapt.function.ts:281](https://github.com/state-adapt/state-adapt/blob/main/libs/angular/src/lib/adapt.function.ts#L281)
 
 `adapt` wraps [StateAdapt.adapt](../../rxjs/index/StateAdapt.md#adapt) and adds signals for the store's selectors.
 
@@ -57,9 +57,9 @@ export class MyComponent {
 ```
 
 ### Example: Using AdaptOptions
-`adapt(initialState, { adapter, sources, path, signalPing })`
+`adapt(initialState, { adapter, sources, path })`
 
-You can also define an adapter, sources, a state path and a signal ping interval as part of an AdaptOptions object.
+You can also define an adapter, sources, and a state path as part of an AdaptOptions object.
 
 Sources allow the store to declaratively react to external events rather than be commanded
 by imperative code in callback functions.
@@ -79,7 +79,6 @@ export class MyService {
     // sources: { set: this.tick$ },
     // sources: { set: [this.tick$] },
     path: 'clock',
-    signalPing: 500, // Default 1000 ms
   });
 
   logSub = this.clock.state$.subscribe(console.log); // Logs 0, 1, 2, etc.
@@ -90,12 +89,11 @@ When a store is being used, it subscribes to its sources. When it goes back to u
 
 When created in a component (or service provided directly in a component), it is assumed that stores will be in use until that component is destroyed.
 
-In shared services with `providedIn: 'root'`, the store is initialized when a signal is read or a selector observable is subscribed to.
-The first time a store signal is read, it kicks off an interval (default `1000` ms, determined by `signalPing`) to ping the signal graph to see if anyone is listening.
-When it detects nobody listening, and there are no subscriptions from store observables, the store is deactivated: Its state resets and
-its sources are unsubscribed from. For example, if a store has an HTTP source, it will be triggered when the store
-receives its first subscriber or signal read, and it will be canceled when the store loses its
-last subscriber, or detects no effects listening to its signals.
+In shared services with `providedIn: 'root'`, a one-off signal read does not activate the store.
+After rendering stabilizes, State Adapt checks which store signals are still consumed by a template or effect and subscribes only to those stores.
+When a later render shows that a store signal is no longer consumed, and there are no subscriptions to its observables, the store is deactivated:
+Its state resets and its sources are unsubscribed. For example, an HTTP source is started for a rendered signal consumer and canceled after
+that consumer is removed.
 
 Sources can be defined in 4 ways:
 

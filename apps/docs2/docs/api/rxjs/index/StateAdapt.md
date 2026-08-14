@@ -1,10 +1,10 @@
 ---
-definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/rxjs/src/lib/global-store/state-adapt.ts#L74
+definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/rxjs/src/lib/global-store/state-adapt.ts#L77
 ---
 
 # Class: StateAdapt\<CommonStore\>
 
-Defined in: [libs/rxjs/src/lib/global-store/state-adapt.ts:74](https://github.com/state-adapt/state-adapt/blob/main/libs/rxjs/src/lib/global-store/state-adapt.ts#L74)
+Defined in: [libs/rxjs/src/lib/global-store/state-adapt.ts:77](https://github.com/state-adapt/state-adapt/blob/main/libs/rxjs/src/lib/global-store/state-adapt.ts#L77)
 
 ## Type Parameters
 
@@ -18,7 +18,7 @@ Defined in: [libs/rxjs/src/lib/global-store/state-adapt.ts:74](https://github.co
 
 > **adapt**\<`State`, `S`, `R`, `R2`\>(`initialState`, `second`): `InitializedSmartStore`\<`State`, `S`, `object` *extends* `R` ? `R2` : `R`\>
 
-Defined in: [libs/rxjs/src/lib/global-store/state-adapt.ts:290](https://github.com/state-adapt/state-adapt/blob/main/libs/rxjs/src/lib/global-store/state-adapt.ts#L290)
+Defined in: [libs/rxjs/src/lib/global-store/state-adapt.ts:293](https://github.com/state-adapt/state-adapt/blob/main/libs/rxjs/src/lib/global-store/state-adapt.ts#L293)
 
 `adapt` creates a store that will manage state while it has subscribers.
 
@@ -267,7 +267,7 @@ and it only subscribes to sources when it has subscribers itself.
 
 > **watch**\<`State`, `S`, `R`\>(`path`, `adapter`): `SmartStore`\<`State`, `S` & `WithGetState`\<`State`\>\>
 
-Defined in: [libs/rxjs/src/lib/global-store/state-adapt.ts:415](https://github.com/state-adapt/state-adapt/blob/main/libs/rxjs/src/lib/global-store/state-adapt.ts#L415)
+Defined in: [libs/rxjs/src/lib/global-store/state-adapt.ts:418](https://github.com/state-adapt/state-adapt/blob/main/libs/rxjs/src/lib/global-store/state-adapt.ts#L418)
 
 `watch` returns a detached store (doesn't chain off of sources). This allows you to watch state without affecting anything.
 It takes 2 arguments: The path of the state you are interested in, and the adapter you want to use.
