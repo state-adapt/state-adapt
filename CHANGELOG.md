@@ -5,6 +5,7 @@
 - Feature(angular)!: Add signals to stores created with `adapt` function
 - Refactor(angular)!: Require Angular 19+
 - Bugfix(rxjs): Guard against selectors named after object prototype properties
+- Bugfix(react): Synchronize store and observable state with React rendering
 - Refactor(ngrx)!: Remove direct support for NgRx
 
 ## 3.1.0

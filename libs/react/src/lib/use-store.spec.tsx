@@ -1,4 +1,5 @@
 import { act, renderHook } from '@testing-library/react';
+import { ReactNode, useLayoutEffect } from 'react';
 import { configureStateAdapt, joinStores } from '@state-adapt/rxjs';
 import { useStore } from './use-store';
 import { take } from 'rxjs/operators';
@@ -28,7 +29,38 @@ const wrapper = ({ children }: any) => (
 );
 
 describe('useStore proxy states', () => {
-  it('should return correct combined selector initial and after subscription results from joined12Store', () => {
+  it('should sync an update made between render and subscription', () => {
+    const store = adapt('before');
+    const results: string[] = [];
+    const activation = store.state$.subscribe();
+
+    const UpdateStore = () => {
+      useLayoutEffect(() => {
+        store.set('after');
+      }, []);
+      return null;
+    };
+    const updateBeforeSubscriptionWrapper = ({ children }: { children: ReactNode }) => (
+      <AdaptContext.Provider value={stateAdapt}>
+        <UpdateStore />
+        {children}
+      </AdaptContext.Provider>
+    );
+
+    const { unmount } = renderHook(
+      () => {
+        const [state] = useStore(store);
+        results.push(state.state);
+      },
+      { wrapper: updateBeforeSubscriptionWrapper },
+    );
+
+    expect(results).toEqual(['before', 'after']);
+    unmount();
+    activation.unsubscribe();
+  });
+
+  it('should return the correct initial combined selector result from joined12Store', () => {
     const joined12Results: string[] = [];
     const { result } = renderHook(
       () => {
@@ -38,10 +70,10 @@ describe('useStore proxy states', () => {
       },
       { wrapper },
     );
-    expect(joined12Results).toEqual(['initial1initial2', 'initial1initial2']);
+    expect(joined12Results).toEqual(['initial1initial2']);
   });
 
-  it('should return correct combined selector initial and after subscription results from joined123Store', () => {
+  it('should return the correct initial combined selector result from joined123Store', () => {
     const joined123Results: string[] = [];
     const { result } = renderHook(
       () => {
@@ -51,10 +83,7 @@ describe('useStore proxy states', () => {
       },
       { wrapper },
     );
-    expect(joined123Results).toEqual([
-      'initial1initial2initial3',
-      'initial1initial2initial3',
-    ]);
+    expect(joined123Results).toEqual(['initial1initial2initial3']);
   });
 
   it('should return correct combined selector result from joined123Store after store1 change', () => {
@@ -71,7 +100,6 @@ describe('useStore proxy states', () => {
       store1.set('new1');
     });
     expect(joined123Results).toEqual([
-      'initial1initial2initial3',
       'initial1initial2initial3',
       'new1initial2initial3',
     ]);
@@ -96,11 +124,9 @@ describe('useStore proxy states', () => {
     });
     expect(joined123Results).toEqual([
       'initial1initial2initial3',
-      'initial1initial2initial3',
       'new1initial2initial3',
     ]);
     expect(joined123FullSelectorResults).toEqual([
-      'initial1initial2initial3',
       'initial1initial2initial3',
       'new1initial2initial3',
     ]);
@@ -130,19 +156,19 @@ describe('useStore proxy states', () => {
       },
       { wrapper },
     );
-    expect(name3Results).toEqual(['initial3', 'initial3']);
+    expect(name3Results).toEqual(['initial3']);
     act(() => {
       store1.set('new1');
     });
-    expect(name3Results).toEqual(['initial3', 'initial3']);
+    expect(name3Results).toEqual(['initial3']);
     act(() => {
       store2.set('new2');
     });
-    expect(name3Results).toEqual(['initial3', 'initial3']);
+    expect(name3Results).toEqual(['initial3']);
     act(() => {
       store3.set('new3');
     });
-    expect(name3Results).toEqual(['initial3', 'initial3', 'new3']);
+    expect(name3Results).toEqual(['initial3', 'new3']);
   });
 
   it('should use global state if another store has already been initialized', () => {
@@ -169,7 +195,7 @@ describe('useStore proxy states', () => {
       { wrapper },
     );
     expect(result2.current).toEqual('new3');
-    expect(results).toEqual(['initial3', 'initial3', 'new3', 'new3', 'new3']);
+    expect(results).toEqual(['initial3', 'new3', 'new3']);
   });
 
   // reverseName12name3
@@ -184,10 +210,7 @@ describe('useStore proxy states', () => {
       { wrapper },
     );
     serializeSelectorsCache(globalSelectorsCache);
-    expect(joined123Results).toEqual([
-      '3laitini2laitini1laitini',
-      '3laitini2laitini1laitini',
-    ]);
+    expect(joined123Results).toEqual(['3laitini2laitini1laitini']);
   });
 });
 
@@ -210,15 +233,14 @@ describe('useStore setState/store', () => {
       },
       { wrapper },
     );
-    expect(store1Results).toEqual(['initial1', 'initial1']);
+    expect(store1Results).toEqual(['initial1']);
     act(() => {
-      console.log('setState1', setState1);
       setState1('asdf');
     });
-    expect(store1Results).toEqual(['initial1', 'initial1', 'asdf']);
+    expect(store1Results).toEqual(['initial1', 'asdf']);
     act(() => {
       reverse1('-');
     });
-    expect(store1Results).toEqual(['initial1', 'initial1', 'asdf', 'f-d-s-a']);
+    expect(store1Results).toEqual(['initial1', 'asdf', 'f-d-s-a']);
   });
 });
