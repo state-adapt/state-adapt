@@ -351,7 +351,7 @@ export const adapt = <
   };
 
   const state = signal(initialState);
-  const readState = computed(() => {
+  const compute = computed(() => {
     state(); // Mark dependency
     valueRequested = true;
     readInProgress = true;
@@ -372,13 +372,13 @@ export const adapt = <
   }
 
   const store: any = function () {
-    return readState();
+    return compute();
   };
   Object.assign(store, storeObj, { readOnce: getCurrentState });
 
   const selectors = storeObj.__.selectors;
   for (const prop in selectors) {
-    const value = computed(() => selectors[prop](readState()));
+    const value = computed(() => selectors[prop](compute()));
     if (fnOverrideProps.includes(prop)) {
       Object.defineProperty(store, prop, { value });
     } else {
