@@ -17,12 +17,12 @@ export interface ToSignalOptions<State> {
 }
 
 /**
- * Converts an observable to a signal without keeping a root-scoped observable
- * subscribed when no Angular consumer is reading the signal.
+ * Converts an observable to a signal without keeping the source observable
+ * subscribed to when no Angular consumer is reading the signal.
  *
  * Signals created in a component, directive, or locally provided service are
- * subscribed immediately and unsubscribed with that view. Signals created in a
- * root injection context are subscribed only while a template or effect keeps
+ * subscribed to immediately and unsubscribed from with that view. Signals created in a
+ * root injection context are subscribed to only while a template or effect keeps
  * reading them.
  */
 export function toSignal<State>(

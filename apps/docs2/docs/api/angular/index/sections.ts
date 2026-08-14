@@ -9,6 +9,10 @@ export const sections: Section[] = [
     name: 'Store',
     items: ['adapt', 'watch'],
   },
+  {
+    name: 'Signal Utilities',
+    items: ['toSignal'],
+  },
 ].map(({ name, items }) => ({
   name,
   items: items.map(symbol => ({

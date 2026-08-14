@@ -6,6 +6,7 @@
 
 ## Peer Dependencies
 
+- Angular
 - [@state-adapt/core](/api/core/src/)
 - [@state-adapt/rxjs](/api/rxjs/index/)
 
