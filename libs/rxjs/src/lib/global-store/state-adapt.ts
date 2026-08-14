@@ -21,7 +21,7 @@ import {
   globalSelectorsCache,
   SelectorsCache,
 } from '@state-adapt/core';
-import { defer, merge, NEVER, Observable, of, using } from 'rxjs';
+import { defer, merge, NEVER, Observable, using } from 'rxjs';
 import { distinctUntilChanged, filter, finalize, share, tap } from 'rxjs/operators';
 import { isSource } from '../sources/is-source.function';
 import { Selections } from '../stores/selections.type';
@@ -40,11 +40,14 @@ import { getPayload } from '../sources/get-payload.function';
 interface ParsedPath {
   path: string;
   pathAr: string[];
+  provided: boolean;
 }
 
-const filterDefined = <T>(sel$: Observable<T>) =>
+const INACTIVE = '__INACTIVE';
+
+const filterActivated = <T>(sel$: Observable<T>) =>
   sel$.pipe(
-    filter(a => a !== undefined),
+    filter(a => a !== INACTIVE),
     distinctUntilChanged(),
   );
 
@@ -302,7 +305,8 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
     // Initialize parameters
     const options = isAdaptOptions(second) ? second : undefined;
 
-    const path = options?.path || getId().toString();
+    const pathObj = this.parsePath(options?.path);
+    const path = pathObj.path;
 
     // const stackItems = {
     //   Error: false,
@@ -352,7 +356,6 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
 
     // Parameters are all defined
 
-    const pathObj = this.parsePath(path);
     const [requireSources$, syntheticSources] = this.getRequireSources<
       State,
       S,
@@ -383,7 +386,7 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
         path,
         getCurrentState: () =>
           this.pathStates[path] ? this.pathStates[path].lastState : initialState, // With signals, we use default state when inactive
-        select: (sel: any) => filterDefined(this.commonStore.select(sel)),
+        select: (sel: any) => this.commonStore.select(sel),
       },
     } as any;
   }
@@ -418,19 +421,30 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
     //
   ): SmartStore<State, S & WithGetState<State>> {
     const adapterSelectors = adapter.selectors || ({} as S);
+    const onlyWhenActiveSelectors = { ...adapterSelectors } as S;
+    // Replace with selectors that short-circuit when INACTIVE
+    for (const key in onlyWhenActiveSelectors) {
+      const originalSelector = onlyWhenActiveSelectors[key];
+      (onlyWhenActiveSelectors as any)[key] = (state: State, cache: SelectorsCache) =>
+        this.isPathActive(path) ? (originalSelector as any)(state, cache) : INACTIVE;
+    }
+
     const getSelectorsCache = this.getSelectorsCacheFactory(path);
     const getState = this.getStateSelector<State>(path.split('.'));
-    const getStateSelector = getMemoizedSelector(path, getState, () =>
+    const getStateWhenActive = (state: any) =>
+      this.isPathActive(path) ? getState(state) : INACTIVE;
+    const getStateSelector = getMemoizedSelector(path, getStateWhenActive, () =>
       this.getGlobalSelectorsCache(),
     ); // all state selectors go in global cache
-    const requireSources$ = of(null);
+    const requireSources$ = NEVER;
     const { fullSelectors, selections, selectors } = this.getSelections<State, S>(
-      adapterSelectors,
+      onlyWhenActiveSelectors,
       getStateSelector as (state: any) => State,
       requireSources$,
       getSelectorsCache,
     );
-    return {
+
+    const detachedStore = {
       ...selections,
       __: {
         requireSources$: requireSources$,
@@ -439,13 +453,27 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
         initialState: undefined as unknown as State, // added for React integration, which requires immediate access to initial state before subscribing,
         path,
         getCurrentState: () => this.pathStates[path]?.lastState, // For signals - not needed here, but to satisfy type
-        select: (sel: any) => filterDefined(this.commonStore.select(sel)),
+        select: (sel: any) => filterActivated(this.commonStore.select(sel)),
       },
     };
+
+    for (const key in selections) {
+      (detachedStore as any)[key] = filterActivated((detachedStore as any)[key]);
+    }
+
+    return detachedStore;
   }
 
-  private parsePath(path: string): ParsedPath {
-    return { path, pathAr: path.split('.') };
+  private parsePath(path?: string): ParsedPath {
+    if (path) {
+      return { path, pathAr: path.split('.'), provided: true };
+    }
+    const defaultPath = getId().toString();
+    return {
+      path: defaultPath,
+      pathAr: [defaultPath],
+      provided: false,
+    };
   }
 
   private getRequireSources<
@@ -455,7 +483,7 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
     RSS extends SyntheticSources<R>,
   >(
     reactions: Reactions<State>,
-    { path, pathAr }: ParsedPath,
+    { path, pathAr, provided: pathProvided }: ParsedPath,
     sources: Sources<State, S, R>,
     initialState: State,
   ): [Observable<any>, RSS] {
@@ -516,18 +544,21 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
     const requireSources$ = defer(() => {
       // Runs first upon subscription.
       // If any of the sources emits immediately, this needs to have been set up first.
-      const colllisionPath = this.getPathCollisions(path);
-      if (colllisionPath) {
-        throw this.getPathCollisionError(path, colllisionPath);
+
+      if (pathProvided) {
+        const colllisionPath = this.getPathCollisions(path);
+        if (colllisionPath) {
+          throw this.getPathCollisionError(path, colllisionPath);
+        }
       }
       const selectorsCache = this.createSelectorsCache(path);
-      this.commonStore.dispatch(createInit(path, initialState));
       this.pathStates[path] = {
         lastState: initialState,
         initialState,
         arr: pathAr,
         selectorsCache,
       };
+      this.commonStore.dispatch(createInit(path, initialState));
       return merge(...allUpdatesFromSources$, NEVER); // If sources all complete, keep state in the store
     }).pipe(
       finalize(() => {
@@ -631,7 +662,7 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
 
   private getSelections<State, S extends Selectors<State>>(
     selectors: S,
-    getStateSelector: (state: any) => State, // uses global cache
+    getState: (state: any) => State, // uses global cache
     requireSources$: Observable<any>,
     getSelectorsCache: () => SelectorsCache,
   ): {
@@ -642,13 +673,13 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
     const getUsing = <T>(selection$: Observable<T>) =>
       using(
         () => requireSources$.subscribe(),
-        () => filterDefined(selection$),
+        () => selection$,
       );
 
     const selections = {
-      fullSelectors: { state: getStateSelector },
+      fullSelectors: { state: getState },
       selections: {
-        state$: getUsing(this.commonStore.select(getStateSelector)),
+        state$: getUsing(this.commonStore.select(getState)),
       },
       selectors: { state: (pathState: any) => pathState },
     } as {
@@ -658,14 +689,12 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
     };
     for (const key in selectors) {
       const fullSelector = (state: any, sharedChildCache: SelectorsCache) => {
-        const pathState = getStateSelector(state);
-        if (pathState !== undefined) {
-          const cache = getSelectorsCache();
-          if (cache && sharedChildCache) {
-            cache && (cache.__children[sharedChildCache.__id] = sharedChildCache);
-          }
-          return (selectors[key] as any)(pathState, cache);
+        const pathState = getState(state);
+        const cache = getSelectorsCache();
+        if (cache && sharedChildCache) {
+          cache && (cache.__children[sharedChildCache.__id] = sharedChildCache);
         }
+        return (selectors[key] as any)(pathState, cache);
       };
 
       (selections as any).selectors[key] = (pathState: any) =>
@@ -677,5 +706,9 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
     }
 
     return selections;
+  }
+
+  private isPathActive(path: string) {
+    return !!this.pathStates[path];
   }
 }

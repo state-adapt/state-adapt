@@ -1,5 +1,6 @@
 ## 4.0.0
 
+- Feature(rxjs): Allow `undefined` as state value
 - Feature(angular): Add experimental ScopedInjectable
 - Feature(angular)!: Add signals to stores created with `adapt` function
 - Refactor(angular)!: Require Angular 17+

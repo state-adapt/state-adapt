@@ -24,9 +24,7 @@ export class ObservableStore<
 
   select<T>(sel: (s: State) => T) {
     return this.pipe(
-      filter(state => state !== undefined),
       map(state => sel(state)),
-      filter(state => state !== undefined),
       distinctUntilChanged(),
     );
   }
