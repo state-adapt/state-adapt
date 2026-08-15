@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useContext, useMemo, useState } from 'react';
 import { AdaptContext } from './adapt.context';
 import { useStore } from './use-store';
 import {
@@ -287,10 +287,12 @@ export function useAdapt<
 ): ProxyStoreTuple<State, InitializedSmartStore<State, S, R>> {
   const stateAdapt = useContext(AdaptContext);
   const [store] = useState(() => stateAdapt.adapt(initialState, second));
-  function setState(newState: State) {
-    store.set(newState);
-  }
-  Object.assign(setState, store);
+  const setState = useMemo(() => {
+    const setter = (newState: State) => {
+      store.set(newState);
+    };
+    return Object.assign(setter, store);
+  }, [store]);
   const proxy = useProxyStates(store) as any;
   return [proxy, setState as any];
 }

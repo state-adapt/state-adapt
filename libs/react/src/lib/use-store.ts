@@ -118,10 +118,12 @@ export function useStore<
   Store,
   Extract<FilterSelectors[number], string>
 > {
-  function setState(newState: Store['__']['initialState']) {
-    (store as any).set(newState);
-  }
-  Object.assign(setState, store);
+  const setState = useMemo(() => {
+    const setter = (newState: Store['__']['initialState']) => {
+      (store as any).set(newState);
+    };
+    return Object.assign(setter, store);
+  }, [store]);
   const proxy = useProxyStates(store, filterSelectors) as any;
   return [proxy, setState as any];
 }

@@ -1,5 +1,6 @@
 ## 4.0.0
 
+- Bugfix(react): Make setState a stable value
 - Feature(react): useDebug value
 - Feature(rxjs): Allow `undefined` as state value
 - Feature(angular): Add experimental ScopedInjectable
