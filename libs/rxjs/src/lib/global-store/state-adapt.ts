@@ -21,8 +21,15 @@ import {
   globalSelectorsCache,
   SelectorsCache,
 } from '@state-adapt/core';
-import { defer, merge, NEVER, Observable, using } from 'rxjs';
-import { distinctUntilChanged, filter, finalize, share, tap } from 'rxjs/operators';
+import { defer, merge, NEVER, Observable, Subject, using } from 'rxjs';
+import {
+  distinctUntilChanged,
+  filter,
+  finalize,
+  share,
+  takeUntil,
+  tap,
+} from 'rxjs/operators';
 import { isSource } from '../sources/is-source.function';
 import { Selections } from '../stores/selections.type';
 import { SmartStore } from '../stores/smart-store.interface';
@@ -356,7 +363,7 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
 
     // Parameters are all defined
 
-    const [requireSources$, syntheticSources] = this.getRequireSources<
+    const [requireSources$, syntheticSources] = this.getRequire<
       State,
       S,
       R,
@@ -476,7 +483,7 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
     };
   }
 
-  private getRequireSources<
+  private getRequire<
     State,
     S extends Selectors<State>,
     R extends ReactionsWithSelectors<State, S>,
@@ -537,11 +544,14 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
           const updateStream = this.getSourceUpdateStream(source$);
           updateStream?.reactions.push({ path, reaction });
           return requireSources$;
-        }).pipe(share());
+        });
       },
     );
 
-    const requireSources$ = defer(() => {
+    const contextDestroyed$ = new Subject();
+    const stateDestroyed$ = new Subject();
+
+    const requireState$ = defer(() => {
       // Runs first upon subscription.
       // If any of the sources emits immediately, this needs to have been set up first.
 
@@ -559,10 +569,25 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
         selectorsCache,
       };
       this.commonStore.dispatch(createInit(path, initialState));
-      return merge(...allUpdatesFromSources$, NEVER); // If sources all complete, keep state in the store
+      return NEVER;
     }).pipe(
+      takeUntil(contextDestroyed$),
       finalize(() => {
+        // Pull the rug - we can't have sources updating destroyed state
+        stateDestroyed$.next();
         // Runs Last to clean up the store:
+        delete this.pathStates[path];
+        this.destroySelectorsCache(path);
+        this.commonStore.dispatch(createDestroy(path));
+      }),
+      share(),
+    );
+
+    const requireSources$ = merge(...allUpdatesFromSources$, NEVER).pipe(
+      takeUntil(contextDestroyed$),
+      takeUntil(stateDestroyed$),
+      finalize(() => {
+        // Runs next to last to remove state from source updates:
         allSourcesWithReactions.forEach(({ source$ }) => {
           const updateStream = this.getSourceUpdateStream(source$);
           const updateReactions = updateStream?.reactions || [];
@@ -571,12 +596,11 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
             1,
           );
         });
-        delete this.pathStates[path];
-        this.destroySelectorsCache(path);
-        this.commonStore.dispatch(createDestroy(path));
       }),
       share(),
     );
+
+    const require$ = merge(requireState$, requireSources$).pipe(share());
 
     const syntheticSources = reactionEntries.reduce((acc, [reactionName, reaction]) => {
       return {
@@ -589,7 +613,7 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
       };
     }, {} as RSS);
 
-    return [requireSources$, syntheticSources];
+    return [require$, syntheticSources];
   }
 
   private getPathCollisions(path: string) {
