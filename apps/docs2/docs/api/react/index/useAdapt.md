@@ -1,12 +1,12 @@
 ---
-definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/react/src/lib/use-adapt.ts#L280
+definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/react/src/lib/use-adapt.ts#L306
 ---
 
 # Function: useAdapt()
 
 > **useAdapt**\<`State`, `S`, `R`\>(`initialState`, `second`): `ProxyStoreTuple`\<`State`, `InitializedSmartStore`\<`State`, `S`, `R`\>\>
 
-Defined in: [lib/use-adapt.ts:280](https://github.com/state-adapt/state-adapt/blob/main/libs/react/src/lib/use-adapt.ts#L280)
+Defined in: [lib/use-adapt.ts:306](https://github.com/state-adapt/state-adapt/blob/main/libs/react/src/lib/use-adapt.ts#L306)
 
 `useAdapt` is a hook that wraps [StateAdapt.adapt](../../rxjs/index/StateAdapt.md#adapt) and [useStore](useStore.md). It creates a store, immediately subscribes to it,
 and returns a tuple `[selectorResults, setState]` where `selectorResults` is a proxy object containing results from the store's selectors,
@@ -40,6 +40,31 @@ export function MyComponent() {
   );
 }
 ```
+
+### Example: Initial state factory
+`useAdapt(() => initialState)`
+
+Just like `useState`, you can pass a function that returns the initial state. The store calls it when it
+activates, keeps that value for as long as it stays active, and discards it when it deactivates — so the
+factory runs again for each activation, but not for re-renders.
+
+This helps when initial state might be different at each time the store is being used, like with `localStorage`:
+
+```tsx
+export function MyComponent() {
+  // Each mount reads `localStorage`, and `reset` goes back to what it read
+  const [name, setName] = useAdapt(() => localStorage.getItem('name') ?? 'John');
+
+  return (
+    <>
+      <div>{name.state}</div>
+      <button onClick={() => setName.reset()}>Reset</button>
+    </>
+  );
+}
+```
+
+A one-off read of initial state will not use a cached value, but call the state factory function.
 
 ### Example: Using an adapter
 `useAdapt(initialState, adapter)`
@@ -279,7 +304,7 @@ Stores need to have subscribers in order to activate and subscribe to their sour
 
 ### initialState
 
-`State`
+[`InitialState`](../../rxjs/index/InitialState.md)\<`State`\>
 
 ### second
 

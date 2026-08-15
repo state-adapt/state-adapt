@@ -2,6 +2,7 @@ import {
   actionSanitizer,
   buildAdapter,
   createAdapter,
+  getId,
   joinAdapters,
   stateSanitizer,
 } from '@state-adapt/core';
@@ -483,6 +484,186 @@ describe('adapt', () => {
       expect(result).toBe(2);
       event$.next(3);
       expect(result).toBe(6);
+    });
+  });
+
+  describe('StateAdapt with initial state factory', () => {
+    it('should not call the factory until the store needs its initial state', () => {
+      let calls = 0;
+      const store = adapt(() => {
+        calls++;
+        return 5;
+      });
+      expect(calls).toBe(0);
+
+      let state;
+      const sub = store.state$.subscribe(s => {
+        // Synchronous
+        state = s;
+      });
+      expect(calls).toBe(1);
+      expect(state).toBe(5);
+      sub.unsubscribe();
+    });
+
+    it('should call the factory once per activation', () => {
+      let calls = 0;
+      const store = adapt(() => {
+        calls++;
+        return { a: 5, b: 5 };
+      }, numbersAdapter);
+
+      // One activation, shared by every subscriber and selector
+      const sub1 = store.state$.subscribe();
+      const sub2 = store.bOctuple$.subscribe();
+      expect(calls).toBe(1);
+      sub1.unsubscribe();
+      expect(calls).toBe(1);
+
+      // Deactivated, so the next activation creates its own initial state
+      sub2.unsubscribe();
+      const sub3 = store.state$.subscribe();
+      expect(calls).toBe(2);
+      sub3.unsubscribe();
+    });
+
+    it('should reset to the initial state of the current activation', () => {
+      let name = 'John';
+      const store = adapt(() => name);
+
+      let state;
+      const sub1 = store.state$.subscribe(s => {
+        // Synchronous
+        state = s;
+      });
+      store.set('Johnsh');
+      expect(state).toBe('Johnsh');
+      store.reset();
+      expect(state).toBe('John');
+      sub1.unsubscribe();
+
+      name = 'Jane';
+      const sub2 = store.state$.subscribe(s => (state = s));
+      store.set('Janesh');
+      expect(state).toBe('Janesh');
+      store.reset();
+      // The state this activation started from, not the one the first activation started from
+      expect(state).toBe('Jane');
+      sub2.unsubscribe();
+    });
+
+    it('should keep a stable initial state while the store is active', () => {
+      let calls = 0;
+      const store = adapt(() => {
+        calls++;
+        return { a: 5, b: 5 };
+      }, numbersAdapter);
+
+      let state;
+      const sub = store.state$.subscribe(s => {
+        // Synchronous
+        state = s;
+      });
+      expect(store.__.initialState).toBe(state);
+      expect(store.__.initialState).toBe(store.__.initialState);
+      expect(store.__.getCurrentState()).toBe(state);
+      expect(calls).toBe(1);
+
+      store.setA(10);
+      store.reset();
+      expect(state).toBe(store.__.initialState);
+      expect(calls).toBe(1);
+      sub.unsubscribe();
+    });
+
+    it('should read the factory fresh on every read while inactive', () => {
+      let calls = 0;
+      const store = adapt(() => {
+        calls++;
+        return { count: 0 };
+      });
+
+      // No activation for a value to belong to, so each read is its own up-to-date answer
+      const read1 = store.__.initialState;
+      const read2 = store.__.initialState;
+      expect(calls).toBe(2);
+      expect(read1).toEqual(read2);
+      expect(read1).not.toBe(read2);
+
+      store.__.getCurrentState();
+      expect(calls).toBe(3);
+
+      // Activating doesn't reuse what an inactive read happened to create
+      const sub = store.state$.subscribe();
+      expect(calls).toBe(4);
+      expect(store.__.initialState).toBe(store.__.initialState);
+      expect(calls).toBe(4);
+      sub.unsubscribe();
+    });
+
+    it('should provide the update reaction for object state', () => {
+      const store = adapt(() => ({ a: 5, b: 5 }));
+      let state;
+      const sub = store.state$.subscribe(s => {
+        // Synchronous
+        state = s;
+      });
+
+      store.update({ b: 10 });
+      expect(state).toEqual({ a: 5, b: 10 });
+      // @ts-expect-error Should take a partial of the state
+      store.update({ c: 10 });
+      sub.unsubscribe();
+    });
+
+    it('should infer state from the factory return type', () => {
+      const store = adapt(() => 'John', {
+        concat: (state, payload: string) => state + payload,
+        selectors: {
+          length: state => state.length,
+        },
+      });
+
+      let length;
+      const sub = store.length$.subscribe(s => {
+        // Synchronous
+        length = s;
+      });
+      expect(length).toBe(4);
+
+      store.concat('sh');
+      expect(length).toBe(6);
+
+      // @ts-expect-error Should take string as payload
+      store.concat(5);
+      // @ts-expect-error Should take string
+      store.set(5);
+      // @ts-expect-error Should not exist for primitive state
+      store.update;
+      sub.unsubscribe();
+    });
+
+    it('should work with sources and a path', () => {
+      const onIncrement = source<number>('onIncrement');
+      const store = adapt(() => 1, {
+        adapter: {
+          increment: (state, n: number) => state + n,
+        },
+        sources: {
+          increment: onIncrement,
+        },
+        path: 'factoryCount' + getId(),
+      });
+
+      let state;
+      const sub = store.state$.subscribe(s => {
+        // Synchronous
+        state = s;
+      });
+      expect(state).toBe(1);
+      onIncrement(2);
+      expect(state).toBe(3);
+      sub.unsubscribe();
     });
   });
 

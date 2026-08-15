@@ -3,6 +3,8 @@ import { TestBed } from '@angular/core/testing';
 import { concat, defer, NEVER, of } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { adapt } from './adapt.function';
+import { adaptInjectable } from './adapt-injectable.function';
+import { toSignal } from './to-signal.function';
 
 describe('adapt signals', () => {
   it('delegates a component-local store lifecycle to toSignal', () => {
@@ -95,6 +97,108 @@ describe('adapt signals', () => {
       expect(getToStringError).toBeDefined();
       expect(getLengthError).toBeDefined();
       expect(getNameError).toBeDefined();
+    });
+  });
+
+  describe('initial state factory', () => {
+    it('infers state from the factory and uses its result', () => {
+      TestBed.configureTestingModule({});
+      TestBed.runInInjectionContext(() => {
+        const count = adapt(() => 1, {
+          selectors: {
+            double: state => state * 2,
+          },
+        });
+
+        expect(count()).toBe(1);
+        expect(count.double()).toBe(2);
+
+        // @ts-expect-error Should take a number
+        const setError = () => count.set('5');
+        expect(setError).toBeDefined();
+      });
+    });
+
+    it('does not call the factory for a root store nothing reads', () => {
+      let calls = 0;
+
+      TestBed.configureTestingModule({});
+      TestBed.runInInjectionContext(() => {
+        const count = adapt(() => {
+          calls++;
+          return 1;
+        });
+
+        expect(calls).toBe(0);
+        expect(count()).toBe(1);
+        expect(calls).toBe(1);
+      });
+    });
+
+    it('calls the factory once for a component-local store and resets to its result', () => {
+      let calls = 0;
+
+      @Component({
+        standalone: true,
+        template: `
+          {{ count() }}
+        `,
+      })
+      class LocalComponent {
+        count = adapt(() => {
+          calls++;
+          return 1;
+        });
+      }
+
+      TestBed.configureTestingModule({ imports: [LocalComponent] });
+      const fixture = TestBed.createComponent(LocalComponent);
+      fixture.detectChanges();
+      const { count } = fixture.componentInstance;
+
+      expect(count()).toBe(1);
+      expect(calls).toBe(1);
+
+      count.set(5);
+      fixture.detectChanges();
+      expect(count()).toBe(5);
+
+      count.reset();
+      fixture.detectChanges();
+      expect(count()).toBe(1);
+      expect(calls).toBe(1);
+
+      fixture.destroy();
+    });
+
+    it('re-reads the factory when a root store reactivates', () => {
+      let name = 'John';
+      const injectName = adaptInjectable(() => name);
+
+      @Component({
+        standalone: true,
+        template: `
+          {{ name() }}
+        `,
+      })
+      class RootConsumerComponent {
+        name = toSignal(injectName().state$, { initialValue: () => '' });
+      }
+
+      TestBed.configureTestingModule({ imports: [RootConsumerComponent] });
+
+      const fixture1 = TestBed.createComponent(RootConsumerComponent);
+      fixture1.detectChanges();
+      expect(fixture1.componentInstance.name()).toBe('John');
+      // Last consumer goes away, so the store deactivates
+      fixture1.destroy();
+
+      name = 'Jane';
+
+      const fixture2 = TestBed.createComponent(RootConsumerComponent);
+      fixture2.detectChanges();
+      expect(fixture2.componentInstance.name()).toBe('Jane');
+      fixture2.destroy();
     });
   });
 });

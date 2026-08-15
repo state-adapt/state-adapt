@@ -1,10 +1,10 @@
 ---
-definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/rxjs/src/lib/global-store/state-adapt.ts#L77
+definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/rxjs/src/lib/global-store/state-adapt.ts#L89
 ---
 
 # Class: StateAdapt\<CommonStore\>
 
-Defined in: [libs/rxjs/src/lib/global-store/state-adapt.ts:77](https://github.com/state-adapt/state-adapt/blob/main/libs/rxjs/src/lib/global-store/state-adapt.ts#L77)
+Defined in: [libs/rxjs/src/lib/global-store/state-adapt.ts:89](https://github.com/state-adapt/state-adapt/blob/main/libs/rxjs/src/lib/global-store/state-adapt.ts#L89)
 
 ## Type Parameters
 
@@ -18,7 +18,7 @@ Defined in: [libs/rxjs/src/lib/global-store/state-adapt.ts:77](https://github.co
 
 > **adapt**\<`State`, `S`, `R`, `R2`\>(`initialState`, `second`): `InitializedSmartStore`\<`State`, `S`, `object` *extends* `R` ? `R2` : `R`\>
 
-Defined in: [libs/rxjs/src/lib/global-store/state-adapt.ts:293](https://github.com/state-adapt/state-adapt/blob/main/libs/rxjs/src/lib/global-store/state-adapt.ts#L293)
+Defined in: [libs/rxjs/src/lib/global-store/state-adapt.ts:333](https://github.com/state-adapt/state-adapt/blob/main/libs/rxjs/src/lib/global-store/state-adapt.ts#L333)
 
 `adapt` creates a store that will manage state while it has subscribers.
 
@@ -39,6 +39,34 @@ name.reset(); // logs 'John'
 
 Usually you won't manually subscribe to state like this, but you can if you want the store to immediately start managing state
 and never clean it up.
+
+### Example: Initial state factory
+`adapt(() => initialState)`
+
+You can pass a function that returns the initial state. The store calls it when it activates,
+keeps that value for as long as it stays active, and discards it when it deactivates — so the factory runs again
+for each activation.
+
+This helps when initial state might be different at each time the store is being used, like with `localStorage`:
+
+```typescript
+const name = adapt(() => localStorage.getItem('name') ?? 'John');
+
+// `localStorage` hasn't been read yet
+
+const sub1 = name.state$.subscribe(console.log); // Reads `localStorage`, then logs 'John'
+name.set('Johnsh'); // logs 'Johnsh'
+name.reset(); // logs 'John'
+sub1.unsubscribe(); // The store deactivates and forgets 'John'
+
+localStorage.setItem('name', 'Jane');
+
+const sub2 = name.state$.subscribe(console.log); // Reads `localStorage` again, logs 'Jane'
+name.set('Janesh'); // logs 'Janesh'
+name.reset(); // logs 'Jane', not 'John'
+```
+
+A one-off read of initial state will not use a cached value, but call the state factory function.
 
 ### Example: Using an adapter
 `adapt(initialState, adapter)`
@@ -251,7 +279,7 @@ and it only subscribes to sources when it has subscribers itself.
 
 ##### initialState
 
-`State`
+[`InitialState`](InitialState.md)\<`State`\>
 
 ##### second
 
@@ -267,7 +295,7 @@ and it only subscribes to sources when it has subscribers itself.
 
 > **watch**\<`State`, `S`, `R`\>(`path`, `adapter`): `SmartStore`\<`State`, `S` & `WithGetState`\<`State`\>\>
 
-Defined in: [libs/rxjs/src/lib/global-store/state-adapt.ts:418](https://github.com/state-adapt/state-adapt/blob/main/libs/rxjs/src/lib/global-store/state-adapt.ts#L418)
+Defined in: [libs/rxjs/src/lib/global-store/state-adapt.ts:467](https://github.com/state-adapt/state-adapt/blob/main/libs/rxjs/src/lib/global-store/state-adapt.ts#L467)
 
 `watch` returns a detached store (doesn't chain off of sources). This allows you to watch state without affecting anything.
 It takes 2 arguments: The path of the state you are interested in, and the adapter you want to use.

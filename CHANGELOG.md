@@ -1,5 +1,6 @@
 ## 4.0.0
 
+- Feature(rxjs,angular,react): Accept an initial state factory, re-evaluated on each store activation
 - Bugfix(react): Make setState a stable value
 - Feature(react): useDebug value
 - Feature(rxjs): Allow `undefined` as state value

@@ -41,8 +41,13 @@ import {
   isAdaptOptions,
   NotAdaptOptions,
   InitializedReactions,
+  InitialState,
 } from './state-adapt.types';
 import { getPayload } from '../sources/get-payload.function';
+import {
+  createInitialStateGetter,
+  InitialStateGetter,
+} from './create-initial-state-getter.function';
 
 interface ParsedPath {
   path: string;
@@ -107,6 +112,34 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
 
   Usually you won't manually subscribe to state like this, but you can if you want the store to immediately start managing state
   and never clean it up.
+
+  ### Example: Initial state factory
+  `adapt(() => initialState)`
+
+  You can pass a function that returns the initial state. The store calls it when it activates,
+  keeps that value for as long as it stays active, and discards it when it deactivates — so the factory runs again
+  for each activation.
+
+  This helps when initial state might be different at each time the store is being used, like with `localStorage`:
+
+  ```typescript
+  const name = adapt(() => localStorage.getItem('name') ?? 'John');
+
+  // `localStorage` hasn't been read yet
+
+  const sub1 = name.state$.subscribe(console.log); // Reads `localStorage`, then logs 'John'
+  name.set('Johnsh'); // logs 'Johnsh'
+  name.reset(); // logs 'John'
+  sub1.unsubscribe(); // The store deactivates and forgets 'John'
+
+  localStorage.setItem('name', 'Jane');
+
+  const sub2 = name.state$.subscribe(console.log); // Reads `localStorage` again, logs 'Jane'
+  name.set('Janesh'); // logs 'Janesh'
+  name.reset(); // logs 'Jane', not 'John'
+  ```
+
+  A one-off read of initial state will not use a cached value, but call the state factory function.
 
   ### Example: Using an adapter
   `adapt(initialState, adapter)`
@@ -304,12 +337,13 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
     R2 extends ReactionsWithSelectors<State, S>,
     // ActualSourcesArg extends SourceArg<State, S, R2>,
   >(
-    initialState: State,
+    initialState: InitialState<State>,
     second: (R & { selectors?: S } & NotAdaptOptions) | AdaptOptions<State, S, R2> = {}, // Default object required to make R = {} rather than indexed object
   ): InitializedSmartStore<State, S, {} extends R ? R2 : R> {
     let sources: any;
 
     // Initialize parameters
+    const getInitialState = createInitialStateGetter(initialState);
     const options = isAdaptOptions(second) ? second : undefined;
 
     const pathObj = this.parsePath(options?.path);
@@ -341,12 +375,15 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
       ? createAdapter<State>()(adapterArg as R & { selectors?: S })
       : createAdapter<State>()({});
     (adapter as any).noop = createNoopReaction();
-    if (
-      !(adapter as any).update &&
-      typeof initialState === 'object' &&
-      !Array.isArray(initialState) &&
-      initialState !== null
-    ) {
+    // A factory can't be inspected without calling it, which would defeat its laziness.
+    // `update` is only exposed on the store's type when `State extends object`, so defining
+    // it for every factory can't be reached by type-checked code that returns other state.
+    const stateSupportsUpdate =
+      typeof initialState === 'function' ||
+      (typeof initialState === 'object' &&
+        !Array.isArray(initialState) &&
+        initialState !== null);
+    if (!(adapter as any).update && stateSupportsUpdate) {
       (adapter as any).update = createUpdateReaction();
     }
 
@@ -368,10 +405,10 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
       S,
       R,
       SyntheticSources<R>
-    >(adapter as any, pathObj, sources, initialState);
+    >(adapter as any, pathObj, sources, getInitialState);
 
     const getSelectorsCache = this.getSelectorsCacheFactory(path);
-    const getState = this.getStateSelector<State>(pathObj.pathAr, initialState);
+    const getState = this.getStateSelector<State>(pathObj.pathAr, getInitialState);
     const getStateSelector = getMemoizedSelector(path, getState, () =>
       this.getGlobalSelectorsCache(),
     ); // all state selectors go in global cache
@@ -389,10 +426,15 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
         requireSources$,
         selectors,
         fullSelectors,
-        initialState, // added for React integration, which requires immediate access to initial state before subscribing
+        // added for React integration, which requires immediate access to initial state before subscribing.
+        // A getter so an initial state factory isn't called until something reads it: during an activation
+        // that's the state the store started from, and outside of one it's a fresh read.
+        get initialState() {
+          return getInitialState();
+        },
         path,
         getCurrentState: () =>
-          this.pathStates[path] ? this.pathStates[path].lastState : initialState, // With signals, we use default state when inactive
+          this.pathStates[path] ? this.pathStates[path].lastState : getInitialState(), // With signals, we use default state when inactive
         select: (sel: any) => this.commonStore.select(sel),
       },
     } as any;
@@ -492,7 +534,7 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
     reactions: Reactions<State>,
     { path, pathAr, provided: pathProvided }: ParsedPath,
     sources: Sources<State, S, R>,
-    initialState: State,
+    getInitialState: InitialStateGetter<State>,
   ): [Observable<any>, RSS] {
     const reactionEntries = Object.entries(reactions);
     const allSourcesWithReactions = flatten(
@@ -562,6 +604,7 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
         }
       }
       const selectorsCache = this.createSelectorsCache(path);
+      const initialState = getInitialState.activate();
       this.pathStates[path] = {
         lastState: initialState,
         initialState,
@@ -577,6 +620,7 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
         stateDestroyed$.next();
         // Runs Last to clean up the store:
         delete this.pathStates[path];
+        getInitialState.deactivate();
         this.destroySelectorsCache(path);
         this.commonStore.dispatch(createDestroy(path));
       }),
@@ -660,11 +704,11 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
 
   private getStateSelector<State>(
     pathAr: string[],
-    initialState?: State,
+    getInitialState?: () => State,
   ): ({ adapt }: { adapt: any }) => State {
     return ({ adapt }) => {
       const pathState = pathAr.reduce((state, segment) => state?.[segment], adapt);
-      return pathState === undefined ? initialState : pathState;
+      return pathState === undefined ? getInitialState?.() : pathState;
     };
   }
 

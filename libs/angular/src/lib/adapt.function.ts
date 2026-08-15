@@ -1,6 +1,7 @@
 import { computed, inject } from '@angular/core';
 import {
   AdaptOptions,
+  InitialState,
   InitializedSmartStore,
   NotAdaptOptions,
   StateAdapt,
@@ -44,6 +45,30 @@ import { toSignal } from './to-signal.function';
     count = adapt(0);
   }
   ```
+
+  ### Example: Initial state factory
+  `adapt(() => initialState)`
+
+  You can pass a function that returns the initial state. The store calls it when it activates,
+  keeps that value for as long as it stays active, and discards it when it deactivates — so the factory runs again
+  for each activation.
+
+  This helps when initial state might be different at each time the store is being used, like with `localStorage`:
+
+  ```ts
+  @Component({
+    template: `
+      <div>Name is {{ name() }}</div>
+      <button (click)="name.reset()">Reset Name</button>
+    `,
+  })
+  export class MyComponent {
+    // Each component reads `localStorage` when it activates the store, and `reset` goes back to what it read
+    name = adapt(() => localStorage.getItem('name') ?? 'John');
+  }
+  ```
+
+  A one-off read of initial state will not use a cached value, but call the state factory function.
 
   ### Example: Using an adapter
   `adapt(initialState, adapter)`
@@ -285,12 +310,15 @@ export const adapt = <
   R2 extends ReactionsWithSelectors<State, S>,
   // ActualSourcesArg extends SourceArg<State, S, R2>,
 >(
-  initialState: State,
+  initialState: InitialState<State>,
   second: (R & { selectors?: S } & NotAdaptOptions) | AdaptOptions<State, S, R2> = {}, // Default object required to make R = {} rather than indexed object
 ): InitializedSmartStore<State, S, {} extends R ? R2 : R> & StoreSignals<State, S> => {
   const adaptDep = inject(StateAdaptToken);
   const storeObj = adaptDep.adapt(initialState, second);
-  const state = toSignal(storeObj.state$, { initialValue: initialState });
+  // Lazy so an initial state factory isn't called until the signal is read before its first emission
+  const state = toSignal(storeObj.state$, {
+    initialValue: () => storeObj.__.initialState,
+  });
 
   const store: any = function () {
     return state();

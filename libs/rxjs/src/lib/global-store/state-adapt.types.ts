@@ -17,6 +17,20 @@ export interface GlobalStoreMethods {
   dispatch: (action: any) => any;
 }
 
+/**
+  A store's initial state, either as a plain value or as a factory function that returns it.
+
+  A factory runs once per activation: the store calls it when it activates, holds onto that
+  value for as long as it stays active, and discards it when it deactivates. So a store that
+  is reset always goes back to what its *current* activation started from.
+  Reading state from an inactive store calls the factory for that read alone.
+
+  ```typescript
+  const name = adapt(() => localStorage.getItem('name') ?? 'John');
+  ```
+ */
+export type InitialState<State> = State | (() => State);
+
 export type ConcreteSourceArg<
   State,
   S extends Selectors<State>,

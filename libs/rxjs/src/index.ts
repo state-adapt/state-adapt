@@ -26,6 +26,7 @@ export * from './lib/stores/store-like.type';
 export * from './lib/global-store/configure-state-adapt.options';
 export * from './lib/global-store/configure-state-adapt.function';
 export * from './lib/global-store/state-adapt.types';
+export * from './lib/global-store/create-initial-state-getter.function';
 export * from './lib/global-store/state-adapt';
 
 export * from './lib/utils/map-each-with-effect.function';

@@ -426,5 +426,89 @@ describe('toSignal', () => {
 
       expect(subscriptions).toBe(0);
     });
+
+    it('creates initial value once per subscription, not per read', async () => {
+      let calls = 0;
+
+      @Injectable({ providedIn: 'root' })
+      class RootService {
+        value = toSignal<number>(NEVER, { initialValue: () => ++calls });
+      }
+
+      @Component({
+        standalone: true,
+        changeDetection: ChangeDetectionStrategy.OnPush,
+        template: `
+          {{ value() }}
+        `,
+      })
+      class ConsumerComponent {
+        value = inject(RootService).value;
+      }
+
+      TestBed.configureTestingModule({ imports: [ConsumerComponent], providers });
+      const fixture = TestBed.createComponent(ConsumerComponent);
+      attachToApplication(fixture);
+
+      fixture.detectChanges();
+      TestBed.inject(ApplicationRef).tick();
+      await settleRenderProbe();
+      const callsWhileSubscribed = calls;
+
+      // Later probes invalidate and re-read the signal while it stays subscribed
+      TestBed.inject(ApplicationRef).tick();
+      await settleRenderProbe();
+      TestBed.inject(ApplicationRef).tick();
+      await settleRenderProbe();
+
+      expect(calls).toBe(callsWhileSubscribed);
+      expect(fixture.nativeElement.textContent.trim()).toBe(String(callsWhileSubscribed));
+
+      fixture.destroy();
+    });
+
+    it('creates fresh initial value when it subscribes again', async () => {
+      let name = 'John';
+
+      @Injectable({ providedIn: 'root' })
+      class RootService {
+        value = toSignal<string>(new Subject<string>(), { initialValue: () => name });
+      }
+
+      @Component({
+        standalone: true,
+        changeDetection: ChangeDetectionStrategy.OnPush,
+        template: `
+          {{ value() }}
+        `,
+      })
+      class ConsumerComponent {
+        value = inject(RootService).value;
+      }
+
+      TestBed.configureTestingModule({ imports: [ConsumerComponent], providers });
+
+      const firstFixture = TestBed.createComponent(ConsumerComponent);
+      attachToApplication(firstFixture);
+      firstFixture.detectChanges();
+      TestBed.inject(ApplicationRef).tick();
+      await settleRenderProbe();
+      expect(firstFixture.nativeElement.textContent.trim()).toBe('John');
+
+      firstFixture.destroy();
+      TestBed.inject(ApplicationRef).tick();
+      await settleRenderProbe();
+
+      name = 'Jane';
+
+      const secondFixture = TestBed.createComponent(ConsumerComponent);
+      attachToApplication(secondFixture);
+      secondFixture.detectChanges();
+      TestBed.inject(ApplicationRef).tick();
+      await settleRenderProbe();
+      expect(secondFixture.nativeElement.textContent.trim()).toBe('Jane');
+
+      secondFixture.destroy();
+    });
   });
 });

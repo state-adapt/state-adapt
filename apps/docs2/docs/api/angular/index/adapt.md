@@ -1,12 +1,12 @@
 ---
-definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/angular/src/lib/adapt.function.ts#L281
+definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/angular/src/lib/adapt.function.ts#L306
 ---
 
 # Function: adapt()
 
 > **adapt**\<`State`, `S`, `R`, `R2`\>(`initialState`, `second`): \{ \[P in string \| number \| symbol as \`$\{P extends string ? P\<P\> : never\}$\`\]: Observable\<ReturnType\<((\{\} extends S ? S & \{\} : S) & WithGetState\<State\>)\[P\]\>\> \} & `object` & `object` & `SyntheticSources`\<`InitializedReactions`\<`State`, `S`, `object` *extends* `R` ? `R2` : `R`\>\> & `WritableSignal`\<`State`\> & \{ \[K in string \| number \| symbol\]: () =\> ReturnType\<S\[K\]\> \}
 
-Defined in: [angular/src/lib/adapt.function.ts:281](https://github.com/state-adapt/state-adapt/blob/main/libs/angular/src/lib/adapt.function.ts#L281)
+Defined in: [angular/src/lib/adapt.function.ts:306](https://github.com/state-adapt/state-adapt/blob/main/libs/angular/src/lib/adapt.function.ts#L306)
 
 `adapt` wraps [StateAdapt.adapt](../../rxjs/index/StateAdapt.md#adapt) and adds signals for the store's selectors.
 
@@ -31,6 +31,30 @@ export class MyComponent {
   count = adapt(0);
 }
 ```
+
+### Example: Initial state factory
+`adapt(() => initialState)`
+
+You can pass a function that returns the initial state. The store calls it when it activates,
+keeps that value for as long as it stays active, and discards it when it deactivates — so the factory runs again
+for each activation.
+
+This helps when initial state might be different at each time the store is being used, like with `localStorage`:
+
+```ts
+@Component({
+  template: `
+    <div>Name is {{ name() }}</div>
+    <button (click)="name.reset()">Reset Name</button>
+  `,
+})
+export class MyComponent {
+  // Each component reads `localStorage` when it activates the store, and `reset` goes back to what it read
+  name = adapt(() => localStorage.getItem('name') ?? 'John');
+}
+```
+
+A one-off read of initial state will not use a cached value, but call the state factory function.
 
 ### Example: Using an adapter
 `adapt(initialState, adapter)`
@@ -287,7 +311,7 @@ Stores provided in `'root'` need to have subscribers or signal reads in order to
 
 ### initialState
 
-`State`
+[`InitialState`](../../rxjs/index/InitialState.md)\<`State`\>
 
 ### second
 

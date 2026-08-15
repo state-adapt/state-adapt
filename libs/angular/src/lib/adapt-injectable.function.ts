@@ -2,6 +2,7 @@ import { InjectionToken, inject } from '@angular/core';
 import { ReactionsWithSelectors, Selectors, getId } from '@state-adapt/core';
 import {
   AdaptOptions,
+  InitialState,
   InitializedSmartStore,
   NotAdaptOptions,
   SourceArg,
@@ -49,7 +50,7 @@ export function adaptInjectable<
   S extends Selectors<State>,
   R extends ReactionsWithSelectors<State, S>,
 >(
-  initialState: State,
+  initialState: InitialState<State>,
   second: (R & { selectors?: S } & NotAdaptOptions) | AdaptOptions<State, S, R> = {}, // Default object required to make R = {} rather than indexed object
 ): () => InitializedSmartStore<State, S, R> {
   const path = second?.path || 'adaptInjectable' + getId();

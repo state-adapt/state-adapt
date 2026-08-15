@@ -11,9 +11,11 @@ import {
   ViewContainerRef,
 } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
+import { createInitialStateGetter, InitialState } from '@state-adapt/rxjs';
 
 export interface ToSignalOptions<State> {
-  initialValue: State;
+  /** The value the signal returns until the source emits, and again after it unsubscribes. */
+  initialValue: InitialState<State>;
 }
 
 /**
@@ -24,6 +26,29 @@ export interface ToSignalOptions<State> {
  * subscribed to immediately and unsubscribed from with that view. Signals created in a
  * root injection context are subscribed to only while a template or effect keeps
  * reading them.
+ *
+ * ### Example: Basic usage
+ *
+ * ```ts
+ * const name = toSignal(name$, { initialValue: 'John' });
+ * ```
+ *
+ * ### Example: Initial value factory
+ *
+ * `initialValue` can be a function that returns the value. The signal calls it when it
+ * subscribes, keeps that value until it unsubscribes, and discards it then — so the factory
+ * runs again for each subscription.
+ *
+ * This helps when the initial value might be different at each time the signal is being used,
+ * like with `localStorage`:
+ *
+ * ```ts
+ * const name = toSignal(name$, {
+ *   initialValue: () => localStorage.getItem('name') ?? 'John',
+ * });
+ * ```
+ *
+ * A read while the signal is unsubscribed will not use a cached value, but call the factory function.
  */
 export function toSignal<State>(
   source$: Observable<State>,
@@ -32,7 +57,11 @@ export function toSignal<State>(
   const destroyRef = inject(DestroyRef);
   const version = signal(0);
   const noError = {};
-  let currentValue = initialValue;
+  const unset = {};
+  const getInitialValue = createInitialStateGetter(initialValue);
+  let currentValue: State | typeof unset = unset;
+  const getCurrentValue = () =>
+    currentValue === unset ? getInitialValue() : (currentValue as State);
   let currentError: unknown = noError;
   let subscription: Subscription | undefined;
   let active = false;
@@ -52,14 +81,19 @@ export function toSignal<State>(
         version.update(valueVersion => valueVersion + 1);
       },
     });
+
+    // After subscribing, so a source that activates with it has already created its own
+    // initial state for this session rather than being asked for a one-off value
+    getInitialValue.activate();
   };
 
   const unsubscribe = () => {
     active = false;
     subscription?.unsubscribe();
     subscription = undefined;
-    currentValue = initialValue;
+    currentValue = unset;
     currentError = noError;
+    getInitialValue.deactivate();
   };
 
   const isLocal = !!inject(ViewContainerRef, { optional: true });
@@ -70,7 +104,7 @@ export function toSignal<State>(
     return computed(() => {
       version();
       if (currentError !== noError) throw currentError;
-      return currentValue;
+      return getCurrentValue();
     });
   }
 
@@ -91,7 +125,7 @@ export function toSignal<State>(
     entry.wasRead = true;
     strategy.track(entry);
     if (currentError !== noError) throw currentError;
-    return currentValue;
+    return getCurrentValue();
   });
 
   destroyRef.onDestroy(() => {

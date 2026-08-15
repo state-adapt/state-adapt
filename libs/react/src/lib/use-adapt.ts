@@ -9,6 +9,7 @@ import {
   SourceArg,
   AdaptOptions,
   NotAdaptOptions,
+  InitialState,
 } from '@state-adapt/rxjs';
 import {
   Action,
@@ -56,6 +57,31 @@ import { useProxyStates } from './use-proxy-states';
     );
   }
   ```
+
+  ### Example: Initial state factory
+  `useAdapt(() => initialState)`
+
+  Just like `useState`, you can pass a function that returns the initial state. The store calls it when it
+  activates, keeps that value for as long as it stays active, and discards it when it deactivates — so the
+  factory runs again for each activation, but not for re-renders.
+
+  This helps when initial state might be different at each time the store is being used, like with `localStorage`:
+
+  ```tsx
+  export function MyComponent() {
+    // Each mount reads `localStorage`, and `reset` goes back to what it read
+    const [name, setName] = useAdapt(() => localStorage.getItem('name') ?? 'John');
+
+    return (
+      <>
+        <div>{name.state}</div>
+        <button onClick={() => setName.reset()}>Reset</button>
+      </>
+    );
+  }
+  ```
+
+  A one-off read of initial state will not use a cached value, but call the state factory function.
 
   ### Example: Using an adapter
   `useAdapt(initialState, adapter)`
@@ -282,7 +308,7 @@ export function useAdapt<
   S extends Selectors<State>,
   R extends ReactionsWithSelectors<State, S>,
 >(
-  initialState: State,
+  initialState: InitialState<State>,
   second: (R & { selectors?: S } & NotAdaptOptions) | AdaptOptions<State, S, R> = {}, // Default object required to make R = {} rather than indexed object
 ): ProxyStoreTuple<State, InitializedSmartStore<State, S, R>> {
   const stateAdapt = useContext(AdaptContext);
