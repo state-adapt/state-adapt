@@ -91,7 +91,7 @@ const joinedAdapters = joinAdapters<ParentState, 'extraProp' | 'c'>()({
 
 const cache = createSelectorsCache();
 
-describe('mergeAdapters', () => {
+describe('joinAdapters', () => {
   it("should return child adapter's state", () => {
     const bResult = joinedAdapters.selectors.b(parentState, cache);
     expect(bResult).toEqual(bState);
@@ -104,6 +104,16 @@ describe('mergeAdapters', () => {
     const aResult = joinedAdapters.selectors.combinedSelector(parentState, cache);
     expect(aResult).toBe('1224');
     // console.log('cache', JSON.stringify(cache, null, '\t'));
+  });
+  // A store's selectors cache only exists while the store is active, but
+  // selectors can be read before that — e.g. React evaluates them during the
+  // first render, before `useStore` has subscribed. Selectors that derive a
+  // child cache from the parent must degrade to uncached evaluation, not throw.
+  // Angular signals can also read from inactive stores.
+  it('should evaluate selectors without a cache', () => {
+    expect(joinedAdapters.selectors.b(parentState)).toEqual(bState);
+    expect(joinedAdapters.selectors.aOneAndTwo(parentState)).toBe('12');
+    expect(joinedAdapters.selectors.combinedSelector(parentState)).toBe('1224');
   });
   it('should set state', () => {
     const newState: ParentState = {

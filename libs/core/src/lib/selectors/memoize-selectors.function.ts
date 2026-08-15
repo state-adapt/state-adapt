@@ -54,7 +54,7 @@ export function getMemoizedSelector<State>(
   toChildCache?: (pc?: SelectorsCache) => SelectorsCache,
 ) {
   return (s: State, parentCache?: SelectorsCache) => {
-    const cache = toChildCache ? toChildCache(parentCache) : parentCache;
+    const cache = toChildCache && parentCache ? toChildCache(parentCache) : parentCache;
     if (!cache) return (fn as any)(s);
     cache.__inputs[name] = cache.__inputs[name]?.values // Check for our shape because some selector names collide with default Object prop names, like toString.
       ? cache.__inputs[name]
