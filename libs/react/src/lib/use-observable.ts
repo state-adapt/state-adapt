@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useDebugValue, useMemo } from 'react';
 import { Observable } from 'rxjs';
 import { useSyncExternalStore } from 'use-sync-external-store/shim';
 
@@ -28,9 +28,11 @@ export function useObservable<T>(obs$: Observable<T>, initialValue?: T): T | und
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [obs$]);
 
-  return useSyncExternalStore(
+  const snapshot = useSyncExternalStore(
     observableStore.subscribe,
     observableStore.getSnapshot,
     observableStore.getSnapshot,
   );
+  useDebugValue(snapshot);
+  return snapshot;
 }

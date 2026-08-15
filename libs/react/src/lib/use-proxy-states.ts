@@ -1,5 +1,5 @@
 import { StoreLike } from '@state-adapt/rxjs';
-import { useContext, useMemo } from 'react';
+import { useContext, useDebugValue, useMemo } from 'react';
 import { Subscription } from 'rxjs';
 import { useSyncExternalStore } from 'use-sync-external-store/shim';
 import { AdaptContext } from './adapt.context';
@@ -64,6 +64,7 @@ export function useProxyStates<
     [stableFilterSelectors, store],
   );
   const snapshot = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
+  useDebugValue(snapshot.storeState);
 
   const proxy = useMemo(
     () =>
