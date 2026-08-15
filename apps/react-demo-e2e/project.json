@@ -1,0 +1,26 @@
+{
+  "name": "react-demo-e2e",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/react-demo-e2e/src",
+  "tags": [],
+  "implicitDependencies": ["react-demo"],
+  "targets": {
+    "e2e": {
+      "executor": "@nx/cypress:cypress",
+      "options": {
+        "cypressConfig": "apps/react-demo-e2e/cypress.config.ts",
+        "testingType": "e2e",
+        "devServerTarget": "react-demo:serve"
+      },
+      "configurations": {
+        "production": {
+          "devServerTarget": "react-demo:serve:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  }
+}

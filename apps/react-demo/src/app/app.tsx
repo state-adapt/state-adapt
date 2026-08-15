@@ -1,150 +1,106 @@
 import React, { useState } from 'react';
-import { interval, Observable } from 'rxjs';
-import { createAdapter } from '@state-adapt/core';
-import { source, Source, toSource, type } from '@state-adapt/rxjs';
-import { useAdapt, useObservable, useSource, useStore } from '@state-adapt/react';
-import { adapt } from '../store';
+import { NavLink, Route, Routes } from 'react-router-dom';
+import { useStore } from '@state-adapt/react';
 
-export const countAdapter = createAdapter<number>()({
-  increment: (state, n: number) => state + n,
-  double: state => state * 2,
-  selectors: {
-    bold: s => s.toString().bold(),
-  },
-});
+import { CartPage, cartStore } from './cart';
+import { CounterPage } from './counter';
+import { Home } from './home';
+import { LivePage, TickerKeepAlive, TickerLifecycle } from './live';
+import { TodosPage, todosStore } from './todos';
 
-const onResetAll = source('[App] onResetAll');
-const onInterval = interval(5_000).pipe(type('[App] onInterval'));
+function Badge({ count, testId }: { count: number; testId: string }) {
+  if (!count) return null;
+  return (
+    <span className="badge" data-testid={testId}>
+      {count}
+    </span>
+  );
+}
 
 export function App() {
-  const [count1, count1Store] = useAdapt(0);
-  const [count2, count2Store] = useAdapt(0, { sources: onInterval, path: 'count2' });
-  const [count3, count3Store] = useAdapt(0, countAdapter);
-  const [count4, count4Store] = useAdapt(10, {
-    multiply: (state, n: number) => state * n,
-  });
-  const [count5, count5Store] = useAdapt(0, {
-    adapter: countAdapter,
-    sources: onInterval,
-    path: 'count5',
-  });
-  const [count6, count6Store] = useAdapt(0, {
-    adapter: countAdapter,
-    sources: {
-      set: onInterval,
-      reset: onResetAll,
-    },
-    path: 'count6',
-  });
+  // Subscribing here keeps both stores active for the lifetime of the app, so
+  // their state survives navigating between routes.
+  const [todos] = useStore(todosStore);
+  const [cart] = useStore(cartStore);
 
-  // count1Store.set();
-  // count2Store.set();
-  // count3Store.double(4);
-  // count4Store.multiply('4');
-  // count5Store.set('4');
-  // count6Store.increment();
+  const [keepAlive, setKeepAlive] = useState(false);
 
   return (
-    <div>
-      <main>
-        <a href="https://reactjs.org" target="_blank">
-          <img
-            src="https://upload.wikimedia.org/wikipedia/commons/a/a7/React-icon.svg"
-            className="logo react"
-            alt="React logo"
-          />
-        </a>
-        <a href="https://state-adapt.github.io/" target="_blank" rel="noreferrer">
+    <div className="app">
+      {keepAlive && <TickerKeepAlive />}
+
+      <header className="topbar">
+        <a
+          className="brand"
+          href="https://state-adapt.github.io/"
+          target="_blank"
+          rel="noreferrer"
+        >
           <img
             src="https://state-adapt.github.io/sa3-3.svg"
             className="logo stateadapt"
-            alt="StateAdapt Logo"
+            alt="StateAdapt logo"
           />
+          <span className="brand-name">StateAdapt</span>
         </a>
-        <div>
-          <h2>Counter 1</h2>
-          <p>
-            {count1.state}
-            {/* <span dangerouslySetInnerHTML={{ __html: bold1 || '' }}></span> */}
-          </p>
-          <p>
-            <button onClick={() => count1Store.set(300)}>Set</button>
-            {/* <button onClick={() => count1.increment(3)}>Increment</button> */}
-            {/* <button onClick={() => count1.double()}>Double</button> */}
-          </p>
-        </div>
 
-        <div>
-          <h2>Counter 2</h2>
-          <p>
-            {count2.state}
-            {/* <span dangerouslySetInnerHTML={{ __html: bold2 || '' }}></span> */}
-          </p>
-          <p>
-            <button onClick={() => count2Store.set(300)}>Set</button>
-            {/* <button onClick={() => count2.increment(3)}>Increment</button> */}
-            {/* <button onClick={() => count2.double()}>Double</button> */}
-          </p>
-        </div>
+        <nav className="nav" aria-label="Demo sections">
+          <NavLink to="/" end data-testid="nav-home">
+            Home
+          </NavLink>
+          <NavLink to="/counter" data-testid="nav-counter">
+            Counter
+          </NavLink>
+          <NavLink to="/todos" data-testid="nav-todos">
+            Todos
+            <Badge count={todos.activeCount} testId="nav-todos-badge" />
+          </NavLink>
+          <NavLink to="/cart" data-testid="nav-cart">
+            Cart
+            <Badge count={cart.itemCount} testId="nav-cart-badge" />
+          </NavLink>
+          <NavLink to="/live" data-testid="nav-live">
+            Live
+          </NavLink>
+        </nav>
+      </header>
 
-        <div>
-          <h2>Counter 3</h2>
-          <p>
-            {count3.state}{' '}
-            <span dangerouslySetInnerHTML={{ __html: count3.bold || '' }}></span>
-          </p>
-          <p>
-            <button onClick={() => count3Store.set(300)}>Set</button>
-            <button onClick={() => count3Store.increment(3)}>Increment</button>
-            <button onClick={() => count3Store.double()}>Double</button>
-          </p>
-        </div>
-
-        <div>
-          <h2>Counter 4</h2>
-          <p>
-            {count4.state}
-            {/* <span dangerouslySetInnerHTML={{ __html: bold4 || '' }}></span> */}
-          </p>
-          <p>
-            <button onClick={() => count4Store.set(300)}>Set</button>
-            <button onClick={() => count4Store.multiply(10)}>Multiply By 10</button>
-            {/* <button onClick={() => count4.increment(3)}>Increment</button> */}
-            {/* <button onClick={() => count4.double()}>Double</button> */}
-          </p>
-        </div>
-
-        <div>
-          <h2>Counter 5</h2>
-          <p>
-            {count5.state}{' '}
-            <span dangerouslySetInnerHTML={{ __html: count5.bold || '' }}></span>
-          </p>
-          <p>
-            <button onClick={() => count5Store.set(300)}>Set</button>
-            <button onClick={() => count5Store.increment(3)}>Increment</button>
-            <button onClick={() => count5Store.double()}>Double</button>
-          </p>
-        </div>
-
-        <div>
-          <h2>Counter 6</h2>
-          <p>
-            {count6.state}{' '}
-            <span dangerouslySetInnerHTML={{ __html: count6.bold || '' }}></span>
-          </p>
-          <p>
-            <button onClick={() => count6Store.set(300)}>Set</button>
-            <button onClick={() => count6Store.increment(3)}>Increment</button>
-            <button onClick={() => count6Store.double()}>Double</button>
-          </p>
-        </div>
-
-        <br />
-        <br />
-        <button onClick={onResetAll}>Reset Externally</button>
+      <main className="content">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/counter" element={<CounterPage />} />
+          <Route path="/todos" element={<TodosPage />} />
+          <Route path="/cart" element={<CartPage />} />
+          <Route path="/live" element={<LivePage />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
       </main>
+
+      <footer className="footer">
+        <TickerLifecycle />
+        <label className="keep-alive">
+          <input
+            type="checkbox"
+            data-testid="keep-alive"
+            checked={keepAlive}
+            onChange={event => setKeepAlive(event.target.checked)}
+          />
+          Keep ticker alive
+        </label>
+      </footer>
     </div>
+  );
+}
+
+function NotFound() {
+  return (
+    <section className="panel" data-testid="not-found">
+      <h1>Not found</h1>
+      <p className="muted">That route doesn&apos;t exist in this demo.</p>
+      <NavLink className="button" to="/">
+        Back home
+      </NavLink>
+    </section>
   );
 }
 
