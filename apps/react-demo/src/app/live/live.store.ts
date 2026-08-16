@@ -1,10 +1,6 @@
 import { adapt } from '../../store';
-import {
-  initialLifecycleState,
-  lifecycleAdapter,
-  tickerAdapter,
-} from './live.adapter';
-import { onTick$, onTickerLifecycle } from './live.source';
+import { initialLifecycleState, lifecycleAdapter, tickerAdapter } from './live.adapter';
+import { onTick, onTickerLifecycle } from './live.source';
 
 /**
  * Shared between the `/live` and `/counter` routes. It activates when the first
@@ -14,7 +10,7 @@ import { onTick$, onTickerLifecycle } from './live.source';
  */
 export const tickerStore = adapt(0, {
   adapter: tickerAdapter,
-  sources: { increment: onTick$ },
+  sources: { increment: onTick },
   path: 'ticker',
 });
 

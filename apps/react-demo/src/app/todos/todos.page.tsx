@@ -1,21 +1,17 @@
-import React, { useState } from 'react';
-import { useStore } from '@state-adapt/react';
+import React from 'react';
+import { useAdapt, useStore } from '@state-adapt/react';
 
 import { TodoFilter } from './todos.adapter';
-import { todosStore } from './todos.store';
+import { todosStore, onTodoSubmit } from './todos.store';
 
 const filters: TodoFilter[] = ['all', 'active', 'completed'];
 
 export function TodosPage() {
   const [todos, store] = useStore(todosStore);
-  const [draft, setDraft] = useState('');
-
-  const submit = (event: React.FormEvent) => {
-    event.preventDefault();
-    if (!draft.trim()) return;
-    store.addItems(draft);
-    setDraft('');
-  };
+  const [draft, setDraft] = useAdapt('', {
+    sources: { reset: onTodoSubmit },
+    path: 'todoDraft',
+  });
 
   return (
     <>
@@ -27,13 +23,19 @@ export function TodosPage() {
           does no deriving of its own.
         </p>
 
-        <form className="field-row" onSubmit={submit}>
+        <form
+          className="field-row"
+          onSubmit={event => {
+            event.preventDefault();
+            draft.state && onTodoSubmit(draft.state);
+          }}
+        >
           <input
             type="text"
             placeholder="What needs doing?"
             aria-label="New todo"
             data-testid="todo-input"
-            value={draft}
+            value={draft.state}
             onChange={event => setDraft(event.target.value)}
           />
           <button className="button primary" type="submit" data-testid="todo-add">

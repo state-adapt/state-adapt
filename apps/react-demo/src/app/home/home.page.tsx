@@ -4,7 +4,7 @@ import { interval } from 'rxjs';
 import { useObservable } from '@state-adapt/react';
 
 /** A plain observable, rendered straight into the view with `useObservable`. */
-const seconds$ = interval(1000);
+const onSeconds = interval(1000);
 
 const demos = [
   {
@@ -39,7 +39,7 @@ const demos = [
 ];
 
 export function Home() {
-  const ticks = useObservable(seconds$, -1);
+  const ticks = useObservable(onSeconds, -1);
 
   return (
     <>
@@ -49,8 +49,8 @@ export function Home() {
         </h1>
         <p className="lede">
           A tour of StateAdapt in React — reusable state logic, memoized selectors, and
-          declarative sources. State on these pages survives navigation, so wander
-          between them.
+          declarative sources. State on these pages survives navigation, so wander between
+          them.
         </p>
         <p className="muted small" data-testid="uptime">
           This page has been open for {ticks + 1}s (straight from an RxJS{' '}
