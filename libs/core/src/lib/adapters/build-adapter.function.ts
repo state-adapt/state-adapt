@@ -13,6 +13,7 @@ import {
   ReactionsWithoutSelectors,
 } from './build-adapter.types';
 import { BasicAdapterMethods, createAdapter } from './create-adapter.function';
+import { AdapterEnhancer, isAdapterEnhancer } from './create-adapter-enhancer.function';
 import { Reactions } from './reactions.interface';
 
 /**
@@ -34,7 +35,7 @@ import { Reactions } from './reactions.interface';
 
   The first call creates a new object, but after that, every object passed in is looped over and used to mutate the original new object.
 
-  {@link buildAdapter} takes 3 possible arguments in each call (after the first):
+  {@link buildAdapter} takes 4 possible arguments in each call (after the first):
 
   1. A selectors object
   2. A function taking in a tuple of `[selectors, reactions]` and returning new reactions
@@ -105,7 +106,8 @@ import { Reactions } from './reactions.interface';
   })();
   ```
 
-  The new reaction's payload type will be the intersection of the payload types from the reactions used, except when one of the payloads is `void`, in which case it will be ignored in the payload intersection.
+  The new reaction's payload type will be the intersection of the payload types from the reactions used,
+  except when one of the payloads is `void`, in which case it will be ignored in the payload intersection.
  */
 export function buildAdapter<State>() {
   return <S extends Selectors<State>, R extends ReactionsWithSelectors<State, S>>(
@@ -149,6 +151,15 @@ export interface NewBlockAdder<
 > {
   (): { [K in keyof BuiltAdapter<State, R, S>]: BuiltAdapter<State, R, S>[K] };
 
+  <EnhancedAdapter extends Adapter<any, any, any>>(
+    enhancer: AdapterEnhancer<(adapter: BuiltAdapter<State, R, S>) => EnhancedAdapter>,
+  ): NewBlockAdder<
+    AdapterStateFromEnhancedAdapter<EnhancedAdapter>,
+    SelectorsFromEnhancedAdapter<EnhancedAdapter>,
+    ReactionsFromEnhancedAdapter<EnhancedAdapter>,
+    Prev[D]
+  >;
+
   <NewBlock extends (ar: [S, R]) => Reactions<State>>(
     newBlock: NewBlock,
   ): NewBlock extends (ar: [S, R]) => infer R2
@@ -190,6 +201,31 @@ export interface NewBlockAdder<
   >;
 }
 
+type AdapterStateFromEnhancedAdapter<A extends Adapter<any, any, any>> = A extends {
+  set: (state: infer State, payload: any, ...args: any[]) => any;
+}
+  ? State
+  : never;
+
+type SelectorsFromEnhancedAdapter<A extends Adapter<any, any, any>> = A extends {
+  selectors: infer S;
+}
+  ? S extends Selectors<AdapterStateFromEnhancedAdapter<A>>
+    ? S
+    : never
+  : never;
+
+type ReactionsFromEnhancedAdapter<A extends Adapter<any, any, any>> = {
+  [K in keyof A as A[K] extends (
+    state: AdapterStateFromEnhancedAdapter<A>,
+    ...args: any[]
+  ) => AdapterStateFromEnhancedAdapter<A>
+    ? K
+    : never]: A[K] extends Reactions<AdapterStateFromEnhancedAdapter<A>>[string]
+    ? A[K]
+    : never;
+};
+
 type NestedReactions<
   State,
   CRDef extends {
@@ -223,6 +259,16 @@ export function addNewBlock<AB extends AdapterBuilder<any, any, any>>(
   ) => {
     // Done
     if (!newBlock) return { ...builder.reactions, selectors: builder.selectors };
+
+    // Adapter enhancers
+    if (isAdapterEnhancer(newBlock)) {
+      const enhancedAdapter = newBlock({
+        ...builder.reactions,
+        selectors: builder.selectors,
+      });
+      const { selectors, ...reactions } = enhancedAdapter;
+      return addNewBlock({ reactions, selectors });
+    }
 
     // New reactions
     if (typeof newBlock === 'function') {

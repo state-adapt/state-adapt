@@ -27,6 +27,10 @@ export * from './lib/adapters/adapter.type';
 export * from './lib/adapters/synthetic-sources.type';
 export * from './lib/adapters/create-reactions.function';
 export * from './lib/adapters/create-adapter.function';
+export {
+  createAdapterEnhancer,
+  AdapterEnhancer,
+} from './lib/adapters/create-adapter-enhancer.function';
 export * from './lib/adapters/map-payloads.function';
 export * from './lib/adapters/build-adapter.function';
 export * from './lib/adapters/join-adapters.function';
