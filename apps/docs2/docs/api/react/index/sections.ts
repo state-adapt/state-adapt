@@ -3,7 +3,11 @@ import { Section } from '../../../../section-paths';
 export const sections: Section[] = [
   {
     name: 'Store',
-    items: ['useStore', 'useAdapt'],
+    items: ['adapt', 'watch', 'useStore', 'useAdapt'],
+  },
+  {
+    name: 'Configuration',
+    items: ['defaultStateAdapt', 'AdaptContext'],
   },
 ].map(({ name, items }) => ({
   name,

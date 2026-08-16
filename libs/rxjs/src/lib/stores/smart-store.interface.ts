@@ -4,6 +4,7 @@ import { CoreStoreProps } from './core-store-props.type';
 
 export type SmartStore<State, S extends Selectors<State>> = Selections<State, S> & {
   /**
+   * @internal
    * Don't use this property directly. Intended for internal use only.
    */
   __: CoreStoreProps<State, S> & {

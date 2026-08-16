@@ -35,7 +35,7 @@ import { Reactions } from './reactions.interface';
 
   The first call creates a new object, but after that, every object passed in is looped over and used to mutate the original new object.
 
-  {@link buildAdapter} takes 4 possible arguments in each call (after the first):
+  {@link buildAdapter} takes 3 possible arguments in each call (after the first):
 
   1. A selectors object
   2. A function taking in a tuple of `[selectors, reactions]` and returning new reactions

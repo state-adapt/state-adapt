@@ -1,5 +1,5 @@
+import { adapt } from '@state-adapt/react';
 import { source } from '@state-adapt/rxjs';
-import { adapt } from '../../store';
 import { initialTodosState, todosAdapter } from './todos.adapter';
 
 export const onTodoSubmit = source<string>('[Todos] onTodoSubmit');

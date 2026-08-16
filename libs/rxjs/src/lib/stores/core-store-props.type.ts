@@ -2,6 +2,7 @@ import { AnySelectors } from '@state-adapt/core';
 import { Observable } from 'rxjs';
 
 export type CoreStoreProps<State, S extends AnySelectors> = {
+  stateAdaptInstanceId: symbol;
   requireSources$: Observable<any>;
   fullSelectors: S;
   selectors: S;

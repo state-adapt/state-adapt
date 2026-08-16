@@ -30,6 +30,13 @@ describe('joinStores', () => {
     });
     expect(state).toEqual({ store1: 1, store2: 2 });
   });
+  it('should reject stores created by different StateAdapt instances', () => {
+    const otherAdapt = configureStateAdapt({ devtools: null }).adapt;
+
+    expect(() => joinStores({ store1, otherStore: otherAdapt(3) })).toThrow(
+      'StateAdapt Error: joinStores cannot combine stores created by different StateAdapt instances.',
+    );
+  });
   // TODO: Test memoization
   // TODO: Throw error if source is `.next` without subscribers
 });

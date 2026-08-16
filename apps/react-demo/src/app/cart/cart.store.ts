@@ -1,5 +1,5 @@
 import { joinStores } from '@state-adapt/rxjs';
-import { adapt } from '../../store';
+import { adapt } from '@state-adapt/react';
 import { CartState, cartAdapter, couponAdapter } from './cart.adapter';
 
 /**

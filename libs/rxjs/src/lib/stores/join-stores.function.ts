@@ -80,6 +80,19 @@ export function joinStores<SE extends StoreEntries>(
   // a selector for each piece of state. The developer only defines the 2nd+ selector group.
 
   const namespaces = Object.keys(storeEntries) as (string & keyof SE)[];
+  const stateAdaptInstanceId = storeEntries[namespaces[0]].__.stateAdaptInstanceId;
+
+  if (
+    namespaces.some(
+      namespace =>
+        storeEntries[namespace].__.stateAdaptInstanceId !== stateAdaptInstanceId,
+    )
+  ) {
+    throw new Error(
+      'StateAdapt Error: joinStores cannot combine stores created by different StateAdapt instances.',
+    );
+  }
+
   const joinedSelectors: Selectors<any> = {};
   const joinedFullSelectors: Selectors<any> = {};
 
@@ -191,6 +204,7 @@ function addNewBlock<SB extends StoreBuilder<any, any, any>>(
 
     const joinedStore = {
       __: {
+        stateAdaptInstanceId: storeEntries[namespaces[0]].__.stateAdaptInstanceId,
         selectors,
         fullSelectors,
         requireSources$: requireAllSources$,

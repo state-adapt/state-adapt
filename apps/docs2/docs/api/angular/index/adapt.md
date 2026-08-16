@@ -4,7 +4,7 @@ definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/angular/src
 
 # Function: adapt()
 
-> **adapt**\<`State`, `S`, `R`, `R2`\>(`initialState`, `second`): \{ \[P in string \| number \| symbol as \`$\{P extends string ? P\<P\> : never\}$\`\]: Observable\<ReturnType\<((\{\} extends S ? S & \{\} : S) & WithGetState\<State\>)\[P\]\>\> \} & `object` & `object` & `SyntheticSources`\<`InitializedReactions`\<`State`, `S`, `object` *extends* `R` ? `R2` : `R`\>\> & `WritableSignal`\<`State`\> & \{ \[K in string \| number \| symbol\]: () =\> ReturnType\<S\[K\]\> \}
+> **adapt**\<`State`, `S`, `R`, `R2`, `ReturnedSources`\>(`initialState`, `second`): \{ \[P in string \| number \| symbol as \`$\{P extends string ? P\<P\> : never\}$\`\]: Observable\<ReturnType\<((\{\} extends S ? S & \{\} : S) & WithGetState\<State\>)\[P\]\>\> \} & `object` & `object` & `SyntheticSources`\<`InitializedReactions`\<`State`, `S`, `object` *extends* `R` ? `R2` : `R`\>\> & `WritableSignal`\<`State`\> & \{ \[K in string \| number \| symbol\]: () =\> ReturnType\<S\[K\]\> \}
 
 Defined in: [angular/src/lib/adapt.function.ts:306](https://github.com/state-adapt/state-adapt/blob/main/libs/angular/src/lib/adapt.function.ts#L306)
 
@@ -307,14 +307,18 @@ Stores provided in `'root'` need to have subscribers or signal reads in order to
 
 `R2` *extends* `ReactionsWithSelectors`\<`State`, `S`\>
 
+### ReturnedSources
+
+`ReturnedSources` = `unknown`
+
 ## Parameters
 
 ### initialState
 
-[`InitialState`](../../rxjs/index/InitialState.md)\<`State`\>
+`InitialState`\<`State`\>
 
 ### second
 
-`R` & `object` & `NotAdaptOptions` | `AdaptOptions`\<`State`, `S`, `R2`\>
+`R` & `object` & `NotAdaptOptions` | `AdaptOptions`\<`State`, `S`, `R2`, `ReturnedSources`\>
 
 ## Returns

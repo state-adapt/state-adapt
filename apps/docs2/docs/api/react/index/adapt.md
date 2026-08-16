@@ -1,24 +1,19 @@
 ---
-definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/rxjs/src/lib/global-store/state-adapt.ts#L89
+definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/react/src/lib/adapt.context.ts#L21
 ---
 
-# Class: StateAdapt\<CommonStore\>
+# Variable: adapt()
 
-Defined in: [libs/rxjs/src/lib/global-store/state-adapt.ts:89](https://github.com/state-adapt/state-adapt/blob/main/libs/rxjs/src/lib/global-store/state-adapt.ts#L89)
+> `const` **adapt**: \<`State`, `S`, `R`, `R2`, `ReturnedSources`\>(`initialState`, `second`) => `InitializedSmartStore`\<`State`, `S`, `object` *extends* `R` ? `R2` : `R`\> = `defaultStateAdapt.adapt`
 
-## Type Parameters
+Defined in: [react/src/lib/adapt.context.ts:21](https://github.com/state-adapt/state-adapt/blob/main/libs/react/src/lib/adapt.context.ts#L21)
 
-### CommonStore
+Creates a store using React's default StateAdapt configuration.
 
-`CommonStore` *extends* `GlobalStoreMethods` = `any`
-
-## Methods
-
-### adapt()
-
-> **adapt**\<`State`, `S`, `R`, `R2`, `ReturnedSources`\>(`initialState`, `second`): `InitializedSmartStore`\<`State`, `S`, `object` *extends* `R` ? `R2` : `R`\>
-
-Defined in: [libs/rxjs/src/lib/global-store/state-adapt.ts:335](https://github.com/state-adapt/state-adapt/blob/main/libs/rxjs/src/lib/global-store/state-adapt.ts#L335)
+This function is bound to [defaultStateAdapt](defaultStateAdapt.md). A custom
+`AdaptContext.Provider` affects hooks, but it cannot change stores created at
+module scope. For custom configuration, export `adapt` from the configured
+instance instead.
 
 `adapt` creates a store that will manage state while it has subscribers.
 
@@ -257,97 +252,38 @@ If no path is provided, then the store's path defaults to the result of calling 
 The store needs to have subscribers in order to start managing state,
 and it only subscribes to sources when it has subscribers itself.
 
-#### Type Parameters
+## Type Parameters
 
-##### State
+### State
 
 `State`
 
-##### S
+### S
 
 `S` *extends* `Selectors`\<`State`\>
 
-##### R
+### R
 
 `R` *extends* `ReactionsWithSelectors`\<`State`, `S`\>
 
-##### R2
+### R2
 
 `R2` *extends* `ReactionsWithSelectors`\<`State`, `S`\>
 
-##### ReturnedSources
+### ReturnedSources
 
 `ReturnedSources` = `unknown`
 
-#### Parameters
+## Parameters
 
-##### initialState
+### initialState
 
 `InitialState`\<`State`\>
 
-##### second
+### second
 
 `R` & `object` & `NotAdaptOptions` | `AdaptOptions`\<`State`, `S`, `R2`, `ReturnedSources`\>
 
-#### Returns
+## Returns
 
 `InitializedSmartStore`\<`State`, `S`, `object` *extends* `R` ? `R2` : `R`\>
-
-***
-
-### watch()
-
-> **watch**\<`State`, `S`, `R`\>(`path`, `adapter`): `SmartStore`\<`State`, `S` & `WithGetState`\<`State`\>\>
-
-Defined in: [libs/rxjs/src/lib/global-store/state-adapt.ts:472](https://github.com/state-adapt/state-adapt/blob/main/libs/rxjs/src/lib/global-store/state-adapt.ts#L472)
-
-`watch` returns a detached store (doesn't chain off of sources). This allows you to watch state without affecting anything.
-It takes 2 arguments: The path of the state you are interested in, and the adapter you want to use.
-
-```tsx
-watch(path, adapter)
-```
-
-path — Object path in Redux Devtools
-
-adapter — Object with state change functions and selectors
-
-### Usage
-
-`watch` enables accessing state without subscribing to sources. For example, if your adapter manages the loading state
-for an HTTP request and you need to know if the request is loading before the user is interested in the data,
-`watch` can give you access to it without triggering the request.
-
-#### Example: Accessing loading state
-
-```tsx
-watch('data', httpAdapter).loading$.subscribe(console.log);
-```
-
-#### Type Parameters
-
-##### State
-
-`State`
-
-##### S
-
-`S` *extends* `Selectors`\<`State`\>
-
-##### R
-
-`R` *extends* `ReactionsWithSelectors`\<`State`, `S`\>
-
-#### Parameters
-
-##### path
-
-`string`
-
-##### adapter
-
-[`Adapter`](../../core/src/Adapter.md)\<`State`, `S`, `R` & `BasicAdapterMethods`\<`State`\>\>
-
-#### Returns
-
-`SmartStore`\<`State`, `S` & `WithGetState`\<`State`\>\>

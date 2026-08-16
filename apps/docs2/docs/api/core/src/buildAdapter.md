@@ -1,12 +1,12 @@
 ---
-definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/core/src/lib/adapters/build-adapter.function.ts#L110
+definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/core/src/lib/adapters/build-adapter.function.ts#L112
 ---
 
 # Function: buildAdapter()
 
 > **buildAdapter**\<`State`\>(): \<`S`, `R`\>(`reactionsWithSelectors`) => `NewBlockAdder`\<`State`, `WithStateSelector`\<`State`, `S`\>, `ReactionsWithoutSelectors`\<`State`, `R` & `BasicAdapterMethods`\<`State`\>\>\>
 
-Defined in: [src/lib/adapters/build-adapter.function.ts:110](https://github.com/state-adapt/state-adapt/blob/main/libs/core/src/lib/adapters/build-adapter.function.ts#L110)
+Defined in: [src/lib/adapters/build-adapter.function.ts:112](https://github.com/state-adapt/state-adapt/blob/main/libs/core/src/lib/adapters/build-adapter.function.ts#L112)
 
 `buildAdapter` is called with an initial adapter, then can be called again and again with more objects inheriting from previous objects,
 until a final empty call `()` to get the final built adapter:
@@ -97,7 +97,8 @@ const numbersAdapter = buildAdapter<NumbersState>()({
 })();
 ```
 
-The new reaction's payload type will be the intersection of the payload types from the reactions used, except when one of the payloads is `void`, in which case it will be ignored in the payload intersection.
+The new reaction's payload type will be the intersection of the payload types from the reactions used,
+except when one of the payloads is `void`, in which case it will be ignored in the payload intersection.
 
 ## Type Parameters
 

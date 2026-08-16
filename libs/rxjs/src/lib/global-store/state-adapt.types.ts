@@ -28,6 +28,8 @@ export interface GlobalStoreMethods {
   ```typescript
   const name = adapt(() => localStorage.getItem('name') ?? 'John');
   ```
+
+  @hidden
  */
 export type InitialState<State> = State | (() => State);
 

@@ -11,6 +11,17 @@ const wrapper = ({ children }: any) => (
 );
 
 describe('useAdapt with an initial state factory', () => {
+  it('should use the default context when no provider is present', () => {
+    const { result } = renderHook(() => useAdapt('John'));
+
+    expect(result.current[0].state).toBe('John');
+
+    act(() => {
+      result.current[1]('Jane');
+    });
+    expect(result.current[0].state).toBe('Jane');
+  });
+
   it('should use the state returned by the factory', () => {
     const { result } = renderHook(
       () =>

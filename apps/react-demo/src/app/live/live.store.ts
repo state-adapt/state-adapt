@@ -1,4 +1,4 @@
-import { adapt } from '../../store';
+import { adapt } from '@state-adapt/react';
 import { initialLifecycleState, lifecycleAdapter, tickerAdapter } from './live.adapter';
 import { onTick, onTickerLifecycle } from './live.source';
 

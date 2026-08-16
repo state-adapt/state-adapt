@@ -92,5 +92,6 @@ export function configureStateAdapt<
     adapt: stateAdapt.adapt.bind(stateAdapt),
     watch: stateAdapt.watch.bind(stateAdapt),
     ['commonStore' as never]: (stateAdapt as any).commonStore,
+    ['stateAdaptInstanceId' as never]: (stateAdapt as any).stateAdaptInstanceId,
   };
 }

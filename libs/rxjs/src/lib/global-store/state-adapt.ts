@@ -90,6 +90,8 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
   private pathStates: PathStates = {};
   private updaterStreams: UpdaterStream[] = [];
 
+  private readonly stateAdaptInstanceId = Symbol('StateAdapt instance');
+
   constructor(private commonStore: CommonStore) {}
 
   /**
@@ -425,6 +427,7 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
       ...(syntheticSources as SyntheticSources<InitializedReactions<State, S, R>>),
       ...selections,
       __: {
+        stateAdaptInstanceId: this.stateAdaptInstanceId,
         requireSources$,
         selectors,
         fullSelectors,
@@ -498,6 +501,7 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
     const detachedStore = {
       ...selections,
       __: {
+        stateAdaptInstanceId: this.stateAdaptInstanceId,
         requireSources$: requireSources$,
         fullSelectors: fullSelectors,
         selectors,

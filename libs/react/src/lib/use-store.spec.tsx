@@ -2,8 +2,9 @@ import { act, renderHook } from '@testing-library/react';
 import { ReactNode, useLayoutEffect } from 'react';
 import { configureStateAdapt, joinStores } from '@state-adapt/rxjs';
 import { useStore } from './use-store';
+import { STATE_ADAPT_CONTEXT_MISMATCH_ERROR } from './use-proxy-states';
 import { take } from 'rxjs/operators';
-import { AdaptContext } from './adapt.context';
+import { AdaptContext, adapt as defaultAdapt } from './adapt.context';
 import { globalSelectorsCache, serializeSelectorsCache } from '@state-adapt/core';
 
 const stateAdapt = configureStateAdapt({ devtools: null });
@@ -29,6 +30,28 @@ const wrapper = ({ children }: any) => (
 );
 
 describe('useStore proxy states', () => {
+  it('should use the default context when no provider is present', () => {
+    const store = defaultAdapt('initial');
+    const { result } = renderHook(() => useStore(store));
+
+    expect(result.current[0].state).toBe('initial');
+
+    act(() => {
+      result.current[1]('updated');
+    });
+    expect(result.current[0].state).toBe('updated');
+  });
+
+  it('should reject a store from a different StateAdapt instance', () => {
+    const store = defaultAdapt('initial');
+    const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
+
+    expect(() => renderHook(() => useStore(store), { wrapper })).toThrow(
+      STATE_ADAPT_CONTEXT_MISMATCH_ERROR,
+    );
+    consoleError.mockRestore();
+  });
+
   it('should sync an update made between render and subscription', () => {
     const store = adapt('before');
     const results: string[] = [];

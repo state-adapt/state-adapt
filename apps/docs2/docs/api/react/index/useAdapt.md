@@ -4,9 +4,9 @@ definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/react/src/l
 
 # Function: useAdapt()
 
-> **useAdapt**\<`State`, `S`, `R`\>(`initialState`, `second`): `ProxyStoreTuple`\<`State`, `InitializedSmartStore`\<`State`, `S`, `R`\>\>
+> **useAdapt**\<`State`, `S`, `R`, `ReturnedSources`\>(`initialState`, `second`): `ProxyStoreTuple`\<`State`, `InitializedSmartStore`\<`State`, `S`, `R`\>\>
 
-Defined in: [lib/use-adapt.ts:306](https://github.com/state-adapt/state-adapt/blob/main/libs/react/src/lib/use-adapt.ts#L306)
+Defined in: [react/src/lib/use-adapt.ts:306](https://github.com/state-adapt/state-adapt/blob/main/libs/react/src/lib/use-adapt.ts#L306)
 
 `useAdapt` is a hook that wraps [StateAdapt.adapt](../../rxjs/index/StateAdapt.md#adapt) and [useStore](useStore.md). It creates a store, immediately subscribes to it,
 and returns a tuple `[selectorResults, setState]` where `selectorResults` is a proxy object containing results from the store's selectors,
@@ -300,15 +300,19 @@ Stores need to have subscribers in order to activate and subscribe to their sour
 
 `R` *extends* `ReactionsWithSelectors`\<`State`, `S`\>
 
+### ReturnedSources
+
+`ReturnedSources` = `unknown`
+
 ## Parameters
 
 ### initialState
 
-[`InitialState`](../../rxjs/index/InitialState.md)\<`State`\>
+`InitialState`\<`State`\>
 
 ### second
 
-`R` & `object` & `NotAdaptOptions` | `AdaptOptions`\<`State`, `S`, `R`\>
+`R` & `object` & `NotAdaptOptions` | `AdaptOptions`\<`State`, `S`, `R`, `ReturnedSources`\>
 
 ## Returns
 

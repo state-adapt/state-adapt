@@ -10,6 +10,8 @@ type StoreSnapshot = {
   selectorValues: any[];
 };
 
+export const STATE_ADAPT_CONTEXT_MISMATCH_ERROR = `StateAdapt Error: This store was created by a different StateAdapt instance than the one provided to React through AdaptContext. Make sure the store and React use the same StateAdapt instance. If you configured StateAdapt, provide that instance through AdaptContext and import adapt and watch from your application's StateAdapt configuration module instead of @state-adapt/react.`;
+
 export function useProxyStates<
   Store extends StoreLike<any, any, any>,
   FilterSelectors extends (keyof Store['__']['selectors'])[],
@@ -18,6 +20,11 @@ export function useProxyStates<
   filterSelectors: FilterSelectors = ['state'] as FilterSelectors,
 ): StoreStates<Store, Extract<FilterSelectors[number], string>> {
   const stateAdapt = useContext(AdaptContext);
+
+  if (store.__.stateAdaptInstanceId !== (stateAdapt as any).stateAdaptInstanceId) {
+    throw new Error(STATE_ADAPT_CONTEXT_MISMATCH_ERROR);
+  }
+
   const filterSelectorsKey = filterSelectors.join();
   const stableFilterSelectors = useMemo(
     () => [...filterSelectors] as string[],
