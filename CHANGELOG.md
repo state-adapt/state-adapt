@@ -1,5 +1,6 @@
 ## 4.0.0
 
+- Feature(rxjs, angular): support signals for watched stores and make adapter optional
 - Feature(react): Simplify setup and guard against bad config
 - Feature(react): Make useSource return callable
 - Bugfix(rxjs): Prevent extra properties in sources object

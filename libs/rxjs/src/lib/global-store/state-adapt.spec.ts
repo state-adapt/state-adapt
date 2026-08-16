@@ -695,6 +695,21 @@ describe('adapt', () => {
 });
 
 describe('watch', () => {
+  it('should use the base adapter when none is provided', () => {
+    const path = 'default.watch.adapter';
+    const watched = watch<number>(path);
+    const watchValues: number[] = [];
+
+    watched.state$.subscribe(value => watchValues.push(value));
+
+    const count = adapt(1, { path });
+    const subscription = count.state$.subscribe();
+    count.set(2);
+    subscription.unsubscribe();
+
+    expect(watchValues).toEqual([1, 2]);
+  });
+
   it('should not receive any values when store is inactive', () => {
     const path = 'as.df';
     const adapter = createAdapter<number>()({

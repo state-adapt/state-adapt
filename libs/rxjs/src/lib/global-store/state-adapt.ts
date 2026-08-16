@@ -447,7 +447,7 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
 
   /**
   `watch` returns a detached store (doesn't chain off of sources). This allows you to watch state without affecting anything.
-  It takes 2 arguments: The path of the state you are interested in, and the adapter you want to use.
+  It takes the path of the state you are interested in and, optionally, the adapter whose selectors you want to use.
 
   ```tsx
   watch(path, adapter)
@@ -455,7 +455,7 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
 
   path — Object path in Redux Devtools
 
-  adapter — Object with state change functions and selectors
+  adapter — Optional object with state change functions and selectors. When omitted, `watch` uses the base adapter.
 
   ### Usage
 
@@ -469,12 +469,15 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
   watch('data', httpAdapter).loading$.subscribe(console.log);
   ```
    */
-  watch<State, S extends Selectors<State>, R extends ReactionsWithSelectors<State, S>>(
+  watch<
+    State = any,
+    S extends Selectors<State> = {},
+    R extends ReactionsWithSelectors<State, S> = {},
+  >(
     path: string,
-    adapter: Adapter<State, S, R & BasicAdapterMethods<State>>,
-    //
+    adapter?: Adapter<State, S, R & BasicAdapterMethods<State>>,
   ): SmartStore<State, S & WithGetState<State>> {
-    const adapterSelectors = adapter.selectors || ({} as S);
+    const adapterSelectors = adapter?.selectors || createAdapter<State>()({}).selectors;
     const onlyWhenActiveSelectors = { ...adapterSelectors } as S;
     // Replace with selectors that short-circuit when INACTIVE
     for (const key in onlyWhenActiveSelectors) {

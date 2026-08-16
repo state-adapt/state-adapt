@@ -4,7 +4,7 @@ definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/react/src/l
 
 # Variable: watch()
 
-> `const` **watch**: \<`State`, `S`, `R`\>(`path`, `adapter`) => `SmartStore`\<`State`, `S` & `WithGetState`\<`State`\>\> = `defaultStateAdapt.watch`
+> `const` **watch**: \<`State`, `S`, `R`\>(`path`, `adapter?`) => `SmartStore`\<`State`, `S` & `WithGetState`\<`State`\>\> = `defaultStateAdapt.watch`
 
 Defined in: [react/src/lib/adapt.context.ts:29](https://github.com/state-adapt/state-adapt/blob/main/libs/react/src/lib/adapt.context.ts#L29)
 
@@ -14,7 +14,7 @@ This function is bound to [defaultStateAdapt](defaultStateAdapt.md). For custom 
 export `watch` from the configured instance instead.
 
 `watch` returns a detached store (doesn't chain off of sources). This allows you to watch state without affecting anything.
-It takes 2 arguments: The path of the state you are interested in, and the adapter you want to use.
+It takes the path of the state you are interested in and, optionally, the adapter whose selectors you want to use.
 
 ```tsx
 watch(path, adapter)
@@ -22,7 +22,7 @@ watch(path, adapter)
 
 path — Object path in Redux Devtools
 
-adapter — Object with state change functions and selectors
+adapter — Optional object with state change functions and selectors. When omitted, `watch` uses the base adapter.
 
 ### Usage
 
@@ -40,15 +40,15 @@ watch('data', httpAdapter).loading$.subscribe(console.log);
 
 ### State
 
-`State`
+`State` = `any`
 
 ### S
 
-`S` *extends* `Selectors`\<`State`\>
+`S` *extends* `Selectors`\<`State`\> = \{ \}
 
 ### R
 
-`R` *extends* `ReactionsWithSelectors`\<`State`, `S`\>
+`R` *extends* `ReactionsWithSelectors`\<`State`, `S`\> = \{ \}
 
 ## Parameters
 
@@ -56,7 +56,7 @@ watch('data', httpAdapter).loading$.subscribe(console.log);
 
 `string`
 
-### adapter
+### adapter?
 
 [`Adapter`](../../core/src/Adapter.md)\<`State`, `S`, `R` & `BasicAdapterMethods`\<`State`\>\>
 

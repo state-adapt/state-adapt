@@ -6,7 +6,7 @@ definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/angular/src
 
 > **toSignal**\<`State`\>(`source$`, `__namedParameters`): `Signal`\<`State`\>
 
-Defined in: [angular/src/lib/to-signal.function.ts:53](https://github.com/state-adapt/state-adapt/blob/main/libs/angular/src/lib/to-signal.function.ts#L53)
+Defined in: [libs/angular/src/lib/to-signal.function.ts:53](https://github.com/state-adapt/state-adapt/blob/main/libs/angular/src/lib/to-signal.function.ts#L53)
 
 Converts an observable to a signal without keeping the source observable
 subscribed to when no Angular consumer is reading the signal.

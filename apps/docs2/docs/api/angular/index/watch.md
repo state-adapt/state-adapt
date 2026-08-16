@@ -1,17 +1,18 @@
 ---
-definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/angular/src/lib/watch.function.ts#L34
+definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/angular/src/lib/watch.function.ts#L48
 ---
 
-# Variable: watch
+# Function: watch()
 
-> `const` **watch**: [`StateAdapt`](../../rxjs/index/StateAdapt.md)\[`"watch"`\]
+> **watch**\<`State`, `S`, `R`\>(`path`, `adapter?`): \{ \[P in string \| number \| symbol as \`$\{P extends string ? P\<P\> : never\}$\`\]: Observable\<ReturnType\<(S & WithGetState\<State\>)\[P\]\>\> \} & `object` & `object` & () => `undefined` \| `State` & `object` & \{ \[K in string \| number \| symbol\]: Signal\<undefined \| ReturnType\<S\[K\]\>\> \}
 
-Defined in: [angular/src/lib/watch.function.ts:34](https://github.com/state-adapt/state-adapt/blob/main/libs/angular/src/lib/watch.function.ts#L34)
+Defined in: [libs/angular/src/lib/watch.function.ts:48](https://github.com/state-adapt/state-adapt/blob/main/libs/angular/src/lib/watch.function.ts#L48)
 
-`watch` wraps [StateAdapt.watch](../../rxjs/index/StateAdapt.md#watch) for Angular.
+`watch` wraps [StateAdapt.watch](../../rxjs/index/StateAdapt.md#watch) for Angular and adds signals for the store's selectors.
 
 `watch` returns a detached store (doesn't chain off of sources). This allows you to watch state without affecting anything.
-It takes 2 arguments: The path of the state you are interested in, and the adapter containing the selectors you want to use.
+Its signals are `undefined` until the watched path becomes active, then mirror its latest state without activating its sources.
+It takes the path of the state you are interested in and, optionally, the adapter containing the selectors you want to use.
 
 ```tsx
 watch(path, adapter)
@@ -19,7 +20,7 @@ watch(path, adapter)
 
 path — Object path in Redux Devtools
 
-adapter — Object with state change functions and selectors
+adapter — Optional object with state change functions and selectors. When omitted, `watch` uses the base adapter.
 
 ### Usage
 
@@ -32,3 +33,29 @@ for an HTTP request and you need to know if the request is loading before the us
 ```tsx
 watch('data', httpAdapter).loading$.subscribe(console.log);
 ```
+
+## Type Parameters
+
+### State
+
+`State` = `any`
+
+### S
+
+`S` *extends* `Selectors`\<`State`\> = \{ \}
+
+### R
+
+`R` *extends* `ReactionsWithSelectors`\<`State`, `S`\> = \{ \}
+
+## Parameters
+
+### path
+
+`string`
+
+### adapter?
+
+[`Adapter`](../../core/src/Adapter.md)\<`State`, `S`, `R` & `BasicAdapterMethods`\<`State`\>\>
+
+## Returns
