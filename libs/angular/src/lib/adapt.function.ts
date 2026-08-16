@@ -308,10 +308,12 @@ export const adapt = <
   S extends Selectors<State>,
   R extends ReactionsWithSelectors<State, S>,
   R2 extends ReactionsWithSelectors<State, S>,
-  // ActualSourcesArg extends SourceArg<State, S, R2>,
+  ReturnedSources = unknown,
 >(
   initialState: InitialState<State>,
-  second: (R & { selectors?: S } & NotAdaptOptions) | AdaptOptions<State, S, R2> = {}, // Default object required to make R = {} rather than indexed object
+  second:
+    | (R & { selectors?: S } & NotAdaptOptions)
+    | AdaptOptions<State, S, R2, ReturnedSources> = {},
 ): InitializedSmartStore<State, S, {} extends R ? R2 : R> & StoreSignals<State, S> => {
   const adaptDep = inject(StateAdaptToken);
   const storeObj = adaptDep.adapt(initialState, second);

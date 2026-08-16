@@ -49,9 +49,12 @@ export function adaptInjectable<
   State,
   S extends Selectors<State>,
   R extends ReactionsWithSelectors<State, S>,
+  ReturnedSources = unknown,
 >(
   initialState: InitialState<State>,
-  second: (R & { selectors?: S } & NotAdaptOptions) | AdaptOptions<State, S, R> = {}, // Default object required to make R = {} rather than indexed object
+  second:
+    | (R & { selectors?: S } & NotAdaptOptions)
+    | AdaptOptions<State, S, R, ReturnedSources> = {}, // Default object required to make R = {} rather than indexed object
 ): () => InitializedSmartStore<State, S, R> {
   const path = second?.path || 'adaptInjectable' + getId();
   const token = new InjectionToken(path, {

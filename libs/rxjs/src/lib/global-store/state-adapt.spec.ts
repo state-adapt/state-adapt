@@ -295,14 +295,15 @@ describe('adapt', () => {
           subtract: [of('3').pipe(toSource('fdsa'))],
         },
       });
-      // TODO: Allow mixed array types
-      // const store3d = adapt(5, {
-      //   adapter,
-      //   sources: {
-      //     set: [of(4)],
-      //     add: [of(3), interval3$],
-      //   },
-      // });
+
+      // Allow mixed array types
+      const store3d = adapt(5, {
+        adapter,
+        sources: {
+          set: [of(4)],
+          add: [of(3), interval3$],
+        },
+      });
     });
 
     const store3b = adapt(5, {
@@ -405,30 +406,35 @@ describe('adapt', () => {
     });
 
     // See https://github.com/state-adapt/state-adapt/issues/67
-    // it('should not allow extra source properties in sources', () => {
-    //   const store3c = adapt(5, {
-    //     adapter: {
-    //       double: state => state * 2,
-    //     },
-    //     sources: {
-    //       double: interval7$,
-    //       // @ts-expect-error This reaction doesn't exist
-    //       ancramant: interval3$,
-    //     },
-    //   });
+    it('should not allow extra source properties in sources', () => {
+      const store3c = adapt(5, {
+        adapter: {
+          double: state => state * 2,
+        },
+        sources: {
+          double: interval7$,
+          // @ts-expect-error This reaction doesn't exist
+          ancramant: interval3$,
+        },
+      });
 
-    //   const store = adapt(1, {
-    //     adapter: {
-    //       increment: (state, n: number) => state + n,
-    //     },
-    //     sources: watched => ({
-    //       increment: interval7$,
-    //       // @ts-expect-error This reaction doesn't exist
-    //       ancramant: interval3$,
-    //     }),
-    //   });
-    //   expect(true).toBe(true);
-    // });
+      const store = adapt(1, {
+        adapter: {
+          increment: (state, n: number) => state + n,
+        },
+        // @ts-expect-error This reaction doesn't exist
+        sources: watched => ({
+          increment: interval7$,
+          ancramant: interval3$,
+        }),
+      });
+      // Literal/union state must stay exact; returning 4 is not 1 | 2
+      adapt(1 as 1 | 2, {
+        // @ts-expect-error 4 is not assignable to 1 | 2
+        toggle: state => (state === 1 ? 2 : 4),
+      });
+      expect(true).toBe(true);
+    });
   });
 
   describe('StateAdapt with source', () => {

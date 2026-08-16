@@ -307,9 +307,12 @@ export function useAdapt<
   State,
   S extends Selectors<State>,
   R extends ReactionsWithSelectors<State, S>,
+  ReturnedSources = unknown,
 >(
   initialState: InitialState<State>,
-  second: (R & { selectors?: S } & NotAdaptOptions) | AdaptOptions<State, S, R> = {}, // Default object required to make R = {} rather than indexed object
+  second:
+    | (R & { selectors?: S } & NotAdaptOptions)
+    | AdaptOptions<State, S, R, ReturnedSources> = {},
 ): ProxyStoreTuple<State, InitializedSmartStore<State, S, R>> {
   const stateAdapt = useContext(AdaptContext);
   const [store] = useState(() => stateAdapt.adapt(initialState, second));

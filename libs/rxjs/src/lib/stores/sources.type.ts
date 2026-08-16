@@ -20,4 +20,8 @@ export type Sources<
     | (Observable<Action<ActionPayload<R, K>>> | Observable<ActionPayload<R, K>>)[]
     | Observable<Action<ActionPayload<R, K>>>
     | Observable<ActionPayload<R, K>>;
+} & {
+  // Observables/arrays would otherwise be assignable to an all-optional Sources object.
+  subscribe?: never;
+  length?: never;
 };
