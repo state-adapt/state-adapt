@@ -1,5 +1,6 @@
 ## 4.0.0
 
+- Feature(react): Make useSource return callable
 - Bugfix(rxjs): Prevent extra properties in sources object
 - Bugfix(core): Protect from joinAdapters reading child selector during inactive store
 - Feature(rxjs,angular,react): Accept an initial state factory, re-evaluated on each store activation

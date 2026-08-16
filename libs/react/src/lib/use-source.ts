@@ -1,7 +1,7 @@
-import { Source } from '@state-adapt/rxjs';
+import { source, SourceFn } from '@state-adapt/rxjs';
 import { useState } from 'react';
 
-export function useSource<T>(type: string): Source<T> {
-  const [source$] = useState(() => new Source<T>(type));
-  return source$;
+export function useSource<T>(type: string): SourceFn<T> {
+  const [onSource] = useState(() => source<T>(type));
+  return onSource;
 }
