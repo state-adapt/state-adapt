@@ -1,0 +1,9 @@
+{
+  "schematics": {
+    "update-4": {
+      "version": "4.0.0",
+      "factory": "./migrations/update-4",
+      "description": "Migrate StateAdapt 3.1 applications to StateAdapt 4."
+    }
+  }
+}

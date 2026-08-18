@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "declaration": false,
+    "module": "commonjs",
+    "outDir": "../../dist/libs/angular/schematics",
+    "rootDir": "schematics",
+    "sourceMap": false,
+    "target": "es2018",
+    "types": ["node"]
+  },
+  "include": ["schematics/**/*.ts"],
+  "exclude": ["schematics/**/*.spec.ts"]
+}

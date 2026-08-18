@@ -8,7 +8,16 @@
   "dependencies": {
     "tslib": "^2.3.0"
   },
-  "schematics": "./schematics/collection.json",
+  "ng-update": {
+    "migrations": "./schematics/migration-collection.json",
+    "packageGroup": [
+      "@state-adapt/core",
+      "@state-adapt/rxjs",
+      "@state-adapt/angular",
+      "@state-adapt/angular-router",
+      "@state-adapt/react"
+    ]
+  },
   "nx": {
     "targets": {
       "build": {
