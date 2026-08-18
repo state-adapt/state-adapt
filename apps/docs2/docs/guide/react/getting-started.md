@@ -13,6 +13,7 @@ npm i -s rxjs
 npm i -s @state-adapt/core
 npm i -s @state-adapt/rxjs
 npm i -s @state-adapt/react
+npx skills experimental_sync # Optional (for coding agents)
 ```
 
 Then create stores and use them in components:

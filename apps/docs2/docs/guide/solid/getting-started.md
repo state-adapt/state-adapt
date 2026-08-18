@@ -12,6 +12,7 @@ First, install:
 npm i -s rxjs
 npm i -s @state-adapt/core
 npm i -s @state-adapt/rxjs
+npx skills experimental_sync # Optional (for coding agents)
 ```
 
 Create a file named `state-adapt.ts` and export `watch` and `adapt`:

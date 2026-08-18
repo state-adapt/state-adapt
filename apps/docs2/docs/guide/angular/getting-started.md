@@ -12,6 +12,7 @@ Install these libraries:
 npm i -s @state-adapt/core
 npm i -s @state-adapt/rxjs
 npm i -s @state-adapt/angular
+npx skills experimental_sync # Optional (for coding agents)
 ```
 
 [StackBlitz](https://stackblitz.com/edit/state-adapt-angular?file=src%2Fapp%2Fapp.module.ts)
