@@ -31,7 +31,7 @@
     "copy-files": "run-s copy-readme generate-package-skills copy-changelog",
     "generate-package-skills": "node scripts/generate-package-skills.js",
     "clean-package-skills": "node scripts/clean-package-skills.js",
-    "bump-version:major": "npm version major --force && cd libs/core && npm version major --force && cd ../angular && npm version major --force && cd ../angular-router && npm version major --force && npm version major --force && cd ../rxjs && npm version major --force && cd ../react && npm version major --force",
+    "bump-version:major": "npm version major --force && cd libs/core && npm version major --force && cd ../angular && npm version major --force && cd ../angular-router && npm version major --force && cd ../rxjs && npm version major --force && cd ../react && npm version major --force",
     "bump-version:minor": "npm version minor --force && cd libs/core && npm version minor --force && cd ../angular && npm version minor --force && cd ../angular-router && npm version minor --force && cd ../rxjs && npm version minor --force && cd ../react && npm version minor --force",
     "bump-version:patch": "npm version patch --force && cd libs/core && npm version patch --force && cd ../angular && npm version patch --force && cd ../angular-router && npm version patch --force && cd ../rxjs && npm version patch --force && cd ../react && npm version patch --force",
     "build:lib-pack": "ng build core --prod && ng build angular --prod && ng build angular-router --prod && ng build rxjs --prod && ng build react --prod && npm run copy-files && cd dist/libs/core && npm pack && cd dist/libs/rxjs && npm pack && cd ../angular && npm pack && cd ../angular-router && npm pack && cd ../react && npm pac",
