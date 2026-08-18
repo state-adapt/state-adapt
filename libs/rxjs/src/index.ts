@@ -30,5 +30,3 @@ export * from './lib/global-store/create-initial-state-getter.function';
 export * from './lib/global-store/state-adapt';
 
 export * from './lib/utils/map-each-with-effect.function';
-
-export * from './cheat-sheet.const';
