@@ -19,7 +19,7 @@
       "cache": false,
       "outputs": ["{workspaceRoot}/apps/docs2/.vitepress/dist"],
       "options": {
-        "command": "node scripts/docs/build.js"
+        "command": "npm run typedoc && node scripts/docs/build.js"
       }
     },
     "serve": {

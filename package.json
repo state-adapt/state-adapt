@@ -30,7 +30,7 @@
     "release:publish:local": "node scripts/release/publish.js --registry http://127.0.0.1:4873",
     "release:publish": "node scripts/release/publish.js --registry https://registry.npmjs.org",
     "typedoc": "npx typedoc --options ./typedoc.json && npx tsx apps/docs2/pregenerate-dynamic-paths.ts",
-    "docs2:check": "npm run typedoc && nx build --project docs2",
+    "docs2:check": "nx build --project docs2",
     "docs2:publish:current": "node scripts/docs/publish.js current",
     "docs2:publish:versioned": "node scripts/docs/publish.js versioned"
   },
