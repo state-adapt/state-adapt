@@ -1,4 +1,4 @@
-import { catchErrorSource } from '@state-adapt/rxjs';
+import { catchErrorSource } from './catch-error-source.operator';
 import { TestScheduler } from 'rxjs/testing';
 import { getAction } from '@state-adapt/core';
 import { map, switchMap } from 'rxjs/operators';

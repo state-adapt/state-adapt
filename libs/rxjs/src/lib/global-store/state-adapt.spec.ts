@@ -6,7 +6,7 @@ import {
   joinAdapters,
   stateSanitizer,
 } from '@state-adapt/core';
-import { toSource } from '@state-adapt/rxjs';
+import { toSource } from '../sources/to-source.operator';
 import { NEVER, interval, of } from 'rxjs';
 import { configureStateAdapt } from './configure-state-adapt.function';
 import { switchMap, take } from 'rxjs/operators';
