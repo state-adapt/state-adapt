@@ -188,11 +188,20 @@ function getGuideSidebar(): DefaultTheme.SidebarItem[] {
       text: 'Getting Started',
       link: `/guide/getting-started/`,
     },
-    ...getFrameworkSidebar('angular', []),
+    ...getFrameworkSidebar('angular', [
+      {
+        text: 'StackBlitz Examples',
+        link: 'stackblitz-examples',
+      },
+    ]),
     ...getFrameworkSidebar('react', [
       {
         text: 'Counter',
         link: 'counter',
+      },
+      {
+        text: 'StackBlitz Examples',
+        link: 'stackblitz-examples',
       },
     ]),
     ...getFrameworkSidebar('solid', []),
