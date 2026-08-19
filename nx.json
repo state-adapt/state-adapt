@@ -88,5 +88,5 @@
     ]
   },
   "parallel": 1,
-  "defaultBase": "master"
+  "defaultBase": "main"
 }

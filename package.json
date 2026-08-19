@@ -4,6 +4,7 @@
   "scripts": {
     "ng": "nx",
     "postinstall": "node ./decorate-angular-cli.js",
+    "prepare": "husky",
     "nx": "nx",
     "start": "npm run typedoc && nx dev docs2",
     "demo:counter": "nx serve ng-sa-counter",
@@ -118,6 +119,7 @@
     "eslint-plugin-react": "7.31.11",
     "eslint-plugin-react-hooks": "4.6.0",
     "fs-extra": "^11.1.1",
+    "husky": "^9.1.7",
     "jest": "29.7.0",
     "jest-environment-jsdom": "29.7.0",
     "jest-preset-angular": "14.1.1",
