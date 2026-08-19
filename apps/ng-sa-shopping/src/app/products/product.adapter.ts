@@ -1,5 +1,5 @@
 import { createAdapter } from '@state-adapt/core';
-import { Product, QuantityChange } from '../../../../../libs/shopping/src';
+import { Product, QuantityChange } from '@state-adapt/shopping';
 
 export const productAdapter = createAdapter<Product[]>()({
   changeQuantity: (state, { name, quantity }: QuantityChange) =>

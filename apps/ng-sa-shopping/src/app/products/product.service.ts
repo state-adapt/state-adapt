@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { joinStores, Source } from '@state-adapt/rxjs';
 import { adaptInjectable } from '@state-adapt/angular';
-import { Product, products, QuantityChange } from '../../../../../libs/shopping/src';
+import { Product, products, QuantityChange } from '@state-adapt/shopping';
 import { injectFilterStore } from '../filters/filter.service';
 import { getFilteredProducts } from './filter-product.selectors';
 import { productAdapter } from './product.adapter';

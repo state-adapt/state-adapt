@@ -2,7 +2,7 @@ import {
   filterFunctions,
   Filters,
   Product,
-} from '../../../../../libs/shopping/src';
+} from '@state-adapt/shopping';
 
 export function getFilteredProducts(filters: Filters, products: Product[]) {
   const activeFilters = Object.entries(filters).filter(([key, val]) => val) as [
