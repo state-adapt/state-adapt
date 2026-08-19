@@ -75,6 +75,7 @@ export interface NewBlockAdder<
 
   <NewBlock extends Selectors<SelectorReturnTypes<State, S>>>(
     newBlock: NewBlock,
+    // eslint-disable-next-line @typescript-eslint/ban-types -- Intersection intentionally flattens the public return type.
   ): {} & ReturnType<
     AddNewBlock<
       State,

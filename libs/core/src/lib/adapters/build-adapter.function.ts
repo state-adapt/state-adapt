@@ -126,9 +126,12 @@ export type SelectorsWithNewBlock<
   State,
   S extends Selectors<State>,
   NewBlock extends Selectors<SelectorReturnTypes<State, S>>,
+  // eslint-disable-next-line @typescript-eslint/ban-types -- Intersection intentionally flattens the public type.
 > = {} & ReturnTypeSelectors<
   State,
+  // eslint-disable-next-line @typescript-eslint/ban-types -- Intersection intentionally flattens this intermediate type.
   {} & SelectorReturnTypes<State, S>,
+  // eslint-disable-next-line @typescript-eslint/ban-types -- Intersection intentionally flattens this intermediate type.
   {} & S & NewBlock
 >;
 
@@ -196,6 +199,7 @@ export interface NewBlockAdder<
     },
   >(
     newBlock: NewBlock,
+    // eslint-disable-next-line @typescript-eslint/ban-types -- Intersection intentionally flattens the public return type.
   ): {} & ReturnType<
     AddNewBlock<State, S, R & NestedReactions<State, NewBlock>, Prev[D]>
   >;

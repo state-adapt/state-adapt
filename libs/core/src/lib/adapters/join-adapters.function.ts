@@ -230,7 +230,7 @@ export function joinAdapters<
       ? S extends Selectors<ParentState>
         ? WithStateSelector<ParentState, S>
         : WithStateSelector<ParentState, Record<string, (state: ParentState) => any>>
-      : {},
+      : {}, // eslint-disable-line @typescript-eslint/ban-types -- Intentional empty selector sentinel.
     ReactionsWithoutSelectors<
       ParentState,
       FlattendAdapters<AE, ParentState> &

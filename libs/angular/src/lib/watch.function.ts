@@ -47,7 +47,9 @@ export type WatchStoreSignals<State, S extends Selectors<State>> = Signal<
   */
 export function watch<
   State = any,
+  // eslint-disable-next-line @typescript-eslint/ban-types -- Intentional empty generic default.
   S extends Selectors<State> = {},
+  // eslint-disable-next-line @typescript-eslint/ban-types -- Intentional empty generic default.
   R extends ReactionsWithSelectors<State, S> = {},
 >(
   path: string,

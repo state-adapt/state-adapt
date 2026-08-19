@@ -34,7 +34,7 @@ export interface GlobalStoreMethods {
 export type InitialState<State> = State | (() => State);
 
 export type DefaultReactions<State> = BasicAdapterMethods<State> &
-  (State extends object ? WithUpdateReaction<State> : {}) &
+  (State extends object ? WithUpdateReaction<State> : unknown) &
   WithNoopReaction<State>;
 
 type SourceObject<
@@ -76,20 +76,28 @@ export type SourceArg<
 
 export type InitializedReactions<
   State,
+  // eslint-disable-next-line @typescript-eslint/ban-types -- Intentional empty generic default.
   S extends Selectors<State> = {},
+  // eslint-disable-next-line @typescript-eslint/ban-types -- Intentional empty generic default.
   R extends ReactionsWithSelectors<State, S> = {},
+  // eslint-disable-next-line @typescript-eslint/ban-types -- Literal `{}` preserves deferred inference and the empty branch.
 > = ({} extends R ? {} : R) & DefaultReactions<State>;
 
 export type InitializedSmartStore<
   State,
+  // eslint-disable-next-line @typescript-eslint/ban-types -- Intentional empty generic default.
   S extends Selectors<State> = {},
+  // eslint-disable-next-line @typescript-eslint/ban-types -- Intentional empty generic default.
   R extends ReactionsWithSelectors<State, S> = {},
+  // eslint-disable-next-line @typescript-eslint/ban-types -- Literal `{}` preserves deferred inference and the empty branch.
 > = SmartStore<State, ({} extends S ? {} : S) & WithGetState<State>> &
   SyntheticSources<InitializedReactions<State, S, R>>;
 
 export interface AdaptOptions<
   State,
+  // eslint-disable-next-line @typescript-eslint/ban-types -- Intentional empty generic default.
   S extends Selectors<State> = {},
+  // eslint-disable-next-line @typescript-eslint/ban-types -- Intentional empty generic default.
   R extends ReactionsWithSelectors<State, S> = {},
   ReturnedSources = unknown,
 > {
@@ -100,7 +108,9 @@ export interface AdaptOptions<
 
 export function isAdaptOptions<
   State,
+  // eslint-disable-next-line @typescript-eslint/ban-types -- Intentional empty generic default.
   S extends Selectors<State> = {},
+  // eslint-disable-next-line @typescript-eslint/ban-types -- Intentional empty generic default.
   R extends ReactionsWithSelectors<State, S> = {},
 >(
   options: AdaptOptions<State, S, R> | undefined | R,

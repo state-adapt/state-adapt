@@ -343,6 +343,7 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
     second:
       | (R & { selectors?: S } & NotAdaptOptions)
       | AdaptOptions<State, S, R2, ReturnedSources> = {},
+    // eslint-disable-next-line @typescript-eslint/ban-types -- Literal `{}` preserves deferred generic inference.
   ): InitializedSmartStore<State, S, {} extends R ? R2 : R> {
     let sources: any;
 
@@ -471,7 +472,9 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
    */
   watch<
     State = any,
+    // eslint-disable-next-line @typescript-eslint/ban-types -- Intentional empty generic default.
     S extends Selectors<State> = {},
+    // eslint-disable-next-line @typescript-eslint/ban-types -- Intentional empty generic default.
     R extends ReactionsWithSelectors<State, S> = {},
   >(
     path: string,

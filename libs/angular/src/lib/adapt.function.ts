@@ -314,6 +314,7 @@ export const adapt = <
   second:
     | (R & { selectors?: S } & NotAdaptOptions)
     | AdaptOptions<State, S, R2, ReturnedSources> = {},
+  // eslint-disable-next-line @typescript-eslint/ban-types -- Literal `{}` preserves deferred generic inference.
 ): InitializedSmartStore<State, S, {} extends R ? R2 : R> & StoreSignals<State, S> => {
   const adaptDep = inject(StateAdaptToken);
   const storeObj = adaptDep.adapt(initialState, second);

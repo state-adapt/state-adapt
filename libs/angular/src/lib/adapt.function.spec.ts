@@ -147,6 +147,16 @@ export const applesAdapter = joinAdapters<AppleStateModel>()({
   allApplesProcessed9: state => state.allApplesProcessed,
 })({
   allApplesProcessed10: state => state.allApplesProcessed,
+})({
+  allApplesProcessed11: state => state.allApplesProcessed10,
+})({
+  allApplesProcessed12: state => state.allApplesProcessed11,
+})({
+  allApplesProcessed13: state => state.allApplesProcessed12,
+})({
+  allApplesProcessed14: state => state.allApplesProcessed13,
+})({
+  allApplesProcessed15: state => state.allApplesProcessed14,
 })();
 
 // Combined Store
@@ -182,11 +192,21 @@ export class SmoothieStore {
     allProductionProcessesDefined9: state => state.allProductionProcessesDefined8,
   })({
     allProductionProcessesDefined10: state => state.allProductionProcessesDefined9,
+  })({
+    allProductionProcessesDefined11: state => state.allProductionProcessesDefined10,
+  })({
+    allProductionProcessesDefined12: state => state.allProductionProcessesDefined11,
+  })({
+    allProductionProcessesDefined13: state => state.allProductionProcessesDefined12,
+  })({
+    allProductionProcessesDefined14: state => state.allProductionProcessesDefined13,
+  })({
+    allProductionProcessesDefined15: state => state.allProductionProcessesDefined14,
   })();
 
-  b = this.store.allProductionProcessesDefined10$;
+  b = this.store.allProductionProcessesDefined15$;
   // @ts-expect-error, should be Observable<boolean>
-  a: Observable<number> = this.store.allProductionProcessesDefined10$;
+  a: Observable<number> = this.store.allProductionProcessesDefined15$;
 }
 
 describe('adapt Angular wrapper function', () => {

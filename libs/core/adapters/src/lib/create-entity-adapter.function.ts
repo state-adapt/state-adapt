@@ -70,6 +70,7 @@ type EntityStateReactions<
   State extends EntityState<Entity, Id>,
   R extends ReactionsWithSelectors<Entity, any>,
   Filters extends string[],
+  // eslint-disable-next-line @typescript-eslint/ban-types -- Intersection intentionally flattens the public type.
 > = {} & {
   addOne: (state: State, payload: Entity) => State;
   addMany: (state: State, payload: Entity[]) => State;
@@ -135,6 +136,7 @@ type EntityStateSelectors<
   State extends EntityState<Entity, Id>,
   Filters extends string[],
   Sorters extends string[],
+  // eslint-disable-next-line @typescript-eslint/ban-types -- Intersection intentionally flattens the public type.
 > = {} & {
   all: (state: State) => Entity[];
   count: (state: State) => number;

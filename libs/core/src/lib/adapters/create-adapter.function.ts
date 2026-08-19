@@ -79,6 +79,7 @@ type InitializedAdapter<
   State,
   S extends Selectors<State>,
   R extends ReactionsWithSelectors<State, S>,
+  // eslint-disable-next-line @typescript-eslint/ban-types -- Literal `{}` preserves deferred generic inference.
 > = ({} extends S
   ? R & { selectors: WithGetState<State> }
   : R & { selectors: S & WithGetState<State> }) &
