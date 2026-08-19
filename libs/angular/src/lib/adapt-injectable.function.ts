@@ -5,7 +5,6 @@ import {
   InitialState,
   InitializedSmartStore,
   NotAdaptOptions,
-  SourceArg,
 } from '@state-adapt/rxjs';
 import { adapt } from './adapt.function';
 import { StateAdaptToken } from './state-adapt-token.const';

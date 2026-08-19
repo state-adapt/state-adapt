@@ -1,7 +1,12 @@
 {
   "root": true,
   "ignorePatterns": ["**/*"],
-  "plugins": ["@nx"],
+  "plugins": ["@nx", "jsdoc"],
+  "settings": {
+    "jsdoc": {
+      "mode": "typescript"
+    }
+  },
   "overrides": [
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
@@ -30,7 +35,13 @@
         "@typescript-eslint/no-explicit-any": "off",
         "@typescript-eslint/member-ordering": "off",
         "@typescript-eslint/no-extra-semi": "error",
-        "no-extra-semi": "off"
+        "no-extra-semi": "off",
+        "jsdoc/no-undefined-types": [
+          "error",
+          {
+            "disableReporting": true
+          }
+        ]
       }
     },
     {
