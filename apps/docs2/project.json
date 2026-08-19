@@ -7,21 +7,26 @@
       "executor": "nx:run-commands",
       "cache": false,
       "options": {
-        "command": "vitepress dev apps/docs2"
+        "commands": [
+          "fswatch -o ./libs | xargs -n1 npm run typedoc",
+          "vitepress dev apps/docs2"
+        ],
+        "parallel": true
       }
     },
     "build": {
       "executor": "nx:run-commands",
-      "outputs": ["{options.outputPath}"],
+      "cache": false,
+      "outputs": ["{workspaceRoot}/apps/docs2/.vitepress/dist"],
       "options": {
-        "command": "vitepress build apps/docs2 && vitepress build apps/docs2 --base /v/4/ --outDir apps/docs2/.vitepress/dist/v/3"
+        "command": "node scripts/docs/build.js"
       }
     },
     "serve": {
       "executor": "nx:run-commands",
       "cache": false,
       "options": {
-        "command": "vitepress serve apps/docs2"
+        "command": "vitepress preview apps/docs2"
       }
     }
   },

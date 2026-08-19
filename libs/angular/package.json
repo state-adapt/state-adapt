@@ -1,6 +1,24 @@
 {
   "name": "@state-adapt/angular",
+  "description": "Angular integration for StateAdapt state management.",
   "version": "3.1.0",
+  "private": false,
+  "homepage": "https://github.com/state-adapt/state-adapt",
+  "author": "Mike Pearson",
+  "license": "MIT",
+  "keywords": [
+    "angular",
+    "rxjs",
+    "state management",
+    "state adapters"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/state-adapt/state-adapt"
+  },
+  "bugs": {
+    "url": "https://github.com/state-adapt/state-adapt/issues"
+  },
   "peerDependencies": {
     "@angular/core": ">=19.0.0",
     "@state-adapt/rxjs": "3.1.0"

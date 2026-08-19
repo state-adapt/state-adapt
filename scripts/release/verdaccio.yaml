@@ -1,0 +1,26 @@
+storage: ../../.local-registry/storage
+
+auth:
+  htpasswd:
+    file: ../../.local-registry/htpasswd
+    max_users: 10
+
+uplinks:
+  npmjs:
+    url: https://registry.npmjs.org/
+
+packages:
+  '@state-adapt/*':
+    access: $all
+    publish: $all
+    unpublish: $all
+
+  '**':
+    access: $all
+    publish: $authenticated
+    proxy: npmjs
+
+log:
+  type: stdout
+  format: pretty
+  level: http

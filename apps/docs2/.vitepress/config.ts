@@ -2,14 +2,13 @@ import { DefaultTheme, defineConfig } from 'vitepress';
 
 import saDark from './theme/code-snippets/sa-dark.json';
 import saLight from './theme/code-snippets/sa-light.json';
-import { version } from '../../../package.json';
+import { version } from '../../../libs/core/package.json';
 import typedocSidebar from '../docs/api/typedoc/typedoc-sidebar.json';
 import corePaths from '../docs/api/core/src/symbol.paths';
 import rxjsPaths from '../docs/api/rxjs/index/symbol.paths';
 import angularPaths from '../docs/api/angular/index/symbol.paths';
 import reactPaths from '../docs/api/react/index/symbol.paths';
 import { Section } from 'section-paths';
-import { resolve } from 'path';
 import { mdCodeDirectiveOffsetPlugin } from '../md-code-directive-offset.plugin';
 import { mdAngularTemplatesPlugin } from '../md-angular-templates.plugin';
 
@@ -104,31 +103,8 @@ export default defineConfig({
             ],
           },
           {
-            items: [
-              // Next:
-              // {
-              //   text: 'v4.1.4',
-              //   link: 'https://state-adapt.github.io/v/4/',
-              // },
-              // Can make the link whatever. Just has to match the Nx command base.
-              // {
-              //   text: 'v3.2.0',
-              //   link: 'https://state-adapt.github.io/v/3-2-0/',
-              // },
-              //
-              {
-                text: 'v3.0.0',
-                link: 'https://state-adapt.github.io/versions/3-0-0/',
-              },
-              {
-                text: 'v2.0.8',
-                link: 'https://state-adapt.github.io/versions/2-0-8/',
-              },
-              {
-                text: 'v1.2.1',
-                link: 'https://state-adapt.github.io/versions/1-2-1/',
-              },
-            ],
+            component: 'VersionLinks',
+            props: { currentMajor: version.split('.')[0] },
           },
         ],
       },
