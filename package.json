@@ -3,7 +3,6 @@
   "license": "MIT",
   "scripts": {
     "ng": "nx",
-    "postinstall": "node ./decorate-angular-cli.js",
     "prepare": "husky",
     "nx": "nx",
     "start": "npm run typedoc && nx dev docs2",
