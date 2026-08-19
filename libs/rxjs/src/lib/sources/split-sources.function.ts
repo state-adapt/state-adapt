@@ -1,7 +1,6 @@
-import { interval, Observable } from 'rxjs';
-import { filter, map, share } from 'rxjs/operators';
-import { Action, getAction } from '@state-adapt/core';
-import { Source } from './source';
+import { Observable } from 'rxjs';
+import { filter, share } from 'rxjs/operators';
+import { Action } from '@state-adapt/core';
 
 /**
   `splitSources` is a function that takes in an [Observable](https://rxjs.dev/guide/observable) that emits multiple types of {@link Action} objects and splits it into a source for each {@link Action} type.

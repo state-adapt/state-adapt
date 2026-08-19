@@ -2,7 +2,7 @@
 
 import { Card } from '../card/card.interface';
 
-interface Dashboard {
+export interface Dashboard {
   id: string;
   title: string;
   lastModified: string; // '2021-02-25T17:02:06.351Z',

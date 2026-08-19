@@ -4,7 +4,7 @@ type UppercaseLetter = 'A'|'B'|'C'|'D'|'E'|'F'|'G'|'H'|'I'|'J'|'K'|'L'|'M'|'N'|'
 export type PrefixedAfterVerb<
   K extends string,
   Prefix extends string,
-> = K extends `${infer Head}${UppercaseLetter}${infer Tail}`
+> = K extends `${infer Head}${UppercaseLetter}${string}`
   ? Head extends Lowercase<Head>
     ? K extends `${Head}${infer ActualTail}`
       ? `${Head}${Capitalize<Prefix>}${ActualTail}`

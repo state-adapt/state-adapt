@@ -2,20 +2,15 @@ import { useContext, useMemo, useState } from 'react';
 import { AdaptContext } from './adapt.context';
 import { useStore } from './use-store';
 import {
-  Sources,
-  Source,
   StateAdapt,
   InitializedSmartStore,
-  SourceArg,
   AdaptOptions,
   NotAdaptOptions,
   InitialState,
 } from '@state-adapt/rxjs';
 import {
-  Action,
   ReactionsWithSelectors,
   Selectors,
-  createAdapter,
   getId,
 } from '@state-adapt/core';
 import { ProxyStoreTuple } from './proxy-store-tuple.type';

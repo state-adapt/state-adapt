@@ -1,14 +1,6 @@
-import { useContext, useEffect, useMemo, useState } from 'react';
-import {
-  InitializedSmartStore,
-  SmartStore,
-  StateAdapt,
-  StoreLike,
-} from '@state-adapt/rxjs';
-import { StoreStates, ProxyStoreTuple } from './proxy-store-tuple.type';
-import { Subscription } from 'rxjs';
-import { AdaptContext } from './adapt.context';
-import { ReactionsWithSelectors, Selectors } from '@state-adapt/core';
+import { useMemo } from 'react';
+import { StateAdapt, StoreLike } from '@state-adapt/rxjs';
+import { ProxyStoreTuple } from './proxy-store-tuple.type';
 import { useProxyStates } from './use-proxy-states';
 
 /**

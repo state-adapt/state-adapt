@@ -1,4 +1,4 @@
-import { concat, Observable, of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Action, getAction } from '@state-adapt/core';
 

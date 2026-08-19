@@ -5,7 +5,7 @@ import {
 } from '@state-adapt/shopping';
 
 export function getFilteredProducts(filters: Filters, products: Product[]) {
-  const activeFilters = Object.entries(filters).filter(([key, val]) => val) as [
+  const activeFilters = Object.entries(filters).filter(([, val]) => val) as [
     keyof Filters,
     boolean,
   ][];

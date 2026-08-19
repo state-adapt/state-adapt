@@ -1,5 +1,4 @@
 import { Action } from '@state-adapt/core';
-import { toRequestSource } from './to-request-source.operator';
 import { splitSources } from './split-sources.function';
 import { Observable } from 'rxjs';
 

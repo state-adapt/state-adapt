@@ -1,5 +1,5 @@
 import { BehaviorSubject } from 'rxjs';
-import { distinctUntilChanged, filter, map } from 'rxjs/operators';
+import { distinctUntilChanged, map } from 'rxjs/operators';
 
 export interface GlobalStore<State, AnyAction> {
   subscribe: (observer: any) => void;

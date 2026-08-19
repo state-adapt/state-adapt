@@ -1,5 +1,4 @@
 import {
-  Action,
   createNoopReaction,
   createUpdateReaction,
   getId,
@@ -562,7 +561,7 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
     );
 
     const allUpdatesFromSources$ = allSourcesWithReactions.map(
-      ({ source$, reaction }, i) => {
+      ({ source$, reaction }) => {
         // (parameter) source$: Observable<Action<SecondParameterOrAny<Parameters<R[string]>>, string>>
         const s$ = source$ as Observable<any>;
         // Source-grouped updates:

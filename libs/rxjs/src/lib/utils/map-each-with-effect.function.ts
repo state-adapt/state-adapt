@@ -13,7 +13,7 @@ export function mapEachWithEffect<T, U>(
     map(([prev, next]) => {
       prev.forEach(value => {
         if (!next.includes(value)) {
-          const [_, destroy] = cache.get(value)!;
+          const [, destroy] = cache.get(value)!;
           destroy?.();
           cache.delete(value);
         }

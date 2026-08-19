@@ -3,7 +3,6 @@ import { merge, using } from 'rxjs';
 import {
   combineSelectors,
   createSelectorsCache,
-  Flat,
   memoizeWithProxy,
   Selectors,
   SelectorsCache,

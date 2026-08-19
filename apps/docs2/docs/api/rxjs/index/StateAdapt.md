@@ -1,10 +1,10 @@
 ---
-definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/rxjs/src/lib/global-store/state-adapt.ts#L89
+definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/rxjs/src/lib/global-store/state-adapt.ts#L88
 ---
 
 # Class: StateAdapt\<CommonStore\>
 
-Defined in: [libs/rxjs/src/lib/global-store/state-adapt.ts:89](https://github.com/state-adapt/state-adapt/blob/main/libs/rxjs/src/lib/global-store/state-adapt.ts#L89)
+Defined in: [libs/rxjs/src/lib/global-store/state-adapt.ts:88](https://github.com/state-adapt/state-adapt/blob/main/libs/rxjs/src/lib/global-store/state-adapt.ts#L88)
 
 ## Type Parameters
 
@@ -18,7 +18,7 @@ Defined in: [libs/rxjs/src/lib/global-store/state-adapt.ts:89](https://github.co
 
 > **adapt**\<`State`, `S`, `R`, `R2`, `ReturnedSources`\>(`initialState`, `second`): `InitializedSmartStore`\<`State`, `S`, `object` *extends* `R` ? `R2` : `R`\>
 
-Defined in: [libs/rxjs/src/lib/global-store/state-adapt.ts:335](https://github.com/state-adapt/state-adapt/blob/main/libs/rxjs/src/lib/global-store/state-adapt.ts#L335)
+Defined in: [libs/rxjs/src/lib/global-store/state-adapt.ts:334](https://github.com/state-adapt/state-adapt/blob/main/libs/rxjs/src/lib/global-store/state-adapt.ts#L334)
 
 `adapt` creates a store that will manage state while it has subscribers.
 

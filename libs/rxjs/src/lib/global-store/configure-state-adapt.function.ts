@@ -17,9 +17,9 @@ function isStoreOptions(options: ConfigureStateAdaptOptions): options is { store
 /**
  * @internal
  */
-export interface ConfiguredStateAdapt<
+export type ConfiguredStateAdapt<
   Store extends GlobalStore<any, any> = GlobalStore<any, any>,
-> extends Pick<StateAdapt<any>, 'adapt' | 'watch'> {}
+> = Pick<StateAdapt<any>, 'adapt' | 'watch'> & Pick<Store, never>;
 
 /**
   `configureStateAdapt` takes in a {@link ConfigureStateAdaptOptions} object and returns a new instance of {@link StateAdapt}.

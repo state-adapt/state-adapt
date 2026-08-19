@@ -1,12 +1,12 @@
 ---
-definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/react/src/lib/use-adapt.ts#L306
+definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/react/src/lib/use-adapt.ts#L301
 ---
 
 # Function: useAdapt()
 
 > **useAdapt**\<`State`, `S`, `R`, `ReturnedSources`\>(`initialState`, `second`): `ProxyStoreTuple`\<`State`, `InitializedSmartStore`\<`State`, `S`, `R`\>\>
 
-Defined in: [react/src/lib/use-adapt.ts:306](https://github.com/state-adapt/state-adapt/blob/main/libs/react/src/lib/use-adapt.ts#L306)
+Defined in: [react/src/lib/use-adapt.ts:301](https://github.com/state-adapt/state-adapt/blob/main/libs/react/src/lib/use-adapt.ts#L301)
 
 `useAdapt` is a hook that wraps [StateAdapt.adapt](../../rxjs/index/StateAdapt.md#adapt) and [useStore](useStore.md). It creates a store, immediately subscribes to it,
 and returns a tuple `[selectorResults, setState]` where `selectorResults` is a proxy object containing results from the store's selectors,

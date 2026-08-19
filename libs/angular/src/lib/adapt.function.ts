@@ -6,13 +6,9 @@ import {
   NotAdaptOptions,
   StateAdapt,
 } from '@state-adapt/rxjs';
-// Import all the {@links to other functions and services
-import { watch } from './watch.function';
 import {
-  Action,
   Adapter,
   getId,
-  createAdapter,
   Selectors,
   ReactionsWithSelectors,
 } from '@state-adapt/core';

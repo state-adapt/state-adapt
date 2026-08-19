@@ -1,12 +1,12 @@
 ---
-definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/core/src/lib/adapters/build-adapter.function.ts#L112
+definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/core/src/lib/adapters/build-adapter.function.ts#L111
 ---
 
 # Function: buildAdapter()
 
 > **buildAdapter**\<`State`\>(): \<`S`, `R`\>(`reactionsWithSelectors`) => `NewBlockAdder`\<`State`, `WithStateSelector`\<`State`, `S`\>, `ReactionsWithoutSelectors`\<`State`, `R` & `BasicAdapterMethods`\<`State`\>\>\>
 
-Defined in: [src/lib/adapters/build-adapter.function.ts:112](https://github.com/state-adapt/state-adapt/blob/main/libs/core/src/lib/adapters/build-adapter.function.ts#L112)
+Defined in: [src/lib/adapters/build-adapter.function.ts:111](https://github.com/state-adapt/state-adapt/blob/main/libs/core/src/lib/adapters/build-adapter.function.ts#L111)
 
 `buildAdapter` is called with an initial adapter, then can be called again and again with more objects inheriting from previous objects,
 until a final empty call `()` to get the final built adapter:

@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { CounterUiModule } from '@state-adapt/counter-ui';
 import { AppComponent } from './app.component';
-import { defaultStoreProvider, provideStore } from '@state-adapt/angular';
+import { provideStore } from '@state-adapt/angular';
 import { actionSanitizer, stateSanitizer } from '@state-adapt/core';
 import { SaCountDirective } from './count.directive';
 
