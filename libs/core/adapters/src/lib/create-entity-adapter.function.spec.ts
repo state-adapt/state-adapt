@@ -153,7 +153,7 @@ describe('createEntityAdapter', () => {
       allAreMarried.concat('');
       // @ts-expect-error marriedByName should be Person[]
       marriedByName.concat('');
-      // @ts-expect-error
+      // @ts-expect-error allByName should be Person[]
       allByName.concat('');
     };
   });
@@ -197,11 +197,11 @@ describe('createEntityAdapter', () => {
     };
     const addOne = personEntityAdapter.addOne(state, newEntity);
     const addOneCheckTypes = () => {
-      // @ts-expect-error
+      // @ts-expect-error Result is entity state, not an array
       addOne.concat('');
-      // @ts-expect-error
+      // @ts-expect-error setAll requires state and entities
       personEntityAdapter.setAll();
-      // @ts-expect-error
+      // @ts-expect-error setAll requires Person[] entities
       personEntityAdapter.setAll(state, 5);
     };
 
@@ -236,11 +236,11 @@ describe('createEntityAdapter', () => {
       },
     });
     const addManyCheckTypes = () => {
-      // @ts-expect-error
+      // @ts-expect-error Result is entity state, not an array
       addMany.concat('');
-      // @ts-expect-error
+      // @ts-expect-error addMany requires state and entities
       personEntityAdapter.addMany();
-      // @ts-expect-error
+      // @ts-expect-error addMany requires Person[] entities
       personEntityAdapter.addMany(state, [5]);
     };
   });
@@ -256,11 +256,11 @@ describe('createEntityAdapter', () => {
     };
     const setOne = personEntityAdapter.setOne(state, newOne);
     const setOneCheckTypes = () => {
-      // @ts-expect-error
+      // @ts-expect-error Result is entity state, not an array
       setOne.concat('');
-      // @ts-expect-error
+      // @ts-expect-error setOne requires state and an entity
       personEntityAdapter.setOne();
-      // @ts-expect-error
+      // @ts-expect-error setOne requires a Person entity
       personEntityAdapter.setOne(state, 5);
     };
 
@@ -276,11 +276,11 @@ describe('createEntityAdapter', () => {
     ];
     const setMany = personEntityAdapter.setMany(setOne, newMany);
     const setManyCheckTypes = () => {
-      // @ts-expect-error
+      // @ts-expect-error Result is entity state, not an array
       setMany.concat('');
-      // @ts-expect-error
+      // @ts-expect-error setMany requires state and entities
       personEntityAdapter.setMany();
-      // @ts-expect-error
+      // @ts-expect-error setMany requires Person[] entities
       personEntityAdapter.setMany(state, [5]);
     };
 
@@ -301,31 +301,31 @@ describe('createEntityAdapter', () => {
 
     const removeOne = personEntityAdapter.removeOne(state, '1');
     const removeOneCheckTypes = () => {
-      // @ts-expect-error
+      // @ts-expect-error Result is entity state, not an array
       removeOne.concat('');
-      // @ts-expect-error
+      // @ts-expect-error removeOne requires state and an ID
       personEntityAdapter.removeOne();
-      // @ts-expect-error
+      // @ts-expect-error Entity IDs are strings
       personEntityAdapter.removeOne(state, 5);
     };
 
     const removeMany = personEntityAdapter.removeMany(removeOne, ['2']);
     const removeManyCheckTypes = () => {
-      // @ts-expect-error
+      // @ts-expect-error Result is entity state, not an array
       removeMany.concat('');
-      // @ts-expect-error
+      // @ts-expect-error removeMany requires state and IDs
       personEntityAdapter.removeMany();
-      // @ts-expect-error
+      // @ts-expect-error Entity IDs are strings
       personEntityAdapter.removeMany(state, [5]);
     };
 
     const removeAll = personEntityAdapter.removeAll(removeMany);
     const removeAllCheckTypes = () => {
-      // @ts-expect-error
+      // @ts-expect-error Result is entity state, not an array
       removeAll.concat('');
-      // @ts-expect-error
+      // @ts-expect-error removeAll requires state
       personEntityAdapter.removeAll();
-      // @ts-expect-error
+      // @ts-expect-error removeAll accepts no payload
       personEntityAdapter.removeAll(state, [5]);
     };
 
@@ -364,21 +364,21 @@ describe('createEntityAdapter', () => {
 
     const upsertOne = personEntityAdapter.upsertOne(state, newEntities[0]);
     const upsertOneCheckTypes = () => {
-      // @ts-expect-error
+      // @ts-expect-error Result is entity state, not an array
       upsertOne.concat('');
-      // @ts-expect-error
+      // @ts-expect-error upsertOne requires state and an entity
       personEntityAdapter.upsertOne();
-      // @ts-expect-error
+      // @ts-expect-error upsertOne requires a Person entity
       personEntityAdapter.upsertOne(state, 5);
     };
 
     const upsertOneMore = personEntityAdapter.upsertOne(upsertOne, updatedEntities[0]);
     const upsertOneMoreCheckTypes = () => {
-      // @ts-expect-error
+      // @ts-expect-error Result is entity state, not an array
       upsertOneMore.concat('');
-      // @ts-expect-error
+      // @ts-expect-error upsertOne requires state and an entity
       personEntityAdapter.upsertOne();
-      // @ts-expect-error
+      // @ts-expect-error upsertOne requires a Person entity
       personEntityAdapter.upsertOne(state, 5);
     };
 
@@ -387,11 +387,11 @@ describe('createEntityAdapter', () => {
       updatedEntities[1],
     ]);
     const upsertManyCheckTypes = () => {
-      // @ts-expect-error
+      // @ts-expect-error Result is entity state, not an array
       upsertMany.concat('');
-      // @ts-expect-error
+      // @ts-expect-error upsertMany requires state and entities
       personEntityAdapter.upsertMany();
-      // @ts-expect-error
+      // @ts-expect-error upsertMany requires Person[] entities
       personEntityAdapter.upsertMany(state, [5]);
     };
 
@@ -419,11 +419,11 @@ describe('createEntityAdapter', () => {
       state,
     );
     const updateOneCheckTypes = () => {
-      // @ts-expect-error
+      // @ts-expect-error Result is entity state, not an array
       updateOne.concat('');
-      // @ts-expect-error
+      // @ts-expect-error updateOne requires state and an update
       personEntityAdapter.updateOne();
-      // @ts-expect-error
+      // @ts-expect-error updateOne requires an ID-update tuple
       personEntityAdapter.updateOne(state, [5]);
     };
 
@@ -453,11 +453,11 @@ describe('createEntityAdapter', () => {
       },
     });
     const updateManyCheckTypes = () => {
-      // @ts-expect-error
+      // @ts-expect-error Result is entity state, not an array
       updateMany.concat('');
-      // @ts-expect-error
+      // @ts-expect-error updateMany requires state and updates
       personEntityAdapter.updateMany();
-      // @ts-expect-error
+      // @ts-expect-error updateMany requires ID-update tuples
       personEntityAdapter.updateMany(state, [5]);
     };
 
@@ -468,11 +468,11 @@ describe('createEntityAdapter', () => {
     );
     expect(updateAll).toEqual(state);
     const updateAllCheckTypes = () => {
-      // @ts-expect-error
+      // @ts-expect-error Result is entity state, not an array
       updateAll.concat('');
-      // @ts-expect-error
+      // @ts-expect-error updateAll requires state and changes
       personEntityAdapter.updateAll();
-      // @ts-expect-error
+      // @ts-expect-error updateAll requires partial Person changes
       personEntityAdapter.updateAll(state, 5);
     };
 
@@ -500,11 +500,11 @@ describe('createEntityAdapter', () => {
     });
   });
   const updateMarriedCheckTypes = () => {
-    // @ts-expect-error
+    // @ts-expect-error Result is entity state, not an array
     updateMarried.concat('');
-    // @ts-expect-error
+    // @ts-expect-error updateMarried requires state and changes
     personEntityAdapter.updateMarried();
-    // @ts-expect-error
+    // @ts-expect-error updateMarried requires partial Person changes
     personEntityAdapter.updateMarried(state, 5);
   };
 
@@ -526,11 +526,11 @@ describe('createEntityAdapter', () => {
       },
     });
     const setOneNameCheckTypes = () => {
-      // @ts-expect-error
+      // @ts-expect-error Result is entity state, not an array
       setOneName.concat('');
-      // @ts-expect-error
+      // @ts-expect-error setOneName requires state and an ID-value tuple
       personEntityAdapter.setOneName();
-      // @ts-expect-error
+      // @ts-expect-error setOneName requires a string ID and name
       personEntityAdapter.setOneName(state, [5]);
     };
 
@@ -557,11 +557,11 @@ describe('createEntityAdapter', () => {
       },
     });
     const setManyNameCheckTypes = () => {
-      // @ts-expect-error
+      // @ts-expect-error Result is entity state, not an array
       setManyName.concat('');
-      // @ts-expect-error
+      // @ts-expect-error setManyName requires state and ID-value tuples
       personEntityAdapter.setManyName();
-      // @ts-expect-error
+      // @ts-expect-error setManyName requires string IDs and names
       personEntityAdapter.setManyName(state, [5]);
     };
 
@@ -584,11 +584,11 @@ describe('createEntityAdapter', () => {
       },
     });
     const setAllNameCheckTypes = () => {
-      // @ts-expect-error
+      // @ts-expect-error Result is entity state, not an array
       setAllName.concat('');
-      // @ts-expect-error
+      // @ts-expect-error setAllName requires state and a name
       personEntityAdapter.setAllName();
-      // @ts-expect-error
+      // @ts-expect-error Names must be strings
       personEntityAdapter.setAllName(state, 5);
     };
 
@@ -612,11 +612,11 @@ describe('createEntityAdapter', () => {
       },
     });
     const concatMarriedNameCheckTypes = () => {
-      // @ts-expect-error
+      // @ts-expect-error Result is entity state, not an array
       concatMarriedName.concat('');
-      // @ts-expect-error
+      // @ts-expect-error concatMarriedName requires state and text
       personEntityAdapter.concatMarriedName();
-      // @ts-expect-error
+      // @ts-expect-error Text to concatenate must be a string
       personEntityAdapter.concatMarriedName(state, 5);
     };
   });
@@ -638,11 +638,11 @@ describe('createEntityAdapter', () => {
     expect(allAreSelected).toEqual(true);
 
     const combinedCheckTypes = () => {
-      // @ts-expect-error
+      // @ts-expect-error Selected result is entity state, not an array
       selected.concat('');
-      // @ts-expect-error
+      // @ts-expect-error selectedCount is a number
       selectedCount.concat('');
-      // @ts-expect-error
+      // @ts-expect-error allAreSelected is a boolean
       allAreSelected.concat('');
     };
   });

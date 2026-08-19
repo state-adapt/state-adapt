@@ -134,7 +134,7 @@ describe('joinAdapters', () => {
     const newState = joinedAdapters.updateA(parentState, { prop2: '3' }, parentState);
     expect(newState).toEqual({ ...parentState, a: { prop1: 1, prop2: '3' } });
     const checkTypes = () => {
-      // @ts-expect-error
+      // @ts-expect-error updateB does not exist; bAdapter has no update
       joinedAdapters.updateB(parentState, { prop3: ['4'] }, parentState);
     };
   });
