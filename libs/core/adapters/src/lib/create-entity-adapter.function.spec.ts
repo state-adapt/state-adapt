@@ -513,6 +513,11 @@ describe('createEntityAdapter', () => {
 
     const state = personEntityAdapter.setAll(initialState, entities);
 
+    const toggleOneSelected = personEntityAdapter.toggleOneSelected(state, '1', state);
+    expect(toggleOneSelected.entities['1'].selected).toBe(true);
+    // @ts-expect-error Alternate-id entity reactions require a uuid value with correct type.
+    personEntityAdapter.toggleOneSelected(state, 1, state);
+
     const setOneName = personEntityAdapter.setOneName(state, ['1', 'Johnny'], state);
     expect(setOneName).toEqual({
       ...state,

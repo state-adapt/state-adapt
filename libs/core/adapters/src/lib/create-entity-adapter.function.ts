@@ -107,7 +107,7 @@ type EntityStateReactions<
       ? (
           state: State,
           payload: Parameters<R[K]>[1] extends void
-            ? Id
+            ? Extract<Entity[Id], Index>
             : [Extract<Entity[Id], Index>, Parameters<R[K]>[1]],
           initialState: State,
         ) => State
@@ -394,10 +394,11 @@ export function createEntityAdapter<
         // One
         reactions[`${stateChangeVerb}One${stateChangeNoun}`] = (
           state: State,
-          [id, payload]: [Extract<Entity[Id], Index>, any],
+          update: Extract<Entity[Id], Index> | [Extract<Entity[Id], Index>, any],
           initialState: State,
           cache: SelectorsCache,
         ) => {
+          const [id, payload] = Array.isArray(update) ? update : [update, undefined];
           const entity = state.entities[id];
           const initialEntity = initialState.entities[id];
           const newEntity = stateChange(
@@ -418,12 +419,13 @@ export function createEntityAdapter<
         // Many
         reactions[`${stateChangeVerb}Many${stateChangeNoun}`] = (
           state: State,
-          updates: [Extract<Entity[Id], Index>, any][],
+          updates: (Extract<Entity[Id], Index> | [Extract<Entity[Id], Index>, any])[],
           initialState: State,
           cache: SelectorsCache,
         ) => {
           const newEntities = { ...state.entities };
-          updates.forEach(([id, payload]) => {
+          updates.forEach(update => {
+            const [id, payload] = Array.isArray(update) ? update : [update, undefined];
             const entity = state.entities[id];
             const initialEntity = initialState.entities[id];
             const newEntity = stateChange(
