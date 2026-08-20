@@ -25,7 +25,7 @@ export type WatchStoreSignals<State, S extends Selectors<State>> = Signal<
   Its signals are `undefined` until the watched path becomes active, then mirror its latest state without activating its sources.
   It takes the path of the state you are interested in and, optionally, the adapter containing the selectors you want to use.
 
-  ```tsx
+  ```ts
   watch(path, adapter)
   ```
 
@@ -41,8 +41,19 @@ export type WatchStoreSignals<State, S extends Selectors<State>> = Signal<
 
   #### Example: Accessing loading state
 
-  ```tsx
-  watch('data', httpAdapter).loading$.subscribe(console.log);
+  ```ts
+  @Component({
+    template: `
+      @if (data.loading()) {
+        <sa-spinner />
+      }
+    `,
+  })
+  export class MyComponent {
+    // Reads the loading state of the 'data' store
+    // without activating it or triggering the request
+    data = watch('data', httpAdapter);
+  }
   ```
   */
 export function watch<

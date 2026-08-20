@@ -1,12 +1,12 @@
 ---
-definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/angular/src/lib/watch.function.ts#L48
+definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/angular/src/lib/watch.function.ts#L59
 ---
 
 # Function: watch()
 
 > **watch**\<`State`, `S`, `R`\>(`path`, `adapter?`): \{ \[P in string \| number \| symbol as \`$\{P extends string ? P\<P\> : never\}$\`\]: Observable\<ReturnType\<(S & WithGetState\<State\>)\[P\]\>\> \} & `object` & `object` & () => `undefined` \| `State` & `object` & \{ \[K in string \| number \| symbol\]: Signal\<undefined \| ReturnType\<S\[K\]\>\> \}
 
-Defined in: [libs/angular/src/lib/watch.function.ts:48](https://github.com/state-adapt/state-adapt/blob/main/libs/angular/src/lib/watch.function.ts#L48)
+Defined in: [libs/angular/src/lib/watch.function.ts:59](https://github.com/state-adapt/state-adapt/blob/main/libs/angular/src/lib/watch.function.ts#L59)
 
 `watch` wraps [StateAdapt.watch](../../rxjs/index/StateAdapt.md#watch) for Angular and adds signals for the store's selectors.
 
@@ -14,7 +14,7 @@ Defined in: [libs/angular/src/lib/watch.function.ts:48](https://github.com/state
 Its signals are `undefined` until the watched path becomes active, then mirror its latest state without activating its sources.
 It takes the path of the state you are interested in and, optionally, the adapter containing the selectors you want to use.
 
-```tsx
+```ts
 watch(path, adapter)
 ```
 
@@ -30,8 +30,19 @@ for an HTTP request and you need to know if the request is loading before the us
 
 #### Example: Accessing loading state
 
-```tsx
-watch('data', httpAdapter).loading$.subscribe(console.log);
+```ts
+@Component({
+  template: `
+    @if (data.loading()) {
+      <sa-spinner />
+    }
+  `,
+})
+export class MyComponent {
+  // Reads the loading state of the 'data' store
+  // without activating it or triggering the request
+  data = watch('data', httpAdapter);
+}
 ```
 
 ## Type Parameters

@@ -35,34 +35,6 @@ name.reset(); // logs 'John'
 Usually you won't manually subscribe to state like this, but you can if you want the store to immediately start managing state
 and never clean it up.
 
-### Example: Initial state factory
-`adapt(() => initialState)`
-
-You can pass a function that returns the initial state. The store calls it when it activates,
-keeps that value for as long as it stays active, and discards it when it deactivates — so the factory runs again
-for each activation.
-
-This helps when initial state might be different at each time the store is being used, like with `localStorage`:
-
-```typescript
-const name = adapt(() => localStorage.getItem('name') ?? 'John');
-
-// `localStorage` hasn't been read yet
-
-const sub1 = name.state$.subscribe(console.log); // Reads `localStorage`, then logs 'John'
-name.set('Johnsh'); // logs 'Johnsh'
-name.reset(); // logs 'John'
-sub1.unsubscribe(); // The store deactivates and forgets 'John'
-
-localStorage.setItem('name', 'Jane');
-
-const sub2 = name.state$.subscribe(console.log); // Reads `localStorage` again, logs 'Jane'
-name.set('Janesh'); // logs 'Janesh'
-name.reset(); // logs 'Jane', not 'John'
-```
-
-A one-off read of initial state will not use a cached value, but call the state factory function.
-
 ### Example: Using an adapter
 `adapt(initialState, adapter)`
 
@@ -246,6 +218,34 @@ store2.state$.subscribe();
 ### No path
 
 If no path is provided, then the store's path defaults to the result of calling [getId](../../core/src/getId.md).
+
+### Example: Initial state factory
+`adapt(() => initialState)`
+
+You can pass a function that returns the initial state. The store calls it when it activates,
+keeps that value for as long as it stays active, and discards it when it deactivates — so the factory runs again
+for each activation.
+
+This helps when initial state might be different at each time the store is being used, like with `localStorage`:
+
+```typescript
+const name = adapt(() => localStorage.getItem('name') ?? 'John');
+
+// `localStorage` hasn't been read yet
+
+const sub1 = name.state$.subscribe(console.log); // Reads `localStorage`, then logs 'John'
+name.set('Johnsh'); // logs 'Johnsh'
+name.reset(); // logs 'John'
+sub1.unsubscribe(); // The store deactivates and forgets 'John'
+
+localStorage.setItem('name', 'Jane');
+
+const sub2 = name.state$.subscribe(console.log); // Reads `localStorage` again, logs 'Jane'
+name.set('Janesh'); // logs 'Janesh'
+name.reset(); // logs 'Jane', not 'John'
+```
+
+A one-off store read will call the state factory function.
 
 ### Remember!
 
