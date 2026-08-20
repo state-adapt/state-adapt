@@ -1,5 +1,6 @@
 ## 4.0.0
 
+- Feature(angular): Support local store activation strategy
 - Bugfix(core): De-register old selector dependencies
 - Bugfix(core): Use alt ID value type and handle payloadless updates
 - Feature: Add agent skills

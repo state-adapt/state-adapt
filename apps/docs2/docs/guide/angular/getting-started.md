@@ -19,4 +19,5 @@ npx skills experimental_sync # Optional (for coding agents)
 
 ---
 
-For advanced configuration, see [`provideStore`](/api/angular/index/provideStore.html).
+For advanced configuration, see [`provideStore`](/api/angular/index/provideStore.html)
+and [`IS_STORE_LOCAL`](/api/angular/index/IS_STORE_LOCAL.html).

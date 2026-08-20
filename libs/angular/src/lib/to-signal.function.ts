@@ -12,6 +12,7 @@ import {
 } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
 import { createInitialStateGetter, InitialState } from '@state-adapt/rxjs';
+import { IS_STORE_LOCAL } from './is-store-local.token';
 
 export interface ToSignalOptions<State> {
   /** The value the signal returns until the source emits, and again after it unsubscribes. */
@@ -96,7 +97,9 @@ export function toSignal<State>(
     getInitialValue.deactivate();
   };
 
-  const isLocal = !!inject(ViewContainerRef, { optional: true });
+  const isLocal =
+    inject(IS_STORE_LOCAL, { optional: true }) ??
+    !!inject(ViewContainerRef, { optional: true });
   if (isLocal) {
     subscribe();
     destroyRef.onDestroy(unsubscribe);

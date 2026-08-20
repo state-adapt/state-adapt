@@ -3,14 +3,14 @@ import { Section } from '../../../../section-paths';
 export const sections: Section[] = [
   {
     name: 'Global Configuration',
-    items: ['defaultStoreProvider', 'provideStore'],
+    items: ['defaultStoreProvider', 'provideStore', 'IS_STORE_LOCAL'],
   },
   {
     name: 'Store',
     items: ['adapt', 'watch'],
   },
   {
-    name: 'Signal Utilities',
+    name: 'Signals',
     items: ['toSignal'],
   },
 ].map(({ name, items }) => ({
