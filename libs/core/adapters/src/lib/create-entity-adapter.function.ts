@@ -13,6 +13,7 @@ import { PrefixedAfterVerb } from '@state-adapt/core';
 
 type Index = number | string | symbol;
 
+/** Keys whose values can be used to index an entity collection. */
 export type IndexableKeys<T> = {
   [K in keyof T]: T[K] extends Index ? K : never;
 }[keyof T];
@@ -32,6 +33,24 @@ type DefaultId<Entity> = Entity extends {
   ? Extract<IndexableWithId<Entity>, 'id'>
   : never;
 
+/**
+ * Normalized state for a collection of entities.
+ *
+ * `ids` keeps the collection order. `entities` stores each entity by ID.
+ *
+ * #### Example
+ *
+ * ```typescript
+ * import { EntityState } from '@state-adapt/core/adapters';
+ *
+ * type Todo = { id: string; text: string };
+ *
+ * const todos: EntityState<Todo> = {
+ *   ids: ['learn'],
+ *   entities: { learn: { id: 'learn', text: 'Learn StateAdapt' } },
+ * };
+ * ```
+ */
 export interface EntityState<
   Entity,
   Id extends IndexableWithId<Entity> = DefaultId<Entity>,
@@ -40,10 +59,12 @@ export interface EntityState<
   entities: RecordWithIndex<Entity, Id>;
 }
 
+/** An entity adapter's source adapter. */
 export type EntityAdapterOptions<A extends Adapter<any, any, any>> = {
   adapter: A;
 };
 
+/** The names of selectors that return a boolean. */
 export type BooleanSelectorKeys<S extends Selectors<any>> = keyof {
   [K in Extract<keyof S, string>]: S[K] extends (state: any) => boolean ? K : never;
 };
@@ -52,6 +73,23 @@ function getNewEntitiesCopy<Id extends IndexableWithId<Entity>, Entity>() {
   return [[] as Extract<Entity[Id], Index>[], {} as RecordWithIndex<Entity, Id>] as const;
 }
 
+/**
+ * Creates empty normalized entity state while preserving any extra state fields.
+ *
+ * @param state Optional initial fields, IDs, or entities.
+ * @returns Entity state with `ids` and `entities` initialized.
+ *
+ * #### Example
+ *
+ * ```typescript
+ * import { createEntityState } from '@state-adapt/core/adapters';
+ *
+ * type Todo = { id: string; text: string };
+ *
+ * const initialState = createEntityState<Todo>();
+ * // { ids: [], entities: {} }
+ * ```
+ */
 export function createEntityState<
   Entity,
   Id extends IndexableWithId<Entity> = DefaultId<Entity>,
@@ -156,6 +194,118 @@ type EntityStateSelectors<
 
 const ignoredKeys = ['selectors', 'set'] as const;
 
+/**
+ * Creates an adapter for normalized entity state from an adapter for one entity.
+ *
+ * The result includes collection reactions such as `addOne`, `setAll`, and
+ * `removeMany`. Reactions from the entity adapter are expanded for one, many,
+ * all, and any configured filters. Entity selectors can also become filters or
+ * sorters for the collection.
+ *
+ * Entities use their `id` field by default. For another ID field, pass its key
+ * as the second type argument and add an `id` selector to the entity adapter.
+ *
+ * #### Example: Filters and sorting
+ *
+ * ```typescript
+ * import { createAdapter } from '@state-adapt/core';
+ * import {
+ *   createEntityAdapter,
+ *   createEntityState,
+ *   EntityState,
+ * } from '@state-adapt/core/adapters';
+ *
+ * interface Todo {
+ *   todoId: string;
+ *   title: string;
+ *   priority: number;
+ *   done: boolean;
+ * }
+ *
+ * const todoAdapter = createAdapter<Todo>()({
+ *   toggleDone: todo => ({ ...todo, done: !todo.done }),
+ *   selectors: {
+ *     id: todo => todo.todoId,
+ *     done: todo => todo.done,
+ *     priority: todo => todo.priority,
+ *   },
+ * });
+ *
+ * const createTodosAdapter = createEntityAdapter<Todo, 'todoId'>();
+ *
+ * export const todosAdapter = createTodosAdapter(todoAdapter, {
+ *   filters: ['done'],
+ *   sorters: ['priority'],
+ * });
+ *
+ * type TodosState = EntityState<Todo, 'todoId'>;
+ *
+ * export const initialTodosState: TodosState = todosAdapter.setAll(
+ *   createEntityState<Todo, 'todoId'>(),
+ *   [
+ *     { todoId: 'tests', title: 'Write tests', priority: 2, done: true },
+ *     { todoId: 'docs', title: 'Write docs', priority: 1, done: false },
+ *   ],
+ * );
+ * ```
+ *
+ * #### Usage with React
+ *
+ * ```tsx
+ * import { adapt, useStore } from '@state-adapt/react';
+ * import { initialTodosState, todosAdapter } from './todos.adapter';
+ *
+ * const todosStore = adapt(initialTodosState, todosAdapter);
+ *
+ * export function CompletedTodos() {
+ *   const [todos, actions] = useStore(todosStore);
+ *
+ *   return (
+ *     <ul>
+ *       {todos.doneByPriority.map(todo => (
+ *         <li key={todo.todoId}>
+ *           <button onClick={() => actions.toggleOneDone(todo.todoId)}>
+ *             {todo.title}
+ *           </button>
+ *         </li>
+ *       ))}
+ *     </ul>
+ *   );
+ * }
+ * ```
+ *
+ * #### Usage with Angular
+ *
+ * ```typescript
+ * import { Component } from '@angular/core';
+ * import { adapt } from '@state-adapt/angular';
+ * import { initialTodosState, todosAdapter } from './todos.adapter';
+ *
+ * @Component({
+ *   standalone: true,
+ *   selector: 'app-completed-todos',
+ *   template: `
+ *     <ul>
+ *       @for (todo of todos.doneByPriority(); track todo.todoId) {
+ *         <li>
+ *           <button (click)="todos.toggleOneDone(todo.todoId)">
+ *             {{ todo.title }}
+ *           </button>
+ *         </li>
+ *       }
+ *     </ul>
+ *   `,
+ * })
+ * export class CompletedTodosComponent {
+ *   todos = adapt(initialTodosState, todosAdapter);
+ * }
+ * ```
+ *
+ * #### Running examples
+ *
+ * - [Angular on StackBlitz](https://stackblitz.com/github/state-adapt/state-adapt?preset=node&startScript=demo:angular&file=apps%2Fangular-demo%2Fsrc%2Fapp%2Fcrew%2Fcrew.adapter.ts)
+ * - [React on StackBlitz](https://stackblitz.com/github/state-adapt/state-adapt?preset=node&startScript=demo:react&file=apps%2Freact-demo%2Fsrc%2Fapp%2Fcrew%2Fcrew.adapter.ts)
+ */
 export function createEntityAdapter<
   Entity,
   Id extends IndexableWithId<Entity> = DefaultId<Entity>,

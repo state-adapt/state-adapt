@@ -8,6 +8,7 @@
     "start": "npm run typedoc && nx dev docs2",
     "demo:counter": "nx serve ng-sa-counter",
     "demo:shopping": "nx serve ng-sa-shopping",
+    "demo:angular": "nx serve angular-demo",
     "demo:react": "nx serve react-demo",
     "build": "npm run docs2:check",
     "test": "nx run-many --target=test --all",

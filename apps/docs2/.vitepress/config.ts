@@ -4,6 +4,7 @@ import saDark from './theme/code-snippets/sa-dark.json';
 import saLight from './theme/code-snippets/sa-light.json';
 import { version } from '../../../libs/core/package.json';
 import typedocSidebar from '../docs/api/typedoc/typedoc-sidebar.json';
+import adapterPaths from '../docs/api/core/adapters/symbol.paths';
 import corePaths from '../docs/api/core/src/symbol.paths';
 import rxjsPaths from '../docs/api/rxjs/index/symbol.paths';
 import angularPaths from '../docs/api/angular/index/symbol.paths';
@@ -252,19 +253,9 @@ function getApiSidebar(): DefaultTheme.SidebarItem[] {
         ...getLibSectionItems(corePaths.sections()),
         {
           text: 'Core Adapters',
-          // base: `/api/core/core-adapters/`,
           link: `/api/core/adapters/`,
-          // collapsed: true,
-          // items: [
-          //   { text: 'base', link: `base` },
-          //   { text: 'boolean', link: `boolean` },
-          //   { text: 'number', link: `number` },
-          //   { text: 'string', link: `string` },
-          //   { text: 'array', link: `array` },
-          //   { text: 'entity', link: `entity` },
-          //   // { text: 'object', link: `object/` },
-          //   // { text: 'date', link: `date/` },
-          // ],
+          collapsed: true,
+          items: getLibSectionItems(adapterPaths.sections()),
         },
       ],
     },
