@@ -71,30 +71,37 @@ export function memoizeWithProxy<State>() {
 
       // 2. Get cached inputs, return cachedResult if results of cached inputs are all the same
       const inputs = cache.__inputs;
-      const cachedInputs = (inputs[name] = inputs[name] || {
-        set: new Set<string>(),
-        values: {},
-      });
+      const existingInputs = inputs[name];
+      const initialized = !!existingInputs?.values;
+      const cachedInputs = (inputs[name] = initialized
+        ? existingInputs
+        : {
+            set: new Set<string>(),
+            values: {},
+          });
       const cachedInputsSet = cachedInputs.set;
       const cachedInputValues = cachedInputs.values;
 
       // If all registered inputs record the same results, the final result will be the same (selectors are deterministic)
       // On initial run, no cachedInputs; skip past this optimization so an input can be added to cachedInputs
       // This calls each registered input which may have a cached value
-      const allInputResultsSame =
-        !!cachedInputsSet.size &&
-        [...cachedInputsSet].every(inputName => {
-          const previousInputValue = cachedInputValues[inputName];
-          const newInputValue = (cachedInputValues[inputName] = (
-            selectors[inputName] as any
-          )(s, cache));
-          return previousInputValue === newInputValue;
-        });
+      let allInputResultsSame = initialized;
+      for (const inputName of cachedInputsSet) {
+        const previousInputValue = cachedInputValues[inputName];
+        const newInputValue = (cachedInputValues[inputName] = (
+          selectors[inputName] as any
+        )(s, cache));
+        if (previousInputValue !== newInputValue) {
+          allInputResultsSame = false;
+          break;
+        }
+      }
 
       if (allInputResultsSame) return cachedResult;
 
       // 3. Recalculate
       // Pass proxy into fn to watch for additional input selectors being accessed
+      cachedInputsSet.clear();
       const handler = {
         get: function (target: S1States, inputName: string) {
           cachedInputsSet.add(inputName);
