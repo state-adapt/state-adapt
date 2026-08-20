@@ -29,6 +29,14 @@ const demos = [
     testId: 'card-cart',
   },
   {
+    to: '/crew',
+    title: 'Flight Operations',
+    blurb:
+      'A normalized roster with filtered bulk actions, sorting, upserts, and detail views.',
+    api: ['createEntityAdapter', 'createEntityState', 'useStore'],
+    testId: 'card-crew',
+  },
+  {
     to: '/live',
     title: 'Live',
     blurb:

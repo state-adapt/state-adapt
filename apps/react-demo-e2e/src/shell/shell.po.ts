@@ -1,4 +1,4 @@
-export type Section = 'home' | 'counter' | 'todos' | 'cart' | 'live';
+export type Section = 'home' | 'counter' | 'todos' | 'cart' | 'crew' | 'live';
 
 export const getNav = () => cy.get('.nav');
 

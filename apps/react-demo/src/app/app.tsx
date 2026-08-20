@@ -4,6 +4,7 @@ import { useStore } from '@state-adapt/react';
 
 import { CartPage, cartStore } from './cart';
 import { CounterPage } from './counter';
+import { CrewPage, crewStore } from './crew';
 import { Home } from './home';
 import { LivePage, TickerKeepAlive, TickerLifecycle } from './live';
 import { TodosPage, todosStore } from './todos';
@@ -18,10 +19,9 @@ function Badge({ count, testId }: { count: number; testId: string }) {
 }
 
 export function App() {
-  // Subscribing here keeps both stores active for the lifetime of the app, so
-  // their state survives navigating between routes.
   const [todos] = useStore(todosStore);
   const [cart] = useStore(cartStore);
+  const [crew] = useStore(crewStore);
 
   const [keepAlive, setKeepAlive] = useState(false);
 
@@ -59,6 +59,10 @@ export function App() {
             Cart
             <Badge count={cart.itemCount} testId="nav-cart-badge" />
           </NavLink>
+          <NavLink to="/crew" data-testid="nav-crew">
+            Crew
+            <Badge count={crew.selectedCount} testId="nav-crew-badge" />
+          </NavLink>
           <NavLink to="/live" data-testid="nav-live">
             Live
           </NavLink>
@@ -71,6 +75,8 @@ export function App() {
           <Route path="/counter" element={<CounterPage />} />
           <Route path="/todos" element={<TodosPage />} />
           <Route path="/cart" element={<CartPage />} />
+          <Route path="/crew" element={<CrewPage />} />
+          <Route path="/crew/:callSign" element={<CrewPage />} />
           <Route path="/live" element={<LivePage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

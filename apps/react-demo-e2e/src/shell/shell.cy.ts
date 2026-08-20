@@ -11,6 +11,7 @@ describe('shell and routing', () => {
     cy.byTestId('hero').should('contain.text', 'State management that');
     cy.byTestId('card-counter').should('be.visible');
     cy.byTestId('card-live').should('be.visible');
+    cy.byTestId('card-crew').should('be.visible');
   });
 
   it('navigates between routes, updating the URL and the active link', () => {
@@ -26,6 +27,10 @@ describe('shell and routing', () => {
     goTo('cart');
     cy.location('pathname').should('eq', '/cart');
     cy.contains('h1', 'Cart').should('be.visible');
+
+    goTo('crew');
+    cy.location('pathname').should('eq', '/crew');
+    cy.contains('h1', 'Flight Operations').should('be.visible');
   });
 
   it('navigates via the home cards', () => {

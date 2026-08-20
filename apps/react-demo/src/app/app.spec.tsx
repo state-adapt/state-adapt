@@ -33,6 +33,13 @@ describe('App', () => {
     expect(screen.getByTestId('counter-b-value').textContent).toBe('10');
   });
 
+  it('should render the entity roster route', () => {
+    renderAt('/crew');
+
+    expect(screen.getByTestId('crew-count').textContent).toBe('5');
+    expect(screen.getByTestId('nav-crew').className).toContain('active');
+  });
+
   it('should render an unknown route as not found', () => {
     renderAt('/nope');
 
