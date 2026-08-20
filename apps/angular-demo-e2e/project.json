@@ -1,0 +1,26 @@
+{
+  "name": "angular-demo-e2e",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/angular-demo-e2e/src",
+  "tags": [],
+  "implicitDependencies": ["angular-demo"],
+  "targets": {
+    "e2e": {
+      "executor": "@nx/cypress:cypress",
+      "options": {
+        "cypressConfig": "apps/angular-demo-e2e/cypress.config.ts",
+        "testingType": "e2e",
+        "devServerTarget": "angular-demo:serve"
+      },
+      "configurations": {
+        "production": {
+          "devServerTarget": "angular-demo:serve:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  }
+}
