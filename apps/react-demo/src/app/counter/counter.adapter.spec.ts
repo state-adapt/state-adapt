@@ -7,24 +7,24 @@ const select = <K extends keyof typeof counterAdapter.selectors>(
 
 describe('counterAdapter reactions', () => {
   it('increments by the step', () => {
-    expect(counterAdapter.increment(0, 1, 0)).toBe(1);
-    expect(counterAdapter.increment(10, 5, 0)).toBe(15);
+    expect(counterAdapter.increment(0, 1)).toBe(1);
+    expect(counterAdapter.increment(10, 5)).toBe(15);
   });
 
   it('decrements by the step, below zero if asked', () => {
-    expect(counterAdapter.decrement(3, 1, 0)).toBe(2);
-    expect(counterAdapter.decrement(0, 5, 0)).toBe(-5);
+    expect(counterAdapter.decrement(3, 1)).toBe(2);
+    expect(counterAdapter.decrement(0, 5)).toBe(-5);
   });
 
   it('doubles', () => {
-    expect(counterAdapter.double(3, undefined as void, 0)).toBe(6);
-    expect(counterAdapter.double(0, undefined as void, 0)).toBe(0);
-    expect(counterAdapter.double(-4, undefined as void, 0)).toBe(-8);
+    expect(counterAdapter.double(3)).toBe(6);
+    expect(counterAdapter.double(0)).toBe(0);
+    expect(counterAdapter.double(-4)).toBe(-8);
   });
 
   it('negates', () => {
-    expect(counterAdapter.negate(3, undefined as void, 0)).toBe(-3);
-    expect(counterAdapter.negate(-3, undefined as void, 0)).toBe(3);
+    expect(counterAdapter.negate(3)).toBe(-3);
+    expect(counterAdapter.negate(-3)).toBe(3);
   });
 
   it('resets to the initial state it was given', () => {
