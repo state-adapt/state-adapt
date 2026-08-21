@@ -1,5 +1,4 @@
 import { Component, inject } from '@angular/core';
-import { toSignal } from '@state-adapt/angular';
 
 import { formatPrice, products } from './cart.adapter';
 import { CartStores } from './cart.store';
@@ -7,13 +6,12 @@ import { CartStores } from './cart.store';
 @Component({
   standalone: true,
   selector: 'sa-cart-page',
-  preserveWhitespaces: false,
   template: `
     <section class="panel">
       <h1>Cart</h1>
       <p class="muted">
-        The cart and the coupon are two separate stores. <code>joinStores</code>
-        derives the discount and total across both — neither store imports the other.
+        The cart and the coupon are two separate stores. The discount and total are
+        derived across both — neither store imports the other.
       </p>
     </section>
 
@@ -133,6 +131,6 @@ export class CartPageComponent {
   private stores = inject(CartStores);
   cart = this.stores.cart;
   coupon = this.stores.coupon;
-  discount = toSignal(this.stores.checkout.discount$, { initialValue: 0 });
-  total = toSignal(this.stores.checkout.total$, { initialValue: 0 });
+  discount = this.stores.discount;
+  total = this.stores.total;
 }

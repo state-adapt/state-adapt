@@ -1,13 +1,14 @@
 import { TestBed } from '@angular/core/testing';
-import { Router } from '@angular/router';
+import { Router, provideRouter } from '@angular/router';
 
 import { AppComponent } from './app.component';
-import { AppModule } from './app.module';
+import { appRoutes } from './app.routes';
 import { byTestId, text } from './test-utils';
 
 const renderAt = async (route: string) => {
   TestBed.configureTestingModule({
-    imports: [AppModule],
+    imports: [AppComponent],
+    providers: [provideRouter(appRoutes)],
   });
   const fixture = TestBed.createComponent(AppComponent);
   const router = TestBed.inject(Router);

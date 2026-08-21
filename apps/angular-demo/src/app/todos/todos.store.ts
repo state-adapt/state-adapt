@@ -11,7 +11,7 @@ export const onTodoSubmit = source<string>('[Todos] onTodoSubmit');
  */
 @Injectable({ providedIn: 'root' })
 export class TodosStores {
-  store = adapt(initialTodosState, {
+  todos = adapt(initialTodosState, {
     adapter: todosAdapter,
     sources: { addItems: onTodoSubmit },
     path: 'todos',

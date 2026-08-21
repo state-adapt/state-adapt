@@ -1,4 +1,3 @@
-// @ts-nocheck — reactions accept (state, payload, initialState) at runtime; inferred types omit the third arg.
 import { LifecycleState, lifecycleAdapter, tickerAdapter } from './live.adapter';
 
 const initial: LifecycleState = {
@@ -9,7 +8,7 @@ const initial: LifecycleState = {
 
 describe('tickerAdapter', () => {
   it('increments', () => {
-    expect(tickerAdapter.increment(0, undefined as void, 0)).toBe(1);
+    expect(tickerAdapter.increment(0)).toBe(1);
   });
 
   it('labels the count, pluralising past one', () => {
@@ -23,21 +22,21 @@ describe('tickerAdapter', () => {
 
 describe('lifecycleAdapter', () => {
   it('records a subscription', () => {
-    const next = lifecycleAdapter.record(initial, 'subscribe', initial);
+    const next = lifecycleAdapter.record(initial, 'subscribe');
 
     expect(next).toEqual({ status: 'subscribed', activations: 1, teardowns: 0 });
   });
 
   it('records a teardown', () => {
-    const subscribed = lifecycleAdapter.record(initial, 'subscribe', initial);
-    const next = lifecycleAdapter.record(subscribed, 'unsubscribe', initial);
+    const subscribed = lifecycleAdapter.record(initial, 'subscribe');
+    const next = lifecycleAdapter.record(subscribed, 'unsubscribe');
 
     expect(next).toEqual({ status: 'unsubscribed', activations: 1, teardowns: 1 });
   });
 
   it('accumulates across repeated cycles', () => {
     const next = (['subscribe', 'unsubscribe', 'subscribe'] as const).reduce(
-      (state, event) => lifecycleAdapter.record(state, event, initial),
+      (state, event) => lifecycleAdapter.record(state, event),
       initial,
     );
 

@@ -1,23 +1,15 @@
-import { Component, Input, inject } from '@angular/core';
+import { Component, computed, inject, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
-import { CrewStatus } from '../crew.adapter';
 import { CrewStores } from '../crew.store';
 import { crewStatusLabels, getInitials } from '../crew.view';
 
 @Component({
   standalone: true,
   selector: 'sa-crew-detail',
-  preserveWhitespaces: false,
   imports: [RouterLink],
   template: `
-    @if (!member) {
-      <section class="panel" data-testid="crew-not-found">
-        <h1>Crew member not found</h1>
-        <p class="muted">No roster record has the call sign {{ callSign }}.</p>
-        <a class="button" routerLink="/crew">Back to roster</a>
-      </section>
-    } @else {
+    @if (member(); as member) {
       <a class="back-link" routerLink="/crew">← Back to roster</a>
       <section class="panel crew-detail" data-testid="crew-detail">
         <div class="crew-detail-heading">
@@ -83,7 +75,7 @@ import { crewStatusLabels, getInitials } from '../crew.view';
           <select
             data-testid="crew-status"
             [value]="member.status"
-            (change)="onStatusChange($any($event.target).value)"
+            (change)="crew.setOneStatus([member.callSign, $any($event.target).value])"
           >
             <option value="active">Active</option>
             <option value="training">Training</option>
@@ -91,20 +83,21 @@ import { crewStatusLabels, getInitials } from '../crew.view';
           </select>
         </label>
       </section>
+    } @else {
+      <section class="panel" data-testid="crew-not-found">
+        <h1>Crew member not found</h1>
+        <p class="muted">No roster record has the call sign {{ callSign() }}.</p>
+        <a class="button" routerLink="/crew">Back to roster</a>
+      </section>
     }
   `,
 })
 export class CrewDetailComponent {
-  @Input({ required: true }) callSign!: string;
-  crew = inject(CrewStores).store;
+  callSign = input.required<string>();
+  crew = inject(CrewStores).crew;
   crewStatusLabels = crewStatusLabels;
   getInitials = getInitials;
 
-  get member() {
-    return this.crew.entities()[this.callSign];
-  }
-
-  onStatusChange(status: CrewStatus) {
-    this.crew.setOneStatus([this.callSign, status]);
-  }
+  /** The route param picks one record out of the normalized entity map. */
+  member = computed(() => this.crew.entities()[this.callSign()]);
 }

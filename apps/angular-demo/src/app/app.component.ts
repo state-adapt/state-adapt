@@ -1,15 +1,24 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 import { CartStores } from './cart';
 import { CrewStores } from './crew';
+import { TickerKeepAliveComponent, TickerLifecycleComponent } from './live';
 import { TodosStores } from './todos';
 
 @Component({
+  standalone: true,
   selector: 'sa-root',
-  preserveWhitespaces: false,
+  imports: [
+    RouterLink,
+    RouterLinkActive,
+    RouterOutlet,
+    TickerKeepAliveComponent,
+    TickerLifecycleComponent,
+  ],
   template: `
     <div class="app">
-      @if (keepAlive) {
+      @if (keepAlive()) {
         <sa-ticker-keep-alive />
       }
 
@@ -74,8 +83,8 @@ import { TodosStores } from './todos';
           <input
             type="checkbox"
             data-testid="keep-alive"
-            [checked]="keepAlive"
-            (change)="keepAlive = $any($event.target).checked"
+            [checked]="keepAlive()"
+            (change)="keepAlive.set($any($event.target).checked)"
           />
           Keep ticker alive
         </label>
@@ -84,8 +93,8 @@ import { TodosStores } from './todos';
   `,
 })
 export class AppComponent {
-  todos = inject(TodosStores).store;
+  todos = inject(TodosStores).todos;
   cart = inject(CartStores).cart;
-  crew = inject(CrewStores).store;
-  keepAlive = false;
+  crew = inject(CrewStores).crew;
+  keepAlive = signal(false);
 }

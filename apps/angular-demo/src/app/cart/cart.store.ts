@@ -1,6 +1,5 @@
-import { Injectable } from '@angular/core';
+import { Injectable, computed } from '@angular/core';
 import { adapt } from '@state-adapt/angular';
-import { joinStores } from '@state-adapt/rxjs';
 import { CartState, cartAdapter, couponAdapter } from './cart.adapter';
 
 /**
@@ -20,15 +19,12 @@ export class CartStores {
   });
 
   /**
-   * `joinStores` derives state across store boundaries: the total depends on both
-   * the cart and the coupon, but neither store needs to know about the other.
+   * The checkout totals depend on both stores, but neither store needs to know about
+   * the other: each store's selectors are signals, so the totals are just derived.
    */
-  checkout = joinStores({
-    cart: this.cart,
-    coupon: this.coupon,
-  })({
-    discount: s => Math.round(s.cartSubtotal * s.couponDiscountRate),
-  })({
-    total: s => s.cartSubtotal - s.discount,
-  })();
+  discount = computed(() =>
+    Math.round(this.cart.subtotal() * this.coupon.discountRate()),
+  );
+
+  total = computed(() => this.cart.subtotal() - this.discount());
 }

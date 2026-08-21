@@ -10,7 +10,7 @@ export const onRecruit = source<CrewMember>('[Crew] onRecruit');
  * list/detail navigation. */
 @Injectable({ providedIn: 'root' })
 export class CrewStores {
-  store = adapt(initialCrewState, {
+  crew = adapt(initialCrewState, {
     adapter: crewAdapter,
     sources: { addOne: onRecruit },
     path: 'crew',

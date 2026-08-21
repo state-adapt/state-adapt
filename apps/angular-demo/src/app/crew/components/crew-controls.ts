@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
+import { Component, computed, inject, model } from '@angular/core';
 import { adapt } from '@state-adapt/angular';
 
 import { createRecruit } from '../crew.adapter';
@@ -10,7 +10,12 @@ import { crewFilters, CrewFilter, CrewSort } from '../crew.types';
   selector: 'sa-crew-controls',
   template: `
     <section class="panel crew-controls">
-      <form class="field-row recruit-form" (submit)="onSubmit($event)">
+      <form
+        class="field-row recruit-form"
+        (submit)="
+          $event.preventDefault(); draft().trim() && onRecruit(createRecruit(draft()))
+        "
+      >
         <input
           aria-label="Recruit name"
           data-testid="crew-recruit-input"
@@ -25,18 +30,16 @@ import { crewFilters, CrewFilter, CrewSort } from '../crew.types';
 
       <div class="crew-toolbar">
         <div class="filter-group" role="group" aria-label="Filter crew">
-          @for (value of crewFilters; track value) {
+          @for (chip of filterChips(); track chip.value) {
             <button
               class="chip"
-              [class.active]="filter === value"
-              [attr.data-testid]="'crew-filter-' + value"
-              [attr.aria-pressed]="filter === value"
-              (click)="filterChange.emit(value)"
+              [class.active]="filter() === chip.value"
+              [attr.data-testid]="'crew-filter-' + chip.value"
+              [attr.aria-pressed]="filter() === chip.value"
+              (click)="filter.set(chip.value)"
             >
-              {{ value }}
-              <span class="chip-count">{{
-                value === 'all' ? crew.count() : countFor(value)
-              }}</span>
+              {{ chip.value }}
+              <span class="chip-count">{{ chip.count }}</span>
             </button>
           }
         </div>
@@ -45,8 +48,8 @@ import { crewFilters, CrewFilter, CrewSort } from '../crew.types';
           <span>Sort by</span>
           <select
             data-testid="crew-sort"
-            [value]="sort"
-            (change)="sortChange.emit($any($event.target).value)"
+            [value]="sort()"
+            (change)="sort.set($any($event.target).value)"
           >
             <option value="name">Name</option>
             <option value="clearance">Clearance</option>
@@ -85,26 +88,25 @@ import { crewFilters, CrewFilter, CrewSort } from '../crew.types';
   `,
 })
 export class CrewControlsComponent {
-  @Input({ required: true }) filter!: CrewFilter;
-  @Input({ required: true }) sort!: CrewSort;
-  @Output() filterChange = new EventEmitter<CrewFilter>();
-  @Output() sortChange = new EventEmitter<CrewSort>();
+  filter = model.required<CrewFilter>();
+  sort = model.required<CrewSort>();
 
-  crewFilters = crewFilters;
-  crew = inject(CrewStores).store;
+  onRecruit = onRecruit;
+  createRecruit = createRecruit;
+  crew = inject(CrewStores).crew;
   draft = adapt('', {
     sources: { reset: onRecruit },
   });
 
-  countFor(value: Exclude<CrewFilter, 'all'>) {
-    return this.crew[`${value}Count`]();
-  }
+  /** Each chip's count comes from a generated entity selector, derived once per change. */
+  filterChips = computed(() =>
+    crewFilters.map(value => ({
+      value,
+      count: value === 'all' ? this.crew.count() : this.crew[`${value}Count`](),
+    })),
+  );
 
-  onSubmit(event: Event) {
-    event.preventDefault();
-    this.draft().trim() && onRecruit(createRecruit(this.draft()));
-  }
-
+  // Angular templates have no object spread, so the upsert payload is built here.
   syncDispatch() {
     this.crew.upsertMany([
       { ...this.crew.entities()['lumen-4'], status: 'active' },

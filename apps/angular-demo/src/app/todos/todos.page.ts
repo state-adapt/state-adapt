@@ -9,7 +9,6 @@ const filters: TodoFilter[] = ['all', 'active', 'completed'];
 @Component({
   standalone: true,
   selector: 'sa-todos-page',
-  preserveWhitespaces: false,
   template: `
     <section class="panel">
       <h1>Todos</h1>
@@ -19,7 +18,10 @@ const filters: TodoFilter[] = ['all', 'active', 'completed'];
         does no deriving of its own.
       </p>
 
-      <form class="field-row" (submit)="onSubmit($event)">
+      <form
+        class="field-row"
+        (submit)="$event.preventDefault(); draft() && onTodoSubmit(draft())"
+      >
         <input
           type="text"
           placeholder="What needs doing?"
@@ -109,14 +111,10 @@ const filters: TodoFilter[] = ['all', 'active', 'completed'];
 })
 export class TodosPageComponent {
   filters = filters;
-  todos = inject(TodosStores).store;
+  onTodoSubmit = onTodoSubmit;
+  todos = inject(TodosStores).todos;
   draft = adapt('', {
     sources: { reset: onTodoSubmit },
     path: 'todoDraft',
   });
-
-  onSubmit(event: Event) {
-    event.preventDefault();
-    this.draft() && onTodoSubmit(this.draft());
-  }
 }

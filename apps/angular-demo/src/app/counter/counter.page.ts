@@ -1,70 +1,14 @@
-import { Component, Input } from '@angular/core';
+import { Component, computed } from '@angular/core';
 import { adapt } from '@state-adapt/angular';
 import { source } from '@state-adapt/rxjs';
 
 import { LiveTickerComponent } from '../live';
+import { CounterCardComponent } from './counter-card';
 import { counterAdapter } from './counter.adapter';
 
 @Component({
   standalone: true,
-  selector: 'sa-counter-card',
-  preserveWhitespaces: false,
-  template: `
-    <section class="card static" [attr.data-testid]="testId">
-      <h2>Counter {{ name }}</h2>
-      <p
-        class="stat"
-        [class.negative]="store.isNegative()"
-        [attr.data-testid]="testId + '-value'"
-      >{{ store() }}</p>
-      <p class="muted small">
-        Selector says it's
-        <strong [attr.data-testid]="testId + '-parity'">{{ store.parity() }}</strong>
-      </p>
-      <div class="button-row">
-        <button [attr.data-testid]="testId + '-decrement'" (click)="store.decrement(step)">
-          −{{ step }}
-        </button>
-        <button [attr.data-testid]="testId + '-increment'" (click)="store.increment(step)">
-          +{{ step }}
-        </button>
-        <button [attr.data-testid]="testId + '-double'" (click)="store.double()">
-          ×2
-        </button>
-        <button [attr.data-testid]="testId + '-negate'" (click)="store.negate()">
-          ±
-        </button>
-        <button
-          class="ghost"
-          [attr.data-testid]="testId + '-reset'"
-          (click)="store.reset()"
-        >
-          Reset
-        </button>
-      </div>
-    </section>
-  `,
-})
-export class CounterCardComponent {
-  @Input({ required: true }) name!: string;
-  @Input({ required: true }) testId!: string;
-  @Input({ required: true }) step!: number;
-  @Input({ required: true }) store!: {
-    (): number;
-    increment: (step: number) => void;
-    decrement: (step: number) => void;
-    double: () => void;
-    negate: () => void;
-    reset: () => void;
-    parity: () => string;
-    isNegative: () => boolean;
-  };
-}
-
-@Component({
-  standalone: true,
   selector: 'sa-counter-page',
-  preserveWhitespaces: false,
   imports: [CounterCardComponent, LiveTickerComponent],
   template: `
     <section class="panel">
@@ -87,8 +31,8 @@ export class CounterCardComponent {
     </section>
 
     <div class="card-grid">
-      <sa-counter-card name="A" testId="counter-a" [store]="a" [step]="stepSize" />
-      <sa-counter-card name="B" testId="counter-b" [store]="b" [step]="stepSize" />
+      <sa-counter-card name="A" testId="counter-a" [store]="a" [step]="stepSize()" />
+      <sa-counter-card name="B" testId="counter-b" [store]="b" [step]="stepSize()" />
     </div>
 
     <section class="panel">
@@ -128,7 +72,5 @@ export class CounterPageComponent {
     path: 'counterB',
   });
 
-  get stepSize() {
-    return Number(this.step()) || 0;
-  }
+  stepSize = computed(() => Number(this.step()) || 0);
 }

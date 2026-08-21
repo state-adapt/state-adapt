@@ -39,5 +39,5 @@ import { CrewStatComponent } from './crew-stat';
   `,
 })
 export class CrewHeroComponent {
-  crew = inject(CrewStores).store;
+  crew = inject(CrewStores).crew;
 }

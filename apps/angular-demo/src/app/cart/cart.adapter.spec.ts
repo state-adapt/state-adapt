@@ -1,4 +1,3 @@
-// @ts-nocheck — reactions accept (state, payload, initialState) at runtime; inferred types omit the third arg.
 import {
   CartState,
   cartAdapter,
@@ -26,42 +25,42 @@ describe('formatPrice', () => {
 
 describe('cartAdapter reactions', () => {
   it('adds a product not yet in the cart', () => {
-    expect(cartAdapter.add({}, 1, {})).toEqual({ 1: 1 });
+    expect(cartAdapter.add({}, 1)).toEqual({ 1: 1 });
   });
 
   it('increments a product already in the cart', () => {
-    expect(cartAdapter.add({ 1: 2 }, 1, {})).toEqual({ 1: 3 });
+    expect(cartAdapter.add({ 1: 2 }, 1)).toEqual({ 1: 3 });
   });
 
   it('keeps other products untouched when adding', () => {
-    expect(cartAdapter.add({ 1: 1, 2: 5 }, 1, {})).toEqual({ 1: 2, 2: 5 });
+    expect(cartAdapter.add({ 1: 1, 2: 5 }, 1)).toEqual({ 1: 2, 2: 5 });
   });
 
   it('decrements with removeOne', () => {
-    expect(cartAdapter.removeOne({ 1: 3 }, 1, {})).toEqual({ 1: 2 });
+    expect(cartAdapter.removeOne({ 1: 3 }, 1)).toEqual({ 1: 2 });
   });
 
   it('drops the line when the last item is removed', () => {
-    expect(cartAdapter.removeOne({ 1: 1, 2: 1 }, 1, {})).toEqual({ 2: 1 });
+    expect(cartAdapter.removeOne({ 1: 1, 2: 1 }, 1)).toEqual({ 2: 1 });
   });
 
   it('is a no-op removing a product that is not there', () => {
-    expect(cartAdapter.removeOne({ 2: 1 }, 1, {})).toEqual({ 2: 1 });
+    expect(cartAdapter.removeOne({ 2: 1 }, 1)).toEqual({ 2: 1 });
   });
 
   it('removes a whole line at once', () => {
-    expect(cartAdapter.removeAll({ 1: 7, 2: 1 }, 1, {})).toEqual({ 2: 1 });
+    expect(cartAdapter.removeAll({ 1: 7, 2: 1 }, 1)).toEqual({ 2: 1 });
   });
 
   it('sets an explicit quantity', () => {
-    expect(cartAdapter.setQuantity({ 1: 1 }, { id: 1, quantity: 4 }, {})).toEqual({
+    expect(cartAdapter.setQuantity({ 1: 1 }, { id: 1, quantity: 4 })).toEqual({
       1: 4,
     });
   });
 
   it('treats a non-positive quantity as removal', () => {
-    expect(cartAdapter.setQuantity({ 1: 3 }, { id: 1, quantity: 0 }, {})).toEqual({});
-    expect(cartAdapter.setQuantity({ 1: 3 }, { id: 1, quantity: -2 }, {})).toEqual({});
+    expect(cartAdapter.setQuantity({ 1: 3 }, { id: 1, quantity: 0 })).toEqual({});
+    expect(cartAdapter.setQuantity({ 1: 3 }, { id: 1, quantity: -2 })).toEqual({});
   });
 });
 
@@ -118,7 +117,7 @@ describe('couponAdapter selectors', () => {
   });
 
   it('clears back to empty', () => {
-    expect(couponAdapter.clear('ADAPT10', undefined as void, '')).toBe('');
+    expect(couponAdapter.clear()).toBe('');
   });
 });
 

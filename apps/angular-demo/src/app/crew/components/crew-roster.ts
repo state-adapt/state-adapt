@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { adapt } from '@state-adapt/angular';
 
 import { CrewMember } from '../crew.adapter';
@@ -17,24 +17,23 @@ import { CrewListComponent } from './crew-list';
     <sa-crew-hero />
     <sa-crew-controls
       [filter]="filter()"
-      [sort]="sort()"
       (filterChange)="filter.set($event)"
+      [sort]="sort()"
       (sortChange)="sort.set($event)"
     />
-    <sa-crew-list [visible]="visible" [filter]="filter()" />
+    <sa-crew-list [visible]="visibleMembers()" [filter]="filter()" />
   `,
 })
 export class CrewRosterComponent {
-  crew = inject(CrewStores).store;
+  crew = inject(CrewStores).crew;
   filter = adapt('all' as CrewFilter);
   sort = adapt('name' as CrewSort);
 
-  get visible(): CrewMember[] {
+  /** The filter and the sort pick which generated entity selector to read. */
+  visibleMembers = computed(() => {
     const viewSelector = `${this.filter()}By${capitalize(
       this.sort(),
     )}` as CrewViewSelector;
-    return (this.crew as unknown as Record<CrewViewSelector, () => CrewMember[]>)[
-      viewSelector
-    ]();
-  }
+    return this.crew[viewSelector]();
+  });
 }

@@ -25,7 +25,7 @@ const demos = [
     to: '/cart',
     title: 'Cart',
     blurb: 'Two independent stores combined into totals neither one knows about.',
-    api: ['buildAdapter', 'joinStores', 'adapt'],
+    api: ['buildAdapter', 'adapt', 'computed'],
     testId: 'card-cart',
   },
   {
