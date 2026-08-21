@@ -1,13 +1,17 @@
 import { Component, inject } from '@angular/core';
 import { adapt } from '@state-adapt/angular';
+import { CounterUiModule } from '@state-adapt/counter-ui';
 import { source, toSource } from '@state-adapt/rxjs';
 import { interval } from 'rxjs';
 import { countAdapter } from './count.adapter';
+import { SaCountDirective } from './count.directive';
 import { LocalService } from './local.service';
 import { RootService } from './root-service';
 
 @Component({
+  standalone: true,
   selector: 'sa-root',
+  imports: [CounterUiModule, SaCountDirective],
   template: `
     <h2>Store 1</h2>
     <sa-counter

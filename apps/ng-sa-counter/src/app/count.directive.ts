@@ -1,7 +1,7 @@
 import { Directive, ElementRef, inject, OnInit, Renderer2 } from '@angular/core';
 import { adapt } from '@state-adapt/angular';
 
-@Directive({ selector: '[saCountDirective]' })
+@Directive({ standalone: true, selector: '[saCountDirective]' })
 export class SaCountDirective implements OnInit {
   renderer = inject(Renderer2);
   el = inject(ElementRef);

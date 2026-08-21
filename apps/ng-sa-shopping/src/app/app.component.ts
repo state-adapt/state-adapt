@@ -1,4 +1,6 @@
+import { AsyncPipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
+import { ShoppingSharedModule } from '@state-adapt/shopping';
 import {
   ProductService,
   injectCartStore,
@@ -7,7 +9,9 @@ import {
 import { injectFilterStore } from './filters/filter.service';
 
 @Component({
+  standalone: true,
   selector: 'sa-root',
+  imports: [AsyncPipe, ShoppingSharedModule],
   template: `
     <sa-shopping>
       <sa-product-filters
