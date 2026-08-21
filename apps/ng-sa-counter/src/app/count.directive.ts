@@ -16,7 +16,7 @@ export class SaCountDirective implements OnInit {
     this.renderer.setStyle(
       this.el.nativeElement,
       'color',
-      this.store9.readOnce() === 9 ? 'darkturquoise' : 'red',
+      this.store9() === 9 ? 'darkturquoise' : 'red',
     );
   }
 }
