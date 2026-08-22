@@ -24,3 +24,41 @@ jobs:
       - uses: nrwl/nx-set-shas@v4
 
       - run: npx nx affected -t lint test build
+
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      # The Cypress binary lives outside node_modules, so setup-node's npm
+      # cache doesn't cover it. Without this it re-downloads (~150MB) each run.
+      - name: Cache Cypress binary
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/Cypress
+          key: cypress-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: cypress-${{ runner.os }}-
+
+      - run: npm ci
+
+      - uses: nrwl/nx-set-shas@v4
+
+      # Boots each demo app's serve target and runs Cypress against it.
+      # Also guards the StackBlitz demos, which run the same serve targets.
+      - run: npx nx affected -t e2e
+
+      - name: Upload Cypress artifacts on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-artifacts
+          path: dist/cypress
+          if-no-files-found: ignore
+          retention-days: 7
