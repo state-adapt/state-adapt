@@ -13,6 +13,7 @@ import { Sources } from '../stores/sources.type';
 import { SmartStore } from '../stores/smart-store.interface';
 
 export interface GlobalStoreMethods {
+  readonly value: any;
   select: (sel: any) => Observable<any>;
   dispatch: (action: any) => any;
 }

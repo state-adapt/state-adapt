@@ -208,6 +208,11 @@ function addNewBlock<SB extends StoreBuilder<any, any, any>>(
         fullSelectors,
         requireSources$: requireAllSources$,
         initialState,
+        getCurrentState: () =>
+          fullSelectors.state(storeEntries[namespaces[0]].__.getGlobalState()),
+        getGlobalState: storeEntries[namespaces[0]].__.getGlobalState,
+        isActive: () =>
+          namespaces.every(namespace => storeEntries[namespace].__.isActive()),
         select: select,
       },
     } as any;

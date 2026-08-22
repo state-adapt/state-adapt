@@ -600,23 +600,20 @@ function ReactiveState() {
 
 State derived from multiple stores can [glitch and over-compute](https://dev.to/mfp22/signals-make-angular-much-easier-3k9) in some libraries, especially if RxJS-based.
 
-But StateAdapt's `joinStores` is glitch-free and efficient, preventing the need for complicated workarounds and refactors:
+But StateAdapt's `derive` is glitch-free and efficient, preventing the need for
+complicated workarounds. Use derivations in components with `useDerived`:
 
 ```tsx
 // ...
 
 // [!code ++ 1]
-const name12Store = joinStores({
-  name1: name1Store, // [!code ++]
-  name2: name2Store, // [!code ++]
-  // [!code ++ 1]
-})({
-  bobcat: s => s.name1 === 'Bob' && s.name2 === 'Kat' // [!code ++]
-})(); // [!code ++]
+const deriveBobcat = derive( // [!code ++]
+  () => name1Store() === 'Bob' && name2Store() === 'Kat', // [!code ++]
+); // [!code ++]
 
 // ...
 
-  const [{ bobcat }] = useStore(name12Store); // [!code ++]
+  const bobcat = useDerived(deriveBobcat); // [!code ++]
 
   // ...
 
@@ -625,6 +622,9 @@ const name12Store = joinStores({
   );
 }
 ```
+
+Prefixing the derivation with `derive` leaves the plain name free for the value
+inside the component.
 
 Result:
 
@@ -651,17 +651,14 @@ const name2Store = adapt('Kat', {
   sources: { reset: onResetAll },
 });
 
-const name12Store = joinStores({
-  name1: name1Store,
-  name2: name2Store,
-})({
-  bobcat: s => s.name1 === 'Bob' && s.name2 === 'Kat',
-})();
+const deriveBobcat = derive(
+  () => name1Store() === 'Bob' && name2Store() === 'Kat',
+);
 
 function MultiStoreSharedDerivedState() {
   const [name1, setName1] = useStore(name1Store);
   const [name2, setName2] = useStore(name2Store);
-  const [{ bobcat }] = useStore(name12Store);
+  const bobcat = useDerived(deriveBobcat);
   return (
     <>
       <h2>Hello {name1.state}!</h2>
@@ -809,17 +806,14 @@ const name2Store = adapt('Loading...', {
   },
 });
 
-const name12Store = joinStores({
-  name1: name1Store,
-  name2: name2Store,
-})({
-  bobcat: s => s.name1 === 'Bob' && s.name2 === 'Kat',
-})();
+const deriveBobcat = derive(
+  () => name1Store() === 'Bob' && name2Store() === 'Kat',
+);
 
 function DerivedEvents() {
   const [name1, setName1] = useStore(name1Store);
   const [name2, setName2] = useStore(name2Store);
-  const [{ bobcat }] = useStore(name12Store);
+  const bobcat = useDerived(deriveBobcat);
   return (
     <>
       <h2>Hello {name1.state}!</h2>

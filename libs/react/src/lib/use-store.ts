@@ -100,7 +100,7 @@ export function useStore<
   // State,
   // S extends Selectors<State>,
   // R extends ReactionsWithSelectors<State, S>,
-  Store extends StoreLike<any, any, any>,
+  Store extends StoreLike<any, Record<never, never>, Record<never, never>>,
   FilterSelectors extends (keyof Store['__']['selectors'])[],
 >(
   store: Store,

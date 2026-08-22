@@ -1,5 +1,12 @@
 export * from './lib/adapt.context';
+export * from './lib/adapt.function';
+export * from './lib/watch.function';
+export * from './lib/create-state-adapt.function';
+export * from './lib/default-state-adapt.const';
 export * from './lib/use-store';
 export * from './lib/use-adapt';
 export * from './lib/use-observable';
 export * from './lib/use-source';
+export { derive, type Derived } from './lib/derived';
+export * from './lib/use-derived';
+export type { ReactStore, ReactWatch, StoreSelectorReaders } from './lib/react-store';

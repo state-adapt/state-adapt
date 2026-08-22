@@ -77,8 +77,8 @@ describe('CartPage', () => {
     expect(text('cart-subtotal')).toBe('$1.29');
   });
 
-  // The discount and total come from `joinStores` over the cart and coupon
-  // stores, so these assertions cover state derived across two stores.
+  // The shared derivations read selectors from both the cart and coupon stores,
+  // so these assertions cover state derived across two stores.
   it('applies a valid coupon to the total', () => {
     renderPage();
     add(1, 2); // 698

@@ -299,7 +299,7 @@ and it only subscribes to sources when it has subscribers itself.
 
 > **watch**\<`State`, `S`, `R`\>(`path`, `adapter?`): `SmartStore`\<`State`, `S` & `WithGetState`\<`State`\>\>
 
-Defined in: [libs/rxjs/src/lib/global-store/state-adapt.ts:472](https://github.com/state-adapt/state-adapt/blob/main/libs/rxjs/src/lib/global-store/state-adapt.ts#L472)
+Defined in: [libs/rxjs/src/lib/global-store/state-adapt.ts:474](https://github.com/state-adapt/state-adapt/blob/main/libs/rxjs/src/lib/global-store/state-adapt.ts#L474)
 
 `watch` returns a detached store (doesn't chain off of sources). This allows you to watch state without affecting anything.
 It takes the path of the state you are interested in and, optionally, the adapter whose selectors you want to use.

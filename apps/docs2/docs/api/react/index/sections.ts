@@ -1,13 +1,18 @@
 import { Section } from '../../../../section-paths';
 
+// Read apps/docs2/curated-api-docs.md before editing this file.
 export const sections: Section[] = [
   {
-    name: 'Store',
-    items: ['adapt', 'watch', 'useStore', 'useAdapt'],
+    name: 'Global Configuration',
+    items: ['createStateAdapt', 'defaultStateAdapt', 'AdaptContext'],
   },
   {
-    name: 'Configuration',
-    items: ['defaultStateAdapt', 'AdaptContext'],
+    name: 'Store',
+    items: ['useAdapt', 'adapt', 'useStore', 'watch'],
+  },
+  {
+    name: 'Shared Derived State',
+    items: ['derive', 'useDerived'],
   },
 ].map(({ name, items }) => ({
   name,

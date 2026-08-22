@@ -1,5 +1,9 @@
 ## 4.0.0
 
+- Feature(react): Make stores callable for reading state and selector values
+- Feature(react): Add createStateAdapt for React-bound configuration
+- Bugfix(react): Make snapshot from newly activated store state factories stable
+- Feature(react): Create derive and useDerived for shared derived state
 - Feature(angular): Support local store activation strategy
 - Bugfix(core): De-register old selector dependencies
 - Bugfix(core): Use alt ID value type and handle payloadless updates

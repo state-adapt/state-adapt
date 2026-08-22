@@ -152,4 +152,4 @@ git push origin HEAD
 git push origin "v$VERSION"
 ```
 
-Publish the matching documentation using [DOCS-PUBLISHING.md](./DOCS-PUBLISHING.md).
+Publish the matching documentation using [docs-publishing.md](./docs-publishing.md).

@@ -8,12 +8,14 @@ export type CoreStoreProps<State, S extends AnySelectors> = {
   selectors: S;
   initialState: State;
   getCurrentState: () => State;
+  getGlobalState: () => any;
+  isActive: () => boolean;
   select: <State>(sel: any) => Observable<State>;
 };
 
 export type WithCoreStoreProps<State, S extends AnySelectors> = {
   /**
-   * Don't use this property directly. Intended for internal use only.
+   * @private Don't use this property directly. Intended for internal use only.
    */
   __: CoreStoreProps<State, S>;
 };

@@ -1,8 +1,10 @@
-# docs2
+# Docs2
 
-Welcome to your newly generated vitepress project
+This is the VitePress documentation app.
 
-- Build your project with
+See [Curated API docs](./curated-api-docs.md) before editing API sections.
+
+## Commands
 
 ```bash
     nx build docs2

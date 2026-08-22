@@ -25,4 +25,4 @@ import { InjectionToken } from '@angular/core';
  * });
  * ```
  */
-export const IS_STORE_LOCAL = new InjectionToken<boolean>('State Adapt IS_STORE_LOCAL');
+export const IS_STORE_LOCAL = new InjectionToken<boolean>('StateAdapt IS_STORE_LOCAL');

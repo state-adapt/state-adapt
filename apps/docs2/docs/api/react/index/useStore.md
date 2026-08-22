@@ -6,7 +6,7 @@ definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/react/src/l
 
 > **useStore**\<`Store`, `FilterSelectors`\>(`store`, `filterSelectors`): `ProxyStoreTuple`\<`Store`\[`"__"`\]\[`"initialState"`\], `Store`, `Extract`\<`FilterSelectors`\[`number`\], `string`\>\>
 
-Defined in: [react/src/lib/use-store.ts:99](https://github.com/state-adapt/state-adapt/blob/main/libs/react/src/lib/use-store.ts#L99)
+Defined in: [lib/use-store.ts:99](https://github.com/state-adapt/state-adapt/blob/main/libs/react/src/lib/use-store.ts#L99)
 
 `useStore` is a custom hook that takes in a store created with [StateAdapt.adapt](../../rxjs/index/StateAdapt.md#adapt), subscribes to it,
 and returns a tuple `[selectorResults, setState]` where `selectorResults` is a proxy object containing results from the store's selectors,
@@ -104,7 +104,7 @@ export function MyComponent() {
 
 ### Store
 
-`Store` *extends* `StoreLike`\<`any`, `any`, `any`\>
+`Store` *extends* `StoreLike`\<`any`, `Record`\<`never`, `never`\>, `Record`\<`never`, `never`\>\>
 
 ### FilterSelectors
 

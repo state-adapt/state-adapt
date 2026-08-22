@@ -1,5 +1,4 @@
-import { joinStores } from '@state-adapt/rxjs';
-import { adapt } from '@state-adapt/react';
+import { adapt, derive } from '@state-adapt/react';
 import { CartState, cartAdapter, couponAdapter } from './cart.adapter';
 
 /**
@@ -17,14 +16,12 @@ export const couponStore = adapt('', {
 });
 
 /**
- * `joinStores` derives state across store boundaries: the total depends on both
- * the cart and the coupon, but neither store needs to know about the other.
+ * These shared derivations compose selectors from independent stores. They are
+ * evaluated once through StateAdapt's selector cache, no matter how many
+ * components consume them.
  */
-export const checkoutStore = joinStores({
-  cart: cartStore,
-  coupon: couponStore,
-})({
-  discount: s => Math.round(s.cartSubtotal * s.couponDiscountRate),
-})({
-  total: s => s.cartSubtotal - s.discount,
-})();
+export const deriveDiscount = derive(() =>
+  Math.round(cartStore.subtotal() * couponStore.discountRate()),
+);
+
+export const deriveTotal = derive(() => cartStore.subtotal() - deriveDiscount());

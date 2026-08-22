@@ -95,7 +95,7 @@ When a store is being used, it subscribes to its sources. When it goes back to u
 When created in a component (or service provided directly in a component), it is assumed that stores will be in use until that component is destroyed.
 
 In shared services with `providedIn: 'root'`, a one-off signal read does not activate the store.
-After rendering stabilizes, State Adapt checks which store signals are still consumed by a template or effect and subscribes only to those stores.
+After rendering stabilizes, StateAdapt checks which store signals are still consumed by a template or effect and subscribes only to those stores.
 When a later render shows that a store signal is no longer consumed, and if there are no subscriptions to its observables, the store is deactivated:
 Its state resets and its sources are unsubscribed from.
 

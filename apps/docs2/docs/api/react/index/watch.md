@@ -1,40 +1,28 @@
 ---
-definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/react/src/lib/adapt.context.ts#L29
+definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/react/src/lib/watch.function.ts#L28
 ---
 
-# Variable: watch()
+# Function: watch()
 
-> `const` **watch**: \<`State`, `S`, `R`\>(`path`, `adapter?`) => `SmartStore`\<`State`, `S` & `WithGetState`\<`State`\>\> = `defaultStateAdapt.watch`
+> **watch**\<`State`, `S`, `R`\>(`path`, `adapter?`): `ReactWatch`\<`State`, `S`\>
 
-Defined in: [react/src/lib/adapt.context.ts:29](https://github.com/state-adapt/state-adapt/blob/main/libs/react/src/lib/adapt.context.ts#L29)
+Defined in: [lib/watch.function.ts:28](https://github.com/state-adapt/state-adapt/blob/main/libs/react/src/lib/watch.function.ts#L28)
 
-Watches a store path using React's default StateAdapt configuration.
+See [StateAdapt.watch](../../rxjs/index/StateAdapt.md#watch) for the complete API.
 
-This function is bound to [defaultStateAdapt](defaultStateAdapt.md). For custom configuration,
-export `watch` from the configured instance instead.
+This wrapper additionally lets you call the store as a function for its
+current state, or call a selector property for its current result.
 
-`watch` returns a detached store (doesn't chain off of sources). This allows you to watch state without affecting anything.
-It takes the path of the state you are interested in and, optionally, the adapter whose selectors you want to use.
+```ts
+const name = watch('name', stringAdapter);
 
-```tsx
-watch(path, adapter)
+// While the store at "name" is active:
+console.log(name()); // 'John'
+console.log(name.uppercase()); // 'JOHN'
 ```
 
-path — Object path in Redux Devtools
-
-adapter — Optional object with state change functions and selectors. When omitted, `watch` uses the base adapter.
-
-### Usage
-
-`watch` enables accessing state without subscribing to sources. For example, if your adapter manages the loading state
-for an HTTP request and you need to know if the request is loading before the user is interested in the data,
-`watch` can give you access to it without triggering the request.
-
-#### Example: Accessing loading state
-
-```tsx
-watch('data', httpAdapter).loading$.subscribe(console.log);
-```
+Reads are `undefined` while the store is inactive and do not activate its
+sources. See [derive](derive.md) for composing these reads.
 
 ## Type Parameters
 
@@ -62,4 +50,4 @@ watch('data', httpAdapter).loading$.subscribe(console.log);
 
 ## Returns
 
-`SmartStore`\<`State`, `S` & `WithGetState`\<`State`\>\>
+`ReactWatch`\<`State`, `S`\>

@@ -1,21 +1,22 @@
 import React from 'react';
-import { useStore } from '@state-adapt/react';
+import { useDerived, useStore } from '@state-adapt/react';
 
 import { formatPrice, products } from './cart.adapter';
-import { cartStore, checkoutStore, couponStore } from './cart.store';
+import { cartStore, couponStore, deriveDiscount, deriveTotal } from './cart.store';
 
 export function CartPage() {
   const [cart, cartActions] = useStore(cartStore);
   const [coupon, couponActions] = useStore(couponStore);
-  const [checkout] = useStore(checkoutStore);
+  const discount = useDerived(deriveDiscount);
+  const total = useDerived(deriveTotal);
 
   return (
     <>
       <section className="panel">
         <h1>Cart</h1>
         <p className="muted">
-          The cart and the coupon are two separate stores. <code>joinStores</code>{' '}
-          derives the discount and total across both — neither store imports the other.
+          The cart and coupon are separate stores. Shared <code>derive</code> values
+          calculate the discount and total across both — neither store imports the other.
         </p>
       </section>
 
@@ -121,11 +122,11 @@ export function CartPage() {
           </div>
           <div>
             <dt>Discount</dt>
-            <dd data-testid="cart-discount">−{formatPrice(checkout.discount)}</dd>
+            <dd data-testid="cart-discount">−{formatPrice(discount)}</dd>
           </div>
           <div className="grand">
             <dt>Total</dt>
-            <dd data-testid="cart-total">{formatPrice(checkout.total)}</dd>
+            <dd data-testid="cart-total">{formatPrice(total)}</dd>
           </div>
         </dl>
       </section>

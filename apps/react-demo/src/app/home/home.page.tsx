@@ -11,7 +11,7 @@ const demos = [
     to: '/counter',
     title: 'Counter',
     blurb: 'Reusable adapters, derived selectors, and one source resetting many stores.',
-    api: ['createAdapter', 'useAdapt', 'useSource', 'joinStores'],
+    api: ['createAdapter', 'useAdapt', 'useSource'],
     testId: 'card-counter',
   },
   {
@@ -25,7 +25,7 @@ const demos = [
     to: '/cart',
     title: 'Cart',
     blurb: 'Two independent stores combined into totals neither one knows about.',
-    api: ['buildAdapter', 'joinStores', 'useStore'],
+    api: ['buildAdapter', 'derive', 'useDerived', 'useStore'],
     testId: 'card-cart',
   },
   {

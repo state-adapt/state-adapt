@@ -8,13 +8,10 @@ import {
   NotAdaptOptions,
   InitialState,
 } from '@state-adapt/rxjs';
-import {
-  ReactionsWithSelectors,
-  Selectors,
-  getId,
-} from '@state-adapt/core';
+import { ReactionsWithSelectors, Selectors, getId } from '@state-adapt/core';
 import { ProxyStoreTuple } from './proxy-store-tuple.type';
 import { useProxyStates } from './use-proxy-states';
+import { createReactStore } from './react-store';
 
 // Differences between StateAdapt.adapt and useAdapt jsdoc:
 //  - Almost everything
@@ -310,13 +307,15 @@ export function useAdapt<
     | AdaptOptions<State, S, R, ReturnedSources> = {},
 ): ProxyStoreTuple<State, InitializedSmartStore<State, S, R>> {
   const stateAdapt = useContext(AdaptContext);
-  const [store] = useState(() => stateAdapt.adapt(initialState, second));
+  const [store] = useState(() =>
+    createReactStore<State, S, R>(stateAdapt.adapt(initialState, second)),
+  );
   const setState = useMemo(() => {
     const setter = (newState: State) => {
-      store.set(newState);
+      (store as any).set(newState);
     };
     return Object.assign(setter, store);
   }, [store]);
-  const proxy = useProxyStates(store) as any;
+  const proxy = useProxyStates(store as any) as any;
   return [proxy, setState as any];
 }

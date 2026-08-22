@@ -1,0 +1,45 @@
+---
+definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/react/src/lib/derived.ts#L107
+---
+
+# Function: derive()
+
+> **derive**\<`Value`\>(`projector`): `Derived`\<`Value`\>
+
+Defined in: [lib/derived.ts:107](https://github.com/state-adapt/state-adapt/blob/main/libs/react/src/lib/derived.ts#L107)
+
+Creates a shared, memoized value derived from stores created with
+[adapt](adapt.md). Call it for its current value, or subscribe a component to it
+with [useDerived](useDerived.md).
+
+Define it outside your components:
+
+```tsx
+const priceStore = adapt(20);
+const quantityStore = adapt(3);
+
+const deriveSubtotal = derive(() => priceStore() * quantityStore());
+const deriveTotal = derive(() => deriveSubtotal() + 5);
+
+function Total() {
+  const total = useDerived(deriveTotal);
+
+  return <p>Total: {total}</p>;
+}
+```
+
+## Type Parameters
+
+### Value
+
+`Value`
+
+## Parameters
+
+### projector
+
+() => `Value`
+
+## Returns
+
+`Derived`\<`Value`\>

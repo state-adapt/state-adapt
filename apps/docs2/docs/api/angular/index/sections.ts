@@ -1,9 +1,10 @@
 import { Section } from '../../../../section-paths';
 
+// Read apps/docs2/curated-api-docs.md before editing this file.
 export const sections: Section[] = [
   {
     name: 'Global Configuration',
-    items: ['defaultStoreProvider', 'provideStore', 'IS_STORE_LOCAL'],
+    items: ['provideStore', 'defaultStoreProvider', 'IS_STORE_LOCAL'],
   },
   {
     name: 'Store',

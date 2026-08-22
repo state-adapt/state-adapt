@@ -10,10 +10,10 @@ type StoreSnapshot = {
   selectorValues: any[];
 };
 
-export const STATE_ADAPT_CONTEXT_MISMATCH_ERROR = `StateAdapt Error: This store was created by a different StateAdapt instance than the one provided to React through AdaptContext. Make sure the store and React use the same StateAdapt instance. If you configured StateAdapt, provide that instance through AdaptContext and import adapt and watch from your application's StateAdapt configuration module instead of @state-adapt/react.`;
+export const STATE_ADAPT_CONTEXT_MISMATCH_ERROR = `StateAdapt Error: This store was created by a different StateAdapt instance than the one provided to React through AdaptContext. Make sure the store and React use the same StateAdapt instance. If you created an instance with createStateAdapt, provide that instance through AdaptContext and import adapt and watch from the module where you called createStateAdapt instead of @state-adapt/react.`;
 
 export function useProxyStates<
-  Store extends StoreLike<any, any, any>,
+  Store extends StoreLike<any, Record<never, never>, Record<never, never>>,
   FilterSelectors extends (keyof Store['__']['selectors'])[],
 >(
   store: Store,
@@ -37,6 +37,12 @@ export function useProxyStates<
 
     return (): StoreSnapshot => {
       const __ = store.__ as any;
+
+      // Until `subscribe` below activates the store, an initial state factory runs on
+      // every read and returns a new value each time. React requires repeated reads to
+      // be identity-stable, so reuse the first one and let activation replace it.
+      if (snapshot && !__.isActive()) return snapshot;
+
       const globalState = (stateAdapt as any).commonStore.value;
       const storeState = __.fullSelectors.state(globalState);
       const selectorValues = stableFilterSelectors.map(selectorName =>

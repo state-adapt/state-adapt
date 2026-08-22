@@ -4,7 +4,8 @@ import { configureStateAdapt, joinStores } from '@state-adapt/rxjs';
 import { useStore } from './use-store';
 import { STATE_ADAPT_CONTEXT_MISMATCH_ERROR } from './use-proxy-states';
 import { take } from 'rxjs/operators';
-import { AdaptContext, adapt as defaultAdapt } from './adapt.context';
+import { AdaptContext } from './adapt.context';
+import { adapt as defaultAdapt } from './adapt.function';
 import { globalSelectorsCache, serializeSelectorsCache } from '@state-adapt/core';
 
 const stateAdapt = configureStateAdapt({ devtools: null });

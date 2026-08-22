@@ -440,6 +440,8 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
         path,
         getCurrentState: () =>
           this.pathStates[path] ? this.pathStates[path].lastState : getInitialState(), // With signals, we use default state when inactive
+        getGlobalState: () => this.commonStore.value,
+        isActive: () => this.isPathActive(path),
         select: (sel: any) => this.commonStore.select(sel),
       },
     } as any;
@@ -513,6 +515,8 @@ export class StateAdapt<CommonStore extends GlobalStoreMethods = any> {
         initialState: undefined as unknown as State, // added for React integration, which requires immediate access to initial state before subscribing,
         path,
         getCurrentState: () => this.pathStates[path]?.lastState, // For signals - not needed here, but to satisfy type
+        getGlobalState: () => this.commonStore.value,
+        isActive: () => this.isPathActive(path),
         select: (sel: any) => filterActivated(this.commonStore.select(sel)),
       },
     };
