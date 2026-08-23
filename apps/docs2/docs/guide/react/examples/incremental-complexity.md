@@ -53,10 +53,10 @@ function SimpleStateAdapt() {
 ```tsx
 function ReducedState() {
   const [name, setName] = useAdapt('Bob'); // [!code --]
-  // [!code ++ 1]
+  // [!code ++:3]
   const [name, setName] = useAdapt('Bob', {
-    reverse: name => name.split('').reverse().join(''), // name type inferred // [!code ++]
-  }); // [!code ++]
+    reverse: name => name.split('').reverse().join(''),
+  });
   return (
     <>
       <h2>Hello {name.state}!</h2>
@@ -91,16 +91,16 @@ Moving local state to shared state should be easy.
 `useAdapt` easily splits into `adapt` and `useStore`:
 
 ```tsx
-// [!code ++ 1]
+// [!code ++:3]
 const nameStore = adapt('Bob', {
-  reverse: name => name.split('').reverse().join(''), // [!code ++]
-}); // [!code ++]
+  reverse: name => name.split('').reverse().join(''),
+});
 
 function SharedState() {
-  // [!code -- 1]
+  // [!code --:3]
   const [name, setName] = useAdapt('Bob', {
-    reverse: name => name.split('').reverse().join(''), // [!code --]
-  }); // [!code --]
+    reverse: name => name.split('').reverse().join(''),
+  });
   const [name, setName] = useStore(nameStore); // [!code ++]
   return (
     <>
@@ -160,16 +160,17 @@ One way StateAdapt addresses this is by allowing selectors to be defined alongsi
 function SharedDerivedState() {
   const [name, setName] = useAdapt('Bob', {
     reverse: name => name.split('').reverse().join(''),
-    // [!code ++ 1]
+    // [!code ++:1]
     seletors: {
       randomCase: (
         name, // [!code ++]
       ) =>
-        name // [!code ++]
-          .split('') // [!code ++]
-          .map(c => (Math.random() > 0.5 ? c : c.toUpperCase())) // [!code ++]
-          .join(''), // [!code ++]
-    }, // [!code ++]
+        // [!code ++:5]
+        name
+          .split('')
+          .map(c => (Math.random() > 0.5 ? c : c.toUpperCase()))
+          .join(''),
+    },
   });
   return (
     <>
@@ -185,36 +186,36 @@ function SharedDerivedState() {
 Now if you need to share it, the selectors can just move with the state:
 
 ```tsx
-// [!code ++ 1]
+// [!code ++:3]
 const nameStore = adapt('Bob', {
-  reverse: name => name.split('').reverse().join(''), // [!code ++]
-  // [!code ++ 1]
+  reverse: name => name.split('').reverse().join(''),
   seletors: {
     randomCase: (
       name, // [!code ++]
     ) =>
-      name // [!code ++]
-        .split('') // [!code ++]
-        .map(c => (Math.random() > 0.5 ? c : c.toUpperCase())) // [!code ++]
-        .join(''), // [!code ++]
-  }, // [!code ++]
-}); // [!code ++]
+      // [!code ++:6]
+      name
+        .split('')
+        .map(c => (Math.random() > 0.5 ? c : c.toUpperCase()))
+        .join(''),
+  },
+});
 
 function SharedDerivedState() {
-  // [!code -- 1]
+  // [!code --:3]
   const [name, setName] = useAdapt('Bob', {
-    reverse: name => name.split('').reverse().join(''), // [!code --]
-    // [!code -- 1]
+    reverse: name => name.split('').reverse().join(''),
     seletors: {
       randomCase: (
         name, // [!code --]
       ) =>
-        name // [!code --]
-          .split('') // [!code --]
-          .map(c => (Math.random() > 0.5 ? c : c.toUpperCase())) // [!code --]
-          .join(''), // [!code --]
-    }, // [!code --]
-  }); // [!code --]
+        // [!code --:6]
+        name
+          .split('')
+          .map(c => (Math.random() > 0.5 ? c : c.toUpperCase()))
+          .join(''),
+    },
+  });
   const [name, setName] = useStore(nameStore); // [!code ++]
   return (
     <>
@@ -266,20 +267,22 @@ const nameStore = adapt('Bob', {
   reverse: name => name.split('').reverse().join(''),
   seletors: {
     random 👈 // Trigger Copilot suggestion // [!code highlight]
-    randomCase: name => // Autocompleted by Copilot, with no other context // [!code ++]
-      name // [!code ++]
-        .split('') // [!code ++]
-        .map(c => (Math.random() > 0.5 ? c : c.toUpperCase())) // [!code ++]
-        .join(''), // [!code ++]
+    // [!code ++:5]
+    randomCase: name => // Autocompleted by Copilot, with no other context
+      name
+        .split('')
+        .map(c => (Math.random() > 0.5 ? c : c.toUpperCase()))
+        .join(''),
   },
 });
 
 function SharedDerivedState() {
   const [name, setName] = useStore(nameStore);
-  const randomCaseName = name.state // Now we can delete this down here // [!code --]
-    .split('') // [!code --]
-    .map(c => (Math.random() > 0.5 ? c : c.toUpperCase())) // [!code --]
-    .join(''); // [!code --]
+  // [!code --:4]
+  const randomCaseName = name.state // Now we can delete this down here
+    .split('')
+    .map(c => (Math.random() > 0.5 ? c : c.toUpperCase()))
+    .join('');
   return (
     <>
       <h2>Hello {name.state}!</h2>
@@ -294,14 +297,15 @@ function SharedDerivedState() {
 <!-- The only way to share this logic with multiple components without refactoring is to create a custom hook. But this still takes work, because you need to return everything, and destructure it:
 
 ```tsx
-// [!code ++ 1]
+// [!code ++:1]
 function useCountWithDouble(initialCount: 0) {
   const [count, setCount] = useAdapt(0);
 
   const doubleCount = count.state * 2;
 
-  return [{ count, doubleCount }, setCount] as const; // [!code ++]
-} // [!code ++]
+  // [!code ++:2]
+  return [{ count, doubleCount }, setCount] as const;
+}
 
 // ...
 
@@ -311,11 +315,12 @@ function useCountWithDouble(initialCount: 0) {
 Or you could try creating a hook for just `doubleCount`:
 
 ```tsx
-// [!code ++ 1]
+// [!code ++:1]
 function useDoubleCount(count: { state: number }) {
   const doubleCount = count.state * 2;
-  return doubleCount; // [!code ++]
-} // [!code ++]
+  // [!code ++:2]
+  return doubleCount;
+}
 
 // ...
   const [count, setCount] = useAdapt(0);
@@ -327,10 +332,10 @@ function useDoubleCount(count: { state: number }) {
 ```tsx
 const nameStore = adapt('Bob', {
   reverse: name => name.split('').reverse().join(''),
-  // [!code ++ 1]
+  // [!code ++:3]
   selectors: {
-    yelled: name => name.toUpperCase(), // Will be memoized // [!code ++]
-  }, // [!code ++]
+    yelled: name => name.toUpperCase(), // Will be memoized
+  },
 });
 
 function DerivedState() {
@@ -414,9 +419,9 @@ In most state management libraries, state logic is tied to specific instances of
 State adapters provide a smooth path to extracting logic away from specific event sources and state:
 
 ```tsx
-// [!code -- 1]
+// [!code --:1]
 const nameStore = adapt('Bob', {
-// [!code ++ 1]
+// [!code ++:1]
 const nameAdapter = createAdapter<string>()({
   reverse: name => name.split('').reverse().join(''),
   selectors: {
@@ -427,8 +432,9 @@ const nameAdapter = createAdapter<string>()({
         .join(''),
   },
 });
-const name1Store = adapt('Bob', nameAdapter); // [!code ++]
-const name2Store = adapt('Kat', nameAdapter); // [!code ++]
+// [!code ++:2]
+const name1Store = adapt('Bob', nameAdapter);
+const name2Store = adapt('Kat', nameAdapter);
 
 // ...
 ```
@@ -524,17 +530,17 @@ StateAdapt provides a smooth path to reactive state:
 const onResetAll = source(); // Shared event source // [!code ++]
 
 const name1Store = adapt('Bob', nameAdapter); // [!code --]
-// [!code ++ 1]
+// [!code ++:4]
 const name1Store = adapt('Bob', {
-  adapter: nameAdapter, // [!code ++]
-  sources: { reset: onResetAll }, // calls `reset` reducer (included) // [!code ++]
-}); // [!code ++]
+  adapter: nameAdapter,
+  sources: { reset: onResetAll }, // calls `reset` reducer (included)
+});
 const name2Store = adapt('Kat', nameAdapter); // [!code --]
-// [!code ++ 1]
+// [!code ++:4]
 const name2Store = adapt('Kat', {
-  adapter: nameAdapter, // [!code ++]
-  sources: { reset: onResetAll }, // calls `reset` reducer (included) // [!code ++]
-}); // [!code ++]
+  adapter: nameAdapter,
+  sources: { reset: onResetAll }, // calls `reset` reducer (included)
+});
 
 // ...
 
@@ -606,10 +612,10 @@ complicated workarounds. Use derivations in components with `useDerived`:
 ```tsx
 // ...
 
-// [!code ++ 1]
-const deriveBobcat = derive( // [!code ++]
-  () => name1Store() === 'Bob' && name2Store() === 'Kat', // [!code ++]
-); // [!code ++]
+// [!code ++:3]
+const deriveBobcat = derive(
+  () => name1Store() === 'Bob' && name2Store() === 'Kat',
+);
 
 // ...
 
@@ -651,9 +657,7 @@ const name2Store = adapt('Kat', {
   sources: { reset: onResetAll },
 });
 
-const deriveBobcat = derive(
-  () => name1Store() === 'Bob' && name2Store() === 'Kat',
-);
+const deriveBobcat = derive(() => name1Store() === 'Bob' && name2Store() === 'Kat');
 
 function MultiStoreSharedDerivedState() {
   const [name1, setName1] = useStore(name1Store);
@@ -698,11 +702,11 @@ const onResetBoth = source('[name] onResetBoth'); // Annotate for Redux Devtools
 const name1Store = adapt('Bob', {
   adapter: nameAdapter,
    sources: onNameFromServer, // Set state // [!code --]
-   // [!code ++ 1]
+   // [!code ++:4]
    sources: {
-     set: onNameFromServer, // `set` is provided with all adapters // [!code ++]
-     reset: onResetBoth, // `reset` is provided with all adapters // [!code ++]
-   }, // [!code ++]
+     set: onNameFromServer, // `set` is provided with all adapters
+     reset: onResetBoth, // `reset` is provided with all adapters
+   },
 });
 const name2Store = adapt('Bob', {
   adapter: nameAdapter,
@@ -746,29 +750,29 @@ StateAdapt sources extend RxJS observables, and StateAdapt stores directly refer
 ```tsx
 // ...
 
-// [!code -- 1]
+// [!code --:1]
 const name1Store = adapt('Bob', {
-// [!code ++ 1]
+// [!code ++:1]
 const name1Store = adapt('Loading...', {
   adapter: nameAdapter,
   sources: { reset: onResetAll }, // [!code --]
-  // [!code ++ 1]
+  // [!code ++:4]
   sources: {
-    set: of('Bob').pipe(delay(3000)), // Any observable // [!code ++]
-    reset: onResetAll, // [!code ++]
-  }, // [!code ++]
+    set: of('Bob').pipe(delay(3000)), // Any observable
+    reset: onResetAll,
+  },
 });
-// [!code -- 1]
+// [!code --:1]
 const name2Store = adapt('Kat', {
-// [!code ++ 1]
+// [!code ++:1]
 const name2Store = adapt('Loading...', {
   adapter: nameAdapter,
   sources: { reset: onResetAll }, // [!code --]
-  // [!code ++ 1]
+  // [!code ++:4]
   sources: {
-    set: of('Kat').pipe(delay(3000)), // Any observable // [!code ++]
-    reset: onResetAll, // [!code ++]
-  }, // [!code ++]
+    set: of('Kat').pipe(delay(3000)), // Any observable
+    reset: onResetAll,
+  },
 });
 
 // ...
@@ -806,9 +810,7 @@ const name2Store = adapt('Loading...', {
   },
 });
 
-const deriveBobcat = derive(
-  () => name1Store() === 'Bob' && name2Store() === 'Kat',
-);
+const deriveBobcat = derive(() => name1Store() === 'Bob' && name2Store() === 'Kat');
 
 function DerivedEvents() {
   const [name1, setName1] = useStore(name1Store);

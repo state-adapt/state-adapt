@@ -35,9 +35,9 @@ export class NameComponent {
 ```ts
 export class NameComponent {
   name = adapt('Bob'); // [!code --]
-  // [!code ++ 3]
+  // [!code ++:3]
   name = adapt('Bob', {
-    reverse: name => name.split('').reverse().join(''), // name type inferred
+    reverse: name => name.split('').reverse().join(''),
   });
 }
 ```
@@ -45,7 +45,7 @@ export class NameComponent {
 ```html
 <h1>Hello {{ name() }}!</h1>
 <button (click)="name.set('Bilbo')">Change Name</button>
-// [!code ++ 1]
+[!code ++:1]
 <button (click)="name.reverse()">Reverse Name</button>
 ```
 
@@ -77,15 +77,16 @@ State adapters provide a smooth path to extracting logic away from specific even
 
 ```ts
 export class NameComponent {
-  // [!code -- 1]
+  // [!code --:1]
   name = adapt('Bob', {
-  // [!code ++ 1]
+  // [!code ++:1]
   nameAdapter = createAdapter<string>()({
     reverse: name => name.split('').reverse().join(''),
   });
 
-  name1 = adapt('Bob', this.nameAdapter); // [!code ++]
-  name2 = adapt('Kat', this.nameAdapter); // [!code ++]
+  // [!code ++:2]
+  name1 = adapt('Bob', this.nameAdapter);
+  name2 = adapt('Kat', this.nameAdapter);
 }
 ```
 
@@ -94,7 +95,7 @@ export class NameComponent {
 <button (click)="name1.set('Bilbo')">Change Name</button>
 <button (click)="name1.reverse()">Reverse Name</button>
 
-// [!code ++ 3]
+<!-- [!code ++:3] -->
 <h1>Hello {{ name2() }}!</h1>
 <button (click)="name2.set('Bilbo')">Change Name</button>
 <button (click)="name2.reverse()">Reverse Name</button>
@@ -142,7 +143,7 @@ State adapters enable reusable derived state logic with selectors:
 export class NameComponent {
   nameAdapter = createAdapter<string>()({
     reverse: name => name.split('').reverse().join(''),
-    // [!code ++ 4]
+    // [!code ++:4]
     selectors: {
       // Each store gets its own computed from this:
       yelled: name => name.toUpperCase(),
@@ -154,15 +155,15 @@ export class NameComponent {
 ```
 
 ```html
-// [!code -- 1]
+// [!code --:1]
 <h1>Hello {{ name1() }}!</h1>
-// [!code ++ 1]
+// [!code ++:1]
 <h1>Hello {{ name1.yelled() }}!</h1>
 <!-- ... -->
 
-// [!code -- 1]
+// [!code --:1]
 <h1>Hello {{ name2() }}!</h1>
-// [!code ++ 1]
+// [!code ++:1]
 <h1>Hello {{ name2.yelled() }}!</h1>
 <!-- ... -->
 ```
@@ -214,13 +215,13 @@ export class NameComponent {
   resetAll$ = source(); // Shared event source // [!code ++]
 
   name1 = adapt('Bob', this.nameAdapter); // [!code --]
-  // [!code ++ 4]
+  // [!code ++:4]
   name1 = adapt('Bob', {
     adapter: this.nameAdapter,
     sources: { reset: this.resetAll$ }, // calls `reset` reducer (included)
   });
   name2 = adapt('Kat', this.nameAdapter); // [!code --]
-  // [!code ++ 4]
+  // [!code ++:4]
   name2 = adapt('Kat', {
     adapter: this.nameAdapter,
     sources: { reset: this.resetAll$ }, // calls `reset` reducer (included)
@@ -230,7 +231,7 @@ export class NameComponent {
 
 ```html
 <!-- ... -->
-// [!code ++ 1]
+// [!code ++:1]
 <button (click)="resetAll$.next()">Reset All</button>
 ```
 
@@ -283,25 +284,25 @@ export class NameComponent {
 
   // ...
 
-  // [!code -- 1]
+  // [!code --:1]
   name1 = adapt('Bob', {
-  // [!code ++ 1]
+  // [!code ++:1]
   name1 = adapt('Loading...', {
     adapter: this.nameAdapter,
     sources: { reset: this.resetAll$ }, // [!code --]
-    // [!code ++ 4]
+    // [!code ++:4]
     sources: {
       set: of('Bob').pipe(delay(3000)), // Any observable
       reset: this.resetAll$,
     },
   });
-  // [!code -- 1]
+  // [!code --:1]
   name2 = adapt('Kat', {
-  // [!code ++ 1]
+  // [!code ++:1]
   name2 = adapt('Loading...', {
     adapter: this.nameAdapter,
     sources: { reset: this.resetAll$ }, // [!code --]
-    // [!code ++ 4]
+    // [!code ++:4]
     sources: {
       set: of('Kat').pipe(delay(3000)), // Any observable
       reset: this.resetAll$,

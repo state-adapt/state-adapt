@@ -90,17 +90,19 @@ function StateAdapters() {
   const nameStore1 = adapt('Bob', nameAdapter);
   const name1 = fromAdapt(nameStore1);
 
-  const nameStore2 = adapt('Bob', nameAdapter); // [!code ++]
-  const name2 = fromAdapt(nameStore2); // [!code ++]
+  // [!code ++:2]
+  const nameStore2 = adapt('Bob', nameAdapter);
+  const name2 = fromAdapt(nameStore2);
   return (
     <>
       <h2>Hello {name1.yelledName()}!</h2>
       <button onClick={() => nameStore1.set('Bilbo')}>Change Name</button>
       <button onClick={() => nameStore1.reverseName()}>Reverse Name</button>
 
-      <h2>Hello {name2.yelledName()}!</h2> // [!code ++]
-      <button onClick={() => nameStore2.set('Bilbo')}>Change Name</button> // [!code ++]
-      <button onClick={() => nameStore2.reverseName()}>Reverse Name</button> // [!code ++]
+      // [!code ++:3]
+      <h2>Hello {name2.yelledName()}!</h2>
+      <button onClick={() => nameStore2.set('Bilbo')}>Change Name</button>
+      <button onClick={() => nameStore2.reverseName()}>Reverse Name</button>
     </>
   );
 }
@@ -129,19 +131,21 @@ const onNameFromServer = timer(3000).pipe(map(() => 'Joel')); // [!code ++]
 
 function ObservableSources() {
   const nameStore1 = adapt('Bob', nameAdapter); // [!code --]
-  const nameStore1 = adapt('Bob', { // [!code ++]
-    adapter: nameAdapter, // [!code ++]
-    sources: onNameFromServer, // Set state // [!code ++]
-  }); // [!code ++]
+  // [!code ++:4]
+  const nameStore1 = adapt('Bob', {
+    adapter: nameAdapter,
+    sources: onNameFromServer, // Set state
+  });
   const name1 = fromAdapt(nameStore1);
 
   const nameStore2 = adapt('Bob', nameAdapter); // [!code --]
-  const nameStore2 = adapt('Bob', { // [!code ++]
-    adapter: nameAdapter, // [!code ++]
-    sources: { // [!code ++]
-      concatName: onNameFromServer, // Trigger a specific state reaction // [!code ++]
-    }, // [!code ++]
-  }); // [!code ++]
+  // [!code ++:6]
+  const nameStore2 = adapt('Bob', {
+    adapter: nameAdapter,
+    sources: {
+      concatName: onNameFromServer, // Trigger a specific state reaction
+    },
+  });
   const name2 = fromAdapt(nameStore2);
   return (
     <>
@@ -184,10 +188,11 @@ function DomSources() {
   const nameStore1 = adapt('Bob', {
     adapter: nameAdapter,
     sources: onNameFromServer, // Set state // [!code --]
-    sources: { // [!code ++]
-      set: onNameFromServer, // `set` is provided with all adapters // [!code ++]
-      reset: onResetBoth, // `reset` is provided with all adapters // [!code ++]
-    }, // [!code ++]
+    // [!code ++:4]
+    sources: {
+      set: onNameFromServer, // `set` is provided with all adapters
+      reset: onResetBoth, // `reset` is provided with all adapters
+    },
   });
   const name1 = fromAdapt(nameStore1);
 

@@ -92,11 +92,13 @@ If you need to reuse state logic, it's as simple as dragging it outside the `ada
   });
   const yelledName$ = nameStore.yelledName$; // [!code --]
 
-  const nameStore1 = adapt('Bob', nameAdapter); // [!code ++]
-  const yelledName1$ = nameStore1.yelledName$; // [!code ++]
+  // [!code ++:2]
+  const nameStore1 = adapt('Bob', nameAdapter);
+  const yelledName1$ = nameStore1.yelledName$;
 
-  const nameStore2 = adapt('Bob', nameAdapter); // [!code ++]
-  const yelledName2$ = nameStore2.yelledName$; // [!code ++]
+  // [!code ++:2]
+  const nameStore2 = adapt('Bob', nameAdapter);
+  const yelledName2$ = nameStore2.yelledName$;
 ```
 
 ```svelte
@@ -104,9 +106,10 @@ If you need to reuse state logic, it's as simple as dragging it outside the `ada
  <button on:click={() => nameStore1.set('Bilbo')}>Change Name</button>
  <button on:click={() => nameStore1.reverseName()}>Reverse Name</button>
 
- <h2>Hello { $yelledName2$ }!</h2> // [!code ++]
- <button on:click={() => nameStore2.set('Bilbo')}>Change Name</button> // [!code ++]
- <button on:click={() => nameStore2.reverseName()}>Reverse Name</button> // [!code ++]
+ <!-- [!code ++:3] -->
+ <h2>Hello { $yelledName2$ }!</h2>
+ <button on:click={() => nameStore2.set('Bilbo')}>Change Name</button>
+ <button on:click={() => nameStore2.reverseName()}>Reverse Name</button>
 ```
 
 <!-- <video controls loop>
@@ -131,22 +134,21 @@ const nameAdapter = createAdapter<string>()({
 const onNameFromServer = timer(3000).pipe(map(() => 'Joel')); // [!code ++]
 
 const nameStore1 = adapt('Bob', nameAdapter); // [!code --]
+// [!code ++:4]
 const nameStore1 = adapt('Bob', {
-  // [!code ++]
-  adapter: nameAdapter, // [!code ++]
-  sources: onNameFromServer, // Set state // [!code ++]
-}); // [!code ++]
+  adapter: nameAdapter,
+  sources: onNameFromServer, // Set state
+});
 const yelledName1$ = nameStore1.yelledName$;
 
 const nameStore2 = adapt('Bob', nameAdapter); // [!code --]
+// [!code ++:6]
 const nameStore2 = adapt('Bob', {
-  // [!code ++]
-  adapter: nameAdapter, // [!code ++]
+  adapter: nameAdapter,
   sources: {
-    // [!code ++]
-    concatName: onNameFromServer, // Trigger a specific state reaction // [!code ++]
-  }, // [!code ++]
-}); // [!code ++]
+    concatName: onNameFromServer, // Trigger a specific state reaction
+  },
+});
 const yelledName2$ = nameStore2.yelledName$;
 ```
 
@@ -186,11 +188,11 @@ const onNameFromServer = timer(3000).pipe(map(() => 'Joel'));
 const nameStore1 = adapt('Bob', {
   adapter: nameAdapter,
   sources: onNameFromServer, // Set state // [!code --]
+  // [!code ++:4]
   sources: {
-    // [!code ++]
-    set: onNameFromServer, // `set` is provided with all adapters // [!code ++]
-    reset: onResetBoth, // `reset` is provided with all adapters // [!code ++]
-  }, // [!code ++]
+    set: onNameFromServer, // `set` is provided with all adapters
+    reset: onResetBoth, // `reset` is provided with all adapters
+  },
 });
 const yelledName1$ = nameStore1.yelledName$;
 
@@ -257,14 +259,13 @@ const nameStore2 = adapt('Bob', {
 });
 const yelledName2$ = nameStore2.yelledName$;
 
+// [!code ++:6]
 const bothBobs$ = joinStores({
-  // [!code ++]
-  name1: nameStore1, // [!code ++]
-  name2: nameStore2, // [!code ++]
+  name1: nameStore1,
+  name2: nameStore2,
 })({
-  // [!code ++]
-  bothBobs: s => s.name1 === 'Bob' && s.name2 === 'Bob', // [!code ++]
-})().bothBobs$; // [!code ++]
+  bothBobs: s => s.name1 === 'Bob' && s.name2 === 'Bob',
+})().bothBobs$;
 ```
 
 ```svelte
@@ -278,9 +279,10 @@ const bothBobs$ = joinStores({
 
  <button on:click={onResetBoth}>Reset Both</button>
 
- {#if $bothBobs$} // [!code ++]
-   <h2>Hello Bobs!</h2> // [!code ++]
- {/if} // [!code ++]
+ <!-- [!code ++:3] -->
+ {#if $bothBobs$}
+   <h2>Hello Bobs!</h2>
+ {/if}
 ```
 
 <!-- <video controls loop>
