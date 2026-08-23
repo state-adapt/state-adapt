@@ -3,6 +3,30 @@ import { BehaviorSubject } from 'rxjs';
 import { useObservable } from './use-observable';
 
 describe('useObservable', () => {
+  it('should infer the return type from the initial value', () => {
+    const value$ = new BehaviorSubject<number>(0);
+    const optionalValue$ = new BehaviorSubject<number | undefined>(undefined);
+
+    renderHook(() => {
+      const valueWithoutInitial = useObservable(value$);
+      const valueWithInitial = useObservable(value$, 0);
+      const optionalValueWithInitial = useObservable(optionalValue$, 0);
+
+      const optionalValue: number | undefined = valueWithoutInitial;
+      const value: number = valueWithInitial;
+      const stillOptionalValue: number | undefined = optionalValueWithInitial;
+
+      // @ts-expect-error An observable without an initial value may return undefined.
+      const missingInitialValue: number = valueWithoutInitial;
+      // @ts-expect-error The observable itself may emit undefined.
+      const emittedUndefined: number = optionalValueWithInitial;
+      // @ts-expect-error The initial value must match the observable's value type.
+      useObservable(value$, '0');
+
+      return { optionalValue, value, stillOptionalValue, missingInitialValue, emittedUndefined };
+    });
+  });
+
   it('should return the latest value without an initial value', () => {
     const value$ = new BehaviorSubject('initial');
     const { result } = renderHook(() => useObservable(value$));

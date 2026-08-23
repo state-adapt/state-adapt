@@ -1,11 +1,7 @@
 import { Section } from '../../../../section-paths';
 
-// Read apps/docs2/curated-api-docs.md before editing this file.
+// Read apps/docs2/README.md before editing this file.
 export const sections: Section[] = [
-  {
-    name: 'Global Configuration',
-    items: ['provideStore', 'defaultStoreProvider', 'IS_STORE_LOCAL'],
-  },
   {
     name: 'Store',
     items: ['adapt', 'watch'],
@@ -13,6 +9,10 @@ export const sections: Section[] = [
   {
     name: 'Signals',
     items: ['toSignal'],
+  },
+  {
+    name: 'Global Configuration',
+    items: ['provideStore', 'defaultStoreProvider', 'IS_STORE_LOCAL'],
   },
 ].map(({ name, items }) => ({
   name,

@@ -3,14 +3,30 @@ import { Observable } from 'rxjs';
 import { useSyncExternalStore } from 'use-sync-external-store/shim';
 
 /**
- * Subscribes to an observable and returns its latest value. An optional initial value is
- * returned during the first render and during server rendering until the observable emits.
+ * Subscribes the component to an observable and returns its latest value.
+ *
+ * Until the observable emits, the hook returns `undefined` or the provided
+ * initial value. The initial value is also used during server rendering.
+ *
+ * ```tsx
+ * import { useObservable } from '@state-adapt/react';
+ * import { interval } from 'rxjs';
+ *
+ * const tick$ = interval(1000);
+ *
+ * function Timer() {
+ *   const tick = useObservable(tick$);
+ *
+ *   return <p>{tick}</p>;
+ * }
+ * ```
  */
-export function useObservable<T>(obs$: Observable<T>): T | undefined;
-export function useObservable<T>(obs$: Observable<T>, initialValue: T): T;
-export function useObservable<T>(obs$: Observable<T>, initialValue?: T): T | undefined {
+export function useObservable<T, Args extends [] | [initialValue: NoInfer<T>]>(
+  obs$: Observable<T>,
+  ...args: Args
+): Args extends [] ? T | undefined : T {
   const observableStore = useMemo(() => {
-    let snapshot = initialValue;
+    let snapshot = args[0];
 
     return {
       getSnapshot: () => snapshot,
@@ -34,5 +50,5 @@ export function useObservable<T>(obs$: Observable<T>, initialValue?: T): T | und
     observableStore.getSnapshot,
   );
   useDebugValue(snapshot);
-  return snapshot;
+  return snapshot as Args extends [] ? T | undefined : T;
 }
