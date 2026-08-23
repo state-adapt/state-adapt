@@ -134,7 +134,6 @@
     "prettier": "2.7.1",
     "raw-loader": "^4.0.2",
     "react-refresh": "^0.10.0",
-    "rimraf": "^3.0.2",
     "style-loader": "^3.3.0",
     "stylus": "0.59.0",
     "stylus-loader": "^7.1.0",
