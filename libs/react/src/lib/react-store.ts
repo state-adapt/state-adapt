@@ -12,7 +12,7 @@ import {
   Selectors,
   WithGetState,
 } from '@state-adapt/core';
-import { createStoreSelectorReader } from './derived';
+import { createStoreSelectorReader } from './derive.function';
 
 const REACT_STORE = Symbol('React StateAdapt store');
 

@@ -1,6 +1,6 @@
 import { act, renderHook } from '@testing-library/react';
 import { adapt } from './adapt.function';
-import { derive } from './derived';
+import { derive } from './derive.function';
 import { useDerived } from './use-derived';
 import { useStore } from './use-store';
 

@@ -7,6 +7,6 @@ export * from './lib/use-store';
 export * from './lib/use-adapt';
 export * from './lib/use-observable';
 export * from './lib/use-source';
-export { derive, type Derived } from './lib/derived';
+export { derive, type Derived } from './lib/derive.function';
 export * from './lib/use-derived';
 export type { ReactStore, ReactWatch, StoreSelectorReaders } from './lib/react-store';

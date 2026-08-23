@@ -2,7 +2,11 @@ import { useDebugValue, useMemo } from 'react';
 import { StoreLike } from '@state-adapt/rxjs';
 import { Subscription } from 'rxjs';
 import { useSyncExternalStore } from 'use-sync-external-store/shim';
-import { Derived, DerivedConsumer, withDerivedConsumer } from './derived';
+import {
+  Derived,
+  DerivedConsumer,
+  withDerivedConsumer,
+} from './derive.function';
 
 class ReactDerivedConsumer<Value> implements DerivedConsumer {
   private active = false;

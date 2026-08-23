@@ -3,7 +3,7 @@ import { StrictMode } from 'react';
 import { createAdapter, getId } from '@state-adapt/core';
 import { Observable, of } from 'rxjs';
 import { adapt } from './adapt.function';
-import { derive } from './derived';
+import { derive } from './derive.function';
 import { useDerived } from './use-derived';
 import { useStore } from './use-store';
 import { watch } from './watch.function';

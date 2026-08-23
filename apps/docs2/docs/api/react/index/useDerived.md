@@ -1,12 +1,12 @@
 ---
-definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/react/src/lib/use-derived.ts#L143
+definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/react/src/lib/use-derived.ts#L147
 ---
 
 # Function: useDerived()
 
 > **useDerived**\<`Value`\>(`derived`): `Value`
 
-Defined in: [lib/use-derived.ts:143](https://github.com/state-adapt/state-adapt/blob/main/libs/react/src/lib/use-derived.ts#L143)
+Defined in: [lib/use-derived.ts:147](https://github.com/state-adapt/state-adapt/blob/main/libs/react/src/lib/use-derived.ts#L147)
 
 Subscribes a React component to a value created with [derive](derive.md).
 

@@ -1,12 +1,12 @@
 ---
-definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/react/src/lib/derived.ts#L109
+definedIn: 
 ---
 
 # Function: derive()
 
 > **derive**\<`Value`\>(`projector`): `Derived`\<`Value`\>
 
-Defined in: [lib/derived.ts:109](https://github.com/state-adapt/state-adapt/blob/main/libs/react/src/lib/derived.ts#L109)
+Defined in: lib/derive.function.ts:109
 
 Creates a shared, memoized value derived from stores created with
 [adapt](adapt.md). Call it for its current value, or subscribe a component to it
