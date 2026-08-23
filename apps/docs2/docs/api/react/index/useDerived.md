@@ -1,16 +1,21 @@
 ---
-definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/react/src/lib/use-derived.ts#L138
+definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/react/src/lib/use-derived.ts#L143
 ---
 
 # Function: useDerived()
 
 > **useDerived**\<`Value`\>(`derived`): `Value`
 
-Defined in: [lib/use-derived.ts:138](https://github.com/state-adapt/state-adapt/blob/main/libs/react/src/lib/use-derived.ts#L138)
+Defined in: [lib/use-derived.ts:143](https://github.com/state-adapt/state-adapt/blob/main/libs/react/src/lib/use-derived.ts#L143)
 
 Subscribes a React component to a value created with [derive](derive.md).
 
 ```tsx
+import { adapt, derive, useDerived } from '@state-adapt/react';
+
+const priceStore = adapt(20);
+const quantityStore = adapt(3);
+
 const deriveTotal = derive(() => priceStore() * quantityStore());
 
 function Total() {

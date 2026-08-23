@@ -1,12 +1,12 @@
 ---
-definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/react/src/lib/derived.ts#L107
+definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/react/src/lib/derived.ts#L109
 ---
 
 # Function: derive()
 
 > **derive**\<`Value`\>(`projector`): `Derived`\<`Value`\>
 
-Defined in: [lib/derived.ts:107](https://github.com/state-adapt/state-adapt/blob/main/libs/react/src/lib/derived.ts#L107)
+Defined in: [lib/derived.ts:109](https://github.com/state-adapt/state-adapt/blob/main/libs/react/src/lib/derived.ts#L109)
 
 Creates a shared, memoized value derived from stores created with
 [adapt](adapt.md). Call it for its current value, or subscribe a component to it
@@ -15,6 +15,8 @@ with [useDerived](useDerived.md).
 Define it outside your components:
 
 ```tsx
+import { adapt, derive, useDerived } from '@state-adapt/react';
+
 const priceStore = adapt(20);
 const quantityStore = adapt(3);
 

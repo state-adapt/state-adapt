@@ -91,6 +91,8 @@ export const createStoreSelectorReader = (
  * Define it outside your components:
  *
  * ```tsx
+ * import { adapt, derive, useDerived } from '@state-adapt/react';
+ *
  * const priceStore = adapt(20);
  * const quantityStore = adapt(3);
  *

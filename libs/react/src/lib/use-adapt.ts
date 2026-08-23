@@ -34,6 +34,8 @@ import { createReactStore } from './react-store';
   as a property of the first tuple element. Also, the `setState` function has a `reset` property function that resets the store's state.
 
   ```tsx
+  import { useAdapt } from '@state-adapt/react';
+
   export function MyComponent() {
     const [name, setName] = useAdapt('John');
 
@@ -60,6 +62,8 @@ import { createReactStore } from './react-store';
   This helps when initial state might be different at each time the store is being used, like with `localStorage`:
 
   ```tsx
+  import { useAdapt } from '@state-adapt/react';
+
   export function MyComponent() {
     // Each mount reads `localStorage`, and `reset` goes back to what it read
     const [name, setName] = useAdapt(() => localStorage.getItem('name') ?? 'John');
@@ -81,6 +85,8 @@ import { createReactStore } from './react-store';
   You can also pass in a state {@link Adapter} object to customize the state change functions and selectors.
 
   ```tsx
+  import { useAdapt } from '@state-adapt/react';
+
   export function MyComponent() {
     const [name, setName] = useAdapt('John', {
       concat: (state, payload: string) => state + payload,
@@ -112,6 +118,9 @@ import { createReactStore } from './react-store';
   by imperative callback functions.
 
   ```tsx
+  import { useAdapt } from '@state-adapt/react';
+  import { interval } from 'rxjs';
+
   const onTick = interval(1000);
 
   export function MyComponent() {
@@ -141,6 +150,9 @@ import { createReactStore } from './react-store';
   #### Example: Single source or observable
 
   ```tsx
+  import { useAdapt } from '@state-adapt/react';
+  import { source } from '@state-adapt/rxjs';
+
   const onNameChange = source<string>();
 
   export function MyComponent() {
@@ -166,6 +178,9 @@ import { createReactStore } from './react-store';
   #### Example: Array of sources or observables
 
   ```tsx
+  import { useAdapt } from '@state-adapt/react';
+  import { source } from '@state-adapt/rxjs';
+
   const onNameChange = source<string>();
   const onNameChange2 = source<string>();
 
@@ -194,6 +209,9 @@ import { createReactStore } from './react-store';
   #### Example: Object of sources or observables
 
   ```tsx
+  import { useAdapt } from '@state-adapt/react';
+  import { source } from '@state-adapt/rxjs';
+
   const onNameChange = source<string>();
   const onNameReset = source<void>();
 
@@ -225,6 +243,10 @@ import { createReactStore } from './react-store';
   #### Example: Function that returns an observable
 
   ```tsx
+  import { useAdapt } from '@state-adapt/react';
+  import { toSource } from '@state-adapt/rxjs';
+  import { delay, map } from 'rxjs/operators';
+
   export function MyComponent() {
     const [name] = useAdapt('John', {
       sources: store => store.state$.pipe(
@@ -250,16 +272,21 @@ import { createReactStore } from './react-store';
   #### Example: Paths and global state
 
   ```tsx
-  const [count1] = useAdapt(0, { path: 'count.1' });
-  const [count2] = useAdapt(0, { path: 'count.2' });
+  import { useAdapt } from '@state-adapt/react';
 
-  // global state:
-  // {
-  //   count: {
-  //     1: 0,
-  //     2: 0,
-  //   }
-  // }
+  export function MyComponent() {
+    const [count1] = useAdapt(0, { path: 'count.1' });
+    const [count2] = useAdapt(0, { path: 'count.2' });
+
+    // global state:
+    // {
+    //   count: {
+    //     1: 0,
+    //     2: 0,
+    //   }
+    // }
+    return <div>{count1.state}, {count2.state}</div>;
+  }
   ```
 
   Each store completely owns its own state. If more than one store tries to use the same path, StateAdapt will throw this error:
@@ -275,6 +302,7 @@ import { createReactStore } from './react-store';
 
   ```tsx
   import { getId } from '@state-adapt/core';
+  import { useAdapt } from '@state-adapt/react';
 
   const path0 = 'number' + getId();
   const path1 = 'number' + getId();

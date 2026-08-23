@@ -1,12 +1,12 @@
 ---
-definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/angular/src/lib/adapt.function.ts#L319
+definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/angular/src/lib/adapt.function.ts#L353
 ---
 
 # Function: adapt()
 
 > **adapt**\<`State`, `S`, `R`, `R2`, `ReturnedSources`\>(`initialState`, `second`): \{ \[P in string \| number \| symbol as \`$\{P extends string ? P\<P\> : never\}$\`\]: Observable\<ReturnType\<((\{\} extends S ? S & \{\} : S) & WithGetState\<State\>)\[P\]\>\> \} & `object` & `object` & `SyntheticSources`\<`InitializedReactions`\<`State`, `S`, `object` *extends* `R` ? `R2` : `R`\>\> & `WritableSignal`\<`State`\> & \{ \[K in string \| number \| symbol\]: () =\> ReturnType\<S\[K\]\> \}
 
-Defined in: [libs/angular/src/lib/adapt.function.ts:319](https://github.com/state-adapt/state-adapt/blob/main/libs/angular/src/lib/adapt.function.ts#L319)
+Defined in: [libs/angular/src/lib/adapt.function.ts:353](https://github.com/state-adapt/state-adapt/blob/main/libs/angular/src/lib/adapt.function.ts#L353)
 
 `adapt` wraps [StateAdapt.adapt](../../rxjs/index/StateAdapt.md#adapt) and adds signals for the store's selectors.
 
@@ -19,6 +19,9 @@ The simplest way to use `adapt` is to only pass it an initial state. `adapt` cre
 In addition to the regular `set` method on signals, stores have a `reset` method, and a `state$` observable of the store's state.
 
 ```typescript
+import { Component } from '@angular/core';
+import { adapt } from '@state-adapt/angular';
+
 @Component({
   template: `
     <div>Count is {{ count() }}</div>
@@ -38,6 +41,9 @@ export class MyComponent {
 You can also pass in a state [Adapter](../../core/src/Adapter.md) object to customize the state change functions and selectors.
 
 ```typescript
+import { Component } from '@angular/core';
+import { adapt } from '@state-adapt/angular';
+
 @Component({
   template: `
     <div>Count is {{ count() }}</div>
@@ -65,6 +71,10 @@ Sources allow the store to declaratively react to external events rather than be
 by imperative code in callback functions.
 
 ```typescript
+import { Component, inject, Injectable } from '@angular/core';
+import { adapt } from '@state-adapt/angular';
+import { interval } from 'rxjs';
+
 @Injectable({ providedIn: 'root' })
 export class ClockService {
   tick$ = interval(1000);
@@ -107,6 +117,10 @@ with the payload.
 #### Example: Single source or observable
 
 ```typescript
+import { Component, inject, Injectable } from '@angular/core';
+import { adapt } from '@state-adapt/angular';
+import { source } from '@state-adapt/rxjs';
+
 @Injectable({ providedIn: 'root' })
 export class NameService {
   nameChange$ = source<string>('nameChange$');
@@ -134,6 +148,10 @@ export class NameComponent {
 #### Example: Array of sources or observables
 
 ```typescript
+import { Component, inject, Injectable } from '@angular/core';
+import { adapt } from '@state-adapt/angular';
+import { source } from '@state-adapt/rxjs';
+
 @Injectable({ providedIn: 'root' })
 export class NameService {
   nameChange$ = source<string>('nameChange$');
@@ -163,6 +181,10 @@ export class NameComponent {
 #### Example: Object of sources or observables
 
 ```angular-ts
+import { Component, inject, Injectable } from '@angular/core';
+import { adapt } from '@state-adapt/angular';
+import { source } from '@state-adapt/rxjs';
+
 @Injectable({ providedIn: 'root' })
 export class NameService {
   nameChange$ = source<string>('nameChange$');
@@ -195,6 +217,10 @@ types of sources or observables.
 #### Example: Function that returns an observable
 
 ```angular-ts
+import { Component, inject, Injectable } from '@angular/core';
+import { adapt } from '@state-adapt/angular';
+import { delay, map } from 'rxjs/operators';
+
 @Injectable({ providedIn: 'root' })
 export class NameService {
   name = adapt('John ', {
@@ -231,6 +257,9 @@ the global store. Here are some example paths and the resulting global state obj
 #### Example: Paths and global state
 
 ```angular-ts
+import { Component } from '@angular/core';
+import { adapt } from '@state-adapt/angular';
+
 @Component({
   template: `
     <div>Count 1 is {{ count1() }}</div>
@@ -262,7 +291,9 @@ To help avoid this error, StateAdapt provides a [getId](../../core/src/getId.md)
 #### Example: getId for unique paths
 
 ```typescript
+import { Component } from '@angular/core';
 import { getId } from '@state-adapt/core';
+import { adapt } from '@state-adapt/angular';
 
 @Component({
   template: `
@@ -291,6 +322,9 @@ for each activation.
 This helps when initial state might be different at each time the store is activated, like with `localStorage`:
 
 ```typescript
+import { Component } from '@angular/core';
+import { adapt } from '@state-adapt/angular';
+
 @Component({
   template: `
     <div>Name is {{ name() }}</div>

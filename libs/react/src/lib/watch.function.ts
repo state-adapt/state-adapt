@@ -15,6 +15,9 @@ import { ReactWatch } from './react-store';
  * current state, or call a selector property for its current result.
  *
  * ```ts
+ * import { stringAdapter } from '@state-adapt/core/adapters';
+ * import { watch } from '@state-adapt/react';
+ *
  * const name = watch('name', stringAdapter);
  *
  * // While the store at "name" is active:

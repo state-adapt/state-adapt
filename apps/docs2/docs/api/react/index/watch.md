@@ -1,12 +1,12 @@
 ---
-definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/react/src/lib/watch.function.ts#L28
+definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/react/src/lib/watch.function.ts#L31
 ---
 
 # Function: watch()
 
 > **watch**\<`State`, `S`, `R`\>(`path`, `adapter?`): `ReactWatch`\<`State`, `S`\>
 
-Defined in: [lib/watch.function.ts:28](https://github.com/state-adapt/state-adapt/blob/main/libs/react/src/lib/watch.function.ts#L28)
+Defined in: [lib/watch.function.ts:31](https://github.com/state-adapt/state-adapt/blob/main/libs/react/src/lib/watch.function.ts#L31)
 
 See [StateAdapt.watch](../../rxjs/index/StateAdapt.md#watch) for the complete API.
 
@@ -14,6 +14,9 @@ This wrapper additionally lets you call the store as a function for its
 current state, or call a selector property for its current result.
 
 ```ts
+import { stringAdapter } from '@state-adapt/core/adapters';
+import { watch } from '@state-adapt/react';
+
 const name = watch('name', stringAdapter);
 
 // While the store at "name" is active:

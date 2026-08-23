@@ -24,6 +24,9 @@ import { toSignal } from './to-signal.function';
   In addition to the regular `set` method on signals, stores have a `reset` method, and a `state$` observable of the store's state.
 
   ```typescript
+  import { Component } from '@angular/core';
+  import { adapt } from '@state-adapt/angular';
+
   @Component({
     template: `
       <div>Count is {{ count() }}</div>
@@ -43,6 +46,9 @@ import { toSignal } from './to-signal.function';
   You can also pass in a state {@link Adapter} object to customize the state change functions and selectors.
 
   ```typescript
+  import { Component } from '@angular/core';
+  import { adapt } from '@state-adapt/angular';
+
   @Component({
     template: `
       <div>Count is {{ count() }}</div>
@@ -70,6 +76,10 @@ import { toSignal } from './to-signal.function';
   by imperative code in callback functions.
 
   ```typescript
+  import { Component, inject, Injectable } from '@angular/core';
+  import { adapt } from '@state-adapt/angular';
+  import { interval } from 'rxjs';
+
   @Injectable({ providedIn: 'root' })
   export class ClockService {
     tick$ = interval(1000);
@@ -112,6 +122,10 @@ import { toSignal } from './to-signal.function';
   #### Example: Single source or observable
 
   ```typescript
+  import { Component, inject, Injectable } from '@angular/core';
+  import { adapt } from '@state-adapt/angular';
+  import { source } from '@state-adapt/rxjs';
+
   @Injectable({ providedIn: 'root' })
   export class NameService {
     nameChange$ = source<string>('nameChange$');
@@ -139,6 +153,10 @@ import { toSignal } from './to-signal.function';
   #### Example: Array of sources or observables
 
   ```typescript
+  import { Component, inject, Injectable } from '@angular/core';
+  import { adapt } from '@state-adapt/angular';
+  import { source } from '@state-adapt/rxjs';
+
   @Injectable({ providedIn: 'root' })
   export class NameService {
     nameChange$ = source<string>('nameChange$');
@@ -168,6 +186,10 @@ import { toSignal } from './to-signal.function';
   #### Example: Object of sources or observables
 
   ```angular-ts
+  import { Component, inject, Injectable } from '@angular/core';
+  import { adapt } from '@state-adapt/angular';
+  import { source } from '@state-adapt/rxjs';
+
   @Injectable({ providedIn: 'root' })
   export class NameService {
     nameChange$ = source<string>('nameChange$');
@@ -200,6 +222,10 @@ import { toSignal } from './to-signal.function';
   #### Example: Function that returns an observable
 
   ```angular-ts
+  import { Component, inject, Injectable } from '@angular/core';
+  import { adapt } from '@state-adapt/angular';
+  import { delay, map } from 'rxjs/operators';
+
   @Injectable({ providedIn: 'root' })
   export class NameService {
     name = adapt('John ', {
@@ -236,6 +262,9 @@ import { toSignal } from './to-signal.function';
   #### Example: Paths and global state
 
   ```angular-ts
+  import { Component } from '@angular/core';
+  import { adapt } from '@state-adapt/angular';
+
   @Component({
     template: `
       <div>Count 1 is {{ count1() }}</div>
@@ -267,7 +296,9 @@ import { toSignal } from './to-signal.function';
   #### Example: getId for unique paths
 
   ```typescript
+  import { Component } from '@angular/core';
   import { getId } from '@state-adapt/core';
+  import { adapt } from '@state-adapt/angular';
 
   @Component({
     template: `
@@ -296,6 +327,9 @@ import { toSignal } from './to-signal.function';
   This helps when initial state might be different at each time the store is activated, like with `localStorage`:
 
   ```typescript
+  import { Component } from '@angular/core';
+  import { adapt } from '@state-adapt/angular';
+
   @Component({
     template: `
       <div>Name is {{ name() }}</div>

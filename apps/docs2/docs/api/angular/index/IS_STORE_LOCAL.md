@@ -1,12 +1,12 @@
 ---
-definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/angular/src/lib/is-store-local.token.ts#L28
+definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/angular/src/lib/is-store-local.token.ts#L32
 ---
 
 # Variable: IS\_STORE\_LOCAL
 
 > `const` **IS\_STORE\_LOCAL**: `InjectionToken`\<`boolean`\>
 
-Defined in: [libs/angular/src/lib/is-store-local.token.ts:28](https://github.com/state-adapt/state-adapt/blob/main/libs/angular/src/lib/is-store-local.token.ts#L28)
+Defined in: [libs/angular/src/lib/is-store-local.token.ts:32](https://github.com/state-adapt/state-adapt/blob/main/libs/angular/src/lib/is-store-local.token.ts#L32)
 
 Overrides whether stores in the current Angular injection context are local.
 
@@ -21,7 +21,11 @@ Use an Angular factory provider to determine the value with `inject`:
 
 ```ts
 import { inject } from '@angular/core';
+import { bootstrapApplication } from '@angular/platform-browser';
 import { IS_STORE_LOCAL } from '@state-adapt/angular';
+
+import { AppComponent } from './app/app.component';
+import { MyLocalContext } from './app/my-local-context';
 
 bootstrapApplication(AppComponent, {
   providers: [

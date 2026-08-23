@@ -34,7 +34,12 @@ import { createReactAdapt, createReactWatch } from './react-store';
  * ```tsx
  * // main.tsx
  * import { AdaptContext } from '@state-adapt/react';
+ * import { createRoot } from 'react-dom/client';
+ *
+ * import { App } from './app';
  * import { stateAdapt } from './state-adapt';
+ *
+ * const root = createRoot(document.getElementById('root')!);
  *
  * root.render(
  *   <AdaptContext.Provider value={stateAdapt}>

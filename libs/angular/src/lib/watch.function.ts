@@ -42,6 +42,11 @@ export type WatchStoreSignals<State, S extends Selectors<State>> = Signal<
   #### Example: Accessing loading state
 
   ```ts
+  import { Component } from '@angular/core';
+  import { watch } from '@state-adapt/angular';
+
+  import { httpAdapter } from './http.adapter';
+
   @Component({
     template: `
       @if (data.loading()) {

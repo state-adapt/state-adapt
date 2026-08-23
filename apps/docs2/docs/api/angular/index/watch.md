@@ -1,12 +1,12 @@
 ---
-definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/angular/src/lib/watch.function.ts#L59
+definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/angular/src/lib/watch.function.ts#L64
 ---
 
 # Function: watch()
 
 > **watch**\<`State`, `S`, `R`\>(`path`, `adapter?`): \{ \[P in string \| number \| symbol as \`$\{P extends string ? P\<P\> : never\}$\`\]: Observable\<ReturnType\<(S & WithGetState\<State\>)\[P\]\>\> \} & `object` & `object` & () => `undefined` \| `State` & `object` & \{ \[K in string \| number \| symbol\]: Signal\<undefined \| ReturnType\<S\[K\]\>\> \}
 
-Defined in: [libs/angular/src/lib/watch.function.ts:59](https://github.com/state-adapt/state-adapt/blob/main/libs/angular/src/lib/watch.function.ts#L59)
+Defined in: [libs/angular/src/lib/watch.function.ts:64](https://github.com/state-adapt/state-adapt/blob/main/libs/angular/src/lib/watch.function.ts#L64)
 
 `watch` wraps [StateAdapt.watch](../../rxjs/index/StateAdapt.md#watch) for Angular and adds signals for the store's selectors.
 
@@ -31,6 +31,11 @@ for an HTTP request and you need to know if the request is loading before the us
 #### Example: Accessing loading state
 
 ```ts
+import { Component } from '@angular/core';
+import { watch } from '@state-adapt/angular';
+
+import { httpAdapter } from './http.adapter';
+
 @Component({
   template: `
     @if (data.loading()) {

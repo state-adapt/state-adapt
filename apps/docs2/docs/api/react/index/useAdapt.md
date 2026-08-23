@@ -1,12 +1,12 @@
 ---
-definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/react/src/lib/use-adapt.ts#L298
+definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/react/src/lib/use-adapt.ts#L326
 ---
 
 # Function: useAdapt()
 
 > **useAdapt**\<`State`, `S`, `R`, `ReturnedSources`\>(`initialState`, `second`): `ProxyStoreTuple`\<`State`, `InitializedSmartStore`\<`State`, `S`, `R`\>\>
 
-Defined in: [lib/use-adapt.ts:298](https://github.com/state-adapt/state-adapt/blob/main/libs/react/src/lib/use-adapt.ts#L298)
+Defined in: [lib/use-adapt.ts:326](https://github.com/state-adapt/state-adapt/blob/main/libs/react/src/lib/use-adapt.ts#L326)
 
 `useAdapt` is a hook that wraps [StateAdapt.adapt](../../rxjs/index/StateAdapt.md#adapt) and [useStore](useStore.md). It creates a store, immediately subscribes to it,
 and returns a tuple `[selectorResults, setState]` where `selectorResults` is a proxy object containing results from the store's selectors,
@@ -25,6 +25,8 @@ passed into `useAdapt`.
 as a property of the first tuple element. Also, the `setState` function has a `reset` property function that resets the store's state.
 
 ```tsx
+import { useAdapt } from '@state-adapt/react';
+
 export function MyComponent() {
   const [name, setName] = useAdapt('John');
 
@@ -51,6 +53,8 @@ factory runs again for each activation, but not for re-renders.
 This helps when initial state might be different at each time the store is being used, like with `localStorage`:
 
 ```tsx
+import { useAdapt } from '@state-adapt/react';
+
 export function MyComponent() {
   // Each mount reads `localStorage`, and `reset` goes back to what it read
   const [name, setName] = useAdapt(() => localStorage.getItem('name') ?? 'John');
@@ -72,6 +76,8 @@ A one-off read of initial state will not use a cached value, but call the state 
 You can also pass in a state Adapter object to customize the state change functions and selectors.
 
 ```tsx
+import { useAdapt } from '@state-adapt/react';
+
 export function MyComponent() {
   const [name, setName] = useAdapt('John', {
     concat: (state, payload: string) => state + payload,
@@ -103,6 +109,9 @@ Sources allow the store to declaratively react to external events rather than be
 by imperative callback functions.
 
 ```tsx
+import { useAdapt } from '@state-adapt/react';
+import { interval } from 'rxjs';
+
 const onTick = interval(1000);
 
 export function MyComponent() {
@@ -132,6 +141,9 @@ with the payload.
 #### Example: Single source or observable
 
 ```tsx
+import { useAdapt } from '@state-adapt/react';
+import { source } from '@state-adapt/rxjs';
+
 const onNameChange = source<string>();
 
 export function MyComponent() {
@@ -157,6 +169,9 @@ export function MyComponent() {
 #### Example: Array of sources or observables
 
 ```tsx
+import { useAdapt } from '@state-adapt/react';
+import { source } from '@state-adapt/rxjs';
+
 const onNameChange = source<string>();
 const onNameChange2 = source<string>();
 
@@ -185,6 +200,9 @@ sources that trigger the store's reaction with the payload.
 #### Example: Object of sources or observables
 
 ```tsx
+import { useAdapt } from '@state-adapt/react';
+import { source } from '@state-adapt/rxjs';
+
 const onNameChange = source<string>();
 const onNameReset = source<void>();
 
@@ -216,6 +234,10 @@ types of sources or observables.
 #### Example: Function that returns an observable
 
 ```tsx
+import { useAdapt } from '@state-adapt/react';
+import { toSource } from '@state-adapt/rxjs';
+import { delay, map } from 'rxjs/operators';
+
 export function MyComponent() {
   const [name] = useAdapt('John', {
     sources: store => store.state$.pipe(
@@ -241,16 +263,21 @@ the global store. Here are some example paths and the resulting global state obj
 #### Example: Paths and global state
 
 ```tsx
-const [count1] = useAdapt(0, { path: 'count.1' });
-const [count2] = useAdapt(0, { path: 'count.2' });
+import { useAdapt } from '@state-adapt/react';
 
-// global state:
-// {
-//   count: {
-//     1: 0,
-//     2: 0,
-//   }
-// }
+export function MyComponent() {
+  const [count1] = useAdapt(0, { path: 'count.1' });
+  const [count2] = useAdapt(0, { path: 'count.2' });
+
+  // global state:
+  // {
+  //   count: {
+  //     1: 0,
+  //     2: 0,
+  //   }
+  // }
+  return <div>{count1.state}, {count2.state}</div>;
+}
 ```
 
 Each store completely owns its own state. If more than one store tries to use the same path, StateAdapt will throw this error:
@@ -266,6 +293,7 @@ To help avoid this error, StateAdapt provides a [getId](../../core/src/getId.md)
 
 ```tsx
 import { getId } from '@state-adapt/core';
+import { useAdapt } from '@state-adapt/react';
 
 const path0 = 'number' + getId();
 const path1 = 'number' + getId();

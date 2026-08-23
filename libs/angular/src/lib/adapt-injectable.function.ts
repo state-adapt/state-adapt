@@ -19,9 +19,12 @@ import { StateAdaptToken } from './state-adapt-token.const';
   ### Example: Basic adaptInjectable
 
   ```typescript
+  import { Component } from '@angular/core';
+  import { adaptInjectable } from '@state-adapt/angular';
+
   export const injectNameStore = adaptInjectable('John');
 
-  // ...
+  @Component({ template: '' })
   export class AppComponent {
     name$ = injectNameStore().state$;
   }
@@ -30,6 +33,13 @@ import { StateAdaptToken } from './state-adapt-token.const';
   ### Example: adaptInjectable using dependency injection
 
   ```typescript
+  import { HttpClient } from '@angular/common/http';
+  import { Component, inject } from '@angular/core';
+  import { adaptInjectable } from '@state-adapt/angular';
+  import { toSource } from '@state-adapt/rxjs';
+
+  import type { Name } from './name';
+
   export const injectNameStore = adaptInjectable('John', {
     sources: () => {
       // Can inject dependencies here
@@ -38,7 +48,7 @@ import { StateAdaptToken } from './state-adapt-token.const';
     },
   });
 
-  // ...
+  @Component({ template: '' })
   export class AppComponent {
     name$ = injectNameStore().state$;
   }

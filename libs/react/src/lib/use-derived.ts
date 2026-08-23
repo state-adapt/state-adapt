@@ -123,6 +123,11 @@ class ReactDerivedConsumer<Value> implements DerivedConsumer {
  * Subscribes a React component to a value created with {@link derive}.
  *
  * ```tsx
+ * import { adapt, derive, useDerived } from '@state-adapt/react';
+ *
+ * const priceStore = adapt(20);
+ * const quantityStore = adapt(3);
+ *
  * const deriveTotal = derive(() => priceStore() * quantityStore());
  *
  * function Total() {

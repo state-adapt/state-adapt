@@ -1,12 +1,12 @@
 ---
-definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/angular/src/lib/to-signal.function.ts#L54
+definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/angular/src/lib/to-signal.function.ts#L67
 ---
 
 # Function: toSignal()
 
 > **toSignal**\<`State`\>(`source$`, `__namedParameters`): `Signal`\<`State`\>
 
-Defined in: [libs/angular/src/lib/to-signal.function.ts:54](https://github.com/state-adapt/state-adapt/blob/main/libs/angular/src/lib/to-signal.function.ts#L54)
+Defined in: [libs/angular/src/lib/to-signal.function.ts:67](https://github.com/state-adapt/state-adapt/blob/main/libs/angular/src/lib/to-signal.function.ts#L67)
 
 Converts an observable to a signal without keeping the source observable
 subscribed to when no Angular consumer is reading the signal.
@@ -19,22 +19,35 @@ reading them.
 ### Example: Basic usage
 
 ```ts
-const name = toSignal(name$, { initialValue: 'John' });
+import { Injectable } from '@angular/core';
+import { toSignal } from '@state-adapt/angular';
+import { interval } from 'rxjs';
+import { map } from 'rxjs/operators';
+
+@Injectable({ providedIn: 'root' })
+export class RandomService {
+  random$ = interval(1000).pipe(map(() => Math.random()));
+  random = toSignal(this.random$, { initialValue: 0 });
+}
 ```
 
 ### Example: Initial value factory
 
 `initialValue` can be a function that returns the value. The signal calls it when it
-subscribes, keeps that value until it unsubscribes, and discards it then — so the factory
+subscribes, keeps that value until it unsubscribes, and discards it then—so the factory
 runs again for each subscription.
 
-This helps when the initial value might be different at each time the signal is being used,
-like with `localStorage`:
-
 ```ts
-const name = toSignal(name$, {
-  initialValue: () => localStorage.getItem('name') ?? 'John',
-});
+import { Injectable } from '@angular/core';
+import { toSignal } from '@state-adapt/angular';
+import { interval } from 'rxjs';
+import { map } from 'rxjs/operators';
+
+@Injectable({ providedIn: 'root' })
+export class RandomService {
+  random$ = interval(1000).pipe(map(() => Math.random()));
+  random = toSignal(this.random$, { initialValue: () => Math.random() });
+}
 ```
 
 A read while the signal is unsubscribed will not use a cached value, but call the factory function.

@@ -1,12 +1,12 @@
 ---
-definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/react/src/lib/adapt.function.ts#L26
+definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/react/src/lib/adapt.function.ts#L29
 ---
 
 # Function: adapt()
 
 > **adapt**\<`State`, `S`, `R`, `R2`, `ReturnedSources`\>(`initialState`, `second`): `ReactStore`\<`State`, `S`, `object` *extends* `R` ? `R2` : `R`\>
 
-Defined in: [lib/adapt.function.ts:26](https://github.com/state-adapt/state-adapt/blob/main/libs/react/src/lib/adapt.function.ts#L26)
+Defined in: [lib/adapt.function.ts:29](https://github.com/state-adapt/state-adapt/blob/main/libs/react/src/lib/adapt.function.ts#L29)
 
 See [StateAdapt.adapt](../../rxjs/index/StateAdapt.md#adapt) for the complete API.
 
@@ -14,6 +14,9 @@ This wrapper additionally lets you call the store as a function for its
 current state, or call a selector property for its current result.
 
 ```ts
+import { stringAdapter } from '@state-adapt/core/adapters';
+import { adapt } from '@state-adapt/react';
+
 const name = adapt('John', stringAdapter);
 
 console.log(name()); // 'John'

@@ -13,7 +13,11 @@ import { InjectionToken } from '@angular/core';
  * @example
  * ```ts
  * import { inject } from '@angular/core';
+ * import { bootstrapApplication } from '@angular/platform-browser';
  * import { IS_STORE_LOCAL } from '@state-adapt/angular';
+ *
+ * import { AppComponent } from './app/app.component';
+ * import { MyLocalContext } from './app/my-local-context';
  *
  * bootstrapApplication(AppComponent, {
  *   providers: [

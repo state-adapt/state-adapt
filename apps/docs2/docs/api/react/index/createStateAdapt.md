@@ -1,12 +1,12 @@
 ---
-definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/react/src/lib/create-state-adapt.function.ts#L100
+definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/react/src/lib/create-state-adapt.function.ts#L105
 ---
 
 # Function: createStateAdapt()
 
 > **createStateAdapt**(`options?`): `object`
 
-Defined in: [lib/create-state-adapt.function.ts:100](https://github.com/state-adapt/state-adapt/blob/main/libs/react/src/lib/create-state-adapt.function.ts#L100)
+Defined in: [lib/create-state-adapt.function.ts:105](https://github.com/state-adapt/state-adapt/blob/main/libs/react/src/lib/create-state-adapt.function.ts#L105)
 
 Creates a StateAdapt instance with the provided configuration. See
 [ConfigureStateAdaptOptions](../../rxjs/index/ConfigureStateAdaptOptions.md) for every available option.
@@ -37,7 +37,12 @@ Provide the same instance to the React hooks at the root of your app through
 ```tsx
 // main.tsx
 import { AdaptContext } from '@state-adapt/react';
+import { createRoot } from 'react-dom/client';
+
+import { App } from './app';
 import { stateAdapt } from './state-adapt';
+
+const root = createRoot(document.getElementById('root')!);
 
 root.render(
   <AdaptContext.Provider value={stateAdapt}>

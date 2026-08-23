@@ -15,6 +15,9 @@ import { ReactStore } from './react-store';
  * current state, or call a selector property for its current result.
  *
  * ```ts
+ * import { stringAdapter } from '@state-adapt/core/adapters';
+ * import { adapt } from '@state-adapt/react';
+ *
  * const name = adapt('John', stringAdapter);
  *
  * console.log(name()); // 'John'
