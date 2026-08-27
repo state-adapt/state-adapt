@@ -9,6 +9,7 @@ import corePaths from '../docs/api/core/src/symbol.paths';
 import rxjsPaths from '../docs/api/rxjs/index/symbol.paths';
 import angularPaths from '../docs/api/angular/index/symbol.paths';
 import reactPaths from '../docs/api/react/index/symbol.paths';
+import apiPackages from '../docs/api/packages.json';
 import { Section } from 'section-paths';
 import { mdAngularTemplatesPlugin } from '../md-angular-templates.plugin';
 
@@ -89,7 +90,7 @@ export default defineConfig({
       {
         text: 'API',
         activeMatch: '^/api',
-        link: `/api/core/src/`,
+        link: '/api/',
       },
       {
         text: `v${version}`,
@@ -145,6 +146,7 @@ function getSidebar(): DefaultTheme.SidebarItem[] {
     },
     {
       text: 'API Reference',
+      link: '/api/',
       collapsed: false,
       items: getApiSidebar(),
     },
@@ -243,10 +245,13 @@ function getFrameworkSidebar(
 }
 
 function getApiSidebar(): DefaultTheme.SidebarItem[] {
+  const packageByName = new Map(apiPackages.map(pkg => [pkg.name, pkg]));
+  const packageLink = (name: string) => packageByName.get(name)!.link;
+
   return [
     {
       text: '@state-adapt/core',
-      link: `/api/core/src/`,
+      link: packageLink('@state-adapt/core'),
       collapsed: true,
       items: [
         ...getLibSectionItems(corePaths.sections()),
@@ -260,19 +265,19 @@ function getApiSidebar(): DefaultTheme.SidebarItem[] {
     },
     {
       text: '@state-adapt/rxjs',
-      link: `/api/rxjs/index/`,
+      link: packageLink('@state-adapt/rxjs'),
       collapsed: true,
       items: [...getLibSectionItems(rxjsPaths.sections())],
     },
     {
       text: '@state-adapt/angular',
-      link: `/api/angular/index/`,
+      link: packageLink('@state-adapt/angular'),
       collapsed: true,
       items: [...getLibSectionItems(angularPaths.sections())],
     },
     {
       text: '@state-adapt/react',
-      link: `/api/react/index/`,
+      link: packageLink('@state-adapt/react'),
       collapsed: true,
       items: [...getLibSectionItems(reactPaths.sections())],
     },

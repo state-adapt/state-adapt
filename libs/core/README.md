@@ -1,3 +1,3 @@
-# StateAdapt
+# @state-adapt/core
 
-[Introducing StateAdapt: RxJS, Redux Devtools and Adapters](https://medium.com/@m3po22/rxjs-redux-devtools-introducing-ngrx-adapt-8520094e21b6)
+The framework-agnostic core API for creating adapters, selectors, and reactions.
