@@ -7,7 +7,6 @@ import { CrewDetailComponent } from './components/crew-detail';
 import { CrewRosterComponent } from './components/crew-roster';
 
 @Component({
-  standalone: true,
   selector: 'sa-crew-page',
   imports: [CrewDetailComponent, CrewRosterComponent],
   template: `
@@ -20,8 +19,7 @@ import { CrewRosterComponent } from './components/crew-roster';
 })
 export class CrewPageComponent {
   private route = inject(ActivatedRoute);
-  callSign = toSignal(
-    this.route.paramMap.pipe(map(params => params.get('callSign'))),
-    { initialValue: this.route.snapshot.paramMap.get('callSign') },
-  );
+  callSign = toSignal(this.route.paramMap.pipe(map(params => params.get('callSign'))), {
+    initialValue: this.route.snapshot.paramMap.get('callSign'),
+  });
 }

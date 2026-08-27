@@ -6,11 +6,14 @@ import { CrewStores } from '../crew.store';
 import { crewStatusLabels, getInitials } from '../crew.view';
 
 @Component({
-  standalone: true,
   selector: 'sa-crew-card',
   imports: [RouterLink],
   template: `
-    <article class="crew-card" [class.selected]="member().selected" data-testid="crew-card">
+    <article
+      class="crew-card"
+      [class.selected]="member().selected"
+      data-testid="crew-card"
+    >
       <label class="crew-check">
         <input
           [attr.aria-label]="'Select ' + member().name"
@@ -35,7 +38,10 @@ import { crewStatusLabels, getInitials } from '../crew.view';
         <dl class="crew-metrics">
           <div>
             <dt>Clearance</dt>
-            <dd [attr.data-testid]="'crew-clearance-' + member().callSign">L{{ member().clearance }}</dd>
+            <dd
+              [attr.data-testid]="'crew-clearance-' + member().callSign"
+              [textContent]="'L' + member().clearance"
+            ></dd>
           </div>
           <div>
             <dt>Missions</dt>

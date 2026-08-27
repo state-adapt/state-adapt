@@ -18,8 +18,7 @@ import { defer, NEVER, of, Subject } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { toSignal } from './to-signal.function';
 
-// These expectations target Angular 19's effect/change-detection timing. The
-// workspace dependency remains on Angular 18 until the separate upgrade.
+// These expectations target Angular 19's effect/change-detection timing.
 describe('toSignal', () => {
   const settleRenderProbe = async () => {
     await new Promise<void>(resolve => setTimeout(resolve));
@@ -320,7 +319,7 @@ describe('toSignal', () => {
       expect(subscriptions).toBe(1);
 
       fixture.componentInstance.enabled.set(false);
-      TestBed.inject(ApplicationRef).tick();
+      fixture.detectChanges();
       await settleRenderProbe();
       expect(subscriptions).toBe(0);
     });

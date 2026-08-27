@@ -28,7 +28,8 @@ describe('type', () => {
     expect(onInterval).toBe(onInterval3);
 
     // const onClick2 = onClick.pipe(type('asdf'));
-    const onClick2 = ((onClick as any).type = 'asdf' && onClick);
+    (onClick as any).type = 'asdf';
+    const onClick2 = onClick;
     expect(onClick).toBe(onClick2);
   });
 });

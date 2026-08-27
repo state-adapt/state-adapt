@@ -7,7 +7,6 @@ import { TickerKeepAliveComponent, TickerLifecycleComponent } from './live';
 import { TodosStores } from './todos';
 
 @Component({
-  standalone: true,
   selector: 'sa-root',
   imports: [
     RouterLink,

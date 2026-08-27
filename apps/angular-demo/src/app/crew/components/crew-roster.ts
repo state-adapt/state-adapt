@@ -10,7 +10,6 @@ import { CrewHeroComponent } from './crew-hero';
 import { CrewListComponent } from './crew-list';
 
 @Component({
-  standalone: true,
   selector: 'sa-crew-roster',
   imports: [CrewHeroComponent, CrewControlsComponent, CrewListComponent],
   template: `

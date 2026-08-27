@@ -48,6 +48,7 @@ import { Filters } from './filters.interface';
       }
     `,
   ],
+  standalone: false,
 })
 export class ProductFiltersComponent {
   @Input() filters: Filters = filters;

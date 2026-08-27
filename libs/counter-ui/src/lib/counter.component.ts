@@ -12,6 +12,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
       </p>
     </div>
   `,
+  standalone: false,
 })
 export class CounterComponent {
   @Input() count = 0;

@@ -33,7 +33,6 @@ describe('Shared non-root modules', () => {
 
     @Component({
       selector: 'sa-parent',
-      standalone: true,
       imports: [ChildComponent, Child2Component],
       providers: [BOOKS_TOKEN.provider],
       template: `
@@ -46,7 +45,9 @@ describe('Shared non-root modules', () => {
     })
     class ParentComponent {}
 
-    @Component({})
+    @Component({
+      standalone: false,
+    })
     class HomeComponent {}
 
     TestBed.configureTestingModule({

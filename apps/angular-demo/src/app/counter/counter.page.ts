@@ -7,7 +7,6 @@ import { CounterCardComponent } from './counter-card';
 import { counterAdapter } from './counter.adapter';
 
 @Component({
-  standalone: true,
   selector: 'sa-counter-page',
   imports: [CounterCardComponent, LiveTickerComponent],
   template: `

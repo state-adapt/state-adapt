@@ -7,6 +7,7 @@ import { Component, EventEmitter, Output } from '@angular/core';
       <button (click)="resetBoth.next()">Reset Externally</button>
     </div>
   `,
+  standalone: false,
 })
 export class ResetBothComponent {
   @Output() resetBoth = new EventEmitter<void>();

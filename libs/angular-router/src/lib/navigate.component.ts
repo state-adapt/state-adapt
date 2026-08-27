@@ -2,7 +2,6 @@ import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 
 @Component({
-  standalone: true,
   selector: 'sa-navigate',
   template: '',
   imports: [RouterModule],

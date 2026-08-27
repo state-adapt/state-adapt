@@ -47,13 +47,13 @@ const demos = [
 ];
 
 @Component({
-  standalone: true,
   selector: 'sa-home-page',
   imports: [RouterLink],
   template: `
     <section class="hero" data-testid="hero">
       <h1>
-        State management that <span class="accent">adapts</span>
+        State management that
+        <span class="accent">adapts</span>
       </h1>
       <p class="lede">
         A tour of StateAdapt in Angular — reusable state logic, memoized selectors, and
@@ -62,23 +62,26 @@ const demos = [
       </p>
       <p class="muted small" data-testid="uptime">
         This page has been open for {{ ticks() + 1 }}s (straight from an RxJS
-        <code>interval</code> via <code>toSignal</code>)
+        <code>interval</code>
+        via
+        <code>toSignal</code>
+        )
       </p>
     </section>
 
     <section class="card-grid">
       @for (demo of demos; track demo.to) {
-        <a class="card" [routerLink]="demo.to" [attr.data-testid]="demo.testId">
-          <h2>{{ demo.title }}</h2>
-          <p class="muted">{{ demo.blurb }}</p>
-          <ul class="tag-list">
-            @for (name of demo.api; track name) {
-              <li>
-                <code>{{ name }}</code>
-              </li>
-            }
-          </ul>
-        </a>
+      <a class="card" [routerLink]="demo.to" [attr.data-testid]="demo.testId">
+        <h2>{{ demo.title }}</h2>
+        <p class="muted">{{ demo.blurb }}</p>
+        <ul class="tag-list">
+          @for (name of demo.api; track name) {
+          <li>
+            <code>{{ name }}</code>
+          </li>
+          }
+        </ul>
+      </a>
       }
     </section>
   `,

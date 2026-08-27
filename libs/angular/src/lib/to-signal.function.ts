@@ -221,7 +221,7 @@ class RootConsumerStrategy {
     let candidates: RootSignalEntry[];
     try {
       // Flush work that became dirty after the render which scheduled us.
-      this.applicationRef.tick();
+      this.zone.run(() => this.applicationRef.tick());
 
       candidates = [...this.entries];
       for (const entry of candidates) {
@@ -230,7 +230,7 @@ class RootConsumerStrategy {
       }
 
       // Persistent template/effect consumers re-read their invalidated signal.
-      this.applicationRef.tick();
+      this.zone.run(() => this.applicationRef.tick());
     } catch (error) {
       this.probing = false;
       throw error;

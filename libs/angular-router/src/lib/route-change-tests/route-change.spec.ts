@@ -47,7 +47,6 @@ describe.each([false, true])('route change behavior, zoneless=%s', zoneless => {
     }
 
     @Component({
-      standalone: true,
       imports: [AsyncPipe],
       changeDetection: ChangeDetectionStrategy.OnPush,
       template: `

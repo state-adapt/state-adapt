@@ -62,6 +62,7 @@ import { QuantityChange } from './quantity-change.interface';
       }
     `,
   ],
+  standalone: false,
 })
 export class ProductComponent {
   @Input() product: Product = {

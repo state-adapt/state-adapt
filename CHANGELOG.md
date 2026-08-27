@@ -1,6 +1,7 @@
 ## 4.0.0
 
-- Refactor(react): remove overloads for useObservable
+- Bugfix(angular): Run toSignal appRef.tick in ngZone
+- Refactor(react): Remove overloads for useObservable
 - Feature(react): Make useSource type optional
 - Feature(react): Make stores callable for reading state and selector values
 - Feature(react): Add createStateAdapt for React-bound configuration

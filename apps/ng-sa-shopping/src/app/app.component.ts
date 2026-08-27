@@ -9,7 +9,6 @@ import {
 import { injectFilterStore } from './filters/filter.service';
 
 @Component({
-  standalone: true,
   selector: 'sa-root',
   imports: [AsyncPipe, ShoppingSharedModule],
   template: `

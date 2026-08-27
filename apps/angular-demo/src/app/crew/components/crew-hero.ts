@@ -4,7 +4,6 @@ import { CrewStores } from '../crew.store';
 import { CrewStatComponent } from './crew-stat';
 
 @Component({
-  standalone: true,
   selector: 'sa-crew-hero',
   imports: [CrewStatComponent],
   template: `

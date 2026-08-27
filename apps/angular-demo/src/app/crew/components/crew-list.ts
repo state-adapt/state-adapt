@@ -5,7 +5,6 @@ import { CrewFilter } from '../crew.types';
 import { CrewCardComponent } from './crew-card';
 
 @Component({
-  standalone: true,
   selector: 'sa-crew-list',
   imports: [CrewCardComponent],
   template: `

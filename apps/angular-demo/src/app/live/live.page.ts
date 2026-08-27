@@ -4,7 +4,6 @@ import { RouterLink } from '@angular/router';
 import { LiveTickerComponent } from './live-ticker';
 
 @Component({
-  standalone: true,
   selector: 'sa-live-page',
   imports: [RouterLink, LiveTickerComponent],
   template: `

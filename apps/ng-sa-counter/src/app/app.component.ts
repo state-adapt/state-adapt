@@ -9,7 +9,6 @@ import { LocalService } from './local.service';
 import { RootService } from './root-service';
 
 @Component({
-  standalone: true,
   selector: 'sa-root',
   imports: [CounterUiModule, SaCountDirective],
   template: `

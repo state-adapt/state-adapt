@@ -27,6 +27,7 @@ import { QuantityChange } from './quantity-change.interface';
       }
     `,
   ],
+  standalone: false,
 })
 export class ProductsComponent {
   @Input() products: Product[] = [];
