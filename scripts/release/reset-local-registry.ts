@@ -1,7 +1,7 @@
-const fs = require('node:fs');
-const path = require('node:path');
+import fs from 'node:fs';
+import path from 'node:path';
 
-const { root } = require('./config');
+import { root } from './config';
 
 const registryDirectory = path.join(root, '.local-registry');
 fs.rmSync(registryDirectory, { force: true, recursive: true });

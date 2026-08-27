@@ -1,40 +1,44 @@
-const fs = require('node:fs');
-const path = require('node:path');
-const crypto = require('node:crypto');
-const { execFileSync } = require('node:child_process');
+import { execFileSync } from 'node:child_process';
+import crypto from 'node:crypto';
+import fs from 'node:fs';
+import path from 'node:path';
 
-const {
-  localRegistry,
-  localRegistryNpmrc,
-  npmCache,
-  packages,
-  root,
-} = require('./config');
+import { localRegistry, localRegistryNpmrc, npmCache, packages, root } from './config';
+
+type PublishStatus = 'published' | 'skipped' | 'would publish';
+
+interface PublishResult {
+  name: string;
+  status: PublishStatus;
+}
 
 const args = process.argv.slice(2);
 const registryIndex = args.indexOf('--registry');
-const registry = registryIndex === -1 ? null : args[registryIndex + 1];
+const registryArgument = registryIndex === -1 ? undefined : args[registryIndex + 1];
 const dryRun = args.includes('--dry-run');
 const tagIndex = args.indexOf('--tag');
 const explicitTag = tagIndex === -1 ? null : args[tagIndex + 1];
-const version = require(packages[0].sourceManifest).version;
+const version: string = JSON.parse(
+  fs.readFileSync(packages[0].sourceManifest, 'utf8'),
+).version;
 
-if (!registry) fail('--registry <url> is required.');
+if (!registryArgument) fail('--registry <url> is required.');
 if (tagIndex !== -1 && !explicitTag) fail('--tag requires a value.');
+const registry: string = registryArgument;
 
 // npm's own default is `latest`. Naming it explicitly means a skipped package
 // has a tag to be reconciled against, and leaves one obvious place to teach the
 // script that prereleases belong on `next`.
 const tag = explicitTag || 'latest';
 
-const env = { ...process.env, npm_config_cache: npmCache };
+const env: NodeJS.ProcessEnv = { ...process.env, npm_config_cache: npmCache };
 if (registry === localRegistry) env.npm_config_userconfig = localRegistryNpmrc;
 
 // Publishing is one `npm publish` per package with no transaction around it, so
 // a failure partway through leaves some packages live and some not. Re-running
 // the same command is the recovery path: anything already on the registry is
 // verified byte-for-byte and skipped, and the rest are published.
-const results = [];
+const results: PublishResult[] = [];
 
 for (const pkg of packages) {
   const tarball = path.join(
@@ -91,14 +95,24 @@ summarize();
 // Returns the sha1 the registry holds for this exact version, or null when the
 // version is not published. Anything else — offline, auth, a 5xx — is fatal,
 // because treating it as "not published" would republish over a live version.
-function publishedShasum(name) {
+function publishedShasum(name: string): string | null {
   try {
     return run(
-      ['view', `${name}@${version}`, 'dist.shasum', '--registry', registry, '--prefer-online'],
+      [
+        'view',
+        `${name}@${version}`,
+        'dist.shasum',
+        '--registry',
+        registry,
+        '--prefer-online',
+      ],
       ['ignore', 'pipe', 'pipe'],
     ).trim();
-  } catch (error) {
-    const stderr = `${error.stderr || ''}`;
+  } catch (error: unknown) {
+    const stderr =
+      error && typeof error === 'object' && 'stderr' in error
+        ? String(error.stderr || '')
+        : '';
     if (/E404/.test(stderr)) return null;
     console.error(stderr.trim());
     fail(`Could not determine whether ${name}@${version} is published.`);
@@ -107,19 +121,22 @@ function publishedShasum(name) {
 
 // A skipped package kept whatever tag the failed run gave it, so a resumed run
 // has to re-point it. `npm dist-tag add` is idempotent.
-function reconcileTag(name) {
+function reconcileTag(name: string): void {
   run(['dist-tag', 'add', `${name}@${version}`, tag, '--registry', registry], 'inherit');
 }
 
-function shasum(file) {
+function shasum(file: string): string {
   return crypto.createHash('sha1').update(fs.readFileSync(file)).digest('hex');
 }
 
-function summarize() {
-  const counts = results.reduce((totals, { status }) => {
-    totals[status] = (totals[status] || 0) + 1;
-    return totals;
-  }, {});
+function summarize(): void {
+  const counts = results.reduce<Record<PublishStatus, number>>(
+    (totals, { status }) => {
+      totals[status] = (totals[status] || 0) + 1;
+      return totals;
+    },
+    { published: 0, skipped: 0, 'would publish': 0 },
+  );
 
   console.log(`\n${version} on ${registry} (tag: ${tag})`);
   for (const { name, status } of results) {
@@ -132,11 +149,11 @@ function summarize() {
   );
 }
 
-function run(npmArgs, stdio) {
+function run(npmArgs: string[], stdio: 'inherit' | ['ignore', 'pipe', 'pipe']): string {
   return execFileSync('npm', npmArgs, { cwd: root, env, encoding: 'utf8', stdio });
 }
 
-function fail(message) {
+function fail(message: string): never {
   console.error(`Release publish failed: ${message}`);
   process.exit(1);
 }

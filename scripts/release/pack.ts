@@ -1,6 +1,6 @@
-const { execFileSync } = require('node:child_process');
+import { execFileSync } from 'node:child_process';
 
-const { npmCache, packages } = require('./config');
+import { npmCache, packages } from './config';
 
 for (const pkg of packages) {
   execFileSync('npm', ['pack'], {

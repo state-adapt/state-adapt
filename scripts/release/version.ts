@@ -1,12 +1,20 @@
-const fs = require('node:fs');
+import fs from 'node:fs';
 
-const { packages } = require('./config');
+import { packages } from './config';
+
+type VersionSpecifier = 'patch' | 'minor' | 'major';
+
+interface PackageManifest {
+  version: string;
+  peerDependencies?: Record<string, string>;
+  'ng-update'?: { packageGroup?: string[] };
+}
 
 const args = process.argv.slice(2);
 const specifier = args.find(arg => !arg.startsWith('--'));
 const dryRun = args.includes('--dry-run');
 
-if (!['patch', 'minor', 'major'].includes(specifier)) {
+if (!isVersionSpecifier(specifier)) {
   fail('Usage: npm run release:version -- <patch|minor|major> [--dry-run]');
 }
 
@@ -44,31 +52,38 @@ for (const pkg of sourceManifests) writeJson(pkg.sourceManifest, pkg.manifest);
 
 console.log(`StateAdapt ${currentVersion} -> ${newVersion}`);
 
-function updateInternalDependencies(manifest, version) {
-  for (const dependency of Object.keys(manifest.peerDependencies || {})) {
+function updateInternalDependencies(manifest: PackageManifest, version: string): void {
+  const peerDependencies = manifest.peerDependencies;
+  if (!peerDependencies) return;
+
+  for (const dependency of Object.keys(peerDependencies)) {
     if (dependency.startsWith('@state-adapt/')) {
-      manifest.peerDependencies[dependency] = version;
+      peerDependencies[dependency] = version;
     }
   }
 }
 
-function resolveVersion(current, requested) {
+function resolveVersion(current: string, requested: VersionSpecifier): string {
   const [major, minor, patch] = current.split('.').map(Number);
 
   if (requested === 'major') return `${major + 1}.0.0`;
   if (requested === 'minor') return `${major}.${minor + 1}.0`;
-  if (requested === 'patch') return `${major}.${minor}.${patch + 1}`;
+  return `${major}.${minor}.${patch + 1}`;
 }
 
-function readJson(file) {
+function isVersionSpecifier(value: string | undefined): value is VersionSpecifier {
+  return value === 'patch' || value === 'minor' || value === 'major';
+}
+
+function readJson(file: string): PackageManifest {
   return JSON.parse(fs.readFileSync(file, 'utf8'));
 }
 
-function writeJson(file, value) {
+function writeJson(file: string, value: PackageManifest): void {
   fs.writeFileSync(file, `${JSON.stringify(value, null, 2)}\n`);
 }
 
-function fail(message) {
+function fail(message: string): never {
   console.error(`Release version failed: ${message}`);
   process.exit(1);
 }

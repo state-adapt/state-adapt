@@ -1,17 +1,24 @@
-const fs = require('node:fs');
-const os = require('node:os');
-const path = require('node:path');
-const { execFileSync } = require('node:child_process');
+import { execFileSync } from 'node:child_process';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
 
-const { buildSite, root } = require('./build');
+import { buildSite, root } from './build';
+
+interface VersionLink {
+  text: string;
+  link: string;
+}
 
 const mode = process.argv[2];
 if (!['current', 'versioned'].includes(mode)) {
-  fail('Usage: node scripts/docs/publish.js <current|versioned>');
+  fail('Usage: tsx scripts/docs/publish.ts <current|versioned>');
 }
 
 const pagesRoot = path.resolve(root, '../state-adapt.github.io');
-const version = require(path.join(root, 'libs/core/package.json')).version;
+const version: string = JSON.parse(
+  fs.readFileSync(path.join(root, 'libs/core/package.json'), 'utf8'),
+).version;
 const major = version.split('.')[0];
 const versionLinks = readVersionLinks();
 
@@ -56,7 +63,7 @@ function verifyCurrentVersion() {
   }
 }
 
-function syncRoot(source, destination) {
+function syncRoot(source: string, destination: string) {
   const keep = new Set(['.git', 'versions', 'v']);
 
   for (const entry of fs.readdirSync(destination, { withFileTypes: true })) {
@@ -72,13 +79,13 @@ function syncRoot(source, destination) {
   }
 }
 
-function replaceDirectory(source, destination) {
+function replaceDirectory(source: string, destination: string) {
   fs.rmSync(destination, { recursive: true, force: true });
   fs.mkdirSync(path.dirname(destination), { recursive: true });
   copy(source, destination);
 }
 
-function readVersionLinks() {
+function readVersionLinks(): VersionLink[] {
   const published = path.join(pagesRoot, 'versions.json');
   const source = path.join(root, 'apps/docs2/docs/public/versions.json');
   return JSON.parse(
@@ -86,8 +93,8 @@ function readVersionLinks() {
   );
 }
 
-function writeVersionLinks(links) {
-  const isMajor = ({ link }) => /^\/v\/\d+\/$/.test(link);
+function writeVersionLinks(links: VersionLink[]) {
+  const isMajor = ({ link }: VersionLink) => /^\/v\/\d+\/$/.test(link);
   const latest = links.find(({ link }) => link === '/');
   const latestMajor = latest?.text.match(/^v(\d+)/)?.[1];
   const current = { text: `v${version}`, link: `/v/${major}/` };
@@ -113,11 +120,11 @@ function writeVersionLinks(links) {
   );
 }
 
-function copy(source, destination) {
+function copy(source: string, destination: string) {
   fs.cpSync(source, destination, { recursive: true });
 }
 
-function run(command, ...args) {
+function run(command: string, ...args: string[]) {
   execFileSync(
     process.platform === 'win32' && command === 'npm' ? 'npm.cmd' : command,
     args,
@@ -128,11 +135,11 @@ function run(command, ...args) {
   );
 }
 
-function runInPagesRepo(...args) {
+function runInPagesRepo(...args: string[]) {
   execFileSync('git', args, { cwd: pagesRoot, stdio: 'inherit' });
 }
 
-function fail(message) {
+function fail(message: string): never {
   console.error(`Docs publish failed: ${message}`);
   process.exit(1);
 }

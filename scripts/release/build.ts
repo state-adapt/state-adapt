@@ -1,8 +1,8 @@
-const fs = require('node:fs');
-const path = require('node:path');
-const { execFileSync } = require('node:child_process');
+import { execFileSync } from 'node:child_process';
+import fs from 'node:fs';
+import path from 'node:path';
 
-const { packages, root } = require('./config');
+import { packages, root } from './config';
 
 for (const pkg of packages) {
   fs.rmSync(pkg.distDir, { force: true, recursive: true });
@@ -30,7 +30,7 @@ for (const pkg of packages) {
   fs.copyFileSync(`${root}/CHANGELOG.md`, `${pkg.distDir}/CHANGELOG.md`);
 }
 
-run('node', ['scripts/generate-package-skills.js']);
+run('npx', ['tsx', 'scripts/generate-package-skills.ts']);
 
 const badReferences = packages.flatMap(pkg => findDistReferences(pkg.distDir));
 if (badReferences.length) {
@@ -40,7 +40,7 @@ if (badReferences.length) {
 
 console.log('Release build complete.');
 
-function findDistReferences(directory) {
+function findDistReferences(directory: string): string[] {
   return fs.readdirSync(directory, { withFileTypes: true }).flatMap(entry => {
     const file = path.join(directory, entry.name);
     if (entry.isDirectory()) return findDistReferences(file);
@@ -50,7 +50,7 @@ function findDistReferences(directory) {
   });
 }
 
-function copySchematicAssets(source, destination) {
+function copySchematicAssets(source: string, destination: string) {
   for (const entry of fs.readdirSync(source, { withFileTypes: true })) {
     const sourcePath = path.join(source, entry.name);
     const destinationPath = path.join(destination, entry.name);
@@ -63,7 +63,7 @@ function copySchematicAssets(source, destination) {
   }
 }
 
-function run(command, args) {
+function run(command: string, args: string[]) {
   console.log(`\n> ${command} ${args.join(' ')}`);
   execFileSync(command, args, {
     cwd: root,

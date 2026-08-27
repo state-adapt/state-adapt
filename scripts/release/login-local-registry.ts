@@ -1,7 +1,7 @@
-const fs = require('node:fs');
-const path = require('node:path');
+import fs from 'node:fs';
+import path from 'node:path';
 
-const { localRegistry, localRegistryNpmrc } = require('./config');
+import { localRegistry, localRegistryNpmrc } from './config';
 
 const username = 'state-adapt-release';
 const password = 'local-registry-only';
@@ -22,15 +22,13 @@ async function main() {
     }),
   });
 
-  const result = await response.json();
+  const result = (await response.json()) as { token?: string };
   if (!response.ok) throw new Error(JSON.stringify(result));
 
   fs.mkdirSync(path.dirname(localRegistryNpmrc), { recursive: true });
-  fs.writeFileSync(
-    localRegistryNpmrc,
-    `//127.0.0.1:4873/:_authToken=${result.token}\n`,
-    { mode: 0o600 },
-  );
+  fs.writeFileSync(localRegistryNpmrc, `//127.0.0.1:4873/:_authToken=${result.token}\n`, {
+    mode: 0o600,
+  });
   console.log('Created disposable credentials in .local-registry/npmrc.');
 }
 

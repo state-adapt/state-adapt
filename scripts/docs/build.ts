@@ -1,5 +1,5 @@
-const path = require('node:path');
-const { execFileSync } = require('node:child_process');
+import { execFileSync } from 'node:child_process';
+import path from 'node:path';
 
 const root = path.resolve(__dirname, '../..');
 const dist = path.join(root, 'apps/docs2/.vitepress/dist');
@@ -10,7 +10,7 @@ const vitepress = path.join(
   process.platform === 'win32' ? 'vitepress.cmd' : 'vitepress',
 );
 
-function buildSite(base, outDir) {
+export function buildSite(base: string, outDir: string) {
   execFileSync(vitepress, ['build', 'apps/docs2', '--base', base, '--outDir', outDir], {
     cwd: root,
     stdio: 'inherit',
@@ -24,4 +24,4 @@ function buildCheck() {
 
 if (require.main === module) buildCheck();
 
-module.exports = { buildSite, dist, root };
+export { dist, root };

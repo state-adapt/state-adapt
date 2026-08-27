@@ -1,5 +1,5 @@
-const fs = require('fs/promises');
-const path = require('path');
+import fs from 'node:fs/promises';
+import path from 'node:path';
 
 // ---------------------------------------------------------------------------
 // StateAdapt-specific configuration
@@ -19,6 +19,18 @@ const TYPEDOC_SECTIONS_TO_REMOVE = new Set([
   'Type Parameters',
 ]);
 
+interface PackageJson {
+  name?: string;
+  description?: string;
+}
+
+interface SkillMarkdownOptions {
+  markdownFiles: string[];
+  packageDescription?: string;
+  packageName: string;
+  skillName: string;
+}
+
 // ---------------------------------------------------------------------------
 
 async function main() {
@@ -27,7 +39,7 @@ async function main() {
 
   for (const library of libraries) {
     const packageDirectory = path.join(DIST_LIBS_ROOT, library);
-    const packageJson = JSON.parse(
+    const packageJson: PackageJson = JSON.parse(
       await fs.readFile(path.join(packageDirectory, 'package.json'), 'utf8'),
     );
     const skillName = toSkillName(packageJson.name || library);
@@ -54,7 +66,6 @@ async function main() {
     }
 
     const skillMarkdown = createSkillMarkdown({
-      library,
       markdownFiles,
       packageDescription: packageJson.description,
       packageName: packageJson.name || library,
@@ -66,19 +77,16 @@ async function main() {
   }
 }
 
-function createAgentReferenceMarkdown(markdown) {
-  const withoutFrontmatter = markdown.replace(
-    /^---\r?\n[\s\S]*?\r?\n---\r?\n+/,
-    '',
-  );
+function createAgentReferenceMarkdown(markdown: string): string {
+  const withoutFrontmatter = markdown.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n+/, '');
   const withoutSourceLocations = withoutFrontmatter.replace(
     /^Defined in:.*(?:\r?\n)?/gm,
     '',
   );
   const lines = withoutSourceLocations.split(/\r?\n/);
-  const output = [];
-  let fencedCodeMarker = null;
-  let removedSectionLevel = null;
+  const output: string[] = [];
+  let fencedCodeMarker: string | null = null;
+  let removedSectionLevel: number | null = null;
 
   for (const line of lines) {
     const fenceMatch = line.match(/^\s*(```|~~~)/);
@@ -107,7 +115,7 @@ function createAgentReferenceMarkdown(markdown) {
     .concat('\n');
 }
 
-function consolidateRepeatedCallSignatures(markdown) {
+function consolidateRepeatedCallSignatures(markdown: string): string {
   const callSignatureHeading = /^## Call Signature\s*$/gm;
   const matches = [...markdown.matchAll(callSignatureHeading)];
   if (matches.length < 2) return markdown;
@@ -121,11 +129,7 @@ function consolidateRepeatedCallSignatures(markdown) {
   const parsedSections = sections.map(parseCallSignatureSection);
   const sharedBody = parsedSections[0].body;
 
-  if (
-    parsedSections.some(
-      section => !section.signature || section.body !== sharedBody,
-    )
-  ) {
+  if (parsedSections.some(section => !section.signature || section.body !== sharedBody)) {
     return markdown;
   }
 
@@ -133,7 +137,7 @@ function consolidateRepeatedCallSignatures(markdown) {
   return `${prefix}\n\n## Call Signatures\n\n${signatures}\n\n${sharedBody}\n`;
 }
 
-function parseCallSignatureSection(section) {
+function parseCallSignatureSection(section: string): { body: string; signature: string } {
   const lines = section.split('\n');
   const signatureStart = lines.findIndex(line => line.startsWith('> '));
   if (signatureStart === -1) return { body: section, signature: '' };
@@ -142,12 +146,18 @@ function parseCallSignatureSection(section) {
   while (lines[signatureEnd + 1]?.startsWith('> ')) signatureEnd += 1;
 
   return {
-    signature: lines.slice(signatureStart, signatureEnd + 1).join('\n').trim(),
-    body: lines.slice(signatureEnd + 1).join('\n').trim(),
+    signature: lines
+      .slice(signatureStart, signatureEnd + 1)
+      .join('\n')
+      .trim(),
+    body: lines
+      .slice(signatureEnd + 1)
+      .join('\n')
+      .trim(),
   };
 }
 
-async function discoverLibraries() {
+async function discoverLibraries(): Promise<string[]> {
   const entries = await fs.readdir(API_DOCS_ROOT, { withFileTypes: true });
 
   return entries
@@ -156,8 +166,8 @@ async function discoverLibraries() {
     .sort();
 }
 
-async function preflight(libraries) {
-  const missingPackages = [];
+async function preflight(libraries: string[]): Promise<void> {
+  const missingPackages: string[] = [];
 
   for (const library of libraries) {
     const packageJsonPath = path.join(DIST_LIBS_ROOT, library, 'package.json');
@@ -178,11 +188,14 @@ async function preflight(libraries) {
   }
 }
 
-async function findMarkdownFiles(directory, relativeDirectory = '') {
+async function findMarkdownFiles(
+  directory: string,
+  relativeDirectory = '',
+): Promise<string[]> {
   const entries = await fs.readdir(path.join(directory, relativeDirectory), {
     withFileTypes: true,
   });
-  const files = [];
+  const files: string[] = [];
 
   for (const entry of entries.sort((a, b) => a.name.localeCompare(b.name))) {
     const relativePath = path.join(relativeDirectory, entry.name);
@@ -198,11 +211,15 @@ async function findMarkdownFiles(directory, relativeDirectory = '') {
   return files;
 }
 
-function isPackageIndexMarkdown(markdown) {
+function isPackageIndexMarkdown(markdown: string): boolean {
   return /^# Package:/m.test(markdown);
 }
 
-async function rewriteApiLinks(markdown, library, relativeFile) {
+async function rewriteApiLinks(
+  markdown: string,
+  library: string,
+  relativeFile: string,
+): Promise<string> {
   const markdownLinkPattern = /(!?\[[^\]]*\]\()([^)\s]+)([^)]*\))/g;
   const replacements = await Promise.all(
     [...markdown.matchAll(markdownLinkPattern)].map(async match => {
@@ -225,7 +242,11 @@ async function rewriteApiLinks(markdown, library, relativeFile) {
   return output;
 }
 
-async function rewriteApiLinkTarget(target, library, relativeFile) {
+async function rewriteApiLinkTarget(
+  target: string,
+  library: string,
+  relativeFile: string,
+): Promise<string> {
   if (
     target.startsWith('#') ||
     target.startsWith('http://') ||
@@ -238,7 +259,7 @@ async function rewriteApiLinkTarget(target, library, relativeFile) {
   const suffixIndex = target.search(/[?#]/);
   const pathname = suffixIndex === -1 ? target : target.slice(0, suffixIndex);
   const suffix = suffixIndex === -1 ? '' : target.slice(suffixIndex);
-  let apiRelativeTarget;
+  let apiRelativeTarget: string;
 
   if (pathname.startsWith('/api/')) {
     apiRelativeTarget = pathname.slice('/api/'.length);
@@ -284,7 +305,10 @@ async function rewriteApiLinkTarget(target, library, relativeFile) {
   return `${toPosixPath(rewrittenPath)}${suffix}`;
 }
 
-async function resolveMarkdownTarget(library, targetParts) {
+async function resolveMarkdownTarget(
+  library: string,
+  targetParts: string[],
+): Promise<string[] | null> {
   let targetPath = path.join(API_DOCS_ROOT, library, ...targetParts);
 
   try {
@@ -298,14 +322,14 @@ async function resolveMarkdownTarget(library, targetParts) {
   return path.relative(path.join(API_DOCS_ROOT, library), targetPath).split(path.sep);
 }
 
-async function getSkillName(library) {
-  const packageJson = JSON.parse(
+async function getSkillName(library: string): Promise<string> {
+  const packageJson: PackageJson = JSON.parse(
     await fs.readFile(path.join(DIST_LIBS_ROOT, library, 'package.json'), 'utf8'),
   );
   return toSkillName(packageJson.name || library);
 }
 
-function toSkillName(packageName) {
+function toSkillName(packageName: string): string {
   return packageName
     .toLowerCase()
     .replace(/^@/, '')
@@ -314,12 +338,11 @@ function toSkillName(packageName) {
 }
 
 function createSkillMarkdown({
-  library,
   markdownFiles,
   packageDescription,
   packageName,
   skillName,
-}) {
+}: SkillMarkdownOptions): string {
   const description = [
     `Use ${packageName} accurately with its packaged API documentation.`,
     packageDescription,
@@ -328,9 +351,7 @@ function createSkillMarkdown({
     .filter(Boolean)
     .join(' ')
     .replace(/\s+/g, ' ');
-  const groupedFiles = Map.groupBy
-    ? Map.groupBy(markdownFiles, file => path.dirname(file))
-    : groupBy(markdownFiles, file => path.dirname(file));
+  const groupedFiles = groupBy(markdownFiles, file => path.dirname(file));
   const referenceSections = [...groupedFiles.entries()]
     .map(([directory, files]) => {
       const heading = directory === '.' ? 'API' : toPosixPath(directory);
@@ -367,8 +388,8 @@ ${referenceSections}
 `;
 }
 
-function groupBy(values, getKey) {
-  const groups = new Map();
+function groupBy<T, K>(values: T[], getKey: (value: T) => K): Map<K, T[]> {
+  const groups = new Map<K, T[]>();
   for (const value of values) {
     const key = getKey(value);
     groups.set(key, [...(groups.get(key) || []), value]);
@@ -376,11 +397,11 @@ function groupBy(values, getKey) {
   return groups;
 }
 
-function toPosixPath(filePath) {
+function toPosixPath(filePath: string): string {
   return filePath.split(path.sep).join('/');
 }
 
-main().catch(error => {
-  console.error(error.message);
+main().catch((error: unknown) => {
+  console.error(error instanceof Error ? error.message : error);
   process.exitCode = 1;
 });

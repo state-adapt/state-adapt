@@ -1,10 +1,20 @@
-const fs = require('node:fs');
-const path = require('node:path');
+import fs from 'node:fs';
+import path from 'node:path';
 
-const root = path.resolve(__dirname, '../..');
+export interface ReleasePackage {
+  project: string;
+  name: string;
+  peerDependencies: string[];
+  sourceDir: string;
+  sourceManifest: string;
+  distDir: string;
+  schematics: boolean;
+}
+
+export const root = path.resolve(__dirname, '../..');
 const libraries = path.join(root, 'libs');
 
-const packages = sortByPeerDependencies(
+export const packages = sortByPeerDependencies(
   fs
     .readdirSync(libraries, { withFileTypes: true })
     .filter(entry => entry.isDirectory())
@@ -30,16 +40,16 @@ const packages = sortByPeerDependencies(
     }),
 );
 
-function sortByPeerDependencies(packages) {
+function sortByPeerDependencies(packages: ReleasePackage[]): ReleasePackage[] {
   const byName = new Map(packages.map(pkg => [pkg.name, pkg]));
-  const sorted = [];
-  const seen = new Set();
-  const add = pkg => {
+  const sorted: ReleasePackage[] = [];
+  const seen = new Set<string>();
+  const add = (pkg: ReleasePackage) => {
     if (seen.has(pkg.name)) return;
     seen.add(pkg.name);
     pkg.peerDependencies
       .map(name => byName.get(name))
-      .filter(Boolean)
+      .filter((dependency): dependency is ReleasePackage => Boolean(dependency))
       .forEach(add);
     sorted.push(pkg);
   };
@@ -47,10 +57,6 @@ function sortByPeerDependencies(packages) {
   return sorted;
 }
 
-module.exports = {
-  localRegistry: 'http://127.0.0.1:4873',
-  localRegistryNpmrc: path.join(root, '.local-registry', 'npmrc'),
-  npmCache: path.join(root, 'dist', '.npm-cache'),
-  packages,
-  root,
-};
+export const localRegistry = 'http://127.0.0.1:4873';
+export const localRegistryNpmrc = path.join(root, '.local-registry', 'npmrc');
+export const npmCache = path.join(root, 'dist', '.npm-cache');
