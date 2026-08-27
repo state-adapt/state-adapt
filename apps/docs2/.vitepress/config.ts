@@ -190,6 +190,10 @@ function getGuideSidebar(): DefaultTheme.SidebarItem[] {
       text: 'Getting Started',
       link: `/guide/getting-started/`,
     },
+    {
+      text: 'Upgrade Guide',
+      link: '/guide/upgrade-guide',
+    },
     ...getFrameworkSidebar('angular', [
       {
         text: 'StackBlitz Examples',
