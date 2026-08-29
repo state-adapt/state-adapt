@@ -3,10 +3,36 @@ import * as os from 'node:os';
 import * as path from 'node:path';
 import * as ts from 'typescript';
 
-import { analyzeFile, analyzeProject } from './spaghetti-analysis';
+import { analyzeFile, analyzeProject, ScoringConfig } from './spaghetti-analysis';
 import { CommandRecognizer } from './recognizers';
 
 describe('spaghetti analysis', () => {
+  it('keeps pre-folder scoring configurations structurally compatible', () => {
+    const legacy: ScoringConfig = {
+      baseScores: {
+        'discarded-call': 1,
+        assignment: 2,
+        'property-assignment': 3,
+        increment: 2,
+        decrement: 2,
+        delete: 4,
+        'api-command': 3,
+      },
+      apiBaseScores: {},
+      declarationLineDistanceWeight: 0.1,
+      sameFunctionDistanceWeight: 0,
+      scopeCrossingWeight: 2,
+      fileCrossingWeight: 0,
+      lineDistanceWeight: 0.1,
+      scopeDistanceWeight: 2,
+      functionCallDistanceWeight: 0,
+      fileDistanceWeight: 0,
+      functionSizeWeight: 0,
+    };
+
+    expect(legacy.folderCrossingWeight).toBeUndefined();
+  });
+
   it('detects every V1 command kind without traversing into nested functions', () => {
     const result = analyzeFile(`
 let distant = 0;
@@ -567,5 +593,290 @@ function root() {
       },
     ).commands;
     expect(command.score).toBe(6);
+  });
+
+  it('detects only definitely-void concise arrow bodies as commands', () => {
+    const result = analyzeFile(`
+declare function mutate(): void;
+declare function calculate(): number;
+const command = () => mutate();
+const query = () => calculate();
+const unknown = () => missing();
+`);
+
+    expect(result.functions.find(fn => fn.name === 'command')?.commands).toHaveLength(1);
+    expect(result.functions.find(fn => fn.name === 'query')?.commands).toEqual([]);
+    expect(result.functions.find(fn => fn.name === 'unknown')?.commands).toEqual([]);
+  });
+
+  it('uses resolved overloads and unions without treating async arrows as void', () => {
+    const result = analyzeFile(`
+declare function overloaded(value: string): void;
+declare function overloaded(value: number): number;
+declare function maybe(): void | undefined;
+declare function mutate(): void;
+const overloadedCommand = () => overloaded('value');
+const overloadedQuery = () => overloaded(1);
+const unionCommand = () => maybe();
+const asyncArrow = async () => mutate();
+`);
+
+    expect(
+      result.functions.find(fn => fn.name === 'overloadedCommand')?.commands,
+    ).toHaveLength(1);
+    expect(result.functions.find(fn => fn.name === 'overloadedQuery')?.commands).toEqual(
+      [],
+    );
+    expect(
+      result.functions.find(fn => fn.name === 'unionCommand')?.commands,
+    ).toHaveLength(1);
+    expect(result.functions.find(fn => fn.name === 'asyncArrow')?.commands).toEqual([]);
+  });
+
+  it('detects imported void calls in concise arrows', () => {
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), 'spaghetti-imported-void-'));
+    try {
+      fs.writeFileSync(
+        path.join(root, 'effect.ts'),
+        'export function mutate(): void { globalThis.value = 1; }',
+      );
+      fs.writeFileSync(
+        path.join(root, 'caller.ts'),
+        "import { mutate } from './effect'; export const command = () => mutate();",
+      );
+
+      const command = analyzeProject(root)
+        .files.flatMap(file => file.functions)
+        .find(fn => fn.name === 'command');
+      expect(command?.commands).toHaveLength(1);
+    } finally {
+      fs.rmSync(root, { recursive: true, force: true });
+    }
+  });
+
+  it('retains JSX handler commands but allows its highest-scoring command', () => {
+    const result = analyzeFile(
+      `declare namespace JSX { interface IntrinsicElements { button: unknown } }
+declare function onEvent(event: unknown): void;
+const view = <button onClick={event => {
+  event.preventDefault();
+  onEvent(event);
+}} />;`,
+      'view.tsx',
+      { scoring: { baseScores: { 'discarded-call': 4 } } },
+    );
+    const handler = result.functions.find(fn => fn.name === '<anonymous>');
+
+    expect(handler?.commands).toHaveLength(2);
+    expect(handler?.commands.filter(command => command.allowed)).toHaveLength(1);
+    expect(handler?.score).toBe(4);
+  });
+
+  it('allows the actual highest-scoring event command but not render props', () => {
+    const result = analyzeFile(
+      `declare namespace JSX { interface IntrinsicElements { widget: unknown } }
+declare function notify(): void;
+const eventView = <widget onChange={() => { notify(); globalThis.value = 1; }} />;
+const renderView = <widget renderItem={() => { notify(); globalThis.value = 1; }} />;`,
+      'view.tsx',
+    );
+    const [eventHandler, renderProp] = result.functions.filter(
+      fn => fn.name === '<anonymous>',
+    );
+
+    expect(eventHandler.commands.map(command => [command.kind, command.allowed])).toEqual(
+      [
+        ['discarded-call', undefined],
+        ['property-assignment', 'jsx-event-handler'],
+      ],
+    );
+    expect(renderProp.commands.every(command => !command.allowed)).toBe(true);
+  });
+
+  it('applies the event allowance to concise TSX arrows', () => {
+    const result = analyzeFile(
+      `declare namespace JSX { interface IntrinsicElements { button: unknown } }
+declare function notify(): void;
+const view = <button onClick={() => notify()} />;`,
+      'view.tsx',
+    );
+    expect(
+      result.functions.find(fn => fn.name === '<anonymous>')?.commands[0].allowed,
+    ).toBe('jsx-event-handler');
+  });
+
+  it('resolves checker-backed method, nested, element and wrapped calls', () => {
+    const result = analyzeFile(`
+class Service {
+  mutate() { globalThis.a = 1; }
+  run() { this.mutate(); }
+}
+const api = {
+  nested: { mutate() { globalThis.b = 1; } },
+  mutate() { globalThis.c = 1; }
+};
+function nested() { api.nested.mutate(); }
+function element() { api['mutate'](); }
+function leaf() { globalThis.d = 1; }
+function wrapped() { (leaf)(); }
+`);
+
+    for (const name of ['run', 'nested', 'element', 'wrapped'])
+      expect(result.functions.find(fn => fn.name === name)?.commands).toHaveLength(1);
+  });
+
+  it('scores file and folder crossings independently', () => {
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), 'spaghetti-folders-'));
+    try {
+      fs.mkdirSync(path.join(root, 'feature'));
+      fs.writeFileSync(
+        path.join(root, 'feature', 'effect.ts'),
+        'export function mutate() { globalThis.value = 1; }',
+      );
+      fs.writeFileSync(
+        path.join(root, 'caller.ts'),
+        "import { mutate } from './feature/effect'; export function run() { mutate(); }",
+      );
+      const run = analyzeProject(root, {
+        scoring: {
+          declarationLineDistanceWeight: 0,
+          scopeCrossingWeight: 0,
+          fileCrossingWeight: 2,
+          folderCrossingWeight: 7,
+        },
+      })
+        .files.flatMap(file => file.functions)
+        .find(fn => fn.name === 'run');
+
+      expect(run?.commands[0].distance).toMatchObject({ file: 1, folder: 1 });
+      expect(run?.commands[0].scoreBreakdown).toMatchObject({
+        fileCrossings: 2,
+        folderCrossings: 7,
+      });
+    } finally {
+      fs.rmSync(root, { recursive: true, force: true });
+    }
+  });
+
+  it('accumulates sibling folder crossings across multiple hops', () => {
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), 'spaghetti-folder-hops-'));
+    try {
+      for (const folder of ['a', 'b', 'c']) fs.mkdirSync(path.join(root, folder));
+      fs.writeFileSync(
+        path.join(root, 'c', 'leaf.ts'),
+        'export function leaf() { globalThis.value = 1; }',
+      );
+      fs.writeFileSync(
+        path.join(root, 'b', 'middle.ts'),
+        "import { leaf } from '../c/leaf'; export function middle() { leaf(); }",
+      );
+      fs.writeFileSync(
+        path.join(root, 'a', 'root.ts'),
+        "import { middle } from '../b/middle'; export function run() { middle(); }",
+      );
+
+      const run = analyzeProject(root)
+        .files.flatMap(file => file.functions)
+        .find(fn => fn.name === 'run');
+      expect(run?.commands[0].distance).toMatchObject({ file: 2, folder: 4 });
+    } finally {
+      fs.rmSync(root, { recursive: true, force: true });
+    }
+  });
+
+  it('uses TypeScript module resolution for path aliases and re-exports', () => {
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), 'spaghetti-aliases-'));
+    try {
+      fs.mkdirSync(path.join(root, 'effects'));
+      fs.writeFileSync(
+        path.join(root, 'tsconfig.json'),
+        JSON.stringify({
+          compilerOptions: {
+            baseUrl: '.',
+            paths: { '@effects/*': ['effects/*'] },
+            module: 'commonjs',
+          },
+          include: ['**/*.ts'],
+        }),
+      );
+      fs.writeFileSync(
+        path.join(root, 'effects', 'leaf.ts'),
+        'export function mutate() { globalThis.value = 1; }',
+      );
+      fs.writeFileSync(
+        path.join(root, 'effects', 'index.ts'),
+        "export { mutate as change } from './leaf';",
+      );
+      fs.writeFileSync(
+        path.join(root, 'caller.ts'),
+        "import { change } from '@effects/index'; export function run() { change(); }",
+      );
+
+      const run = analyzeProject(root)
+        .files.flatMap(file => file.functions)
+        .find(fn => fn.name === 'run');
+
+      expect(run?.commands).toHaveLength(1);
+      expect(run?.commands[0]).toMatchObject({
+        kind: 'property-assignment',
+        distance: { file: 1, folder: 1 },
+      });
+    } finally {
+      fs.rmSync(root, { recursive: true, force: true });
+    }
+  });
+
+  it('bounds call-chain expansion with maxCallDepth', () => {
+    const result = analyzeFile(
+      `function leaf() { globalThis.value = 1; }
+function middle() { leaf(); }
+function root() { middle(); }`,
+      'bounded.ts',
+      { maxCallDepth: 1 },
+    );
+
+    expect(result.functions.find(fn => fn.name === 'middle')?.commands).toHaveLength(1);
+    expect(result.functions.find(fn => fn.name === 'root')?.commands).toEqual([]);
+  });
+
+  it('bounds materialized commands per function', () => {
+    const result = analyzeFile(
+      `function leaf() { globalThis.one = 1; globalThis.two = 2; globalThis.three = 3; }
+function root() { leaf(); }`,
+      'bounded-count.ts',
+      { maxCommandsPerFunction: 2 },
+    );
+
+    expect(result.functions.find(fn => fn.name === 'leaf')).toMatchObject({
+      truncated: true,
+      commands: { length: 2 },
+    });
+    expect(result.functions.find(fn => fn.name === 'root')).toMatchObject({
+      truncated: true,
+      commands: { length: 2 },
+    });
+    expect(result).toMatchObject({ truncated: true });
+  });
+
+  it('truncates wide diamond graphs deterministically', () => {
+    const source = `
+function leaf() { globalThis.a = 1; globalThis.b = 2; }
+function left() { leaf(); }
+function right() { leaf(); }
+function root() { left(); right(); }
+`;
+    const first = analyzeFile(source, 'diamond.ts', { maxCommandsPerFunction: 3 });
+    const second = analyzeFile(source, 'diamond.ts', { maxCommandsPerFunction: 3 });
+    const root = first.functions.find(fn => fn.name === 'root');
+
+    expect(root).toMatchObject({ truncated: true, commands: { length: 3 } });
+    expect(root?.commands.map(command => command.callPath[0].callee)).toEqual([
+      'diamond.ts:left@3',
+      'diamond.ts:left@3',
+      'diamond.ts:right@4',
+    ]);
+    expect(second.functions.find(fn => fn.name === 'root')?.commands).toEqual(
+      root?.commands,
+    );
   });
 });

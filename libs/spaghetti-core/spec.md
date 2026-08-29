@@ -322,3 +322,12 @@ And I have committed the work done up to now.
 - DOM retains `appendChild`, `insertAdjacentElement`, `removeChild`, `replaceChild`, and `toggleAttribute`, plus `DOMTokenList.replace` and `DOMTokenList.toggle`. Other previously listed DOM mutations return `void`.
 - Redux retains `dispatch` because Redux returns the dispatched action, a contract commonly used by middleware and callers.
 - StateAdapt store reactions, React setters and reducer dispatchers, Angular signal writes, and RxJS subject emissions return `void`, so those built-in recognizer families are removed.
+
+---
+
+## Type-aware and project-wide analysis decisions
+
+- Type-aware analysis is required. Analysis uses a reusable TypeScript program and checker, and a concise arrow body whose expression is definitely `void` is a command.
+- Cross-file analysis is enabled by default with an explicit opt-out. It resolves the project graph and accumulates call, scope, file, and folder crossings without rebuilding the program per file. Folder distance counts directory edges between caller and callee; file- and folder-crossing weights are independently configurable.
+- ESLint reuses and caches the parser's TypeScript program and project graph. Call-path expansion is bounded, and incomplete results are surfaced rather than silently treated as complete.
+- JSX attributes named like events (`on` followed by an uppercase letter) receive an allowance for one imperative command. Handlers may be concise, multiline, or block-bodied; the allowance applies to the highest-scoring command.

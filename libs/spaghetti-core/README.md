@@ -15,10 +15,15 @@ configurations can use `apiPatterns` and can select families with
 analyzer remains responsible for resolution, distance, propagation, and scoring.
 
 Scores have an additive `scoreBreakdown`. Configure command-kind bases,
-API-specific bases, declaration-line distance, function-call distance, scope and
-file crossings, same-function distance, and function size through
+API-specific bases, declaration-line distance, function-call distance, scope,
+file and folder crossings, same-function distance, and function size through
 `AnalysisOptions.scoring`. The V1-V3 `lineDistanceWeight`,
 `scopeDistanceWeight`, and `fileDistanceWeight` keys remain accepted.
+
+Analysis is type-aware. `analyzeFile` creates a reusable in-memory TypeScript
+program, `analyzeProject` loads project compiler settings, and `analyzeProgram`
+reuses an existing program. Project call paths are bounded by
+`maxCallDepth` and `maxCommandsPerFunction`.
 
 ## Building
 

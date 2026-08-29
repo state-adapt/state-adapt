@@ -25,7 +25,7 @@ describe('spaghetti reporting', () => {
 
   it('renders human-readable command distance details', () => {
     expect(formatHumanReport(report)).toContain(
-      'distance(line=1, scope=1, calls=0, files=0)',
+      'distance(line=1, scope=1, calls=0, files=0, folders=0)',
     );
     expect(formatHumanReport(report)).toContain('Directories');
     expect(formatHumanReport(report)).toContain('[base=2, declaration=0.10');
@@ -54,6 +54,16 @@ export function run() { effect(); }`,
     const json = JSON.parse(formatJsonReport(report));
     expect(json.project.files[0].functions[0].commands).toHaveLength(2);
     expect(json.directoryScores[0].directory).toBe('src');
+  });
+
+  it('warns when analysis is incomplete', () => {
+    const incomplete = reportFromAnalysis({
+      ...report.project,
+      truncated: true,
+    });
+
+    expect(formatHumanReport(incomplete)).toContain('Warning: analysis is incomplete');
+    expect(JSON.parse(formatJsonReport(incomplete)).project.truncated).toBe(true);
   });
 
   it('identifies recognized APIs in human and JSON reports', () => {

@@ -117,7 +117,8 @@ export function createVisualizationDatasets(
           command.distance.sameFunction +
           command.distance.scope +
           command.distance.functionCall +
-          command.distance.file,
+          command.distance.file +
+          (command.distance.folder ?? 0),
         chainLength: command.callPath.length,
         originFunction: command.originFunction,
       })),
@@ -178,6 +179,9 @@ export function formatHumanReport(report: SpaghettiReport): string {
       (sum, file) => sum + file.commands.length,
       0,
     )}`,
+    ...(report.project.truncated
+      ? ['Warning: analysis is incomplete because a configured graph limit was reached.']
+      : []),
     '',
     'Functions',
   ];
@@ -192,7 +196,8 @@ export function formatHumanReport(report: SpaghettiReport): string {
         `    ${command.kind}${command.api ? ` (${command.api})` : ''} ` +
           `${command.location.filePath}:${command.location.start.line}` +
           ` distance(line=${command.distance.line}, scope=${command.distance.scope}, ` +
-          `calls=${command.distance.functionCall}, files=${command.distance.file})` +
+          `calls=${command.distance.functionCall}, files=${command.distance.file}, ` +
+          `folders=${command.distance.folder ?? 0})` +
           ` spaghetti(declarationLine=${command.distance.declarationLine}, ` +
           `sameFunction=${command.distance.sameFunction})` +
           formatCallPath(command.callPath) +
@@ -271,11 +276,11 @@ function formatScoreBreakdown(
     breakdown.declarationLineDistance,
   )}, calls=${format(breakdown.functionCallDistance)}, scope=${format(
     breakdown.scopeCrossings,
-  )}, files=${format(breakdown.fileCrossings)}, local=${format(
-    breakdown.sameFunctionDistance,
-  )}, size=${format(breakdown.functionSize)}, legacy=${format(
-    breakdown.legacyLineDistance,
-  )}]`;
+  )}, files=${format(breakdown.fileCrossings)}, folders=${format(
+    breakdown.folderCrossings ?? 0,
+  )}, local=${format(breakdown.sameFunctionDistance)}, size=${format(
+    breakdown.functionSize,
+  )}, legacy=${format(breakdown.legacyLineDistance)}]`;
 }
 
 function formatCallPath(

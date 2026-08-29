@@ -1,7 +1,8 @@
 import {
-  analyzeFile,
+  analyzeProgram,
   AnalysisOptions,
   Command,
+  FileAnalysis,
   FunctionAnalysis,
 } from '@state-adapt/spaghetti-core';
 import { Rule } from 'eslint';
@@ -12,6 +13,8 @@ type Check = (
   options: Options,
   functions: FunctionAnalysis[],
 ) => void;
+
+const programAnalysisCache = new WeakMap<object, Map<string, FileAnalysis[]>>();
 
 function createRule(
   description: string,
@@ -30,6 +33,8 @@ function createRule(
           '{{kind}} command distance is {{actual}}, above the configured maximum of {{max}}.',
         remoteMutation:
           '{{kind}} mutates remote resource {{resource}} (declared {{distance}} scope(s) away).',
+        analysisTruncated:
+          '{{name}} has incomplete analysis because a configured graph limit was reached.',
       },
     },
     create(context) {
@@ -37,11 +42,18 @@ function createRule(
         'Program:exit'() {
           const options = (context.options[0] ?? {}) as Options;
           const source = context.getSourceCode();
-          const analysis = analyzeFile(
-            source.text,
-            context.getFilename() === '<input>' ? 'source.ts' : context.getFilename(),
-            analysisOptions(options),
-          );
+          const fileName =
+            context.getFilename() === '<input>' ? 'source.ts' : context.getFilename();
+          const analysis = analysisForLintFile(source, fileName, options);
+          analysis.functions
+            .filter(fn => fn.truncated)
+            .forEach(fn =>
+              context.report({
+                loc: eslintLocation(fn.location),
+                messageId: 'analysisTruncated',
+                data: { name: fn.name },
+              }),
+            );
           check(context, options, analysis.functions);
         },
       };
@@ -56,6 +68,7 @@ const scoringSchema: Record<string, unknown> = {
     sameFunctionDistanceWeight: { type: 'number', minimum: 0 },
     scopeCrossingWeight: { type: 'number', minimum: 0 },
     fileCrossingWeight: { type: 'number', minimum: 0 },
+    folderCrossingWeight: { type: 'number', minimum: 0 },
     lineDistanceWeight: { type: 'number', minimum: 0 },
     scopeDistanceWeight: { type: 'number', minimum: 0 },
     functionCallDistanceWeight: { type: 'number', minimum: 0 },
@@ -107,6 +120,9 @@ const maxSchema = [
     properties: {
       max: { type: 'number', minimum: 0 },
       scoring: scoringSchema,
+      crossFileAnalysis: { type: 'boolean' },
+      maxCallDepth: { type: 'integer', minimum: 0 },
+      maxCommandsPerFunction: { type: 'integer', minimum: 1 },
       ...recognitionSchema,
     },
     additionalProperties: false,
@@ -132,7 +148,11 @@ function reportCommand(
   messageId: 'distanceLimit' | 'remoteMutation',
   data: Record<string, string>,
 ): void {
-  context.report({ loc: eslintLocation(command.location), messageId, data });
+  context.report({
+    loc: eslintLocation(command.callPath[0]?.callLocation ?? command.location),
+    messageId,
+    data,
+  });
 }
 
 const maxSpaghettiScore = createRule(
@@ -152,8 +172,9 @@ const maxCommands = createRule(
   (context, options, functions) => {
     const max = numberOption(options, 'max', 5);
     functions
-      .filter(fn => fn.commands.length > max)
-      .forEach(fn => reportFunction(context, fn, fn.commands.length, max));
+      .map(fn => ({ fn, count: fn.commands.filter(command => !command.allowed).length }))
+      .filter(({ count }) => count > max)
+      .forEach(({ fn, count }) => reportFunction(context, fn, count, max));
   },
 );
 
@@ -168,8 +189,12 @@ const maxCommandDistance = createRule(
         scopeWeight: { type: 'number', minimum: 0 },
         functionCallWeight: { type: 'number', minimum: 0 },
         fileWeight: { type: 'number', minimum: 0 },
+        folderWeight: { type: 'number', minimum: 0 },
         sameFunctionWeight: { type: 'number', minimum: 0 },
         scoring: scoringSchema,
+        crossFileAnalysis: { type: 'boolean' },
+        maxCallDepth: { type: 'integer', minimum: 0 },
+        maxCommandsPerFunction: { type: 'integer', minimum: 1 },
         ...recognitionSchema,
       },
       additionalProperties: false,
@@ -181,15 +206,18 @@ const maxCommandDistance = createRule(
     const scopeWeight = numberOption(options, 'scopeWeight', 1);
     const functionCallWeight = numberOption(options, 'functionCallWeight', 1);
     const fileWeight = numberOption(options, 'fileWeight', 1);
+    const folderWeight = numberOption(options, 'folderWeight', 1);
     const sameFunctionWeight = numberOption(options, 'sameFunctionWeight', 1);
     functions
       .flatMap(fn => fn.commands)
+      .filter(command => !command.allowed)
       .forEach(command => {
         const distance =
           command.distance.line * lineWeight +
           command.distance.scope * scopeWeight +
           command.distance.functionCall * functionCallWeight +
           command.distance.file * fileWeight +
+          (command.distance.folder ?? 0) * folderWeight +
           command.distance.sameFunction * sameFunctionWeight;
         if (distance > max)
           reportCommand(context, command, 'distanceLimit', {
@@ -206,13 +234,20 @@ const noRemoteMutation = createRule(
   [
     {
       type: 'object',
-      properties: { scoring: scoringSchema, ...recognitionSchema },
+      properties: {
+        scoring: scoringSchema,
+        crossFileAnalysis: { type: 'boolean' },
+        maxCallDepth: { type: 'integer', minimum: 0 },
+        maxCommandsPerFunction: { type: 'integer', minimum: 1 },
+        ...recognitionSchema,
+      },
       additionalProperties: false,
     },
   ],
   (context, _options, functions) => {
     functions
       .flatMap(fn => fn.commands)
+      .filter(command => !command.allowed)
       .filter(command => command.kind !== 'discarded-call' && command.remote)
       .forEach(command =>
         reportCommand(context, command, 'remoteMutation', {
@@ -233,6 +268,8 @@ export const rules: Record<string, Rule.RuleModule> = {
 
 export const configs = {
   recommended: {
+    parser: '@typescript-eslint/parser',
+    parserOptions: { project: true },
     plugins: ['@state-adapt/spaghetti'],
     rules: {
       '@state-adapt/spaghetti/max-spaghetti-score': 'warn',
@@ -247,6 +284,8 @@ function analysisOptions(options: Options): AnalysisOptions {
   const scoring = options['scoring'];
   const apiPatterns = options['apiPatterns'];
   const builtInRecognizers = options['builtInRecognizers'];
+  const maxCallDepth = options['maxCallDepth'];
+  const maxCommandsPerFunction = options['maxCommandsPerFunction'];
   return {
     ...(scoring && typeof scoring === 'object'
       ? { scoring: scoring as AnalysisOptions['scoring'] }
@@ -259,7 +298,49 @@ function analysisOptions(options: Options): AnalysisOptions {
           builtInRecognizers: builtInRecognizers as AnalysisOptions['builtInRecognizers'],
         }
       : {}),
+    ...(typeof maxCallDepth === 'number' ? { maxCallDepth } : {}),
+    ...(typeof maxCommandsPerFunction === 'number' ? { maxCommandsPerFunction } : {}),
+    crossFileAnalysis: options['crossFileAnalysis'] !== false,
   };
+}
+
+function analysisForLintFile(
+  source: Rule.RuleContext['sourceCode'],
+  fileName: string,
+  options: Options,
+): FileAnalysis {
+  const analysisOptionsValue = analysisOptions(options);
+  const parserServices = source.parserServices as
+    | { program?: { getSourceFiles(): unknown[] } }
+    | undefined;
+  const program = parserServices?.program;
+  if (!program)
+    throw new Error(
+      'eslint-plugin-spaghetti requires type-aware parser services. Configure @typescript-eslint/parser with parserOptions.project.',
+    );
+  const cacheKey = JSON.stringify(analysisOptionsValue);
+  let cache = programAnalysisCache.get(program);
+  if (!cache) {
+    cache = new Map();
+    programAnalysisCache.set(program, cache);
+  }
+  let files = cache.get(cacheKey);
+  if (!files) {
+    files = analyzeProgram(program as never, analysisOptionsValue).files;
+    cache.set(cacheKey, files);
+  }
+  const match = files.find(
+    file => normalizePath(file.filePath) === normalizePath(fileName),
+  );
+  if (!match)
+    throw new Error(
+      `eslint-plugin-spaghetti could not find ${fileName} in the configured TypeScript project.`,
+    );
+  return match;
+}
+
+function normalizePath(filePath: string): string {
+  return filePath.replace(/\\/g, '/');
 }
 
 function numberOption(options: Options, name: string, fallback: number): number {

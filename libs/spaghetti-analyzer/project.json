@@ -27,6 +27,14 @@
       "options": {
         "jestConfig": "libs/spaghetti-analyzer/jest.config.ts"
       }
+    },
+    "smoke": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "dependsOn": ["build"],
+      "options": {
+        "command": "node -r ./libs/spaghetti-analyzer/smoke-register.cjs dist/libs/spaghetti-analyzer/src/cli.js --help"
+      }
     }
   },
   "tags": []

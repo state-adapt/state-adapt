@@ -2,7 +2,7 @@ import * as fs from 'node:fs';
 import * as os from 'node:os';
 import * as path from 'node:path';
 
-import { runCli } from './cli';
+import { runCli } from './lib/cli';
 
 describe('report CLI', () => {
   it('documents its invocation', () => {
@@ -74,6 +74,38 @@ describe('report CLI', () => {
       expect(
         output.visualizations.scoreTrend.map((point: { label: string }) => point.label),
       ).toEqual(['baseline', 'candidate']);
+    } finally {
+      fs.rmSync(root, { recursive: true, force: true });
+    }
+  });
+
+  it('reports real cross-folder propagation and truncation from config', () => {
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), 'spaghetti-cli-cross-folder-'));
+    try {
+      fs.mkdirSync(path.join(root, 'effects'));
+      fs.writeFileSync(
+        path.join(root, 'effects', 'effect.ts'),
+        'export function mutate() { globalThis.one = 1; globalThis.two = 2; }',
+      );
+      fs.writeFileSync(
+        path.join(root, 'caller.ts'),
+        "import { mutate } from './effects/effect'; export function run() { mutate(); }",
+      );
+      fs.writeFileSync(
+        path.join(root, 'spaghetti.json'),
+        JSON.stringify({ maxCommandsPerFunction: 1 }),
+      );
+
+      const output = JSON.parse(
+        runCli(['.', '--json', '--config', 'spaghetti.json'], root).output,
+      );
+      const run = output.project.files
+        .flatMap((file: { functions: unknown[] }) => file.functions)
+        .find((fn: { name: string }) => fn.name === 'run');
+
+      expect(output.project.truncated).toBe(true);
+      expect(run).toMatchObject({ truncated: true, commands: { length: 1 } });
+      expect(run.commands[0].distance).toMatchObject({ file: 1, folder: 1 });
     } finally {
       fs.rmSync(root, { recursive: true, force: true });
     }
