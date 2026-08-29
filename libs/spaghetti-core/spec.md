@@ -252,3 +252,25 @@ each command retains its original location
 ```
 
 That shared representation is the foundation. ESLint rules and codebase reporting are just two different consumers of it.
+
+Alright, now here is a description of what I would like to build. Feel free to use subagents if useful. Notice that instead of calling it imperative analysis, I'm calling it a spaghetti. Because imperative doesn't distinguish between distance, but a lot of what I want to analyze is stuff that's messing with stuff from far away, as you'll see in this description. So that's why I'm calling it spaghetti. Now the one thing this does not describe is event handlers in JSX and Angular templates. There may need to be separate packages for both of those situations. But basically, the rule should be in those situations that the event handler function should be inline and basically One imperative statement is allowed because it's simply unavoidable in current frameworks. Anyway, here it is. There may not be enough detail here to implement it all the way. Feel free to ask any clarifying question. But I'm interested in what you can do with this.
+
+It's important to have tests for the ESLint plugin that include a variety of examples.
+
+I have checked out a branch called Spaghetti and feel free to commit once you have completed each version, following the conventional commits pattern we've been following in this repo.
+
+Actually, it would be good for you to take on sort of a project manager role and spin up a different developer sub-agent to work on each version.
+
+Keep in mind that the various weights and scores should be configurable.
+
+Okay, actually I pasted the description of what needs to be built inside this file. libs/spaghetti-core/spec.md
+And I have committed the work done up to now.
+
+---
+
+## Stable V1 decisions
+
+- The initial scaffold directories remain in place to preserve workspace history, while their public packages follow this specification: `libs/spaghetti-core` publishes `@state-adapt/spaghetti-analysis`, `libs/eslint-plugin-spaghetti` publishes `eslint-plugin-state-adapt`, and `libs/spaghetti-analyzer` publishes `state-adapt-spaghetti-report`.
+- The shared package owns `analyzeFunction`, `analyzeFile`, and `analyzeProject`, plus the public command, distance, declaration, function, file, and project result types. V1 command paths are empty and call/file distances are zero, leaving the result shape forward-compatible with call-chain analysis.
+- Scoring begins with configurable base scores per command kind and configurable line-distance, scope-distance, and function-size weights. Consumer thresholds remain independently configurable.
+- ESLint rules and the reporting CLI consume shared analysis results. They do not walk or interpret ASTs themselves; the report exposes both readable text and complete JSON.

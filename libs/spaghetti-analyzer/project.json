@@ -11,7 +11,8 @@
         "outputPath": "dist/libs/spaghetti-analyzer",
         "main": "libs/spaghetti-analyzer/src/index.ts",
         "tsConfig": "libs/spaghetti-analyzer/tsconfig.lib.json",
-        "assets": ["libs/spaghetti-analyzer/*.md"]
+        "assets": ["libs/spaghetti-analyzer/*.md"],
+        "additionalEntryPoints": ["libs/spaghetti-analyzer/src/cli.ts"]
       },
       "configurations": {
         "production": {}

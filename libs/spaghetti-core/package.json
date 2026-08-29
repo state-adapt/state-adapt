@@ -1,6 +1,6 @@
 {
-  "name": "@state-adapt/spaghetti-core",
-  "description": "Core utilities for detecting and analyzing spaghetti code.",
+  "name": "@state-adapt/spaghetti-analysis",
+  "description": "TypeScript utilities for detecting and scoring spaghetti code.",
   "version": "3.1.0",
   "private": false,
   "homepage": "https://github.com/state-adapt/state-adapt",
@@ -69,7 +69,9 @@
       }
     }
   },
-  "peerDependencies": {},
+  "peerDependencies": {
+    "typescript": ">=5.0.0"
+  },
   "dependencies": {
     "tslib": "^2.3.0"
   }

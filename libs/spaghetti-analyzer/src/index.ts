@@ -1,1 +1,1 @@
-export * from './lib/spaghetti-analyzer';
+export * from './lib/report';

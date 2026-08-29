@@ -1,1 +1,1 @@
-export * from './lib/eslint-plugin-spaghetti';
+export { rules, configs } from './lib/rules';

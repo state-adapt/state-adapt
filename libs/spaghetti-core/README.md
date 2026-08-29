@@ -1,6 +1,6 @@
-# spaghetti-core
+# @state-adapt/spaghetti-analysis
 
-This library was generated with [Nx](https://nx.dev).
+Shared TypeScript AST analysis for discovering direct commands, their declaration distance, and configurable spaghetti scores.
 
 ## Building
 

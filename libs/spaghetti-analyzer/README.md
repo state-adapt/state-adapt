@@ -1,6 +1,6 @@
-# spaghetti-analyzer
+# state-adapt-spaghetti-report
 
-This library was generated with [Nx](https://nx.dev).
+Human-readable and JSON project reports powered by `@state-adapt/spaghetti-analysis`.
 
 ## Building
 

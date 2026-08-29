@@ -1,6 +1,6 @@
 {
-  "name": "@state-adapt/spaghetti-analyzer",
-  "description": "A TypeScript analyzer for detecting spaghetti code.",
+  "name": "state-adapt-spaghetti-report",
+  "description": "CLI reports for StateAdapt spaghetti analysis.",
   "version": "3.1.0",
   "private": false,
   "homepage": "https://github.com/state-adapt/state-adapt",
@@ -38,6 +38,9 @@
           "tsConfig": "libs/spaghetti-analyzer/tsconfig.lib.json",
           "assets": [
             "libs/spaghetti-analyzer/*.md"
+          ],
+          "additionalEntryPoints": [
+            "libs/spaghetti-analyzer/src/cli.ts"
           ]
         }
       },
@@ -69,8 +72,11 @@
       }
     }
   },
+  "bin": {
+    "state-adapt-spaghetti-report": "./src/cli.js"
+  },
   "peerDependencies": {
-    "@state-adapt/spaghetti-core": "3.1.0"
+    "@state-adapt/spaghetti-analysis": "3.1.0"
   },
   "dependencies": {
     "tslib": "^2.3.0"

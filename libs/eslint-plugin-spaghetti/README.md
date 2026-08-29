@@ -1,6 +1,6 @@
-# eslint-plugin-spaghetti
+# eslint-plugin-state-adapt
 
-This library was generated with [Nx](https://nx.dev).
+Thin ESLint rules powered by `@state-adapt/spaghetti-analysis`.
 
 ## Building
 
