@@ -15,14 +15,12 @@ export interface SourceLocation {
   start: { line: number; column: number };
   end: { line: number; column: number };
 }
-
 export interface Distance {
   line: number;
   scope: number;
   functionCall: number;
   file: number;
 }
-
 export interface CommandHop {
   caller: string;
   callee: string;
@@ -30,13 +28,11 @@ export interface CommandHop {
   definitionLocation: SourceLocation;
   distance: Distance;
 }
-
 export interface Declaration {
   name: string;
   kind: 'variable' | 'parameter' | 'function' | 'import' | 'class' | 'unknown';
   location: SourceLocation;
 }
-
 export interface Command {
   kind: CommandKind;
   location: SourceLocation;
@@ -48,7 +44,6 @@ export interface Command {
   declaration?: Declaration;
   remote: boolean;
 }
-
 export interface FunctionAnalysis {
   functionId: string;
   name: string;
@@ -57,14 +52,12 @@ export interface FunctionAnalysis {
   commands: Command[];
   score: number;
 }
-
 export interface FileAnalysis {
   filePath: string;
   functions: FunctionAnalysis[];
   commands: Command[];
   score: number;
 }
-
 export interface ProjectAnalysis {
   rootDir: string;
   files: FileAnalysis[];
@@ -75,6 +68,8 @@ export interface ScoringConfig {
   baseScores: Record<CommandKind, number>;
   lineDistanceWeight: number;
   scopeDistanceWeight: number;
+  functionCallDistanceWeight: number;
+  fileDistanceWeight: number;
   functionSizeWeight: number;
 }
 
@@ -97,12 +92,37 @@ export const defaultScoring: ScoringConfig = {
   },
   lineDistanceWeight: 0.1,
   scopeDistanceWeight: 2,
+  functionCallDistanceWeight: 0,
+  fileDistanceWeight: 0,
   functionSizeWeight: 0,
 };
 
 interface Scope {
   parent?: Scope;
   declarations: Map<string, Declaration>;
+}
+interface ImportBinding {
+  moduleName: string;
+  importedName: string;
+  namespace: boolean;
+}
+interface CallSite {
+  node: ts.CallExpression;
+  location: SourceLocation;
+  directCommandLocation?: SourceLocation;
+  name: string;
+  namespace?: string;
+}
+interface FunctionDraft extends FunctionAnalysis {
+  sourceFile: ts.SourceFile;
+  scopes: Map<ts.Node, Scope>;
+  directCommands: Command[];
+  calls: CallSite[];
+}
+interface FileDraft {
+  sourceFile: ts.SourceFile;
+  functions: FunctionDraft[];
+  imports: Map<string, ImportBinding>;
 }
 
 export function analyzeFunction(
@@ -121,25 +141,7 @@ export function analyzeFile(
   filePath = 'source.ts',
   options: AnalysisOptions = {},
 ): FileAnalysis {
-  const sourceFile = ts.createSourceFile(
-    filePath,
-    sourceText,
-    ts.ScriptTarget.Latest,
-    true,
-    scriptKind(filePath),
-  );
-  const nodeScopes = new Map<ts.Node, Scope>();
-  const rootScope: Scope = { declarations: new Map() };
-  buildScopes(sourceFile, rootScope, nodeScopes, sourceFile);
-  const functions: FunctionAnalysis[] = [];
-  visitFunctions(sourceFile, sourceFile, nodeScopes, options, functions);
-  const commands = functions.flatMap(fn => fn.commands);
-  return {
-    filePath,
-    functions,
-    commands,
-    score: functions.reduce((sum, fn) => sum + fn.score, 0),
-  };
+  return analyzeSources([{ filePath, sourceText }], options)[0];
 }
 
 export function analyzeProject(
@@ -148,9 +150,10 @@ export function analyzeProject(
 ): ProjectAnalysis {
   const absoluteRoot = path.resolve(rootDir);
   const extensions = options.extensions ?? ['.ts', '.tsx', '.js', '.jsx'];
-  const files = collectFiles(absoluteRoot, extensions, options.exclude ?? []).map(
-    filePath => analyzeFile(fs.readFileSync(filePath, 'utf8'), filePath, options),
+  const sources = collectFiles(absoluteRoot, extensions, options.exclude ?? []).map(
+    filePath => ({ filePath, sourceText: fs.readFileSync(filePath, 'utf8') }),
   );
+  const files = analyzeSources(sources, options);
   return {
     rootDir: absoluteRoot,
     files,
@@ -158,27 +161,122 @@ export function analyzeProject(
   };
 }
 
+function analyzeSources(
+  sources: Array<{ filePath: string; sourceText: string }>,
+  options: AnalysisOptions,
+): FileAnalysis[] {
+  const drafts = sources.map(({ filePath, sourceText }) =>
+    createFileDraft(sourceText, filePath, options),
+  );
+  const allFunctions = drafts.flatMap(file => file.functions);
+  const byId = new Map(allFunctions.map(fn => [fn.functionId, fn]));
+  const edges = new Map<string, Array<{ callee: FunctionDraft; hop: CommandHop }>>();
+  const resolvedCallStarts = new Map<string, Set<string>>();
+  allFunctions.forEach(caller => {
+    const callerFile = drafts.find(file => file.sourceFile === caller.sourceFile);
+    if (!callerFile) return;
+    caller.calls.forEach(call => {
+      const callee = resolveCall(call, caller, callerFile, drafts);
+      if (!callee) return;
+      const distance = hopDistance(call, caller, callee);
+      const hop: CommandHop = {
+        caller: caller.functionId,
+        callee: callee.functionId,
+        callLocation: call.location,
+        definitionLocation: callee.location,
+        distance,
+      };
+      const callerEdges = edges.get(caller.functionId) ?? [];
+      callerEdges.push({ callee, hop });
+      edges.set(caller.functionId, callerEdges);
+      if (call.directCommandLocation) {
+        const starts = resolvedCallStarts.get(caller.functionId) ?? new Set<string>();
+        starts.add(locationStartKey(call.directCommandLocation));
+        resolvedCallStarts.set(caller.functionId, starts);
+      }
+    });
+  });
+  const scoring = scoringConfig(options);
+  allFunctions.forEach(fn => {
+    const resolved = resolvedCallStarts.get(fn.functionId);
+    if (resolved)
+      fn.directCommands = fn.directCommands.filter(
+        command =>
+          command.kind !== 'discarded-call' ||
+          !resolved.has(locationStartKey(command.location)),
+      );
+  });
+  allFunctions.forEach(fn => {
+    fn.commands = expandCommands(fn, edges, byId, scoring, new Set());
+    fn.score = fn.commands.reduce((sum, command) => sum + command.score, 0);
+  });
+  return drafts.map(draft => {
+    const functions: FunctionAnalysis[] = draft.functions.map(stripFunctionDraft);
+    const commands = functions.flatMap(fn => fn.commands);
+    return {
+      filePath: draft.sourceFile.fileName,
+      functions,
+      commands,
+      score: functions.reduce((sum, fn) => sum + fn.score, 0),
+    };
+  });
+}
+
+function createFileDraft(
+  sourceText: string,
+  filePath: string,
+  options: AnalysisOptions,
+): FileDraft {
+  const sourceFile = ts.createSourceFile(
+    filePath,
+    sourceText,
+    ts.ScriptTarget.Latest,
+    true,
+    scriptKind(filePath),
+  );
+  const scopes = new Map<ts.Node, Scope>();
+  buildScopes(sourceFile, { declarations: new Map() }, scopes, sourceFile);
+  const functions: FunctionDraft[] = [];
+  visitFunctions(sourceFile, sourceFile, scopes, options, functions);
+  return { sourceFile, functions, imports: collectImports(sourceFile) };
+}
+
 function visitFunctions(
   node: ts.Node,
   sourceFile: ts.SourceFile,
   scopes: Map<ts.Node, Scope>,
   options: AnalysisOptions,
-  output: FunctionAnalysis[],
+  output: FunctionDraft[],
 ): void {
   if (isFunction(node) && node.body) {
     const name = functionName(node, sourceFile);
     const location = locationOf(node, sourceFile);
     const size = location.end.line - location.start.line + 1;
     const functionId = `${sourceFile.fileName}:${name}@${location.start.line}`;
-    const commands: Command[] = [];
-    collectCommands(node.body, node, sourceFile, scopes, options, functionId, size, commands);
+    const directCommands: Command[] = [];
+    const calls: CallSite[] = [];
+    collectFunctionBody(
+      node.body,
+      node,
+      sourceFile,
+      scopes,
+      options,
+      functionId,
+      size,
+      directCommands,
+      calls,
+    );
     output.push({
       functionId,
       name,
       location,
       size,
-      commands,
-      score: commands.reduce((sum, command) => sum + command.score, 0),
+      commands: directCommands,
+      score: directCommands.reduce((sum, command) => sum + command.score, 0),
+      sourceFile,
+      scopes,
+      directCommands,
+      calls,
     });
   }
   ts.forEachChild(node, child =>
@@ -186,7 +284,7 @@ function visitFunctions(
   );
 }
 
-function collectCommands(
+function collectFunctionBody(
   node: ts.Node,
   owner: ts.FunctionLikeDeclaration,
   sourceFile: ts.SourceFile,
@@ -194,45 +292,288 @@ function collectCommands(
   options: AnalysisOptions,
   functionId: string,
   functionSize: number,
-  output: Command[],
+  commands: Command[],
+  calls: CallSite[],
 ): void {
   if (node !== owner.body && isFunction(node)) return;
   const detected = detectCommand(node);
-  if (detected) {
-    const location = locationOf(node, sourceFile);
-    const resource = resourceName(detected.target);
-    const resolution = resource
-      ? resolveDeclaration(resource, scopes.get(node))
-      : undefined;
-    const distance: Distance = {
-      line: resolution
-        ? Math.abs(location.start.line - resolution.declaration.location.start.line)
-        : 0,
-      scope: resolution?.scopeDistance ?? 0,
-      functionCall: 0,
-      file: 0,
-    };
-    const scoring = scoringConfig(options);
-    const score =
-      scoring.baseScores[detected.kind] +
-      distance.line * scoring.lineDistanceWeight +
-      distance.scope * scoring.scopeDistanceWeight +
-      functionSize * scoring.functionSizeWeight;
-    output.push({
-      kind: detected.kind,
-      location,
-      originFunction: functionId,
-      callPath: [],
-      distance,
-      score,
-      ...(resource ? { resource } : {}),
-      ...(resolution ? { declaration: resolution.declaration } : {}),
-      remote: Boolean(resource && (!resolution || resolution.scopeDistance > 0)),
-    });
+  if (detected)
+    commands.push(
+      createDirectCommand(
+        detected,
+        node,
+        sourceFile,
+        scopes,
+        options,
+        functionId,
+        functionSize,
+      ),
+    );
+  if (ts.isCallExpression(node)) {
+    const target = callTarget(node.expression);
+    if (target)
+      calls.push({
+        node,
+        location: locationOf(node, sourceFile),
+        directCommandLocation: directCallCommandLocation(node, sourceFile),
+        ...target,
+      });
   }
   ts.forEachChild(node, child =>
-    collectCommands(child, owner, sourceFile, scopes, options, functionId, functionSize, output),
+    collectFunctionBody(
+      child,
+      owner,
+      sourceFile,
+      scopes,
+      options,
+      functionId,
+      functionSize,
+      commands,
+      calls,
+    ),
   );
+}
+
+function createDirectCommand(
+  detected: { kind: CommandKind; target?: ts.Expression },
+  node: ts.Node,
+  sourceFile: ts.SourceFile,
+  scopes: Map<ts.Node, Scope>,
+  options: AnalysisOptions,
+  functionId: string,
+  functionSize: number,
+): Command {
+  const location = locationOf(node, sourceFile);
+  const resource = resourceName(detected.target);
+  const resolution = resource
+    ? resolveDeclaration(resource, scopes.get(node))
+    : undefined;
+  const distance: Distance = {
+    line: resolution
+      ? Math.abs(location.start.line - resolution.declaration.location.start.line)
+      : 0,
+    scope: resolution?.scopeDistance ?? 0,
+    functionCall: 0,
+    file: 0,
+  };
+  const scoring = scoringConfig(options);
+  const score =
+    scoring.baseScores[detected.kind] +
+    scoreDistance(distance, scoring) +
+    functionSize * scoring.functionSizeWeight;
+  return {
+    kind: detected.kind,
+    location,
+    originFunction: functionId,
+    callPath: [],
+    distance,
+    score,
+    ...(resource ? { resource } : {}),
+    ...(resolution ? { declaration: resolution.declaration } : {}),
+    remote: Boolean(resource && (!resolution || resolution.scopeDistance > 0)),
+  };
+}
+
+function expandCommands(
+  fn: FunctionDraft,
+  edges: Map<string, Array<{ callee: FunctionDraft; hop: CommandHop }>>,
+  functions: Map<string, FunctionDraft>,
+  scoring: ScoringConfig,
+  ancestors: Set<string>,
+): Command[] {
+  if (ancestors.has(fn.functionId)) return [];
+  const nextAncestors = new Set(ancestors).add(fn.functionId);
+  const inherited = (edges.get(fn.functionId) ?? []).flatMap(({ callee, hop }) => {
+    const target = functions.get(callee.functionId);
+    if (!target || nextAncestors.has(target.functionId)) return [];
+    return expandCommands(target, edges, functions, scoring, nextAncestors).map(command =>
+      inheritCommand(command, hop, scoring),
+    );
+  });
+  return [...fn.directCommands, ...inherited];
+}
+
+function inheritCommand(
+  command: Command,
+  hop: CommandHop,
+  scoring: ScoringConfig,
+): Command {
+  return {
+    ...command,
+    callPath: [hop, ...command.callPath],
+    distance: addDistance(command.distance, hop.distance),
+    score: command.score + scoreDistance(hop.distance, scoring),
+  };
+}
+
+function resolveCall(
+  call: CallSite,
+  caller: FunctionDraft,
+  callerFile: FileDraft,
+  files: FileDraft[],
+): FunctionDraft | undefined {
+  if (call.namespace) {
+    const binding = callerFile.imports.get(call.namespace);
+    if (!binding?.namespace) return undefined;
+    return resolveImportedFunction(binding.moduleName, call.name, callerFile, files);
+  }
+  const imported = callerFile.imports.get(call.name);
+  if (imported && !imported.namespace)
+    return resolveImportedFunction(
+      imported.moduleName,
+      imported.importedName,
+      callerFile,
+      files,
+    );
+  const resolution = resolveDeclaration(call.name, caller.scopes.get(call.node));
+  const candidates = callerFile.functions.filter(
+    candidate => candidate.name === call.name,
+  );
+  if (!resolution) return candidates.length === 1 ? candidates[0] : undefined;
+  return (
+    candidates.find(
+      candidate =>
+        candidate.location.start.line === resolution.declaration.location.start.line,
+    ) ?? (candidates.length === 1 ? candidates[0] : undefined)
+  );
+}
+
+function resolveImportedFunction(
+  moduleName: string,
+  importedName: string,
+  callerFile: FileDraft,
+  files: FileDraft[],
+): FunctionDraft | undefined {
+  const target = resolveModuleFile(moduleName, callerFile.sourceFile.fileName, files);
+  if (!target) return undefined;
+  if (importedName === 'default') {
+    const defaultName = defaultExportName(target.sourceFile);
+    if (defaultName) return target.functions.find(fn => fn.name === defaultName);
+    return target.functions.length === 1 ? target.functions[0] : undefined;
+  }
+  return target.functions.find(
+    fn => fn.name === exportedName(target.sourceFile, importedName),
+  );
+}
+
+function resolveModuleFile(
+  moduleName: string,
+  callerPath: string,
+  files: FileDraft[],
+): FileDraft | undefined {
+  if (!moduleName.startsWith('.')) return undefined;
+  const requested = path.resolve(path.dirname(callerPath), moduleName);
+  const requestedExtension = path.extname(requested);
+  const requestedStem = ['.ts', '.tsx', '.js', '.jsx'].includes(requestedExtension)
+    ? requested.slice(0, -requestedExtension.length)
+    : requested;
+  return files.find(file => {
+    const filePath = path.resolve(file.sourceFile.fileName);
+    const extension = path.extname(filePath);
+    return (
+      filePath === requested ||
+      filePath.slice(0, -extension.length) === requestedStem ||
+      (path.dirname(filePath) === requested &&
+        path.basename(filePath, extension) === 'index')
+    );
+  });
+}
+
+function collectImports(sourceFile: ts.SourceFile): Map<string, ImportBinding> {
+  const imports = new Map<string, ImportBinding>();
+  sourceFile.statements.forEach(statement => {
+    if (
+      !ts.isImportDeclaration(statement) ||
+      !ts.isStringLiteral(statement.moduleSpecifier)
+    )
+      return;
+    const moduleName = statement.moduleSpecifier.text;
+    const clause = statement.importClause;
+    if (!clause) return;
+    if (clause.name)
+      imports.set(clause.name.text, {
+        moduleName,
+        importedName: 'default',
+        namespace: false,
+      });
+    const bindings = clause.namedBindings;
+    if (bindings && ts.isNamespaceImport(bindings))
+      imports.set(bindings.name.text, { moduleName, importedName: '*', namespace: true });
+    else if (bindings)
+      bindings.elements.forEach(element =>
+        imports.set(element.name.text, {
+          moduleName,
+          importedName: element.propertyName?.text ?? element.name.text,
+          namespace: false,
+        }),
+      );
+  });
+  return imports;
+}
+
+function exportedName(sourceFile: ts.SourceFile, exported: string): string {
+  for (const statement of sourceFile.statements) {
+    if (
+      !ts.isExportDeclaration(statement) ||
+      !statement.exportClause ||
+      !ts.isNamedExports(statement.exportClause)
+    )
+      continue;
+    const match = statement.exportClause.elements.find(
+      element => element.name.text === exported,
+    );
+    if (match) return match.propertyName?.text ?? match.name.text;
+  }
+  return exported;
+}
+
+function defaultExportName(sourceFile: ts.SourceFile): string | undefined {
+  for (const statement of sourceFile.statements) {
+    if (
+      ts.isFunctionDeclaration(statement) &&
+      statement.name &&
+      hasModifier(statement, ts.SyntaxKind.DefaultKeyword)
+    )
+      return statement.name.text;
+    if (ts.isExportAssignment(statement) && ts.isIdentifier(statement.expression))
+      return statement.expression.text;
+  }
+  return undefined;
+}
+
+function hasModifier(node: ts.Node, kind: ts.SyntaxKind): boolean {
+  return Boolean(
+    ts.getModifiers(node as ts.HasModifiers)?.some(modifier => modifier.kind === kind),
+  );
+}
+
+function hopDistance(
+  call: CallSite,
+  caller: FunctionDraft,
+  callee: FunctionDraft,
+): Distance {
+  const sameFile = caller.sourceFile.fileName === callee.sourceFile.fileName;
+  const resolution = resolveDeclaration(
+    call.namespace ?? call.name,
+    caller.scopes.get(call.node),
+  );
+  return {
+    line: sameFile ? Math.abs(call.location.start.line - callee.location.start.line) : 0,
+    scope: resolution?.scopeDistance ?? 0,
+    functionCall: 1,
+    file: sameFile ? 0 : 1,
+  };
+}
+
+function stripFunctionDraft(fn: FunctionDraft): FunctionAnalysis {
+  return {
+    functionId: fn.functionId,
+    name: fn.name,
+    location: fn.location,
+    size: fn.size,
+    commands: fn.commands,
+    score: fn.score,
+  };
 }
 
 function detectCommand(
@@ -244,7 +585,7 @@ function detectCommand(
       : node.expression;
     if (ts.isCallExpression(expression)) return { kind: 'discarded-call' };
   }
-  if (ts.isBinaryExpression(node) && isAssignmentOperator(node.operatorToken.kind)) {
+  if (ts.isBinaryExpression(node) && isAssignmentOperator(node.operatorToken.kind))
     return {
       kind:
         ts.isPropertyAccessExpression(node.left) ||
@@ -253,7 +594,6 @@ function detectCommand(
           : 'assignment',
       target: node.left,
     };
-  }
   if (ts.isPrefixUnaryExpression(node) || ts.isPostfixUnaryExpression(node)) {
     if (node.operator === ts.SyntaxKind.PlusPlusToken)
       return { kind: 'increment', target: node.operand };
@@ -264,8 +604,29 @@ function detectCommand(
     ts.isDeleteExpression(node) &&
     (ts.isPropertyAccessExpression(node.expression) ||
       ts.isElementAccessExpression(node.expression))
-  ) {
+  )
     return { kind: 'delete', target: node.expression };
+  return undefined;
+}
+
+function callTarget(
+  expression: ts.LeftHandSideExpression,
+): { name: string; namespace?: string } | undefined {
+  if (ts.isIdentifier(expression)) return { name: expression.text };
+  if (ts.isPropertyAccessExpression(expression) && ts.isIdentifier(expression.expression))
+    return { name: expression.name.text, namespace: expression.expression.text };
+  return undefined;
+}
+
+function directCallCommandLocation(
+  call: ts.CallExpression,
+  sourceFile: ts.SourceFile,
+): SourceLocation | undefined {
+  if (ts.isExpressionStatement(call.parent)) {
+    return locationOf(call.parent, sourceFile);
+  }
+  if (ts.isAwaitExpression(call.parent) && ts.isExpressionStatement(call.parent.parent)) {
+    return locationOf(call.parent.parent, sourceFile);
   }
   return undefined;
 }
@@ -281,11 +642,14 @@ function buildScopes(
     (isFunction(node) ||
       (ts.isBlock(node) && !isFunction(node.parent)) ||
       ts.isCatchClause(node));
+  if (createsScope && ts.isFunctionDeclaration(node) && node.name)
+    addDeclaration(node.name.text, 'function', node.name, current, sourceFile);
   const scope: Scope = createsScope
     ? { parent: current, declarations: new Map() }
     : current;
   scopes.set(node, scope);
-  registerDeclaration(node, scope, sourceFile);
+  if (!(createsScope && ts.isFunctionDeclaration(node)))
+    registerDeclaration(node, scope, sourceFile);
   ts.forEachChild(node, child => buildScopes(child, scope, scopes, sourceFile));
 }
 
@@ -294,14 +658,11 @@ function registerDeclaration(
   scope: Scope,
   sourceFile: ts.SourceFile,
 ): void {
-  if (ts.isVariableDeclaration(node)) {
+  if (ts.isVariableDeclaration(node))
     registerBinding(node.name, 'variable', node, scope, sourceFile);
-  } else if (ts.isParameter(node)) {
+  else if (ts.isParameter(node))
     registerBinding(node.name, 'parameter', node, scope, sourceFile);
-  } else if (
-    (ts.isFunctionDeclaration(node) || ts.isClassDeclaration(node)) &&
-    node.name
-  ) {
+  else if ((ts.isFunctionDeclaration(node) || ts.isClassDeclaration(node)) && node.name)
     addDeclaration(
       node.name.text,
       ts.isClassDeclaration(node) ? 'class' : 'function',
@@ -309,13 +670,12 @@ function registerDeclaration(
       scope,
       sourceFile,
     );
-  } else if (ts.isImportClause(node) && node.name) {
+  else if (ts.isImportClause(node) && node.name)
     addDeclaration(node.name.text, 'import', node.name, scope, sourceFile);
-  } else if (ts.isImportSpecifier(node)) {
+  else if (ts.isImportSpecifier(node))
     addDeclaration(node.name.text, 'import', node.name, scope, sourceFile);
-  } else if (ts.isNamespaceImport(node)) {
+  else if (ts.isNamespaceImport(node))
     addDeclaration(node.name.text, 'import', node.name, scope, sourceFile);
-  }
 }
 
 function registerBinding(
@@ -325,14 +685,12 @@ function registerBinding(
   scope: Scope,
   sourceFile: ts.SourceFile,
 ): void {
-  if (ts.isIdentifier(name)) {
-    addDeclaration(name.text, kind, node, scope, sourceFile);
-  } else {
+  if (ts.isIdentifier(name)) addDeclaration(name.text, kind, node, scope, sourceFile);
+  else
     name.elements.forEach(element => {
       if (ts.isBindingElement(element))
         registerBinding(element.name, kind, element, scope, sourceFile);
     });
-  }
 }
 
 function addDeclaration(
@@ -363,16 +721,40 @@ function resolveDeclaration(
 function resourceName(expression?: ts.Expression): string | undefined {
   if (!expression) return undefined;
   if (ts.isIdentifier(expression)) return expression.text;
-  if (ts.isPropertyAccessExpression(expression)) return resourceName(expression.expression);
-  if (ts.isElementAccessExpression(expression)) return resourceName(expression.expression);
-  if (ts.isParenthesizedExpression(expression)) return resourceName(expression.expression);
+  if (ts.isPropertyAccessExpression(expression))
+    return resourceName(expression.expression);
+  if (ts.isElementAccessExpression(expression))
+    return resourceName(expression.expression);
+  if (ts.isParenthesizedExpression(expression))
+    return resourceName(expression.expression);
   return undefined;
+}
+
+function addDistance(left: Distance, right: Distance): Distance {
+  return {
+    line: left.line + right.line,
+    scope: left.scope + right.scope,
+    functionCall: left.functionCall + right.functionCall,
+    file: left.file + right.file,
+  };
+}
+
+function locationStartKey(location: SourceLocation): string {
+  return `${location.start.line}:${location.start.column}`;
+}
+
+function scoreDistance(distance: Distance, scoring: ScoringConfig): number {
+  return (
+    distance.line * scoring.lineDistanceWeight +
+    distance.scope * scoring.scopeDistanceWeight +
+    distance.functionCall * scoring.functionCallDistanceWeight +
+    distance.file * scoring.fileDistanceWeight
+  );
 }
 
 function isAssignmentOperator(kind: ts.SyntaxKind): boolean {
   return kind >= ts.SyntaxKind.FirstAssignment && kind <= ts.SyntaxKind.LastAssignment;
 }
-
 function isFunction(node: ts.Node): node is ts.FunctionLikeDeclaration {
   return (
     ts.isFunctionDeclaration(node) ||
@@ -384,7 +766,6 @@ function isFunction(node: ts.Node): node is ts.FunctionLikeDeclaration {
     ts.isSetAccessorDeclaration(node)
   );
 }
-
 function functionName(node: ts.FunctionLikeDeclaration, source: ts.SourceFile): string {
   if ('name' in node && node.name) return node.name.getText(source);
   if (ts.isConstructorDeclaration(node)) return 'constructor';
@@ -411,14 +792,12 @@ function scoringConfig(options: AnalysisOptions): ScoringConfig {
     baseScores: { ...defaultScoring.baseScores, ...options.scoring?.baseScores },
   };
 }
-
 function scriptKind(filePath: string): ts.ScriptKind {
   if (filePath.endsWith('.tsx')) return ts.ScriptKind.TSX;
   if (filePath.endsWith('.jsx')) return ts.ScriptKind.JSX;
   if (filePath.endsWith('.js')) return ts.ScriptKind.JS;
   return ts.ScriptKind.TS;
 }
-
 function collectFiles(
   directory: string,
   extensions: string[],
@@ -438,7 +817,6 @@ function collectFiles(
       return extensions.some(extension => entry.name.endsWith(extension)) ? [target] : [];
     });
 }
-
 function excluded(filePath: string, patterns: (string | RegExp)[]): boolean {
   return patterns.some(pattern =>
     typeof pattern === 'string' ? filePath.includes(pattern) : pattern.test(filePath),

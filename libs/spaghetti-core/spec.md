@@ -274,3 +274,13 @@ And I have committed the work done up to now.
 - The shared package owns `analyzeFunction`, `analyzeFile`, and `analyzeProject`, plus the public command, distance, declaration, function, file, and project result types. V1 command paths are empty and call/file distances are zero, leaving the result shape forward-compatible with call-chain analysis.
 - Scoring begins with configurable base scores per command kind and configurable line-distance, scope-distance, and function-size weights. Consumer thresholds remain independently configurable.
 - ESLint rules and the reporting CLI consume shared analysis results. They do not walk or interpret ASTs themselves; the report exposes both readable text and complete JSON.
+
+---
+
+## Stable V2 decisions
+
+- A call that resolves to a project function contributes that function's actual downstream commands instead of a generic discarded-call command. Calls that cannot be resolved remain direct discarded-call commands.
+- Each inherited command keeps its original command location and origin function. Its ordered call path runs from the analyzed caller toward the origin, and each hop records caller, callee, call and definition locations, and line, scope, function-call, and file distance.
+- Project analysis resolves lexical same-file calls and named, aliased, default, and namespace calls through relative TypeScript/JavaScript imports. Single-file analysis applies the same propagation to functions available in that file.
+- Recursive expansion is bounded by the functions already visited on the current path. Distinct acyclic call paths remain distinct because they represent distinct ways a caller can cause a command.
+- Call-chain distance is accumulated onto the command. Function-call and file scoring weights are available with zero defaults, while the broader scoring model remains reserved for V4.

@@ -1,4 +1,9 @@
-import { analyzeFile, AnalysisOptions, Command, FunctionAnalysis } from '@state-adapt/spaghetti-analysis';
+import {
+  analyzeFile,
+  AnalysisOptions,
+  Command,
+  FunctionAnalysis,
+} from '@state-adapt/spaghetti-analysis';
 import { Rule } from 'eslint';
 
 type Options = Record<string, unknown>;
@@ -19,7 +24,8 @@ function createRule(
       docs: { description },
       schema,
       messages: {
-        functionLimit: '{{name}} has {{actual}}, above the configured maximum of {{max}}.',
+        functionLimit:
+          '{{name}} has {{actual}}, above the configured maximum of {{max}}.',
         distanceLimit:
           '{{kind}} command distance is {{actual}}, above the configured maximum of {{max}}.',
         remoteMutation:
@@ -48,6 +54,8 @@ const scoringSchema: Record<string, unknown> = {
   properties: {
     lineDistanceWeight: { type: 'number', minimum: 0 },
     scopeDistanceWeight: { type: 'number', minimum: 0 },
+    functionCallDistanceWeight: { type: 'number', minimum: 0 },
+    fileDistanceWeight: { type: 'number', minimum: 0 },
     functionSizeWeight: { type: 'number', minimum: 0 },
     baseScores: {
       type: 'object',
@@ -88,16 +96,18 @@ function reportCommand(
 }
 
 const maxSpaghettiScore = createRule(
-  'limit the direct spaghetti score of a function',
+  'limit the spaghetti score of a function and its downstream commands',
   maxSchema,
   (context, options, functions) => {
     const max = numberOption(options, 'max', 10);
-    functions.filter(fn => fn.score > max).forEach(fn => reportFunction(context, fn, fn.score, max));
+    functions
+      .filter(fn => fn.score > max)
+      .forEach(fn => reportFunction(context, fn, fn.score, max));
   },
 );
 
 const maxCommands = createRule(
-  'limit the number of direct commands in a function',
+  'limit the number of commands caused by a function',
   maxSchema,
   (context, options, functions) => {
     const max = numberOption(options, 'max', 5);
@@ -108,7 +118,7 @@ const maxCommands = createRule(
 );
 
 const maxCommandDistance = createRule(
-  'limit weighted declaration distance for direct commands',
+  'limit weighted distance for commands caused by a function',
   [
     {
       type: 'object',
@@ -116,6 +126,8 @@ const maxCommandDistance = createRule(
         max: { type: 'number', minimum: 0 },
         lineWeight: { type: 'number', minimum: 0 },
         scopeWeight: { type: 'number', minimum: 0 },
+        functionCallWeight: { type: 'number', minimum: 0 },
+        fileWeight: { type: 'number', minimum: 0 },
         scoring: scoringSchema,
       },
       additionalProperties: false,
@@ -125,21 +137,35 @@ const maxCommandDistance = createRule(
     const max = numberOption(options, 'max', 10);
     const lineWeight = numberOption(options, 'lineWeight', 1);
     const scopeWeight = numberOption(options, 'scopeWeight', 1);
-    functions.flatMap(fn => fn.commands).forEach(command => {
-      const distance = command.distance.line * lineWeight + command.distance.scope * scopeWeight;
-      if (distance > max)
-        reportCommand(context, command, 'distanceLimit', {
-          kind: command.kind,
-          actual: format(distance),
-          max: format(max),
-        });
-    });
+    const functionCallWeight = numberOption(options, 'functionCallWeight', 1);
+    const fileWeight = numberOption(options, 'fileWeight', 1);
+    functions
+      .flatMap(fn => fn.commands)
+      .forEach(command => {
+        const distance =
+          command.distance.line * lineWeight +
+          command.distance.scope * scopeWeight +
+          command.distance.functionCall * functionCallWeight +
+          command.distance.file * fileWeight;
+        if (distance > max)
+          reportCommand(context, command, 'distanceLimit', {
+            kind: command.kind,
+            actual: format(distance),
+            max: format(max),
+          });
+      });
   },
 );
 
 const noRemoteMutation = createRule(
   'disallow mutation of resources outside the current lexical scope',
-  [{ type: 'object', properties: { scoring: scoringSchema }, additionalProperties: false }],
+  [
+    {
+      type: 'object',
+      properties: { scoring: scoringSchema },
+      additionalProperties: false,
+    },
+  ],
   (context, _options, functions) => {
     functions
       .flatMap(fn => fn.commands)

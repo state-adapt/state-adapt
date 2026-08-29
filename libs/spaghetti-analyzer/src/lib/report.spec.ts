@@ -7,17 +7,46 @@ describe('spaghetti reporting', () => {
     'let shared = 0;\nexport function update() { shared++; external(); }',
     '/project/src/update.ts',
   );
-  const report = reportFromAnalysis({ rootDir: '/project', files: [file], score: file.score });
+  const report = reportFromAnalysis({
+    rootDir: '/project',
+    files: [file],
+    score: file.score,
+  });
 
   it('aggregates file, directory, function and whole-project scores', () => {
     expect(report.project.score).toBeGreaterThan(0);
     expect(report.functionScores[0]).toMatchObject({ name: 'update', size: 1 });
-    expect(report.directoryScores[0]).toMatchObject({ directory: 'src', files: 1, commands: 2 });
+    expect(report.directoryScores[0]).toMatchObject({
+      directory: 'src',
+      files: 1,
+      commands: 2,
+    });
   });
 
   it('renders human-readable command distance details', () => {
-    expect(formatHumanReport(report)).toContain('distance(line=1, scope=1)');
+    expect(formatHumanReport(report)).toContain(
+      'distance(line=1, scope=1, calls=0, files=0)',
+    );
     expect(formatHumanReport(report)).toContain('Directories');
+  });
+
+  it('renders inherited command chains', () => {
+    const chainedFile = analyzeFile(
+      `function effect() { window.value = 1; }
+export function run() { effect(); }`,
+      '/project/src/chained.ts',
+    );
+    const chainedReport = reportFromAnalysis({
+      rootDir: '/project',
+      files: [chainedFile],
+      score: chainedFile.score,
+    });
+
+    expect(formatHumanReport(chainedReport)).toContain(
+      'chain=/project/src/chained.ts:run@2 -> /project/src/chained.ts:effect@1',
+    );
+    const json = JSON.parse(formatJsonReport(chainedReport));
+    expect(json.project.files[0].functions[1].commands[0].callPath).toHaveLength(1);
   });
 
   it('renders complete machine-readable JSON', () => {

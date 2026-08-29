@@ -19,13 +19,28 @@ ruleTester.run('max-commands', rules['max-commands'], {
       options: [{ max: 2 }],
       errors: [{ messageId: 'functionLimit' }],
     },
+    {
+      code: `function downstream() { window.one = 1; window.two = 2; }
+function caller() { downstream(); }`,
+      options: [{ max: 1 }],
+      errors: [
+        {
+          messageId: 'functionLimit',
+          data: { name: 'downstream', actual: '2', max: '1' },
+        },
+        { messageId: 'functionLimit', data: { name: 'caller', actual: '2', max: '1' } },
+      ],
+    },
   ],
 });
 
 ruleTester.run('max-spaghetti-score', rules['max-spaghetti-score'], {
   valid: [
     { code: 'function okay() { let x = 0; x++; }', options: [{ max: 2 }] },
-    { code: 'function configured() { call(); }', options: [{ max: 20, scoring: { baseScores: { 'discarded-call': 20 } } }] },
+    {
+      code: 'function configured() { call(); }',
+      options: [{ max: 20, scoring: { baseScores: { 'discarded-call': 20 } } }],
+    },
   ],
   invalid: [
     {

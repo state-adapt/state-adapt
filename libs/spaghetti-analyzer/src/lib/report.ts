@@ -57,7 +57,10 @@ export function formatHumanReport(report: SpaghettiReport): string {
     `Project: ${report.project.rootDir}`,
     `Score: ${format(report.project.score)}`,
     `Files: ${report.project.files.length}`,
-    `Commands: ${report.project.files.reduce((sum, file) => sum + file.commands.length, 0)}`,
+    `Commands: ${report.project.files.reduce(
+      (sum, file) => sum + file.commands.length,
+      0,
+    )}`,
     '',
     'Functions',
   ];
@@ -70,7 +73,9 @@ export function formatHumanReport(report: SpaghettiReport): string {
     functionAnalysis?.commands.forEach(command =>
       lines.push(
         `    ${command.kind} ${command.location.filePath}:${command.location.start.line}` +
-          ` distance(line=${command.distance.line}, scope=${command.distance.scope})` +
+          ` distance(line=${command.distance.line}, scope=${command.distance.scope}, ` +
+          `calls=${command.distance.functionCall}, files=${command.distance.file})` +
+          formatCallPath(command.callPath) +
           ` score=${format(command.score)}`,
       ),
     );
@@ -81,7 +86,10 @@ export function formatHumanReport(report: SpaghettiReport): string {
     .sort((a, b) => b.score - a.score)
     .forEach(file =>
       lines.push(
-        `  ${format(file.score)}  ${path.relative(report.project.rootDir, file.filePath)}`,
+        `  ${format(file.score)}  ${path.relative(
+          report.project.rootDir,
+          file.filePath,
+        )}`,
       ),
     );
   lines.push('', 'Directories');
@@ -92,6 +100,15 @@ export function formatHumanReport(report: SpaghettiReport): string {
     ),
   );
   return lines.join('\n');
+}
+
+function formatCallPath(
+  callPath: FunctionAnalysis['commands'][number]['callPath'],
+): string {
+  if (!callPath.length) return '';
+  return ` chain=${[callPath[0].caller, ...callPath.map(hop => hop.callee)].join(
+    ' -> ',
+  )}`;
 }
 
 export function formatJsonReport(report: SpaghettiReport, pretty = true): string {

@@ -1,6 +1,6 @@
 # state-adapt-spaghetti-report
 
-Human-readable and JSON project reports powered by `@state-adapt/spaghetti-analysis`.
+Human-readable and JSON project reports, including downstream command chains, powered by `@state-adapt/spaghetti-analysis`.
 
 ## Building
 
