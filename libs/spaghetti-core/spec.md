@@ -294,3 +294,13 @@ And I have committed the work done up to now.
 - Seven built-in recognizer families are enabled by default and can be selected individually. Programmatic recognizers run first, followed by JSON-friendly custom patterns and built-ins.
 - Custom patterns support method or function calls, optional receiver/import constraints, and receiver- or argument-based resources. The same shape is accepted by ESLint and report CLI configuration.
 - V3 adds one configurable `api-command` base score; richer per-API scoring remains V4 work.
+
+---
+
+## Stable V4 decisions
+
+- A command exposes an additive score breakdown containing its base, declaration-line, call, scope-crossing, file-crossing, same-function, and function-size contributions. API names can override the base for individual known APIs; all bases and weights are JSON-configurable. V1-V3 line, scope, and file weight names remain supported as aliases.
+- Same-function spaghetti distance is the non-negative line offset from a function's declaration/start line to the command or project-function call site inside it. A direct command contributes its origin offset, and every inherited layer contributes the caller's call-site offset. This stays distinct from command-to-resource declaration distance.
+- Inheritance creates a new command and prepends both the hop and that hop's score contributions. Origin commands and their breakdowns are not mutated, and the contribution list provides caller-first evidence for the total.
+- Report JSON includes deterministic, top-limited datasets for command hotspots, functions, files, call-chain lengths, and aggregate command distances. Text output renders the same data with dependency-free tables/bars.
+- Score trends consume an optional JSON-friendly array of `{ label, score, timestamp? }` historical snapshots and append the current analysis with per-point deltas. History is caller-owned input; analysis and reporting perform no hidden persistence.

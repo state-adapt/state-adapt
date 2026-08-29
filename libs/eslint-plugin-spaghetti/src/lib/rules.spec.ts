@@ -100,6 +100,65 @@ ruleTester.run('max-spaghetti-score', rules['max-spaghetti-score'], {
       ],
       errors: [{ messageId: 'functionLimit' }],
     },
+    {
+      code: 'const values = []; function update() { values.push(1); }',
+      options: [
+        {
+          max: 11,
+          scoring: {
+            apiBaseScores: { 'Array.push': 12 },
+            declarationLineDistanceWeight: 0,
+            scopeCrossingWeight: 0,
+          },
+        },
+      ],
+      errors: [{ messageId: 'functionLimit' }],
+    },
+    {
+      code: `function leaf() { window.value = 1; }
+function middle() { leaf(); }
+function root() {
+  middle();
+}`,
+      options: [
+        {
+          max: 15,
+          scoring: {
+            functionCallDistanceWeight: 10,
+            declarationLineDistanceWeight: 0,
+            scopeCrossingWeight: 0,
+            lineDistanceWeight: 0,
+          },
+        },
+      ],
+      errors: [
+        {
+          messageId: 'functionLimit',
+          data: { name: 'root', actual: '23', max: '15' },
+        },
+      ],
+    },
+    {
+      code: `function spaced(value: number) {
+  // separation
+  value++;
+}`,
+      options: [
+        {
+          max: 7,
+          scoring: {
+            sameFunctionDistanceWeight: 3,
+            declarationLineDistanceWeight: 0,
+          },
+        },
+      ],
+      errors: [
+        {
+          messageId: 'functionLimit',
+          data: { name: 'spaced', actual: '8', max: '7' },
+        },
+      ],
+    },
   ],
 });
 
@@ -117,6 +176,24 @@ ruleTester.run('max-command-distance', rules['max-command-distance'], {
     {
       code: 'let shared = 0; function scoped() { shared++; }',
       options: [{ max: 1, lineWeight: 0, scopeWeight: 2 }],
+      errors: [{ messageId: 'distanceLimit' }],
+    },
+    {
+      code: `function spread(value: number) {
+  // one
+  // two
+  value++;
+}`,
+      options: [
+        {
+          max: 2,
+          lineWeight: 0,
+          scopeWeight: 0,
+          functionCallWeight: 0,
+          fileWeight: 0,
+          sameFunctionWeight: 1,
+        },
+      ],
       errors: [{ messageId: 'distanceLimit' }],
     },
   ],

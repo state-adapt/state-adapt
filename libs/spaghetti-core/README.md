@@ -9,6 +9,12 @@ configurations can use `apiPatterns` and can select families with
 `builtInRecognizers`. Recognizers identify only the API and resource; the shared
 analyzer remains responsible for resolution, distance, propagation, and scoring.
 
+Scores have an additive `scoreBreakdown`. Configure command-kind bases,
+API-specific bases, declaration-line distance, function-call distance, scope and
+file crossings, same-function distance, and function size through
+`AnalysisOptions.scoring`. The V1-V3 `lineDistanceWeight`,
+`scopeDistanceWeight`, and `fileDistanceWeight` keys remain accepted.
+
 ## Building
 
 Run `nx build spaghetti-core` to build the library.

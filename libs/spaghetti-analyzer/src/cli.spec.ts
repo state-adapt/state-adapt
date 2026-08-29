@@ -42,4 +42,40 @@ describe('report CLI', () => {
       fs.rmSync(root, { recursive: true, force: true });
     }
   });
+
+  it('accepts report limits, labels and JSON history without persistent writes', () => {
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), 'spaghetti-cli-v4-'));
+    try {
+      fs.writeFileSync(
+        path.join(root, 'source.ts'),
+        'let value = 0; function update() { value++; }',
+      );
+      fs.writeFileSync(
+        path.join(root, 'history.json'),
+        JSON.stringify([{ label: 'baseline', score: 2 }]),
+      );
+
+      const output = JSON.parse(
+        runCli(
+          [
+            '.',
+            '--json',
+            '--top',
+            '1',
+            '--history',
+            'history.json',
+            '--label',
+            'candidate',
+          ],
+          root,
+        ).output,
+      );
+      expect(output.visualizations.hotspots).toHaveLength(1);
+      expect(
+        output.visualizations.scoreTrend.map((point: { label: string }) => point.label),
+      ).toEqual(['baseline', 'candidate']);
+    } finally {
+      fs.rmSync(root, { recursive: true, force: true });
+    }
+  });
 });

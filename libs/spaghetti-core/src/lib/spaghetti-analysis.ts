@@ -26,10 +26,46 @@ export interface SourceLocation {
   end: { line: number; column: number };
 }
 export interface Distance {
+  /** Legacy aggregate line distance, retained for V1-V3 consumers. */
   line: number;
+  /** Lines between a command and the declaration of its resource. */
+  declarationLine: number;
+  /** Caller-local offsets from function starts to command/call sites. */
+  sameFunction: number;
   scope: number;
   functionCall: number;
   file: number;
+}
+export type ScoreFactor =
+  | 'base'
+  | 'legacy-line-distance'
+  | 'declaration-line-distance'
+  | 'function-call-distance'
+  | 'scope-crossings'
+  | 'file-crossings'
+  | 'same-function-distance'
+  | 'function-size';
+export interface ScoreContribution {
+  factor: ScoreFactor;
+  value: number;
+  /** `origin` for the command itself; otherwise the caller function id. */
+  layer: string;
+  distance?: number;
+  weight?: number;
+}
+export interface ScoreBreakdown {
+  base: number;
+  /** V1-V3 call-site-to-definition line scoring, when enabled. */
+  legacyLineDistance: number;
+  declarationLineDistance: number;
+  functionCallDistance: number;
+  scopeCrossings: number;
+  fileCrossings: number;
+  sameFunctionDistance: number;
+  functionSize: number;
+  total: number;
+  /** Ordered, additive evidence; inherited layers are prepended caller-first. */
+  contributions: ScoreContribution[];
 }
 export interface CommandHop {
   caller: string;
@@ -50,6 +86,7 @@ export interface Command {
   callPath: CommandHop[];
   distance: Distance;
   score: number;
+  scoreBreakdown: ScoreBreakdown;
   resource?: string;
   /** Stable API name supplied by the recognizer for API commands. */
   api?: string;
@@ -80,16 +117,26 @@ export interface ProjectAnalysis {
 
 export interface ScoringConfig {
   baseScores: Record<CommandKind, number>;
+  /** Optional exact API-name overrides for api-command base scores. */
+  apiBaseScores: Record<string, number>;
+  declarationLineDistanceWeight: number;
+  sameFunctionDistanceWeight: number;
+  scopeCrossingWeight: number;
+  fileCrossingWeight: number;
+  /** @deprecated Alias of declarationLineDistanceWeight. */
   lineDistanceWeight: number;
+  /** @deprecated Alias of scopeCrossingWeight. */
   scopeDistanceWeight: number;
   functionCallDistanceWeight: number;
+  /** @deprecated Alias of fileCrossingWeight. */
   fileDistanceWeight: number;
   functionSizeWeight: number;
 }
 
 export interface AnalysisOptions {
-  scoring?: Partial<Omit<ScoringConfig, 'baseScores'>> & {
+  scoring?: Partial<Omit<ScoringConfig, 'baseScores' | 'apiBaseScores'>> & {
     baseScores?: Partial<Record<CommandKind, number>>;
+    apiBaseScores?: Record<string, number>;
   };
   extensions?: string[];
   exclude?: (string | RegExp)[];
@@ -111,6 +158,11 @@ export const defaultScoring: ScoringConfig = {
     delete: 4,
     'api-command': 3,
   },
+  apiBaseScores: {},
+  declarationLineDistanceWeight: 0.1,
+  sameFunctionDistanceWeight: 0,
+  scopeCrossingWeight: 2,
+  fileCrossingWeight: 0,
   lineDistanceWeight: 0.1,
   scopeDistanceWeight: 2,
   functionCallDistanceWeight: 0,
@@ -403,22 +455,30 @@ function createDirectCommand(
     line: resolution
       ? Math.abs(location.start.line - resolution.declaration.location.start.line)
       : 0,
+    declarationLine: resolution
+      ? Math.abs(location.start.line - resolution.declaration.location.start.line)
+      : 0,
+    sameFunction: Math.max(0, location.start.line - locationOfFunctionStart(functionId)),
     scope: resolution?.scopeDistance ?? 0,
     functionCall: 0,
     file: 0,
   };
   const scoring = scoringConfig(options);
-  const score =
-    scoring.baseScores[detected.kind] +
-    scoreDistance(distance, scoring) +
-    functionSize * scoring.functionSizeWeight;
+  const scoreBreakdown = directScoreBreakdown(
+    detected.kind,
+    detected.api,
+    distance,
+    functionSize,
+    scoring,
+  );
   return {
     kind: detected.kind,
     location,
     originFunction: functionId,
     callPath: [],
     distance,
-    score,
+    score: scoreBreakdown.total,
+    scoreBreakdown,
     ...(resource ? { resource } : {}),
     ...(detected.api ? { api: detected.api } : {}),
     ...(detected.recognizer ? { recognizer: detected.recognizer } : {}),
@@ -451,11 +511,13 @@ function inheritCommand(
   hop: CommandHop,
   scoring: ScoringConfig,
 ): Command {
+  const scoreBreakdown = inheritScoreBreakdown(command.scoreBreakdown, hop, scoring);
   return {
     ...command,
     callPath: [hop, ...command.callPath],
     distance: addDistance(command.distance, hop.distance),
-    score: command.score + scoreDistance(hop.distance, scoring),
+    scoreBreakdown,
+    score: scoreBreakdown.total,
   };
 }
 
@@ -673,6 +735,8 @@ function hopDistance(
   );
   return {
     line: sameFile ? Math.abs(call.location.start.line - callee.location.start.line) : 0,
+    declarationLine: 0,
+    sameFunction: Math.max(0, call.location.start.line - caller.location.start.line),
     scope: resolution?.scopeDistance ?? 0,
     functionCall: 1,
     file: sameFile ? 0 : 1,
@@ -882,6 +946,8 @@ function resourceName(expression?: ts.Expression): string | undefined {
 function addDistance(left: Distance, right: Distance): Distance {
   return {
     line: left.line + right.line,
+    declarationLine: left.declarationLine + right.declarationLine,
+    sameFunction: left.sameFunction + right.sameFunction,
     scope: left.scope + right.scope,
     functionCall: left.functionCall + right.functionCall,
     file: left.file + right.file,
@@ -892,13 +958,119 @@ function locationStartKey(location: SourceLocation): string {
   return `${location.start.line}:${location.start.column}`;
 }
 
-function scoreDistance(distance: Distance, scoring: ScoringConfig): number {
-  return (
-    distance.line * scoring.lineDistanceWeight +
-    distance.scope * scoring.scopeDistanceWeight +
-    distance.functionCall * scoring.functionCallDistanceWeight +
-    distance.file * scoring.fileDistanceWeight
-  );
+function locationOfFunctionStart(functionId: string): number {
+  const match = functionId.match(/@(\d+)$/);
+  return match ? Number(match[1]) : 1;
+}
+
+function contribution(
+  factor: ScoreFactor,
+  layer: string,
+  distance: number,
+  weight: number,
+): ScoreContribution {
+  return { factor, layer, distance, weight, value: distance * weight };
+}
+
+function directScoreBreakdown(
+  kind: CommandKind,
+  api: string | undefined,
+  distance: Distance,
+  functionSize: number,
+  scoring: ScoringConfig,
+): ScoreBreakdown {
+  const base = api
+    ? scoring.apiBaseScores[api] ?? scoring.baseScores[kind]
+    : scoring.baseScores[kind];
+  const contributions: ScoreContribution[] = [
+    { factor: 'base', layer: 'origin', value: base },
+    contribution(
+      'declaration-line-distance',
+      'origin',
+      distance.declarationLine,
+      scoring.declarationLineDistanceWeight,
+    ),
+    contribution(
+      'scope-crossings',
+      'origin',
+      distance.scope,
+      scoring.scopeCrossingWeight,
+    ),
+    contribution(
+      'same-function-distance',
+      'origin',
+      distance.sameFunction,
+      scoring.sameFunctionDistanceWeight,
+    ),
+    contribution('function-size', 'origin', functionSize, scoring.functionSizeWeight),
+  ];
+  return breakdownFrom(contributions);
+}
+
+function hopContributions(hop: CommandHop, scoring: ScoringConfig): ScoreContribution[] {
+  const contributions = [
+    contribution(
+      'function-call-distance',
+      hop.caller,
+      hop.distance.functionCall,
+      scoring.functionCallDistanceWeight,
+    ),
+    contribution(
+      'scope-crossings',
+      hop.caller,
+      hop.distance.scope,
+      scoring.scopeCrossingWeight,
+    ),
+    contribution(
+      'file-crossings',
+      hop.caller,
+      hop.distance.file,
+      scoring.fileCrossingWeight,
+    ),
+    contribution(
+      'same-function-distance',
+      hop.caller,
+      hop.distance.sameFunction,
+      scoring.sameFunctionDistanceWeight,
+    ),
+  ];
+  if (scoring.lineDistanceWeight)
+    contributions.push(
+      contribution(
+        'legacy-line-distance',
+        hop.caller,
+        hop.distance.line,
+        scoring.lineDistanceWeight,
+      ),
+    );
+  return contributions;
+}
+
+function inheritScoreBreakdown(
+  breakdown: ScoreBreakdown,
+  hop: CommandHop,
+  scoring: ScoringConfig,
+): ScoreBreakdown {
+  return breakdownFrom([...hopContributions(hop, scoring), ...breakdown.contributions]);
+}
+
+function breakdownFrom(contributions: ScoreContribution[]): ScoreBreakdown {
+  const sum = (factor: ScoreFactor): number =>
+    contributions
+      .filter(item => item.factor === factor)
+      .reduce((total, item) => total + item.value, 0);
+  return {
+    base: sum('base'),
+    legacyLineDistance: sum('legacy-line-distance'),
+    declarationLineDistance: sum('declaration-line-distance'),
+    functionCallDistance: sum('function-call-distance'),
+    scopeCrossings: sum('scope-crossings'),
+    fileCrossings: sum('file-crossings'),
+    sameFunctionDistance: sum('same-function-distance'),
+    functionSize: sum('function-size'),
+    total: contributions.reduce((total, item) => total + item.value, 0),
+    contributions,
+  };
 }
 
 function isAssignmentOperator(kind: ts.SyntaxKind): boolean {
@@ -935,10 +1107,28 @@ function locationOf(node: ts.Node, sourceFile: ts.SourceFile): SourceLocation {
 }
 
 function scoringConfig(options: AnalysisOptions): ScoringConfig {
+  const supplied = options.scoring ?? {};
+  const declarationLineDistanceWeight =
+    supplied.declarationLineDistanceWeight ??
+    supplied.lineDistanceWeight ??
+    defaultScoring.declarationLineDistanceWeight;
+  const scopeCrossingWeight =
+    supplied.scopeCrossingWeight ??
+    supplied.scopeDistanceWeight ??
+    defaultScoring.scopeCrossingWeight;
+  const fileCrossingWeight =
+    supplied.fileCrossingWeight ??
+    supplied.fileDistanceWeight ??
+    defaultScoring.fileCrossingWeight;
   return {
     ...defaultScoring,
-    ...options.scoring,
-    baseScores: { ...defaultScoring.baseScores, ...options.scoring?.baseScores },
+    ...supplied,
+    declarationLineDistanceWeight,
+    scopeCrossingWeight,
+    fileCrossingWeight,
+    lineDistanceWeight: supplied.lineDistanceWeight ?? defaultScoring.lineDistanceWeight,
+    baseScores: { ...defaultScoring.baseScores, ...supplied.baseScores },
+    apiBaseScores: { ...defaultScoring.apiBaseScores, ...supplied.apiBaseScores },
   };
 }
 function scriptKind(filePath: string): ts.ScriptKind {

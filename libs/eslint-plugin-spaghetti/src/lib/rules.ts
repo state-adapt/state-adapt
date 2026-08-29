@@ -52,12 +52,20 @@ function createRule(
 const scoringSchema: Record<string, unknown> = {
   type: 'object',
   properties: {
+    declarationLineDistanceWeight: { type: 'number', minimum: 0 },
+    sameFunctionDistanceWeight: { type: 'number', minimum: 0 },
+    scopeCrossingWeight: { type: 'number', minimum: 0 },
+    fileCrossingWeight: { type: 'number', minimum: 0 },
     lineDistanceWeight: { type: 'number', minimum: 0 },
     scopeDistanceWeight: { type: 'number', minimum: 0 },
     functionCallDistanceWeight: { type: 'number', minimum: 0 },
     fileDistanceWeight: { type: 'number', minimum: 0 },
     functionSizeWeight: { type: 'number', minimum: 0 },
     baseScores: {
+      type: 'object',
+      additionalProperties: { type: 'number', minimum: 0 },
+    },
+    apiBaseScores: {
       type: 'object',
       additionalProperties: { type: 'number', minimum: 0 },
     },
@@ -160,6 +168,7 @@ const maxCommandDistance = createRule(
         scopeWeight: { type: 'number', minimum: 0 },
         functionCallWeight: { type: 'number', minimum: 0 },
         fileWeight: { type: 'number', minimum: 0 },
+        sameFunctionWeight: { type: 'number', minimum: 0 },
         scoring: scoringSchema,
         ...recognitionSchema,
       },
@@ -172,6 +181,7 @@ const maxCommandDistance = createRule(
     const scopeWeight = numberOption(options, 'scopeWeight', 1);
     const functionCallWeight = numberOption(options, 'functionCallWeight', 1);
     const fileWeight = numberOption(options, 'fileWeight', 1);
+    const sameFunctionWeight = numberOption(options, 'sameFunctionWeight', 1);
     functions
       .flatMap(fn => fn.commands)
       .forEach(command => {
@@ -179,7 +189,8 @@ const maxCommandDistance = createRule(
           command.distance.line * lineWeight +
           command.distance.scope * scopeWeight +
           command.distance.functionCall * functionCallWeight +
-          command.distance.file * fileWeight;
+          command.distance.file * fileWeight +
+          command.distance.sameFunction * sameFunctionWeight;
         if (distance > max)
           reportCommand(context, command, 'distanceLimit', {
             kind: command.kind,
