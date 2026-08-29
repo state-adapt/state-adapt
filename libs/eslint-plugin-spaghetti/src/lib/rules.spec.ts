@@ -12,6 +12,10 @@ ruleTester.run('max-commands', rules['max-commands'], {
     'function tidy() { let x = 0; x++; }',
     { code: 'function allowed() { let x = 0; x++; x--; }', options: [{ max: 2 }] },
     'const value = calculate()',
+    {
+      code: 'function selected() { const values = []; values.push(1); const result = element.remove(); }',
+      options: [{ max: 1, builtInRecognizers: ['javascript'] }],
+    },
   ],
   invalid: [
     {
@@ -29,6 +33,38 @@ function caller() { downstream(); }`,
           data: { name: 'downstream', actual: '2', max: '1' },
         },
         { messageId: 'functionLimit', data: { name: 'caller', actual: '2', max: '1' } },
+      ],
+    },
+    {
+      code: 'const items = []; function mutate() { items.push(1); items.splice(0, 1); }',
+      options: [{ max: 1 }],
+      errors: [
+        {
+          messageId: 'functionLimit',
+          data: { name: 'mutate', actual: '2', max: '1' },
+        },
+      ],
+    },
+    {
+      code: 'const cache = makeCache(); function flush() { cache.flush(); }',
+      options: [
+        {
+          max: 0,
+          apiPatterns: [
+            {
+              name: 'Cache.flush',
+              methods: ['flush'],
+              receiverNames: ['cache'],
+              resource: 'receiver',
+            },
+          ],
+        },
+      ],
+      errors: [
+        {
+          messageId: 'functionLimit',
+          data: { name: 'flush', actual: '1', max: '0' },
+        },
       ],
     },
   ],
@@ -51,6 +87,17 @@ ruleTester.run('max-spaghetti-score', rules['max-spaghetti-score'], {
     {
       code: 'function weighted() { call(); }',
       options: [{ max: 4, scoring: { baseScores: { 'discarded-call': 5 } } }],
+      errors: [{ messageId: 'functionLimit' }],
+    },
+    {
+      code: 'function update() { const state = signal(0); state.set(1); }',
+      options: [
+        {
+          max: 8,
+          scoring: { baseScores: { 'api-command': 9 } },
+          builtInRecognizers: ['angular'],
+        },
+      ],
       errors: [{ messageId: 'functionLimit' }],
     },
   ],
@@ -89,6 +136,15 @@ ruleTester.run('no-remote-mutation', rules['no-remote-mutation'], {
     {
       code: 'function update() { window.state = 1; delete globalThis.cache; }',
       errors: [{ messageId: 'remoteMutation' }, { messageId: 'remoteMutation' }],
+    },
+    {
+      code: 'const subject = new Subject(); function emit() { subject.next(1); }',
+      errors: [
+        {
+          messageId: 'remoteMutation',
+          data: { kind: 'api-command', resource: 'subject', distance: '1' },
+        },
+      ],
     },
   ],
 });

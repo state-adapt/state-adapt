@@ -284,3 +284,13 @@ And I have committed the work done up to now.
 - Project analysis resolves lexical same-file calls and named, aliased, default, and namespace calls through relative TypeScript/JavaScript imports. Single-file analysis applies the same propagation to functions available in that file.
 - Recursive expansion is bounded by the functions already visited on the current path. Distinct acyclic call paths remain distinct because they represent distinct ways a caller can cause a command.
 - Call-chain distance is accumulated onto the command. Function-call and file scoring weights are available with zero defaults, while the broader scoring model remains reserved for V4.
+
+---
+
+## Stable V3 decisions
+
+- Known APIs produce a single `api-command` carrying stable API and recognizer names; resolved project functions still expand to their downstream commands instead.
+- Recognizers only identify the API and resource expression. Shared analysis owns declarations, remoteness, distance, propagation, recursion handling, and score.
+- Seven built-in recognizer families are enabled by default and can be selected individually. Programmatic recognizers run first, followed by JSON-friendly custom patterns and built-ins.
+- Custom patterns support method or function calls, optional receiver/import constraints, and receiver- or argument-based resources. The same shape is accepted by ESLint and report CLI configuration.
+- V3 adds one configurable `api-command` base score; richer per-API scoring remains V4 work.

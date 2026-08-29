@@ -65,10 +65,42 @@ const scoringSchema: Record<string, unknown> = {
   additionalProperties: false,
 };
 
+const recognitionSchema: Record<string, unknown> = {
+  apiPatterns: {
+    type: 'array',
+    items: {
+      type: 'object',
+      required: ['name'],
+      properties: {
+        name: { type: 'string', minLength: 1 },
+        methods: { type: 'array', items: { type: 'string' }, minItems: 1 },
+        functions: { type: 'array', items: { type: 'string' }, minItems: 1 },
+        receiverNames: { type: 'array', items: { type: 'string' } },
+        importSources: { type: 'array', items: { type: 'string' } },
+        resource: { enum: ['receiver', 'argument'] },
+        argumentIndex: { type: 'integer', minimum: 0 },
+      },
+      oneOf: [{ required: ['methods'] }, { required: ['functions'] }],
+      additionalProperties: false,
+    },
+  },
+  builtInRecognizers: {
+    type: 'array',
+    uniqueItems: true,
+    items: {
+      enum: ['javascript', 'dom', 'state-adapt', 'react', 'angular', 'rxjs', 'redux'],
+    },
+  },
+};
+
 const maxSchema = [
   {
     type: 'object',
-    properties: { max: { type: 'number', minimum: 0 }, scoring: scoringSchema },
+    properties: {
+      max: { type: 'number', minimum: 0 },
+      scoring: scoringSchema,
+      ...recognitionSchema,
+    },
     additionalProperties: false,
   },
 ];
@@ -129,6 +161,7 @@ const maxCommandDistance = createRule(
         functionCallWeight: { type: 'number', minimum: 0 },
         fileWeight: { type: 'number', minimum: 0 },
         scoring: scoringSchema,
+        ...recognitionSchema,
       },
       additionalProperties: false,
     },
@@ -162,7 +195,7 @@ const noRemoteMutation = createRule(
   [
     {
       type: 'object',
-      properties: { scoring: scoringSchema },
+      properties: { scoring: scoringSchema, ...recognitionSchema },
       additionalProperties: false,
     },
   ],
@@ -201,9 +234,21 @@ export const configs = {
 
 function analysisOptions(options: Options): AnalysisOptions {
   const scoring = options['scoring'];
-  return scoring && typeof scoring === 'object'
-    ? { scoring: scoring as AnalysisOptions['scoring'] }
-    : {};
+  const apiPatterns = options['apiPatterns'];
+  const builtInRecognizers = options['builtInRecognizers'];
+  return {
+    ...(scoring && typeof scoring === 'object'
+      ? { scoring: scoring as AnalysisOptions['scoring'] }
+      : {}),
+    ...(Array.isArray(apiPatterns)
+      ? { apiPatterns: apiPatterns as AnalysisOptions['apiPatterns'] }
+      : {}),
+    ...(Array.isArray(builtInRecognizers)
+      ? {
+          builtInRecognizers: builtInRecognizers as AnalysisOptions['builtInRecognizers'],
+        }
+      : {}),
+  };
 }
 
 function numberOption(options: Options, name: string, fallback: number): number {

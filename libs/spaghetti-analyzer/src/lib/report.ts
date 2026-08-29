@@ -72,7 +72,8 @@ export function formatHumanReport(report: SpaghettiReport): string {
       .find(candidate => candidate.functionId === fn.functionId);
     functionAnalysis?.commands.forEach(command =>
       lines.push(
-        `    ${command.kind} ${command.location.filePath}:${command.location.start.line}` +
+        `    ${command.kind}${command.api ? ` (${command.api})` : ''} ` +
+          `${command.location.filePath}:${command.location.start.line}` +
           ` distance(line=${command.distance.line}, scope=${command.distance.scope}, ` +
           `calls=${command.distance.functionCall}, files=${command.distance.file})` +
           formatCallPath(command.callPath) +

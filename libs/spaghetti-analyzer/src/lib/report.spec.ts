@@ -54,4 +54,21 @@ export function run() { effect(); }`,
     expect(json.project.files[0].functions[0].commands).toHaveLength(2);
     expect(json.directoryScores[0].directory).toBe('src');
   });
+
+  it('identifies recognized APIs in human and JSON reports', () => {
+    const apiFile = analyzeFile(
+      'const items = []; function append() { items.push(1); }',
+      '/project/src/api.ts',
+    );
+    const apiReport = reportFromAnalysis({
+      rootDir: '/project',
+      files: [apiFile],
+      score: apiFile.score,
+    });
+
+    expect(formatHumanReport(apiReport)).toContain('api-command (Array.push)');
+    expect(
+      JSON.parse(formatJsonReport(apiReport)).project.files[0].commands[0],
+    ).toMatchObject({ api: 'Array.push', recognizer: 'javascript' });
+  });
 });

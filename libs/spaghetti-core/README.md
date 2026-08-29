@@ -2,6 +2,13 @@
 
 Shared TypeScript AST analysis for discovering commands, propagating them through project-function call chains, measuring their distance, and calculating configurable spaghetti scores.
 
+Known mutation APIs are represented as `api-command` commands. JavaScript, DOM,
+StateAdapt, React, Angular, RxJS, and Redux recognizers are enabled by default.
+Programmatic consumers can supply `CommandRecognizer` objects. JSON and ESLint
+configurations can use `apiPatterns` and can select families with
+`builtInRecognizers`. Recognizers identify only the API and resource; the shared
+analyzer remains responsible for resolution, distance, propagation, and scoring.
+
 ## Building
 
 Run `nx build spaghetti-core` to build the library.

@@ -2,13 +2,23 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 import * as ts from 'typescript';
 
+import {
+  ApiCommandPattern,
+  BuiltInRecognizerName,
+  builtInRecognizers,
+  CommandRecognitionContext,
+  CommandRecognizer,
+  patternRecognizer,
+} from './recognizers';
+
 export type CommandKind =
   | 'discarded-call'
   | 'assignment'
   | 'property-assignment'
   | 'increment'
   | 'decrement'
-  | 'delete';
+  | 'delete'
+  | 'api-command';
 
 export interface SourceLocation {
   filePath: string;
@@ -41,6 +51,10 @@ export interface Command {
   distance: Distance;
   score: number;
   resource?: string;
+  /** Stable API name supplied by the recognizer for API commands. */
+  api?: string;
+  /** Name of the recognizer that identified the API command. */
+  recognizer?: string;
   declaration?: Declaration;
   remote: boolean;
 }
@@ -79,6 +93,12 @@ export interface AnalysisOptions {
   };
   extensions?: string[];
   exclude?: (string | RegExp)[];
+  /** Programmatic extension point. These run before declarative and built-in recognizers. */
+  recognizers?: CommandRecognizer[];
+  /** JSON-friendly custom API command definitions, suitable for config files. */
+  apiPatterns?: ApiCommandPattern[];
+  /** Select built-in families. All families are enabled by default. */
+  builtInRecognizers?: BuiltInRecognizerName[];
 }
 
 export const defaultScoring: ScoringConfig = {
@@ -89,6 +109,7 @@ export const defaultScoring: ScoringConfig = {
     increment: 2,
     decrement: 2,
     delete: 4,
+    'api-command': 3,
   },
   lineDistanceWeight: 0.1,
   scopeDistanceWeight: 2,
@@ -189,11 +210,11 @@ function analyzeSources(
       const callerEdges = edges.get(caller.functionId) ?? [];
       callerEdges.push({ callee, hop });
       edges.set(caller.functionId, callerEdges);
-      if (call.directCommandLocation) {
-        const starts = resolvedCallStarts.get(caller.functionId) ?? new Set<string>();
+      const starts = resolvedCallStarts.get(caller.functionId) ?? new Set<string>();
+      starts.add(locationStartKey(call.location));
+      if (call.directCommandLocation)
         starts.add(locationStartKey(call.directCommandLocation));
-        resolvedCallStarts.set(caller.functionId, starts);
-      }
+      resolvedCallStarts.set(caller.functionId, starts);
     });
   });
   const scoring = scoringConfig(options);
@@ -201,9 +222,7 @@ function analyzeSources(
     const resolved = resolvedCallStarts.get(fn.functionId);
     if (resolved)
       fn.directCommands = fn.directCommands.filter(
-        command =>
-          command.kind !== 'discarded-call' ||
-          !resolved.has(locationStartKey(command.location)),
+        command => !resolved.has(locationStartKey(command.location)),
       );
   });
   allFunctions.forEach(fn => {
@@ -236,9 +255,20 @@ function createFileDraft(
   );
   const scopes = new Map<ts.Node, Scope>();
   buildScopes(sourceFile, { declarations: new Map() }, scopes, sourceFile);
+  const imports = collectImports(sourceFile);
+  const recognizers = configuredRecognizers(options);
+  const recognitionContext = createRecognitionContext(sourceFile, imports, scopes);
   const functions: FunctionDraft[] = [];
-  visitFunctions(sourceFile, sourceFile, scopes, options, functions);
-  return { sourceFile, functions, imports: collectImports(sourceFile) };
+  visitFunctions(
+    sourceFile,
+    sourceFile,
+    scopes,
+    options,
+    recognizers,
+    recognitionContext,
+    functions,
+  );
+  return { sourceFile, functions, imports };
 }
 
 function visitFunctions(
@@ -246,6 +276,8 @@ function visitFunctions(
   sourceFile: ts.SourceFile,
   scopes: Map<ts.Node, Scope>,
   options: AnalysisOptions,
+  recognizers: readonly CommandRecognizer[],
+  recognitionContext: CommandRecognitionContext,
   output: FunctionDraft[],
 ): void {
   if (isFunction(node) && node.body) {
@@ -261,6 +293,8 @@ function visitFunctions(
       sourceFile,
       scopes,
       options,
+      recognizers,
+      recognitionContext,
       functionId,
       size,
       directCommands,
@@ -280,7 +314,15 @@ function visitFunctions(
     });
   }
   ts.forEachChild(node, child =>
-    visitFunctions(child, sourceFile, scopes, options, output),
+    visitFunctions(
+      child,
+      sourceFile,
+      scopes,
+      options,
+      recognizers,
+      recognitionContext,
+      output,
+    ),
   );
 }
 
@@ -290,13 +332,15 @@ function collectFunctionBody(
   sourceFile: ts.SourceFile,
   scopes: Map<ts.Node, Scope>,
   options: AnalysisOptions,
+  recognizers: readonly CommandRecognizer[],
+  recognitionContext: CommandRecognitionContext,
   functionId: string,
   functionSize: number,
   commands: Command[],
   calls: CallSite[],
 ): void {
   if (node !== owner.body && isFunction(node)) return;
-  const detected = detectCommand(node);
+  const detected = detectCommand(node, recognizers, recognitionContext);
   if (detected)
     commands.push(
       createDirectCommand(
@@ -326,6 +370,8 @@ function collectFunctionBody(
       sourceFile,
       scopes,
       options,
+      recognizers,
+      recognitionContext,
       functionId,
       functionSize,
       commands,
@@ -335,7 +381,12 @@ function collectFunctionBody(
 }
 
 function createDirectCommand(
-  detected: { kind: CommandKind; target?: ts.Expression },
+  detected: {
+    kind: CommandKind;
+    target?: ts.Expression;
+    api?: string;
+    recognizer?: string;
+  },
   node: ts.Node,
   sourceFile: ts.SourceFile,
   scopes: Map<ts.Node, Scope>,
@@ -369,6 +420,8 @@ function createDirectCommand(
     distance,
     score,
     ...(resource ? { resource } : {}),
+    ...(detected.api ? { api: detected.api } : {}),
+    ...(detected.recognizer ? { recognizer: detected.recognizer } : {}),
     ...(resolution ? { declaration: resolution.declaration } : {}),
     remote: Boolean(resource && (!resolution || resolution.scopeDistance > 0)),
   };
@@ -511,6 +564,67 @@ function collectImports(sourceFile: ts.SourceFile): Map<string, ImportBinding> {
   return imports;
 }
 
+function configuredRecognizers(options: AnalysisOptions): readonly CommandRecognizer[] {
+  const enabled = options.builtInRecognizers
+    ? new Set(options.builtInRecognizers)
+    : undefined;
+  return [
+    ...(options.recognizers ?? []),
+    ...(options.apiPatterns ?? []).map(patternRecognizer),
+    ...builtInRecognizers.filter(
+      recognizer => !enabled || enabled.has(recognizer.name as BuiltInRecognizerName),
+    ),
+  ];
+}
+
+function createRecognitionContext(
+  sourceFile: ts.SourceFile,
+  imports: Map<string, ImportBinding>,
+  scopes: Map<ts.Node, Scope>,
+): CommandRecognitionContext {
+  return {
+    sourceFile,
+    importSource(localName) {
+      return imports.get(localName)?.moduleName;
+    },
+    declarationInitializer(name, from) {
+      const resolution = resolveDeclaration(name, scopes.get(from));
+      if (!resolution) return undefined;
+      const declarationStart = locationStartKey(resolution.declaration.location);
+      let initializer: ts.Expression | undefined;
+      const visit = (node: ts.Node): void => {
+        if (initializer) return;
+        if (ts.isVariableDeclaration(node) && node.initializer) {
+          const declarationNode = bindingDeclarationNode(node.name, name, node);
+          if (
+            declarationNode &&
+            locationStartKey(locationOf(declarationNode, sourceFile)) === declarationStart
+          )
+            initializer = node.initializer;
+        }
+        ts.forEachChild(node, visit);
+      };
+      visit(sourceFile);
+      return initializer;
+    },
+  };
+}
+
+function bindingDeclarationNode(
+  binding: ts.BindingName,
+  name: string,
+  declarationNode: ts.Node,
+): ts.Node | undefined {
+  if (ts.isIdentifier(binding))
+    return binding.text === name ? declarationNode : undefined;
+  for (const element of binding.elements) {
+    if (!ts.isBindingElement(element)) continue;
+    const found = bindingDeclarationNode(element.name, name, element);
+    if (found) return found;
+  }
+  return undefined;
+}
+
 function exportedName(sourceFile: ts.SourceFile, exported: string): string {
   for (const statement of sourceFile.statements) {
     if (
@@ -578,12 +692,35 @@ function stripFunctionDraft(fn: FunctionDraft): FunctionAnalysis {
 
 function detectCommand(
   node: ts.Node,
-): { kind: CommandKind; target?: ts.Expression } | undefined {
+  recognizers: readonly CommandRecognizer[],
+  context: CommandRecognitionContext,
+):
+  | {
+      kind: CommandKind;
+      target?: ts.Expression;
+      api?: string;
+      recognizer?: string;
+    }
+  | undefined {
   if (ts.isExpressionStatement(node)) {
     const expression = ts.isAwaitExpression(node.expression)
       ? node.expression.expression
       : node.expression;
-    if (ts.isCallExpression(expression)) return { kind: 'discarded-call' };
+    if (
+      ts.isCallExpression(expression) &&
+      !recognizeApiCommand(expression, recognizers, context)
+    )
+      return { kind: 'discarded-call' };
+  }
+  if (ts.isCallExpression(node)) {
+    const recognized = recognizeApiCommand(node, recognizers, context);
+    if (recognized)
+      return {
+        kind: 'api-command',
+        target: recognized.command.resource,
+        api: recognized.command.api,
+        recognizer: recognized.recognizer,
+      };
   }
   if (ts.isBinaryExpression(node) && isAssignmentOperator(node.operatorToken.kind))
     return {
@@ -606,6 +743,18 @@ function detectCommand(
       ts.isElementAccessExpression(node.expression))
   )
     return { kind: 'delete', target: node.expression };
+  return undefined;
+}
+
+function recognizeApiCommand(
+  call: ts.CallExpression,
+  recognizers: readonly CommandRecognizer[],
+  context: CommandRecognitionContext,
+): { recognizer: string; command: { api: string; resource: ts.Expression } } | undefined {
+  for (const recognizer of recognizers) {
+    const command = recognizer.recognize(call, context);
+    if (command) return { recognizer: recognizer.name, command };
+  }
   return undefined;
 }
 
