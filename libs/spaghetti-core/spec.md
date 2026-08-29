@@ -271,7 +271,7 @@ And I have committed the work done up to now.
 ## Stable V1 decisions
 
 - Package names, Nx projects, and library directories align: `libs/spaghetti-core` publishes `@state-adapt/spaghetti-core`, `libs/eslint-plugin-spaghetti` publishes `@state-adapt/eslint-plugin-spaghetti`, and `libs/spaghetti-analyzer` publishes `@state-adapt/spaghetti-analyzer`.
-- The shared package owns `analyzeFunction`, `analyzeFile`, and `analyzeProject`, plus the public command, distance, declaration, function, file, and project result types. V1 command paths are empty and call/file distances are zero, leaving the result shape forward-compatible with call-chain analysis.
+- The shared package owns `analyzeFunction`, `analyzeFile`, and `analyzeProject`, plus the public command, distance, declaration, function, file, and project result types.
 - Scoring begins with configurable base scores per command kind and configurable line-distance, scope-distance, and function-size weights. Consumer thresholds remain independently configurable.
 - ESLint rules and the reporting CLI consume shared analysis results. They do not walk or interpret ASTs themselves; the report exposes both readable text and complete JSON.
 
@@ -299,7 +299,7 @@ And I have committed the work done up to now.
 
 ## Stable V4 decisions
 
-- A command exposes an additive score breakdown containing its base, declaration-line, call, scope-crossing, file-crossing, same-function, and function-size contributions. API names can override the base for individual known APIs; all bases and weights are JSON-configurable. V1-V3 line, scope, and file weight names remain supported as aliases.
+- A command exposes an additive score breakdown containing its base, declaration-line, call, scope-crossing, file-crossing, folder-crossing, same-function, and function-size contributions. API names can override the base for individual known APIs; all bases and weights are JSON-configurable.
 - Same-function spaghetti distance is the non-negative line offset from a function's declaration/start line to the command or project-function call site inside it. A direct command contributes its origin offset, and every inherited layer contributes the caller's call-site offset. This stays distinct from command-to-resource declaration distance.
 - Inheritance creates a new command and prepends both the hop and that hop's score contributions. Origin commands and their breakdowns are not mutated, and the contribution list provides caller-first evidence for the total.
 - Report JSON includes deterministic, top-limited datasets for command hotspots, functions, files, call-chain lengths, and aggregate command distances. Text output renders the same data with dependency-free tables/bars.

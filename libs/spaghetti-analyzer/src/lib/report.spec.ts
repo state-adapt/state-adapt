@@ -25,7 +25,7 @@ describe('spaghetti reporting', () => {
 
   it('renders human-readable command distance details', () => {
     expect(formatHumanReport(report)).toContain(
-      'distance(line=1, scope=1, calls=0, files=0, folders=0)',
+      'distance(declarationLine=1, scope=1, calls=0, files=0, folders=0)',
     );
     expect(formatHumanReport(report)).toContain('Directories');
     expect(formatHumanReport(report)).toContain('[base=2, declaration=0.10');

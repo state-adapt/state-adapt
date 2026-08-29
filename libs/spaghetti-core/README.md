@@ -17,8 +17,7 @@ analyzer remains responsible for resolution, distance, propagation, and scoring.
 Scores have an additive `scoreBreakdown`. Configure command-kind bases,
 API-specific bases, declaration-line distance, function-call distance, scope,
 file and folder crossings, same-function distance, and function size through
-`AnalysisOptions.scoring`. The V1-V3 `lineDistanceWeight`,
-`scopeDistanceWeight`, and `fileDistanceWeight` keys remain accepted.
+`AnalysisOptions.scoring`.
 
 Analysis is type-aware. `analyzeFile` creates a reusable in-memory TypeScript
 program, `analyzeProject` loads project compiler settings, and `analyzeProgram`
