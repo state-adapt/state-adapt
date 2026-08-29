@@ -767,16 +767,13 @@ function detectCommand(
     }
   | undefined {
   if (ts.isExpressionStatement(node)) {
-    const expression = ts.isAwaitExpression(node.expression)
-      ? node.expression.expression
-      : node.expression;
-    if (
-      ts.isCallExpression(expression) &&
-      !recognizeApiCommand(expression, recognizers, context)
-    )
-      return { kind: 'discarded-call' };
+    const outerExpression = unwrapOuterExpression(node.expression);
+    const expression = ts.isAwaitExpression(outerExpression)
+      ? unwrapOuterExpression(outerExpression.expression)
+      : outerExpression;
+    if (ts.isCallExpression(expression)) return { kind: 'discarded-call' };
   }
-  if (ts.isCallExpression(node)) {
+  if (ts.isCallExpression(node) && !isDiscardedCall(node)) {
     const recognized = recognizeApiCommand(node, recognizers, context);
     if (recognized)
       return {
@@ -808,6 +805,49 @@ function detectCommand(
   )
     return { kind: 'delete', target: node.expression };
   return undefined;
+}
+
+function isDiscardedCall(call: ts.CallExpression): boolean {
+  let expression: ts.Expression = call;
+  while (
+    isOuterExpression(expression.parent) &&
+    expression.parent.expression === expression
+  )
+    expression = expression.parent;
+  if (ts.isAwaitExpression(expression.parent)) {
+    expression = expression.parent;
+    while (
+      isOuterExpression(expression.parent) &&
+      expression.parent.expression === expression
+    )
+      expression = expression.parent;
+  }
+  return ts.isExpressionStatement(expression.parent);
+}
+
+function unwrapOuterExpression(expression: ts.Expression): ts.Expression {
+  let unwrapped = expression;
+  while (isOuterExpression(unwrapped)) unwrapped = unwrapped.expression;
+  return unwrapped;
+}
+
+function isOuterExpression(
+  node: ts.Node,
+): node is
+  | ts.ParenthesizedExpression
+  | ts.AsExpression
+  | ts.TypeAssertion
+  | ts.NonNullExpression
+  | ts.SatisfiesExpression
+  | ts.PartiallyEmittedExpression {
+  return (
+    ts.isParenthesizedExpression(node) ||
+    ts.isAsExpression(node) ||
+    ts.isTypeAssertionExpression(node) ||
+    ts.isNonNullExpression(node) ||
+    ts.isSatisfiesExpression(node) ||
+    ts.isPartiallyEmittedExpression(node)
+  );
 }
 
 function recognizeApiCommand(

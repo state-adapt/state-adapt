@@ -304,3 +304,11 @@ And I have committed the work done up to now.
 - Inheritance creates a new command and prepends both the hop and that hop's score contributions. Origin commands and their breakdowns are not mutated, and the contribution list provides caller-first evidence for the total.
 - Report JSON includes deterministic, top-limited datasets for command hotspots, functions, files, call-chain lengths, and aggregate command distances. Text output renders the same data with dependency-free tables/bars.
 - Score trends consume an optional JSON-friendly array of `{ label, score, timestamp? }` historical snapshots and append the current analysis with per-point deltas. History is caller-owned input; analysis and reporting perform no hidden persistence.
+
+---
+
+## Recognizer precedence refinement
+
+- General syntax detection takes precedence over API-specific recognition. Bare call statements, including awaited or syntax-wrapped calls, are `discarded-call` commands without consulting recognizers.
+- API-specific, custom, and programmatic recognizers are fallbacks only for imperative calls embedded in value-producing contexts that the general statement rule would otherwise miss.
+- All seven built-in recognizer families remain because their mutation calls can appear in returns, initializers, arguments, and other nested expressions.

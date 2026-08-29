@@ -58,7 +58,7 @@ export function run() { effect(); }`,
 
   it('identifies recognized APIs in human and JSON reports', () => {
     const apiFile = analyzeFile(
-      'const items = []; function append() { items.push(1); }',
+      'const items = []; function append() { return items.push(1); }',
       '/project/src/api.ts',
     );
     const apiReport = reportFromAnalysis({

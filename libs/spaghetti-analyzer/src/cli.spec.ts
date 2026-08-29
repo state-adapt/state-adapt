@@ -14,7 +14,7 @@ describe('report CLI', () => {
     try {
       fs.writeFileSync(
         path.join(root, 'source.ts'),
-        'const cache = createCache(); function clear() { cache.flush(); }',
+        'const cache = createCache(); function clear() { return cache.flush(); }',
       );
       fs.writeFileSync(
         path.join(root, 'spaghetti.json'),

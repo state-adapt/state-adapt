@@ -168,7 +168,7 @@ function right() { window.right = 1; left(); }`);
     ]);
   });
 
-  it('recognizes JavaScript, DOM, StateAdapt, Angular, RxJS, React and Redux commands', () => {
+  it('uses general discarded-call detection before API-specific recognizers', () => {
     const result = analyzeFile(`
 import { store } from '@state-adapt/core';
 import { signal } from '@angular/core';
@@ -199,8 +199,54 @@ function mutate() {
     const commands = result.functions.find(fn => fn.name === 'mutate')?.commands ?? [];
 
     expect(commands).toHaveLength(11);
-    expect(commands.every(command => command.kind === 'api-command')).toBe(true);
-    expect(commands.map(command => command.recognizer)).toEqual([
+    expect(commands.every(command => command.kind === 'discarded-call')).toBe(true);
+    expect(commands.every(command => !command.recognizer && !command.api)).toBe(true);
+  });
+
+  it('uses general detection for awaited and syntax-wrapped discarded calls', () => {
+    const commands = analyzeFile(`const subject = new Subject();
+async function emit() {
+  await (subject.next(1));
+  (subject.next(2)) as void;
+}`).functions.find(fn => fn.name === 'emit')?.commands;
+
+    expect(commands).toHaveLength(2);
+    expect(commands?.every(command => command.kind === 'discarded-call')).toBe(true);
+    expect(commands?.every(command => !command.recognizer && !command.api)).toBe(true);
+  });
+
+  it('uses API-specific recognizers only for calls missed by general syntax', () => {
+    const commands = analyzeFile(`
+import { store } from '@state-adapt/core';
+import { signal } from '@angular/core';
+import { Subject } from 'rxjs';
+import { useReducer, useState } from 'react';
+import { useDispatch } from 'react-redux';
+function mutate() {
+  const values = [];
+  const map = new Map();
+  const element = document.body;
+  const count = signal(0);
+  const subject = new Subject();
+  const [value, setValue] = useState(0);
+  const [state, reactDispatch] = useReducer(reducer, {});
+  const dispatch = useDispatch();
+  return [
+    values.push(value),
+    map.set('key', value),
+    element.setAttribute('data-value', String(value)),
+    store.update(value),
+    count.set(value),
+    subject.next(value),
+    setValue(value),
+    component.setState({ value }),
+    reactDispatch({ type: 'change' }),
+    dispatch({ type: 'change' }),
+    store.dispatch({ type: 'change' }),
+  ];
+}`).functions.find(fn => fn.name === 'mutate')?.commands;
+
+    expect(commands?.map(command => command.recognizer)).toEqual([
       'javascript',
       'javascript',
       'dom',
@@ -213,19 +259,7 @@ function mutate() {
       'redux',
       'redux',
     ]);
-    expect(commands.map(command => command.resource)).toEqual([
-      'values',
-      'map',
-      'element',
-      'store',
-      'count',
-      'subject',
-      'setValue',
-      'component',
-      'reactDispatch',
-      'dispatch',
-      'store',
-    ]);
+    expect(commands?.every(command => command.kind === 'api-command')).toBe(true);
   });
 
   it('supports JSON-friendly custom method and imported function patterns', () => {
@@ -233,7 +267,7 @@ function mutate() {
       `import { publish } from 'events-api';
 const cache = createCache();
 const event = {};
-function work() { cache.flush(); publish(event); }`,
+function work() { return [cache.flush(), publish(event)]; }`,
       'custom.ts',
       {
         builtInRecognizers: [],
@@ -271,21 +305,20 @@ const adapter = createAdapter({});
 const adaptedStore = adapt({});
 const createdStore = createStore({});
 function updateAll(state, changes) {
-  adapter.update(state, changes);
-  adaptedStore.update(changes);
-  createdStore.update(changes);
-  store.update(changes);
+  return [
+    adapter.update(state, changes),
+    adaptedStore.update(changes),
+    createdStore.update(changes),
+    store.update(changes),
+  ];
 }`).functions.find(fn => fn.name === 'updateAll')?.commands;
 
     expect(commands?.map(command => [command.kind, command.resource])).toEqual([
-      ['discarded-call', undefined],
       ['api-command', 'adaptedStore'],
       ['api-command', 'createdStore'],
       ['api-command', 'store'],
     ]);
-    expect(
-      commands?.slice(1).every(command => command.recognizer === 'state-adapt'),
-    ).toBe(true);
+    expect(commands?.every(command => command.recognizer === 'state-adapt')).toBe(true);
   });
 
   it('supports programmatic recognizers with stable AST context', () => {
@@ -302,7 +335,7 @@ function updateAll(state, changes) {
     };
     const [command] =
       analyzeFile(
-        'const transaction = open(); function save() { transaction.commit(); }',
+        'const transaction = open(); function save() { return transaction.commit(); }',
         'programmatic.ts',
         { recognizers: [recognizer], builtInRecognizers: [] },
       ).functions.find(fn => fn.name === 'save')?.commands ?? [];
@@ -325,7 +358,7 @@ function work() { map.set('key', 1); }`);
     ]);
   });
 
-  it('propagates recognized commands without retaining a duplicate discarded call', () => {
+  it('propagates generally detected calls without retaining duplicates', () => {
     const result = analyzeFile(`const items = [];
 function append() { items.push(1); }
 function run() { append(); }`);
@@ -335,8 +368,7 @@ function run() { append(); }`);
     expect(append?.commands).toHaveLength(1);
     expect(run?.commands).toHaveLength(1);
     expect(run?.commands[0]).toMatchObject({
-      kind: 'api-command',
-      api: 'Array.push',
+      kind: 'discarded-call',
       originFunction: append?.functionId,
     });
     expect(run?.commands[0].callPath).toHaveLength(1);
@@ -354,13 +386,17 @@ function run() { setValue(); }`);
 
   it('uses the configurable API-command base score and shared distance weights', () => {
     const [command] =
-      analyzeFile('const items = [];\nfunction append() { items.push(1); }', 'score.ts', {
-        scoring: {
-          baseScores: { 'api-command': 12 },
-          lineDistanceWeight: 1,
-          scopeDistanceWeight: 4,
+      analyzeFile(
+        'const items = [];\nfunction append() { return items.push(1); }',
+        'score.ts',
+        {
+          scoring: {
+            baseScores: { 'api-command': 12 },
+            lineDistanceWeight: 1,
+            scopeDistanceWeight: 4,
+          },
         },
-      }).functions.find(fn => fn.name === 'append')?.commands ?? [];
+      ).functions.find(fn => fn.name === 'append')?.commands ?? [];
 
     expect(command.distance).toMatchObject({ line: 1, scope: 1 });
     expect(command.score).toBe(17);
@@ -404,7 +440,7 @@ function update() {
 
   it('uses API-specific bases and retains the command-kind fallback', () => {
     const commands = analyzeFile(
-      'const values = []; const map = new Map(); function work() { values.push(1); map.set("x", 1); }',
+      'const values = []; const map = new Map(); function work() { return [values.push(1), map.set("x", 1)]; }',
       'apis.ts',
       {
         scoring: {

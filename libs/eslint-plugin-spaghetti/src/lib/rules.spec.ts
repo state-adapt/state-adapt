@@ -46,7 +46,7 @@ function caller() { downstream(); }`,
       ],
     },
     {
-      code: 'const cache = makeCache(); function flush() { cache.flush(); }',
+      code: 'const cache = makeCache(); function flush() { return cache.flush(); }',
       options: [
         {
           max: 0,
@@ -90,7 +90,7 @@ ruleTester.run('max-spaghetti-score', rules['max-spaghetti-score'], {
       errors: [{ messageId: 'functionLimit' }],
     },
     {
-      code: 'function update() { const state = signal(0); state.set(1); }',
+      code: 'function update() { const state = signal(0); return state.set(1); }',
       options: [
         {
           max: 8,
@@ -101,7 +101,7 @@ ruleTester.run('max-spaghetti-score', rules['max-spaghetti-score'], {
       errors: [{ messageId: 'functionLimit' }],
     },
     {
-      code: 'const values = []; function update() { values.push(1); }',
+      code: 'const values = []; function update() { return values.push(1); }',
       options: [
         {
           max: 11,
@@ -215,7 +215,7 @@ ruleTester.run('no-remote-mutation', rules['no-remote-mutation'], {
       errors: [{ messageId: 'remoteMutation' }, { messageId: 'remoteMutation' }],
     },
     {
-      code: 'const subject = new Subject(); function emit() { subject.next(1); }',
+      code: 'const subject = new Subject(); function emit() { return subject.next(1); }',
       errors: [
         {
           messageId: 'remoteMutation',
