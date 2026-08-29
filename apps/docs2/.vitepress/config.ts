@@ -2,6 +2,8 @@ import { DefaultTheme, defineConfig } from 'vitepress';
 
 import saDark from './theme/code-snippets/sa-dark.json';
 import saLight from './theme/code-snippets/sa-light.json';
+// This build-time metadata import cannot use the library's public TypeScript API.
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { version } from '../../../libs/core/package.json';
 import typedocSidebar from '../docs/api/typedoc/typedoc-sidebar.json';
 import adapterPaths from '../docs/api/core/adapters/symbol.paths';

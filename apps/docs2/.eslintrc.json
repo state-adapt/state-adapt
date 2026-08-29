@@ -1,0 +1,12 @@
+{
+  "extends": ["../../.eslintrc.json"],
+  "ignorePatterns": ["!**/*", ".vitepress/cache", ".vitepress/dist"],
+  "overrides": [
+    {
+      "files": ["md-angular-templates.plugin.ts"],
+      "rules": {
+        "no-useless-escape": "off"
+      }
+    }
+  ]
+}

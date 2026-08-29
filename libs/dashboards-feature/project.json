@@ -17,5 +17,5 @@
       }
     }
   },
-  "tags": ["feature"]
+  "tags": ["feature", "scope:state-adapt"]
 }

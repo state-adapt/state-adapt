@@ -19,8 +19,12 @@
             "allow": [],
             "depConstraints": [
               {
-                "sourceTag": "*",
-                "onlyDependOnLibsWithTags": ["*"]
+                "sourceTag": "scope:spaghetti",
+                "onlyDependOnLibsWithTags": ["scope:spaghetti"]
+              },
+              {
+                "sourceTag": "scope:state-adapt",
+                "onlyDependOnLibsWithTags": ["scope:state-adapt"]
               }
             ]
           }

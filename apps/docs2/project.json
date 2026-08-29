@@ -3,6 +3,9 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
   "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
     "dev": {
       "executor": "nx:run-commands",
       "cache": false,
@@ -30,5 +33,5 @@
       }
     }
   },
-  "tags": []
+  "tags": ["scope:state-adapt"]
 }

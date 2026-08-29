@@ -33,5 +33,5 @@
       "executor": "@nx/eslint:lint"
     }
   },
-  "tags": []
+  "tags": ["scope:state-adapt"]
 }
