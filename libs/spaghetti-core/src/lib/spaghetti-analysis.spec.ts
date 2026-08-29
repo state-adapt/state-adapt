@@ -215,32 +215,54 @@ async function emit() {
     expect(commands?.every(command => !command.recognizer && !command.api)).toBe(true);
   });
 
-  it('uses API-specific recognizers only for calls missed by general syntax', () => {
+  it('does not recognize void-only mutation APIs in value contexts', () => {
     const commands = analyzeFile(`
 import { store } from '@state-adapt/core';
 import { signal } from '@angular/core';
 import { Subject } from 'rxjs';
 import { useReducer, useState } from 'react';
-import { useDispatch } from 'react-redux';
 function mutate() {
-  const values = [];
-  const map = new Map();
   const element = document.body;
   const count = signal(0);
   const subject = new Subject();
   const [value, setValue] = useState(0);
   const [state, reactDispatch] = useReducer(reducer, {});
-  const dispatch = useDispatch();
   return [
-    values.push(value),
-    map.set('key', value),
     element.setAttribute('data-value', String(value)),
+    element.remove(),
+    element.classList.add('active'),
     store.update(value),
     count.set(value),
     subject.next(value),
     setValue(value),
     component.setState({ value }),
     reactDispatch({ type: 'change' }),
+  ];
+}`).functions.find(fn => fn.name === 'mutate')?.commands;
+
+    expect(commands).toEqual([]);
+  });
+
+  it('recognizes mutation APIs with usable return values in value contexts', () => {
+    const commands = analyzeFile(`
+import { useDispatch } from 'react-redux';
+function mutate() {
+  const values = [];
+  const map = new Map();
+  const element = document.body;
+  const replacement = document.createElement('div');
+  const dispatch = useDispatch();
+  return [
+    values.push(1),
+    values.pop(),
+    map.set('key', 1),
+    map.delete('key'),
+    element.appendChild(replacement),
+    element.removeChild(replacement),
+    element.insertAdjacentElement('beforeend', replacement),
+    element.toggleAttribute('hidden'),
+    element.classList.replace('old', 'new'),
+    element.classList.toggle('active'),
     dispatch({ type: 'change' }),
     store.dispatch({ type: 'change' }),
   ];
@@ -249,17 +271,79 @@ function mutate() {
     expect(commands?.map(command => command.recognizer)).toEqual([
       'javascript',
       'javascript',
+      'javascript',
+      'javascript',
       'dom',
-      'state-adapt',
-      'angular',
-      'rxjs',
-      'react',
-      'react',
-      'react',
+      'dom',
+      'dom',
+      'dom',
+      'dom',
+      'dom',
       'redux',
       'redux',
     ]);
     expect(commands?.every(command => command.kind === 'api-command')).toBe(true);
+  });
+
+  it('limits built-in fallback APIs to the audited value-returning methods', () => {
+    const apis = analyzeFile(`
+function mutate() {
+  const values = [];
+  const map = new Map();
+  const set = new Set();
+  const element = document.body;
+  const replacement = document.createElement('div');
+  const dispatch = useDispatch();
+  return [
+    values.copyWithin(0, 1),
+    values.fill(1),
+    values.pop(),
+    values.push(1),
+    values.reverse(),
+    values.shift(),
+    values.sort(),
+    values.splice(0, 1),
+    values.unshift(1),
+    set.add(1),
+    map.delete('key'),
+    map.set('key', 1),
+    element.appendChild(replacement),
+    element.insertAdjacentElement('beforeend', replacement),
+    element.removeChild(replacement),
+    element.replaceChild(replacement, element.firstChild),
+    element.toggleAttribute('hidden'),
+    element.classList.replace('old', 'new'),
+    element.classList.toggle('active'),
+    dispatch({ type: 'hook' }),
+    store.dispatch({ type: 'store' }),
+  ];
+}`)
+      .functions.find(fn => fn.name === 'mutate')
+      ?.commands.map(command => command.api);
+
+    expect(apis).toEqual([
+      'Array.copyWithin',
+      'Array.fill',
+      'Array.pop',
+      'Array.push',
+      'Array.reverse',
+      'Array.shift',
+      'Array.sort',
+      'Array.splice',
+      'Array.unshift',
+      'Map/Set.add',
+      'Map/Set.delete',
+      'Map/Set.set',
+      'DOM.appendChild',
+      'DOM.insertAdjacentElement',
+      'DOM.removeChild',
+      'DOM.replaceChild',
+      'DOM.toggleAttribute',
+      'DOMTokenList.replace',
+      'DOMTokenList.toggle',
+      'Redux.dispatch',
+      'Redux.dispatch',
+    ]);
   });
 
   it('supports JSON-friendly custom method and imported function patterns', () => {
@@ -296,29 +380,6 @@ function work() { return [cache.flush(), publish(event)]; }`,
     expect(commands?.every(command => command.recognizer?.startsWith('custom:'))).toBe(
       true,
     );
-  });
-
-  it('distinguishes pure StateAdapt adapters from imperative stores', () => {
-    const commands = analyzeFile(`
-import { createAdapter, store } from '@state-adapt/core';
-const adapter = createAdapter({});
-const adaptedStore = adapt({});
-const createdStore = createStore({});
-function updateAll(state, changes) {
-  return [
-    adapter.update(state, changes),
-    adaptedStore.update(changes),
-    createdStore.update(changes),
-    store.update(changes),
-  ];
-}`).functions.find(fn => fn.name === 'updateAll')?.commands;
-
-    expect(commands?.map(command => [command.kind, command.resource])).toEqual([
-      ['api-command', 'adaptedStore'],
-      ['api-command', 'createdStore'],
-      ['api-command', 'store'],
-    ]);
-    expect(commands?.every(command => command.recognizer === 'state-adapt')).toBe(true);
   });
 
   it('supports programmatic recognizers with stable AST context', () => {

@@ -96,7 +96,7 @@ const recognitionSchema: Record<string, unknown> = {
     type: 'array',
     uniqueItems: true,
     items: {
-      enum: ['javascript', 'dom', 'state-adapt', 'react', 'angular', 'rxjs', 'redux'],
+      enum: ['javascript', 'dom', 'redux'],
     },
   },
 };

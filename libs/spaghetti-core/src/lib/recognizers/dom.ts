@@ -4,24 +4,13 @@ import { CommandRecognizer } from './types';
 import { methodCall } from './utils';
 
 const mutations = new Set([
-  'after',
-  'append',
   'appendChild',
-  'before',
   'insertAdjacentElement',
-  'insertAdjacentHTML',
-  'insertAdjacentText',
-  'prepend',
-  'remove',
-  'removeAttribute',
   'removeChild',
   'replaceChild',
-  'replaceChildren',
-  'replaceWith',
-  'setAttribute',
   'toggleAttribute',
 ]);
-const tokenMutations = new Set(['add', 'remove', 'replace', 'toggle']);
+const tokenMutations = new Set(['replace', 'toggle']);
 
 export const domRecognizer: CommandRecognizer = {
   name: 'dom',

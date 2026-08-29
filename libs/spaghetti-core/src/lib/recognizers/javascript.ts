@@ -12,7 +12,7 @@ const arrayMethods = new Set([
   'splice',
   'unshift',
 ]);
-const mapSetMethods = new Set(['add', 'clear', 'delete', 'set']);
+const mapSetMethods = new Set(['add', 'delete', 'set']);
 
 export const javascriptRecognizer: CommandRecognizer = {
   name: 'javascript',

@@ -90,12 +90,12 @@ ruleTester.run('max-spaghetti-score', rules['max-spaghetti-score'], {
       errors: [{ messageId: 'functionLimit' }],
     },
     {
-      code: 'function update() { const state = signal(0); return state.set(1); }',
+      code: 'function update() { const values = []; return values.push(1); }',
       options: [
         {
           max: 8,
           scoring: { baseScores: { 'api-command': 9 } },
-          builtInRecognizers: ['angular'],
+          builtInRecognizers: ['javascript'],
         },
       ],
       errors: [{ messageId: 'functionLimit' }],
@@ -204,6 +204,7 @@ ruleTester.run('no-remote-mutation', rules['no-remote-mutation'], {
     'function local(value: number) { value = 2; const obj = { x: 0 }; obj.x = value; }',
     'function callsAreNotMutation() { sideEffect(); }',
     'function block() { { let x = 0; x++; } }',
+    'const subject = new Subject(); function emit() { return subject.next(1); }',
   ],
   invalid: [
     {
@@ -215,11 +216,11 @@ ruleTester.run('no-remote-mutation', rules['no-remote-mutation'], {
       errors: [{ messageId: 'remoteMutation' }, { messageId: 'remoteMutation' }],
     },
     {
-      code: 'const subject = new Subject(); function emit() { return subject.next(1); }',
+      code: 'const store = createStore(reducer); function send() { return store.dispatch({ type: "change" }); }',
       errors: [
         {
           messageId: 'remoteMutation',
-          data: { kind: 'api-command', resource: 'subject', distance: '1' },
+          data: { kind: 'api-command', resource: 'store', distance: '1' },
         },
       ],
     },

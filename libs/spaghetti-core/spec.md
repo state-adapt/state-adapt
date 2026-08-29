@@ -291,7 +291,7 @@ And I have committed the work done up to now.
 
 - Known APIs produce a single `api-command` carrying stable API and recognizer names; resolved project functions still expand to their downstream commands instead.
 - Recognizers only identify the API and resource expression. Shared analysis owns declarations, remoteness, distance, propagation, recursion handling, and score.
-- Seven built-in recognizer families are enabled by default and can be selected individually. Programmatic recognizers run first, followed by JSON-friendly custom patterns and built-ins.
+- Three built-in recognizer families are enabled by default and can be selected individually. Programmatic recognizers run first, followed by JSON-friendly custom patterns and built-ins.
 - Custom patterns support method or function calls, optional receiver/import constraints, and receiver- or argument-based resources. The same shape is accepted by ESLint and report CLI configuration.
 - V3 adds one configurable `api-command` base score; richer per-API scoring remains V4 work.
 
@@ -311,4 +311,14 @@ And I have committed the work done up to now.
 
 - General syntax detection takes precedence over API-specific recognition. Bare call statements, including awaited or syntax-wrapped calls, are `discarded-call` commands without consulting recognizers.
 - API-specific, custom, and programmatic recognizers are fallbacks only for imperative calls embedded in value-producing contexts that the general statement rule would otherwise miss.
-- All seven built-in recognizer families remain because their mutation calls can appear in returns, initializers, arguments, and other nested expressions.
+- Built-in fallbacks are limited to mutation APIs with usable return values. JavaScript, DOM, and Redux remain; the StateAdapt, React, Angular, and RxJS families are removed because their recognized mutations return `void`.
+
+---
+
+## Recognizer return-value audit
+
+- A built-in API recognizer exists only when a mutation returns a value that can realistically participate in an initializer, return, argument, condition, or other value context. Bare calls are already covered by general discarded-call detection.
+- JavaScript retains mutating Array methods and the value-returning Map/Set methods `add`, `delete`, and `set`. `clear` is omitted because it returns `void`.
+- DOM retains `appendChild`, `insertAdjacentElement`, `removeChild`, `replaceChild`, and `toggleAttribute`, plus `DOMTokenList.replace` and `DOMTokenList.toggle`. Other previously listed DOM mutations return `void`.
+- Redux retains `dispatch` because Redux returns the dispatched action, a contract commonly used by middleware and callers.
+- StateAdapt store reactions, React setters and reducer dispatchers, Angular signal writes, and RxJS subject emissions return `void`, so those built-in recognizer families are removed.
