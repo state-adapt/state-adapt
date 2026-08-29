@@ -1,0 +1,80 @@
+{
+  "name": "@state-adapt/eslint-plugin-spaghetti",
+  "description": "ESLint rules for detecting spaghetti code.",
+  "version": "3.1.0",
+  "private": false,
+  "homepage": "https://github.com/state-adapt/state-adapt",
+  "author": "Mike Pearson",
+  "license": "MIT",
+  "keywords": [
+    "code analysis",
+    "eslint",
+    "eslintplugin",
+    "spaghetti code",
+    "typescript"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/state-adapt/state-adapt"
+  },
+  "bugs": {
+    "url": "https://github.com/state-adapt/state-adapt/issues"
+  },
+  "type": "commonjs",
+  "main": "./src/index.js",
+  "types": "./src/index.d.ts",
+  "nx": {
+    "name": "eslint-plugin-spaghetti",
+    "sourceRoot": "libs/eslint-plugin-spaghetti/src",
+    "projectType": "library",
+    "targets": {
+      "build": {
+        "executor": "@nx/js:tsc",
+        "outputs": [
+          "{options.outputPath}"
+        ],
+        "options": {
+          "outputPath": "dist/libs/eslint-plugin-spaghetti",
+          "main": "libs/eslint-plugin-spaghetti/src/index.ts",
+          "tsConfig": "libs/eslint-plugin-spaghetti/tsconfig.lib.json",
+          "assets": [
+            "libs/eslint-plugin-spaghetti/*.md"
+          ]
+        }
+      },
+      "nx-release-publish": {
+        "options": {
+          "packageRoot": "dist/{projectRoot}"
+        }
+      },
+      "lint": {
+        "executor": "@nx/eslint:lint"
+      },
+      "test": {
+        "executor": "@nx/jest:jest",
+        "outputs": [
+          "{workspaceRoot}/coverage/{projectRoot}"
+        ],
+        "options": {
+          "jestConfig": "libs/eslint-plugin-spaghetti/jest.config.ts"
+        }
+      }
+    },
+    "release": {
+      "version": {
+        "generatorOptions": {
+          "packageRoot": "dist/{projectRoot}",
+          "currentVersionResolver": "git-tag",
+          "fallbackCurrentVersionResolver": "disk"
+        }
+      }
+    }
+  },
+  "peerDependencies": {
+    "@state-adapt/spaghetti-core": "3.1.0",
+    "eslint": ">=8.0.0"
+  },
+  "dependencies": {
+    "tslib": "^2.3.0"
+  }
+}

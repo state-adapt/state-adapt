@@ -1,0 +1,32 @@
+{
+  "name": "eslint-plugin-spaghetti",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/eslint-plugin-spaghetti/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/eslint-plugin-spaghetti",
+        "main": "libs/eslint-plugin-spaghetti/src/index.ts",
+        "tsConfig": "libs/eslint-plugin-spaghetti/tsconfig.lib.json",
+        "assets": ["libs/eslint-plugin-spaghetti/*.md"]
+      },
+      "configurations": {
+        "production": {}
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/eslint-plugin-spaghetti"],
+      "options": {
+        "jestConfig": "libs/eslint-plugin-spaghetti/jest.config.ts"
+      }
+    }
+  },
+  "tags": []
+}

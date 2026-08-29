@@ -1,0 +1,32 @@
+{
+  "name": "spaghetti-analyzer",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/spaghetti-analyzer/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/spaghetti-analyzer",
+        "main": "libs/spaghetti-analyzer/src/index.ts",
+        "tsConfig": "libs/spaghetti-analyzer/tsconfig.lib.json",
+        "assets": ["libs/spaghetti-analyzer/*.md"]
+      },
+      "configurations": {
+        "production": {}
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/spaghetti-analyzer"],
+      "options": {
+        "jestConfig": "libs/spaghetti-analyzer/jest.config.ts"
+      }
+    }
+  },
+  "tags": []
+}

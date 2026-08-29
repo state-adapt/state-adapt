@@ -1,0 +1,32 @@
+{
+  "name": "spaghetti-core",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/spaghetti-core/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/spaghetti-core",
+        "main": "libs/spaghetti-core/src/index.ts",
+        "tsConfig": "libs/spaghetti-core/tsconfig.lib.json",
+        "assets": ["libs/spaghetti-core/*.md"]
+      },
+      "configurations": {
+        "production": {}
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/spaghetti-core"],
+      "options": {
+        "jestConfig": "libs/spaghetti-core/jest.config.ts"
+      }
+    }
+  },
+  "tags": []
+}
