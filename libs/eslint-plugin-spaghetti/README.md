@@ -1,6 +1,6 @@
-# eslint-plugin-state-adapt
+# @state-adapt/eslint-plugin-spaghetti
 
-Thin ESLint rules powered by `@state-adapt/spaghetti-analysis`.
+Thin ESLint rules powered by `@state-adapt/spaghetti-core`.
 
 ## Building
 

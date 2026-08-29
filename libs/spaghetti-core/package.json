@@ -1,5 +1,5 @@
 {
-  "name": "@state-adapt/spaghetti-analysis",
+  "name": "@state-adapt/spaghetti-core",
   "description": "TypeScript utilities for detecting and scoring spaghetti code.",
   "version": "3.1.0",
   "private": false,

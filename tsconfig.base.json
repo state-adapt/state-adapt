@@ -23,12 +23,14 @@
       "@state-adapt/core/adapters": ["libs/core/adapters/src/index.ts"],
       "@state-adapt/counter-ui": ["libs/counter-ui/src/index.ts"],
       "@state-adapt/dashboards-feature": ["libs/dashboards-feature/src/index.ts"],
-      "eslint-plugin-state-adapt": ["libs/eslint-plugin-spaghetti/src/index.ts"],
+      "@state-adapt/eslint-plugin-spaghetti": [
+        "libs/eslint-plugin-spaghetti/src/index.ts"
+      ],
       "@state-adapt/react": ["libs/react/src/index.ts"],
       "@state-adapt/rxjs": ["libs/rxjs/src/index.ts"],
       "@state-adapt/shopping": ["libs/shopping/src/index.ts"],
-      "state-adapt-spaghetti-report": ["libs/spaghetti-analyzer/src/index.ts"],
-      "@state-adapt/spaghetti-analysis": ["libs/spaghetti-core/src/index.ts"]
+      "@state-adapt/spaghetti-analyzer": ["libs/spaghetti-analyzer/src/index.ts"],
+      "@state-adapt/spaghetti-core": ["libs/spaghetti-core/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

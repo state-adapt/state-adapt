@@ -2,7 +2,7 @@
 
 Build three packages/tools.
 
-### `@state-adapt/spaghetti-analysis`
+### `@state-adapt/spaghetti-core`
 
 Shared TypeScript utilities. This is the only place that understands ASTs, commands, call chains, distance, and scoring.
 
@@ -43,9 +43,9 @@ interface Command {
 
 A caller inherits the actual downstream commands. Commands are never collapsed into a generic “effect count.”
 
-### `eslint-plugin-state-adapt`
+### `@state-adapt/eslint-plugin-spaghetti`
 
-Thin ESLint rules that call `@state-adapt/spaghetti-analysis`.
+Thin ESLint rules that call `@state-adapt/spaghetti-core`.
 
 Examples:
 
@@ -58,9 +58,9 @@ no-remote-mutation
 
 The ESLint package should not independently implement AST analysis.
 
-### `state-adapt-spaghetti-report`
+### `@state-adapt/spaghetti-analyzer`
 
-CLI/reporting tool that also calls `@state-adapt/spaghetti-analysis`.
+CLI/reporting tool that also calls `@state-adapt/spaghetti-core`.
 
 Outputs:
 
@@ -116,7 +116,7 @@ So V1 is already a complete usable product.
 
 Keep the same three packages and public architecture.
 
-Enhance `@state-adapt/spaghetti-analysis` so calls to project functions are resolved.
+Enhance `@state-adapt/spaghetti-core` so calls to project functions are resolved.
 
 ```ts
 function a() {
@@ -270,7 +270,7 @@ And I have committed the work done up to now.
 
 ## Stable V1 decisions
 
-- The initial scaffold directories remain in place to preserve workspace history, while their public packages follow this specification: `libs/spaghetti-core` publishes `@state-adapt/spaghetti-analysis`, `libs/eslint-plugin-spaghetti` publishes `eslint-plugin-state-adapt`, and `libs/spaghetti-analyzer` publishes `state-adapt-spaghetti-report`.
+- Package names, Nx projects, and library directories align: `libs/spaghetti-core` publishes `@state-adapt/spaghetti-core`, `libs/eslint-plugin-spaghetti` publishes `@state-adapt/eslint-plugin-spaghetti`, and `libs/spaghetti-analyzer` publishes `@state-adapt/spaghetti-analyzer`.
 - The shared package owns `analyzeFunction`, `analyzeFile`, and `analyzeProject`, plus the public command, distance, declaration, function, file, and project result types. V1 command paths are empty and call/file distances are zero, leaving the result shape forward-compatible with call-chain analysis.
 - Scoring begins with configurable base scores per command kind and configurable line-distance, scope-distance, and function-size weights. Consumer thresholds remain independently configurable.
 - ESLint rules and the reporting CLI consume shared analysis results. They do not walk or interpret ASTs themselves; the report exposes both readable text and complete JSON.

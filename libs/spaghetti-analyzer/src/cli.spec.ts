@@ -6,7 +6,7 @@ import { runCli } from './cli';
 
 describe('report CLI', () => {
   it('documents its invocation', () => {
-    expect(runCli(['--help']).output).toContain('Usage: state-adapt-spaghetti-report');
+    expect(runCli(['--help']).output).toContain('Usage: spaghetti-analyzer');
   });
 
   it('accepts declarative API patterns from JSON config', () => {

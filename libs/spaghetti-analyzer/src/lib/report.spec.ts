@@ -1,4 +1,4 @@
-import { analyzeFile } from '@state-adapt/spaghetti-analysis';
+import { analyzeFile } from '@state-adapt/spaghetti-core';
 
 import { formatHumanReport, formatJsonReport, reportFromAnalysis } from './report';
 

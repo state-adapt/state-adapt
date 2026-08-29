@@ -1,6 +1,6 @@
 {
-  "name": "state-adapt-spaghetti-report",
-  "description": "CLI reports for StateAdapt spaghetti analysis.",
+  "name": "@state-adapt/spaghetti-analyzer",
+  "description": "CLI and JSON reports for spaghetti analysis.",
   "version": "3.1.0",
   "private": false,
   "homepage": "https://github.com/state-adapt/state-adapt",
@@ -73,10 +73,10 @@
     }
   },
   "bin": {
-    "state-adapt-spaghetti-report": "./src/cli.js"
+    "spaghetti-analyzer": "./src/cli.js"
   },
   "peerDependencies": {
-    "@state-adapt/spaghetti-analysis": "3.1.0"
+    "@state-adapt/spaghetti-core": "3.1.0"
   },
   "dependencies": {
     "tslib": "^2.3.0"

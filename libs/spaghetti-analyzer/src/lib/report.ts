@@ -3,7 +3,7 @@ import {
   AnalysisOptions,
   FunctionAnalysis,
   ProjectAnalysis,
-} from '@state-adapt/spaghetti-analysis';
+} from '@state-adapt/spaghetti-core';
 import * as path from 'node:path';
 
 export interface DirectoryScore {
@@ -170,7 +170,7 @@ export function createVisualizationDatasets(
 
 export function formatHumanReport(report: SpaghettiReport): string {
   const lines = [
-    'StateAdapt spaghetti report',
+    'Spaghetti analyzer report',
     `Project: ${report.project.rootDir}`,
     `Score: ${format(report.project.score)}`,
     `Files: ${report.project.files.length}`,

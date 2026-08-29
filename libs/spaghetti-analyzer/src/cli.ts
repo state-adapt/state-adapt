@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { AnalysisOptions } from '@state-adapt/spaghetti-analysis';
+import { AnalysisOptions } from '@state-adapt/spaghetti-core';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 
@@ -20,7 +20,7 @@ export function runCli(args: string[], cwd = process.cwd()): CliResult {
   if (args.includes('--help') || args.includes('-h')) {
     return {
       output:
-        'Usage: state-adapt-spaghetti-report [directory] [--json] [--compact] [--config path] [--top number] [--history path] [--label name]\n' +
+        'Usage: spaghetti-analyzer [directory] [--json] [--compact] [--config path] [--top number] [--history path] [--label name]\n' +
         'The optional JSON config accepts AnalysisOptions plus report: { top, history, currentLabel, currentTimestamp }.',
       exitCode: 0,
     };

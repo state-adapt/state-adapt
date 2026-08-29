@@ -3,7 +3,7 @@ import {
   AnalysisOptions,
   Command,
   FunctionAnalysis,
-} from '@state-adapt/spaghetti-analysis';
+} from '@state-adapt/spaghetti-core';
 import { Rule } from 'eslint';
 
 type Options = Record<string, unknown>;
@@ -233,12 +233,12 @@ export const rules: Record<string, Rule.RuleModule> = {
 
 export const configs = {
   recommended: {
-    plugins: ['state-adapt'],
+    plugins: ['@state-adapt/spaghetti'],
     rules: {
-      'state-adapt/max-spaghetti-score': 'warn',
-      'state-adapt/max-command-distance': 'warn',
-      'state-adapt/max-commands': 'warn',
-      'state-adapt/no-remote-mutation': 'warn',
+      '@state-adapt/spaghetti/max-spaghetti-score': 'warn',
+      '@state-adapt/spaghetti/max-command-distance': 'warn',
+      '@state-adapt/spaghetti/max-commands': 'warn',
+      '@state-adapt/spaghetti/no-remote-mutation': 'warn',
     },
   },
 };

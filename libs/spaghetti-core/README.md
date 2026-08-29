@@ -1,4 +1,4 @@
-# @state-adapt/spaghetti-analysis
+# @state-adapt/spaghetti-core
 
 Shared TypeScript AST analysis for discovering commands, propagating them through project-function call chains, measuring their distance, and calculating configurable spaghetti scores.
 

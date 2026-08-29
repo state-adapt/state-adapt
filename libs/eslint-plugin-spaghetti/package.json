@@ -1,5 +1,5 @@
 {
-  "name": "eslint-plugin-state-adapt",
+  "name": "@state-adapt/eslint-plugin-spaghetti",
   "description": "ESLint rules for detecting spaghetti code.",
   "version": "3.1.0",
   "private": false,
@@ -71,7 +71,7 @@
     }
   },
   "peerDependencies": {
-    "@state-adapt/spaghetti-analysis": "3.1.0",
+    "@state-adapt/spaghetti-core": "3.1.0",
     "eslint": ">=8.0.0"
   },
   "dependencies": {
