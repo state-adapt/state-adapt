@@ -11,7 +11,7 @@
         "outputPath": "dist/libs/spaghetti-core",
         "main": "libs/spaghetti-core/src/index.ts",
         "tsConfig": "libs/spaghetti-core/tsconfig.lib.json",
-        "assets": ["libs/spaghetti-core/*.md"]
+        "assets": ["libs/spaghetti-core/README.md"]
       },
       "configurations": {
         "production": {}

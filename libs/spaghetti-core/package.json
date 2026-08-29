@@ -37,7 +37,7 @@
           "main": "libs/spaghetti-core/src/index.ts",
           "tsConfig": "libs/spaghetti-core/tsconfig.lib.json",
           "assets": [
-            "libs/spaghetti-core/*.md"
+            "libs/spaghetti-core/README.md"
           ]
         }
       },
