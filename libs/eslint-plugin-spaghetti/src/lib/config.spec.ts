@@ -8,7 +8,7 @@ describe('typed configuration', () => {
 
   it('fails clearly when parser services are missing', () => {
     const linter = new Linter();
-    linter.defineRule('spaghetti', rules['max-commands']);
+    linter.defineRule('spaghetti', rules['no-spaghetti']);
     expect(() =>
       linter.verify('function run() {}', {
         parserOptions: { ecmaVersion: 2022 },

@@ -1,14 +1,8 @@
 import { Rule } from 'eslint';
-import { maxCommandDistance } from './plugin/max-distance-rule';
-import { maxCommands } from './plugin/max-commands-rule';
-import { maxSpaghettiScore } from './plugin/max-score-rule';
-import { noRemoteMutation } from './plugin/no-remote-rule';
+import { noSpaghetti } from './plugin/no-spaghetti-rule';
 
 export const rules: Record<string, Rule.RuleModule> = {
-  'max-spaghetti-score': maxSpaghettiScore,
-  'max-command-distance': maxCommandDistance,
-  'max-commands': maxCommands,
-  'no-remote-mutation': noRemoteMutation,
+  'no-spaghetti': noSpaghetti,
 };
 
 export const configs = {
@@ -17,10 +11,7 @@ export const configs = {
     parserOptions: { project: true },
     plugins: ['@state-adapt/spaghetti'],
     rules: {
-      '@state-adapt/spaghetti/max-spaghetti-score': 'warn',
-      '@state-adapt/spaghetti/max-command-distance': 'warn',
-      '@state-adapt/spaghetti/max-commands': 'warn',
-      '@state-adapt/spaghetti/no-remote-mutation': 'warn',
+      '@state-adapt/spaghetti/no-spaghetti': 'warn',
     },
   },
 };

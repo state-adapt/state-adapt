@@ -9,13 +9,9 @@ import { RuleOptions } from './types';
 const cacheByProgram = new WeakMap<object, Map<string, FileAnalysis[]>>();
 
 function analysisOptions(options: RuleOptions): AnalysisOptions {
-  const scoring = options['scoring'];
   const apiPatterns = options['apiPatterns'];
   const builtIns = options['builtInRecognizers'];
   return {
-    ...(scoring && typeof scoring === 'object'
-      ? { scoring: scoring as AnalysisOptions['scoring'] }
-      : {}),
     ...(Array.isArray(apiPatterns)
       ? { apiPatterns: apiPatterns as AnalysisOptions['apiPatterns'] }
       : {}),

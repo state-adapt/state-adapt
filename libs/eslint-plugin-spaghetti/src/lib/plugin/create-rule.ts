@@ -13,12 +13,8 @@ export function createRule(
       docs: { description },
       schema,
       messages: {
-        functionLimit:
-          '{{name}} has {{actual}}, above the configured maximum of {{max}}.',
-        distanceLimit:
-          '{{kind}} command distance is {{actual}}, above the configured maximum of {{max}}.',
-        remoteMutation:
-          '{{kind}} mutates remote resource {{resource}} (declared {{distance}} scope(s) away).',
+        spaghetti:
+          '{{kind}} command has policy distance {{actual}}, above the configured maximum of {{max}}.{{reason}}',
         analysisTruncated:
           '{{name}} has incomplete analysis because a configured graph limit was reached.',
       },
@@ -41,8 +37,8 @@ export function createRule(
                     column: fn.location.start.column - 1,
                   },
                   end: {
-                    line: fn.location.end.line,
-                    column: fn.location.end.column - 1,
+                    line: fn.location.start.line,
+                    column: fn.location.start.column,
                   },
                 },
                 messageId: 'analysisTruncated',

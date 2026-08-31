@@ -1,4 +1,4 @@
-import { Command, FunctionAnalysis } from '@state-adapt/spaghetti-core';
+import { Command } from '@state-adapt/spaghetti-core';
 import { Rule } from 'eslint';
 import { RuleOptions } from './types';
 
@@ -11,33 +11,20 @@ export function numberOption(
   return typeof value === 'number' ? value : fallback;
 }
 
-export function reportFunction(
-  context: Rule.RuleContext,
-  fn: FunctionAnalysis,
-  actual: number,
-  max: number,
-): void {
-  context.report({
-    loc: eslintLocation(fn.location),
-    messageId: 'functionLimit',
-    data: { name: fn.name, actual: format(actual), max: format(max) },
-  });
-}
-
 export function reportCommand(
   context: Rule.RuleContext,
   command: Command,
-  messageId: 'distanceLimit' | 'remoteMutation',
   data: Record<string, string>,
 ): void {
   context.report({
     loc: eslintLocation(command.callPath[0]?.callLocation ?? command.location),
-    messageId,
+    messageId: 'spaghetti',
     data,
   });
 }
 
 export function format(value: number): string {
+  if (!Number.isFinite(value)) return 'maximum';
   return Number.isInteger(value) ? String(value) : value.toFixed(2);
 }
 
