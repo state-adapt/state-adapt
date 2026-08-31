@@ -3,6 +3,7 @@ import { CommandKind, SourceLocation } from './models';
 import { hasModifier } from './recognizer-config';
 import { CommandRecognitionContext, CommandRecognizer } from '../recognizers';
 import { isAssignmentOperator, locationOf } from './ast';
+import { discardedCall } from './call-metadata';
 
 export function detectCommand(
   node: ts.Node,
@@ -16,6 +17,8 @@ export function detectCommand(
       target?: ts.Expression;
       api?: string;
       recognizer?: string;
+      call?: string;
+      external?: boolean;
     }
   | undefined {
   if (
@@ -26,13 +29,13 @@ export function detectCommand(
     ts.isCallExpression(node) &&
     isDefinitelyVoid(checker.getTypeAtLocation(node))
   )
-    return { kind: 'discarded-call' };
+    return discardedCall(node, checker);
   if (ts.isExpressionStatement(node)) {
     const outerExpression = unwrapOuterExpression(node.expression);
     const expression = ts.isAwaitExpression(outerExpression)
       ? unwrapOuterExpression(outerExpression.expression)
       : outerExpression;
-    if (ts.isCallExpression(expression)) return { kind: 'discarded-call' };
+    if (ts.isCallExpression(expression)) return discardedCall(expression, checker);
   }
   if (ts.isCallExpression(node) && !isDiscardedCall(node)) {
     const recognized = recognizeApiCommand(node, recognizers, context);

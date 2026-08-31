@@ -12,7 +12,7 @@ import {
 import { functionName, isFunction, locationOf } from './ast';
 import { directScoreBreakdown, scoringConfig } from './scoring';
 import { collectImports } from './call-resolution';
-import { isJsxEventHandler } from './jsx-allowance';
+import { isJsxEventHandler, referencedJsxEventHandlers } from './jsx-context';
 
 export function createFileDraft(
   sourceFile: ts.SourceFile,
@@ -25,6 +25,7 @@ export function createFileDraft(
   const recognizers = configuredRecognizers(options);
   const recognitionContext = createRecognitionContext(sourceFile, imports, scopes);
   const functions: FunctionDraft[] = [];
+  const jsxEventHandlers = referencedJsxEventHandlers(sourceFile, checker);
   visitFunctions(
     sourceFile,
     sourceFile,
@@ -33,6 +34,7 @@ export function createFileDraft(
     recognizers,
     recognitionContext,
     checker,
+    jsxEventHandlers,
     functions,
   );
   return { sourceFile, functions, imports };
@@ -46,6 +48,7 @@ function visitFunctions(
   recognizers: readonly CommandRecognizer[],
   recognitionContext: CommandRecognitionContext,
   checker: ts.TypeChecker,
+  jsxEventHandlers: ReadonlySet<ts.FunctionLikeDeclaration>,
   output: FunctionDraft[],
 ): void {
   if (isFunction(node) && node.body) {
@@ -80,7 +83,7 @@ function visitFunctions(
       scopes,
       directCommands,
       calls,
-      jsxEventHandler: isJsxEventHandler(node),
+      jsxEventHandler: isJsxEventHandler(node) || jsxEventHandlers.has(node),
     });
   }
   ts.forEachChild(node, child =>
@@ -92,6 +95,7 @@ function visitFunctions(
       recognizers,
       recognitionContext,
       checker,
+      jsxEventHandlers,
       output,
     ),
   );
@@ -159,6 +163,8 @@ function createDirectCommand(
     target?: ts.Expression;
     api?: string;
     recognizer?: string;
+    call?: string;
+    external?: boolean;
   },
   node: ts.Node,
   sourceFile: ts.SourceFile,
@@ -204,6 +210,11 @@ function createDirectCommand(
     ...(resource ? { resource } : {}),
     ...(detected.api ? { api: detected.api } : {}),
     ...(detected.recognizer ? { recognizer: detected.recognizer } : {}),
+    ...(detected.call ? { call: detected.call } : {}),
+    ...(detected.external ||
+    (resource && (!resolution || resolution.declaration.kind === 'import'))
+      ? { external: true }
+      : {}),
     ...(resolution ? { declaration: resolution.declaration } : {}),
     remote: Boolean(resource && (!resolution || resolution.scopeDistance > 0)),
   };

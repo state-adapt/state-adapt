@@ -2,8 +2,7 @@ import * as path from 'node:path';
 import * as ts from 'typescript';
 import { Distance } from './models';
 import { CallSite, FileDraft, FunctionDraft, ImportBinding } from './internal-types';
-import { enclosingFunction } from './jsx-allowance';
-import { locationOf } from './ast';
+import { isFunction, locationOf } from './ast';
 import { defaultExportName, exportedName } from './recognizer-config';
 import { resolveDeclaration } from './scopes';
 
@@ -15,7 +14,8 @@ export function resolveCall(
   checker: ts.TypeChecker,
 ): FunctionDraft | undefined {
   const declaration = checker.getResolvedSignature(call.node)?.declaration;
-  const declarationFunction = declaration && enclosingFunction(declaration);
+  const declarationFunction =
+    declaration && isFunction(declaration) ? declaration : undefined;
   if (declarationFunction) {
     const declarationFile = declarationFunction.getSourceFile();
     const start = locationOf(declarationFunction, declarationFile).start;

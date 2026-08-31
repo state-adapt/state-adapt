@@ -24,6 +24,10 @@ program, `analyzeProject` loads project compiler settings, and `analyzeProgram`
 reuses an existing program. Project call paths are bounded by
 `maxCallDepth` and `maxCommandsPerFunction`.
 
+Functions used as JSX event handlers expose neutral `jsxEventHandler` context.
+Core never removes a handler command from aggregate scores; consumer-specific
+allowances belong to the consumer.
+
 ## Building
 
 Run `nx build spaghetti-core` to build the library.

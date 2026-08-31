@@ -7,7 +7,7 @@ import { analyzeFile, analyzeProject } from './spaghetti-analysis';
 import { CommandRecognizer } from './recognizers';
 
 describe('spaghetti type-aware-jsx', () => {
-  it('retains JSX handler commands but allows its highest-scoring command', () => {
+  it('retains every JSX handler command in objective analyzer scores', () => {
     const result = analyzeFile(
       `declare namespace JSX { interface IntrinsicElements { button: unknown } }
 declare function onEvent(event: unknown): void;
@@ -21,11 +21,13 @@ const view = <button onClick={event => {
     const handler = result.functions.find(fn => fn.name === '<anonymous>');
 
     expect(handler?.commands).toHaveLength(2);
-    expect(handler?.commands.filter(command => command.allowed)).toHaveLength(1);
-    expect(handler?.score).toBe(4);
+    expect(handler?.jsxEventHandler).toBe(true);
+    expect(handler?.score).toBe(
+      handler?.commands.reduce((sum, command) => sum + command.score, 0),
+    );
   });
 
-  it('allows the actual highest-scoring event command but not render props', () => {
+  it('marks event-handler context but not render props', () => {
     const result = analyzeFile(
       `declare namespace JSX { interface IntrinsicElements { widget: unknown } }
 declare function notify(): void;
@@ -37,25 +39,37 @@ const renderView = <widget renderItem={() => { notify(); globalThis.value = 1; }
       fn => fn.name === '<anonymous>',
     );
 
-    expect(eventHandler.commands.map(command => [command.kind, command.allowed])).toEqual(
-      [
-        ['discarded-call', undefined],
-        ['property-assignment', 'jsx-event-handler'],
-      ],
+    expect(eventHandler.jsxEventHandler).toBe(true);
+    expect(renderProp.jsxEventHandler).toBeUndefined();
+    expect(eventHandler.score).toBe(
+      eventHandler.commands.reduce((sum, command) => sum + command.score, 0),
     );
-    expect(renderProp.commands.every(command => !command.allowed)).toBe(true);
   });
 
-  it('applies the event allowance to concise TSX arrows', () => {
+  it('marks concise TSX arrows as event handlers', () => {
     const result = analyzeFile(
       `declare namespace JSX { interface IntrinsicElements { button: unknown } }
 declare function notify(): void;
 const view = <button onClick={() => notify()} />;`,
       'view.tsx',
     );
-    expect(
-      result.functions.find(fn => fn.name === '<anonymous>')?.commands[0].allowed,
-    ).toBe('jsx-event-handler');
+    expect(result.functions.find(fn => fn.name === '<anonymous>')?.jsxEventHandler).toBe(
+      true,
+    );
+  });
+
+  it('marks referenced JSX event handlers without changing their scores', () => {
+    const result = analyzeFile(
+      `declare namespace JSX { interface IntrinsicElements { button: unknown } }
+declare function notify(): void;
+const handler = () => notify();
+const view = <button onClick={handler} />;`,
+      'view.tsx',
+    );
+    const handler = result.functions.find(fn => fn.name === 'handler');
+
+    expect(handler?.jsxEventHandler).toBe(true);
+    expect(handler?.score).toBe(handler?.commands[0].score);
   });
 
   it('resolves checker-backed method, nested, element and wrapped calls', () => {

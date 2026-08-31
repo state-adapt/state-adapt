@@ -19,7 +19,7 @@ import { createFileDraft } from './source-collection';
 import { hopDistance, resolveCall } from './call-resolution';
 import { expandCommands, functionsReachingCycles } from './graph';
 import { scoringConfig, locationStartKey } from './scoring';
-import { applyJsxEventHandlerAllowance, stripFunctionDraft } from './jsx-allowance';
+import { stripFunctionDraft } from './jsx-context';
 
 export function analyzeFunction(
   sourceText: string,
@@ -183,11 +183,7 @@ function analyzeSourceFiles(
     );
     fn.commands = expansion.commands;
     fn.truncated = expansion.truncated;
-    applyJsxEventHandlerAllowance(fn);
-    fn.score = fn.commands.reduce(
-      (sum, command) => sum + (command.allowed ? 0 : command.score),
-      0,
-    );
+    fn.score = fn.commands.reduce((sum, command) => sum + command.score, 0);
   });
   return drafts.map(draft => {
     const functions: FunctionAnalysis[] = draft.functions.map(stripFunctionDraft);

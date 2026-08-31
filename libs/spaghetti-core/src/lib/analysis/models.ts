@@ -85,10 +85,12 @@ export interface Command {
   api?: string;
   /** Name of the recognizer that identified the API command. */
   recognizer?: string;
+  /** Stable source-level name for a call, such as `notify` or `event.preventDefault`. */
+  call?: string;
+  /** The command targets a resource or implementation outside the analyzed program. */
+  external?: boolean;
   declaration?: Declaration;
   remote: boolean;
-  /** An unavoidable command excluded from limits, while remaining visible to consumers. */
-  allowed?: 'jsx-event-handler';
 }
 export interface FunctionAnalysis {
   functionId: string;
@@ -97,6 +99,8 @@ export interface FunctionAnalysis {
   size: number;
   commands: Command[];
   score: number;
+  /** Neutral context metadata; consumers decide whether event handlers get exceptions. */
+  jsxEventHandler?: boolean;
   /** True when maxCommandsPerFunction truncated materialized command paths. */
   truncated?: boolean;
 }

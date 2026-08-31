@@ -331,3 +331,15 @@ And I have committed the work done up to now.
 - Cross-file analysis is enabled by default with an explicit opt-out. It resolves the project graph and accumulates call, scope, file, and folder crossings without rebuilding the program per file. Folder distance counts directory edges between caller and callee; file- and folder-crossing weights are independently configurable.
 - ESLint reuses and caches the parser's TypeScript program and project graph. Call-path expansion is bounded, and incomplete results are surfaced rather than silently treated as complete.
 - JSX attributes named like events (`on` followed by an uppercase letter) receive an allowance for one imperative command. Handlers may be concise, multiline, or block-bodied; the allowance applies to the highest-scoring command.
+
+---
+
+## Unified ESLint policy decisions
+
+- Aggregate function, file, and project scores remain analyzer concerns. ESLint reports individual command or caller lines.
+- The ESLint plugin exposes one primary `no-spaghetti` rule instead of independently enforcing maximum score, command count, command distance, and remote mutation.
+- `no-spaghetti` assesses each command using configurable declaration, same-function, scope, call, file, and folder distance weights. It does not use aggregate function scores or function-size penalties.
+- Generic method calls use their receiver as the resource when possible. Calls without a resolvable implementation or resource receive a configurable external-call penalty.
+- External calls use the maximum penalty by default. Consumers may configure a numeric penalty or ignore them; explicit API and call allowlists take precedence.
+- JSX event handlers receive one command allowance, applied to the command with the highest ESLint policy score. Other commands in the handler are assessed normally.
+- API-specific and consumer-configured recognizers only improve command and resource detection; they do not create separate lint policies.
