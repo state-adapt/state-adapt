@@ -57,3 +57,5 @@ We are considering two options to add support for runes. Please [check progress 
 <!-- For more configuration options, see [@state-adapt/svelte](/docs/svelte). -->
 
 [StackBlitz demo](https://stackblitz.com/edit/vitejs-vite-szsd3d?file=src%2Fadapt.function.ts,src%2Flib%2FCounter.svelte&terminal=dev)
+
+<!--@include: ../../../includes/spaghetti-eslint.md-->

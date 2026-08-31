@@ -36,3 +36,5 @@ To customize StateAdapt, use the React package's
 [`createStateAdapt`](/api/react/index/createStateAdapt).
 
 [StackBlitz Starter](https://stackblitz.com/edit/vitejs-vite-qcthao?file=src%2Fmain.tsx,src%2FCounter.tsx&terminal=dev)
+
+<!--@include: ../../../includes/spaghetti-eslint.md-->

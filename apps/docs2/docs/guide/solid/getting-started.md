@@ -53,3 +53,5 @@ For now, refer to [`configureStateAdapt`](/api/rxjs/index/configureStateAdapt) f
 :::
 
 [StackBlitz demo](https://stackblitz.com/edit/solidjs-templates-oc7ivf?file=src%2Fadapt.function.ts)
+
+<!--@include: ../../../includes/spaghetti-eslint.md-->
