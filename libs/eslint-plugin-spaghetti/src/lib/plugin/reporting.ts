@@ -4,7 +4,7 @@ import { RuleOptions } from './types';
 
 export function numberOption(
   options: RuleOptions,
-  name: string,
+  name: keyof RuleOptions,
   fallback: number,
 ): number {
   const value = options[name];
@@ -24,7 +24,6 @@ export function reportCommand(
 }
 
 export function format(value: number): string {
-  if (!Number.isFinite(value)) return 'maximum';
   return Number.isInteger(value) ? String(value) : value.toFixed(2);
 }
 

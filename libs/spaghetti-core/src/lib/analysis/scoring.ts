@@ -59,6 +59,13 @@ export function directScoreBreakdown(
       distance.scope,
       scoring.scopeCrossingWeight,
     ),
+    contribution('file-crossings', 'origin', distance.file, scoring.fileCrossingWeight),
+    contribution(
+      'folder-crossings',
+      'origin',
+      distance.folder,
+      scoring.folderCrossingWeight,
+    ),
     contribution(
       'same-function-distance',
       'origin',
@@ -72,6 +79,12 @@ export function directScoreBreakdown(
 
 function hopContributions(hop: CommandHop, scoring: ScoringConfig): ScoreContribution[] {
   const contributions = [
+    contribution(
+      'declaration-line-distance',
+      hop.caller,
+      hop.distance.declarationLine,
+      scoring.declarationLineDistanceWeight,
+    ),
     contribution(
       'function-call-distance',
       hop.caller,

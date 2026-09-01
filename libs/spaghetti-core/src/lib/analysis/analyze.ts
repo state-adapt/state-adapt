@@ -124,8 +124,9 @@ function analyzeSourceFiles(
   checker: ts.TypeChecker,
   options: AnalysisOptions,
 ): FileAnalysis[] {
+  const analyzedFiles = new Set(sourceFiles);
   const drafts = sourceFiles.map(sourceFile =>
-    createFileDraft(sourceFile, options, checker),
+    createFileDraft(sourceFile, options, checker, analyzedFiles),
   );
   const allFunctions = drafts.flatMap(file => file.functions);
   const byId = new Map(allFunctions.map(fn => [fn.functionId, fn]));

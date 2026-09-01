@@ -7,6 +7,26 @@ import { analyzeFile, analyzeProject } from './spaghetti-analysis';
 import { CommandRecognizer } from './recognizers';
 
 describe('spaghetti call-graph', () => {
+  it('accumulates same-file call-to-declaration line and scope distance', () => {
+    const caller = analyzeFile(
+      `function leaf(resource: { value: number }) {
+  resource.value = 1;
+}
+
+function caller(resource: { value: number }) {
+  leaf(resource);
+}`,
+      'source.ts',
+      { scoring: { declarationLineDistanceWeight: 2 } },
+    ).functions.find(fn => fn.name === 'caller')?.commands[0];
+
+    expect(caller?.distance.declarationLine).toBe(6);
+    expect(caller?.distance.scope).toBe(1);
+    expect(caller?.distance.functionCall).toBe(1);
+    expect(caller?.distance.file).toBe(0);
+    expect(caller?.scoreBreakdown.declarationLineDistance).toBe(12);
+  });
+
   it('terminates recursive graphs while retaining reachable direct commands once per path', () => {
     const result = analyzeFile(`function left() { window.left = 1; right(); }
 function right() { window.right = 1; left(); }`);
@@ -34,7 +54,6 @@ import { store } from '@state-adapt/core';
 import { signal } from '@angular/core';
 import { Subject } from 'rxjs';
 import { useReducer, useState } from 'react';
-import { useDispatch } from 'react-redux';
 function mutate() {
   const values = [];
   const map = new Map();
@@ -43,7 +62,6 @@ function mutate() {
   const subject = new Subject();
   const [value, setValue] = useState(0);
   const [state, reactDispatch] = useReducer(reducer, {});
-  const dispatch = useDispatch();
   values.push(value);
   map.set('key', value);
   element.setAttribute('data-value', String(value));
@@ -53,12 +71,10 @@ function mutate() {
   setValue(value);
   component.setState({ value });
   reactDispatch({ type: 'change' });
-  dispatch({ type: 'change' });
-  store.dispatch({ type: 'change' });
 }`);
     const commands = result.functions.find(fn => fn.name === 'mutate')?.commands ?? [];
 
-    expect(commands).toHaveLength(11);
+    expect(commands).toHaveLength(9);
     expect(commands.every(command => command.kind === 'discarded-call')).toBe(true);
     expect(commands.every(command => !command.recognizer && !command.api)).toBe(true);
   });
@@ -104,14 +120,11 @@ function mutate() {
   });
 
   it('recognizes mutation APIs with usable return values in value contexts', () => {
-    const commands = analyzeFile(`
-import { useDispatch } from 'react-redux';
-function mutate() {
+    const commands = analyzeFile(`function mutate() {
   const values = [];
   const map = new Map();
   const element = document.body;
   const replacement = document.createElement('div');
-  const dispatch = useDispatch();
   return [
     values.push(1),
     values.pop(),
@@ -123,8 +136,6 @@ function mutate() {
     element.toggleAttribute('hidden'),
     element.classList.replace('old', 'new'),
     element.classList.toggle('active'),
-    dispatch({ type: 'change' }),
-    store.dispatch({ type: 'change' }),
   ];
 }`).functions.find(fn => fn.name === 'mutate')?.commands;
 
@@ -139,8 +150,6 @@ function mutate() {
       'dom',
       'dom',
       'dom',
-      'redux',
-      'redux',
     ]);
     expect(commands?.every(command => command.kind === 'api-command')).toBe(true);
   });
@@ -153,7 +162,6 @@ function mutate() {
   const set = new Set();
   const element = document.body;
   const replacement = document.createElement('div');
-  const dispatch = useDispatch();
   return [
     values.copyWithin(0, 1),
     values.fill(1),
@@ -174,8 +182,6 @@ function mutate() {
     element.toggleAttribute('hidden'),
     element.classList.replace('old', 'new'),
     element.classList.toggle('active'),
-    dispatch({ type: 'hook' }),
-    store.dispatch({ type: 'store' }),
   ];
 }`)
       .functions.find(fn => fn.name === 'mutate')
@@ -201,8 +207,6 @@ function mutate() {
       'DOM.toggleAttribute',
       'DOMTokenList.replace',
       'DOMTokenList.toggle',
-      'Redux.dispatch',
-      'Redux.dispatch',
     ]);
   });
 });

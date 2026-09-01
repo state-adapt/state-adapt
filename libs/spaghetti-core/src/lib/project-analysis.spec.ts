@@ -7,6 +7,64 @@ import { analyzeFile, analyzeProject } from './spaghetti-analysis';
 import { CommandRecognizer } from './recognizers';
 
 describe('spaghetti project-analysis', () => {
+  it('resolves direct imported resources with file and folder distance', () => {
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), 'spaghetti-resources-'));
+    try {
+      fs.mkdirSync(path.join(root, 'src', 'a'), { recursive: true });
+      fs.mkdirSync(path.join(root, 'src', 'b'), { recursive: true });
+      fs.writeFileSync(
+        path.join(root, 'tsconfig.json'),
+        JSON.stringify({ compilerOptions: { module: 'commonjs' }, include: ['**/*.ts'] }),
+      );
+      fs.writeFileSync(
+        path.join(root, 'src', 'a', 'state.ts'),
+        'export const state = { value: 0 };',
+      );
+      fs.writeFileSync(
+        path.join(root, 'src', 'b', 'mutate.ts'),
+        "import { state } from '../a/state'; export function mutate() { state.value++; }",
+      );
+      fs.writeFileSync(
+        path.join(root, 'src', 'a', 'mutate-same.ts'),
+        "import { state } from './state'; export function mutateSame() { state.value++; }",
+      );
+
+      const result = analyzeProject(root, {
+        scoring: {
+          scopeCrossingWeight: 1,
+          fileCrossingWeight: 30,
+          folderCrossingWeight: 10,
+        },
+      });
+      const command = result.files.find(file =>
+        file.filePath.endsWith('/src/b/mutate.ts'),
+      )?.commands[0];
+      const sameFolder = result.files.find(file =>
+        file.filePath.endsWith('/src/a/mutate-same.ts'),
+      )?.commands[0];
+
+      expect(command).toMatchObject({
+        resource: 'state',
+        distance: { declarationLine: 0, scope: 1, file: 1, folder: 2 },
+        declaration: { name: 'state', kind: 'variable' },
+        remote: true,
+      });
+      expect(command?.external).toBeUndefined();
+      expect(command?.declaration?.location.filePath).toMatch(/src\/a\/state\.ts$/);
+      expect(command?.scoreBreakdown).toMatchObject({
+        scopeCrossings: 1,
+        fileCrossings: 30,
+        folderCrossings: 20,
+      });
+      expect(sameFolder).toMatchObject({
+        distance: { declarationLine: 0, scope: 1, file: 1, folder: 0 },
+      });
+      expect(sameFolder?.external).toBeUndefined();
+    } finally {
+      fs.rmSync(root, { recursive: true, force: true });
+    }
+  });
+
   it('uses TypeScript module resolution for path aliases and re-exports', () => {
     const root = fs.mkdtempSync(path.join(os.tmpdir(), 'spaghetti-aliases-'));
     try {

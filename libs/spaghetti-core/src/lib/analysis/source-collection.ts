@@ -1,7 +1,7 @@
 import * as ts from 'typescript';
 import { AnalysisOptions, Command, CommandKind, Distance } from './models';
 import { FileDraft, FunctionDraft, CallSite } from './internal-types';
-import { buildScopes, resolveDeclaration, resourceName, Scope } from './scopes';
+import { buildScopes, Scope } from './scopes';
 import { configuredRecognizers, createRecognitionContext } from './recognizer-config';
 import { CommandRecognitionContext, CommandRecognizer } from '../recognizers';
 import {
@@ -13,11 +13,13 @@ import { functionName, isFunction, locationOf } from './ast';
 import { directScoreBreakdown, scoringConfig } from './scoring';
 import { collectImports } from './call-resolution';
 import { isJsxEventHandler, referencedJsxEventHandlers } from './jsx-context';
+import { resolveResource } from './resource-resolution';
 
 export function createFileDraft(
   sourceFile: ts.SourceFile,
   options: AnalysisOptions,
   checker: ts.TypeChecker,
+  analyzedFiles: ReadonlySet<ts.SourceFile>,
 ): FileDraft {
   const scopes = new Map<ts.Node, Scope>();
   buildScopes(sourceFile, { declarations: new Map() }, scopes, sourceFile);
@@ -34,6 +36,7 @@ export function createFileDraft(
     recognizers,
     recognitionContext,
     checker,
+    analyzedFiles,
     jsxEventHandlers,
     functions,
   );
@@ -48,6 +51,7 @@ function visitFunctions(
   recognizers: readonly CommandRecognizer[],
   recognitionContext: CommandRecognitionContext,
   checker: ts.TypeChecker,
+  analyzedFiles: ReadonlySet<ts.SourceFile>,
   jsxEventHandlers: ReadonlySet<ts.FunctionLikeDeclaration>,
   output: FunctionDraft[],
 ): void {
@@ -67,6 +71,7 @@ function visitFunctions(
       recognizers,
       recognitionContext,
       checker,
+      analyzedFiles,
       functionId,
       size,
       directCommands,
@@ -95,6 +100,7 @@ function visitFunctions(
       recognizers,
       recognitionContext,
       checker,
+      analyzedFiles,
       jsxEventHandlers,
       output,
     ),
@@ -110,6 +116,7 @@ function collectFunctionBody(
   recognizers: readonly CommandRecognizer[],
   recognitionContext: CommandRecognitionContext,
   checker: ts.TypeChecker,
+  analyzedFiles: ReadonlySet<ts.SourceFile>,
   functionId: string,
   functionSize: number,
   commands: Command[],
@@ -124,6 +131,8 @@ function collectFunctionBody(
         node,
         sourceFile,
         scopes,
+        checker,
+        analyzedFiles,
         options,
         functionId,
         functionSize,
@@ -149,6 +158,7 @@ function collectFunctionBody(
       recognizers,
       recognitionContext,
       checker,
+      analyzedFiles,
       functionId,
       functionSize,
       commands,
@@ -169,27 +179,26 @@ function createDirectCommand(
   node: ts.Node,
   sourceFile: ts.SourceFile,
   scopes: Map<ts.Node, Scope>,
+  checker: ts.TypeChecker,
+  analyzedFiles: ReadonlySet<ts.SourceFile>,
   options: AnalysisOptions,
   functionId: string,
   functionSize: number,
 ): Command {
   const location = locationOf(node, sourceFile);
-  const resource = resourceName(detected.target);
-  const resolution = resource
-    ? resolveDeclaration(resource, scopes.get(node))
+  const resolution = detected.target
+    ? resolveResource(detected.target, node, sourceFile, scopes, checker, analyzedFiles)
     : undefined;
   const distance: Distance = {
-    declarationLine: resolution
-      ? Math.abs(location.start.line - resolution.declaration.location.start.line)
-      : 0,
+    declarationLine: resolution?.distance.declarationLine ?? 0,
     sameFunction: Math.max(
       0,
       location.start.line - Number(functionId.match(/@(\d+)$/)?.[1] ?? 1),
     ),
-    scope: resolution?.scopeDistance ?? 0,
+    scope: resolution?.distance.scope ?? 0,
     functionCall: 0,
-    file: 0,
-    folder: 0,
+    file: resolution?.distance.file ?? 0,
+    folder: resolution?.distance.folder ?? 0,
   };
   const scoring = scoringConfig(options);
   const scoreBreakdown = directScoreBreakdown(
@@ -207,15 +216,17 @@ function createDirectCommand(
     distance,
     score: scoreBreakdown.total,
     scoreBreakdown,
-    ...(resource ? { resource } : {}),
+    ...(resolution?.name ? { resource: resolution.name } : {}),
     ...(detected.api ? { api: detected.api } : {}),
     ...(detected.recognizer ? { recognizer: detected.recognizer } : {}),
     ...(detected.call ? { call: detected.call } : {}),
-    ...(detected.external ||
-    (resource && (!resolution || resolution.declaration.kind === 'import'))
-      ? { external: true }
-      : {}),
-    ...(resolution ? { declaration: resolution.declaration } : {}),
-    remote: Boolean(resource && (!resolution || resolution.scopeDistance > 0)),
+    ...(detected.external || resolution?.external ? { external: true } : {}),
+    ...(resolution?.declaration ? { declaration: resolution.declaration } : {}),
+    remote: Boolean(
+      resolution &&
+        (resolution.external ||
+          resolution.distance.scope > 0 ||
+          resolution.distance.file > 0),
+    ),
   };
 }

@@ -7,6 +7,29 @@ import { analyzeFile, analyzeProject } from './spaghetti-analysis';
 import { CommandRecognizer } from './recognizers';
 
 describe('spaghetti command-detection', () => {
+  it('resolves class fields and marks call-produced targets external', () => {
+    const result = analyzeFile(`class Counter {
+  state = { value: 0 };
+  update() {
+    this.state.value++;
+    getState().value++;
+  }
+}`);
+    const commands = result.functions.find(fn => fn.name === 'update')?.commands;
+
+    expect(commands?.[0]).toMatchObject({
+      resource: 'state',
+      distance: { declarationLine: 2, scope: 0, file: 0, folder: 0 },
+      declaration: { name: 'state', kind: 'variable' },
+    });
+    expect(commands?.[0].external).toBeUndefined();
+    expect(commands?.[1]).toMatchObject({
+      resource: 'getState().value',
+      external: true,
+      distance: { declarationLine: 0, scope: 0, file: 0, folder: 0 },
+    });
+  });
+
   it('detects every command kind without traversing into nested functions', () => {
     const result = analyzeFile(`
 let distant = 0;

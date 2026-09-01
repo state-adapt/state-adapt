@@ -8,6 +8,8 @@ const typedScratch = path.join(fixtureDir, 'lint.ts');
 const typedTsx = path.join(fixtureDir, 'lint-jsx.tsx');
 const typedCaller = path.join(fixtureDir, 'caller.ts');
 const nestedCaller = path.join(fixtureDir, 'root-caller.ts');
+const resourceCaller = path.join(fixtureDir, 'resource-caller.ts');
+const nestedResourceCaller = path.join(fixtureDir, 'other/resource-caller.ts');
 const ruleTester = new RuleTester({
   parser: require.resolve('@typescript-eslint/parser'),
   parserOptions: {
@@ -19,10 +21,8 @@ const ruleTester = new RuleTester({
 } as never);
 
 const zeroWeights = {
-  declarationLineWeight: 0,
-  sameFunctionWeight: 0,
+  declarationLineDistanceWeight: 0,
   scopeWeight: 0,
-  functionCallWeight: 0,
   fileWeight: 0,
   folderWeight: 0,
 };
@@ -35,13 +35,19 @@ ruleTester.run('no-spaghetti command policy', rules['no-spaghetti'], {
     },
     {
       filename: typedScratch,
-      code: 'declare function external(): void; function run() { external(); }',
-      options: [{ ...zeroWeights, externalPenalty: 'ignore' }],
+      code: `function atDefaultLimit(value: number) {
+
+
+
+
+
+  value++;
+}`,
     },
     {
       filename: typedScratch,
       code: 'declare function external(): void; function run() { external(); }',
-      options: [{ ...zeroWeights, externalPenalty: 2, max: 2 }],
+      options: [{ ...zeroWeights, externalPenalty: 2, maxScore: 2 }],
     },
     {
       filename: typedScratch,
@@ -104,8 +110,8 @@ const view = <button onClick={() => onEvent()} />;`,
           line: 2,
           data: {
             kind: 'discarded-call',
-            actual: 'maximum',
-            max: '0',
+            actual: '200',
+            maxScore: '6',
             reason: ' External target.',
           },
         },
@@ -120,8 +126,8 @@ const view = <button onClick={() => onEvent()} />;`,
           messageId: 'spaghetti',
           data: {
             kind: 'property-assignment',
-            actual: 'maximum',
-            max: '0',
+            actual: '200',
+            maxScore: '6',
             reason: ' External target.',
           },
         },
@@ -141,7 +147,32 @@ function update() { api.write(); }`,
 function update() {
   shared++;
 }`,
+      options: [{ maxScore: 0 }],
       errors: [{ messageId: 'spaghetti', line: 3, column: 3 }],
+    },
+    {
+      filename: typedScratch,
+      code: `function beyondDefaultLimit(value: number) {
+
+
+
+
+
+
+  value++;
+}`,
+      errors: [
+        {
+          messageId: 'spaghetti',
+          line: 8,
+          data: {
+            kind: 'increment',
+            actual: '7',
+            maxScore: '6',
+            reason: '',
+          },
+        },
+      ],
     },
     {
       filename: typedScratch,
@@ -152,19 +183,72 @@ function update() {
       options: [
         {
           ...zeroWeights,
-          declarationLineWeight: 2,
-          sameFunctionWeight: 3,
-          max: 9,
+          declarationLineDistanceWeight: 2,
+          maxScore: 3,
         },
       ],
       errors: [{ messageId: 'spaghetti', line: 3, column: 3 }],
     },
     {
       filename: typedScratch,
+      code: `class Counter {
+  state = { value: 0 };
+  update() {
+    this.state.value++;
+  }
+}`,
+      options: [{ maxScore: 1 }],
+      errors: [
+        {
+          messageId: 'spaghetti',
+          line: 4,
+          data: { kind: 'increment', actual: '2', maxScore: '1', reason: '' },
+        },
+      ],
+    },
+    {
+      filename: typedScratch,
+      code: `declare function getState(): { value: number };
+function update() {
+  getState().value++;
+}`,
+      errors: [
+        {
+          messageId: 'spaghetti',
+          line: 3,
+          data: {
+            kind: 'increment',
+            actual: '200',
+            maxScore: '6',
+            reason: ' External target.',
+          },
+        },
+      ],
+    },
+    {
+      filename: typedScratch,
+      code: `let shared = 0;
+function outer() {
+  function inner() {
+    shared++;
+  }
+}`,
+      options: [
+        {
+          ...zeroWeights,
+          scopeWeight: 2,
+          maxScore: 3,
+        },
+      ],
+      errors: [{ messageId: 'spaghetti', line: 4, column: 5 }],
+    },
+    {
+      filename: typedScratch,
       code: `function leaf(value: { current: number }) { value.current = 1; }
+
 function caller(value: { current: number }) { leaf(value); }`,
-      options: [{ ...zeroWeights, functionCallWeight: 4, max: 3 }],
-      errors: [{ messageId: 'spaghetti', line: 2 }],
+      options: [{ ...zeroWeights, declarationLineDistanceWeight: 2, maxScore: 3 }],
+      errors: [{ messageId: 'spaghetti', line: 3 }],
     },
     {
       filename: typedScratch,
@@ -175,8 +259,8 @@ function caller(value: { current: number }) { leaf(value); }`,
           messageId: 'spaghetti',
           data: {
             kind: 'discarded-call',
-            actual: 'maximum',
-            max: '0',
+            actual: '200',
+            maxScore: '6',
             reason: ' External target.',
           },
         },
@@ -185,14 +269,14 @@ function caller(value: { current: number }) { leaf(value); }`,
     {
       filename: typedScratch,
       code: 'declare function external(): void; function run() { external(); }',
-      options: [{ ...zeroWeights, externalPenalty: 2, max: 1 }],
+      options: [{ ...zeroWeights, externalPenalty: 2, maxScore: 1 }],
       errors: [
         {
           messageId: 'spaghetti',
           data: {
             kind: 'discarded-call',
             actual: '2',
-            max: '1',
+            maxScore: '1',
             reason: ' External target.',
           },
         },
@@ -203,6 +287,7 @@ function caller(value: { current: number }) { leaf(value); }`,
       code: 'const cache = makeCache(); function flush() { return cache.flush(); }',
       options: [
         {
+          maxScore: 0,
           apiPatterns: [
             {
               name: 'Cache.flush',
@@ -216,7 +301,34 @@ function caller(value: { current: number }) { leaf(value); }`,
       errors: [
         {
           messageId: 'spaghetti',
-          data: { kind: 'api-command', actual: '1', max: '0', reason: '' },
+          data: {
+            kind: 'api-command',
+            actual: '1',
+            maxScore: '0',
+            reason: '',
+          },
+        },
+      ],
+    },
+    {
+      filename: typedTsx,
+      code: `declare namespace JSX { interface IntrinsicElements { button: unknown } }
+declare function first(): void;
+const view = <button onClick={event => {
+  event.preventDefault();
+  first();
+}} />;`,
+      options: [{ maxScore: 0 }],
+      errors: [
+        {
+          messageId: 'spaghetti',
+          line: 4,
+          data: {
+            kind: 'discarded-call',
+            actual: '1',
+            maxScore: '0',
+            reason: '',
+          },
         },
       ],
     },
@@ -225,8 +337,24 @@ function caller(value: { current: number }) { leaf(value); }`,
       code: `declare namespace JSX { interface IntrinsicElements { button: unknown } }
 declare function first(): void;
 declare function second(): void;
-const view = <button onClick={() => { first(); second(); }} />;`,
-      errors: [{ messageId: 'spaghetti' }],
+const view = <button onClick={event => {
+  event.preventDefault();
+  first();
+  second();
+}} />;`,
+      options: [{ maxScore: 0, allowedCalls: ['first'] }],
+      errors: [
+        {
+          messageId: 'spaghetti',
+          line: 5,
+          data: {
+            kind: 'discarded-call',
+            actual: '1',
+            maxScore: '0',
+            reason: '',
+          },
+        },
+      ],
     },
   ],
 });
@@ -237,17 +365,54 @@ ruleTester.run('no-spaghetti project distance', rules['no-spaghetti'], {
       filename: typedCaller,
       code: `import { mutate } from './effect';
 export function run(): void { mutate(); }`,
-      options: [{ ...zeroWeights, max: 0 }],
+      options: [{ ...zeroWeights, maxScore: 0 }],
     },
   ],
   invalid: [
+    {
+      filename: resourceCaller,
+      code: `import { state } from './state';
+
+export function mutateResource(): void {
+  state.value++;
+}`,
+      errors: [
+        {
+          messageId: 'spaghetti',
+          line: 4,
+          data: { kind: 'increment', actual: '31', maxScore: '6', reason: '' },
+        },
+      ],
+    },
+    {
+      filename: nestedResourceCaller,
+      code: `import { nestedState } from '../feature/state';
+
+export function mutateNestedResource(): void {
+  nestedState.value++;
+}`,
+      errors: [
+        {
+          messageId: 'spaghetti',
+          line: 4,
+          data: { kind: 'increment', actual: '51', maxScore: '6', reason: '' },
+        },
+      ],
+    },
     {
       filename: typedCaller,
       code: `import { mutate } from './effect';
 export function run(): void {
   mutate();
 }`,
-      options: [{ ...zeroWeights, fileWeight: 3, max: 2 }],
+      options: [
+        {
+          declarationLineDistanceWeight: 0,
+          scopeWeight: 0,
+          folderWeight: 0,
+          maxScore: 29,
+        },
+      ],
       errors: [
         { messageId: 'spaghetti', line: 3, column: 3 },
         { messageId: 'spaghetti', line: 3, column: 3 },
@@ -259,7 +424,14 @@ export function run(): void {
 export function runNested(): void {
   mutateNested();
 }`,
-      options: [{ ...zeroWeights, folderWeight: 5, max: 4 }],
+      options: [
+        {
+          declarationLineDistanceWeight: 0,
+          scopeWeight: 0,
+          fileWeight: 0,
+          maxScore: 9,
+        },
+      ],
       errors: [{ messageId: 'spaghetti', line: 3, column: 3 }],
     },
   ],

@@ -1,6 +1,6 @@
 import * as ts from 'typescript';
 
-export type BuiltInRecognizerName = 'javascript' | 'dom' | 'redux';
+export type BuiltInRecognizerName = 'javascript' | 'dom';
 
 export interface RecognizedApiCommand {
   /** A stable, human-readable API identifier, such as `Array.push`. */
@@ -34,11 +34,19 @@ export type ApiPatternResource = 'receiver' | 'argument';
  */
 interface ApiCommandPatternBase {
   name: string;
-  receiverNames?: string[];
   importSources?: string[];
-  resource?: ApiPatternResource;
   argumentIndex?: number;
 }
 
-export type ApiCommandPattern = ApiCommandPatternBase &
-  ({ methods: string[]; functions?: never } | { functions: string[]; methods?: never });
+export type ApiCommandPattern =
+  | (ApiCommandPatternBase & {
+      methods: string[];
+      functions?: never;
+      receiverNames?: string[];
+      resource?: ApiPatternResource;
+    })
+  | (ApiCommandPatternBase & {
+      functions: string[];
+      methods?: never;
+      resource?: 'argument';
+    });

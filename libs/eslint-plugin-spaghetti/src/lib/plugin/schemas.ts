@@ -13,14 +13,23 @@ const recognitionProperties: Record<string, unknown> = {
         resource: { enum: ['receiver', 'argument'] },
         argumentIndex: { type: 'integer', minimum: 0 },
       },
-      oneOf: [{ required: ['methods'] }, { required: ['functions'] }],
+      oneOf: [
+        { required: ['methods'], not: { required: ['functions'] } },
+        {
+          required: ['functions'],
+          not: {
+            anyOf: [{ required: ['methods'] }, { required: ['receiverNames'] }],
+          },
+          properties: { resource: { enum: ['argument'] } },
+        },
+      ],
       additionalProperties: false,
     },
   },
   builtInRecognizers: {
     type: 'array',
     uniqueItems: true,
-    items: { enum: ['javascript', 'dom', 'redux'] },
+    items: { enum: ['javascript', 'dom'] },
   },
 };
 
@@ -28,16 +37,12 @@ export const noSpaghettiSchema = [
   {
     type: 'object',
     properties: {
-      max: { type: 'number', minimum: 0 },
-      declarationLineWeight: { type: 'number', minimum: 0 },
-      sameFunctionWeight: { type: 'number', minimum: 0 },
+      maxScore: { type: 'number', minimum: 0 },
+      declarationLineDistanceWeight: { type: 'number', minimum: 0 },
       scopeWeight: { type: 'number', minimum: 0 },
-      functionCallWeight: { type: 'number', minimum: 0 },
       fileWeight: { type: 'number', minimum: 0 },
       folderWeight: { type: 'number', minimum: 0 },
-      externalPenalty: {
-        anyOf: [{ type: 'number', minimum: 0 }, { enum: ['maximum', 'ignore'] }],
-      },
+      externalPenalty: { type: 'number', minimum: 0 },
       allowedCalls: {
         type: 'array',
         uniqueItems: true,

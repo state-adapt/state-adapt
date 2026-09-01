@@ -6,7 +6,7 @@ Known mutation APIs are represented as `api-command` commands only when general 
 does not already identify the operation as imperative and the API returns a usable
 value. For example, bare calls are general `discarded-call` commands, while a nested
 `values.push(value)` needs API recognition because `push` returns the new length.
-JavaScript, DOM, and Redux recognizers are enabled by default. Void-only mutation APIs,
+JavaScript and DOM recognizers are enabled by default. Void-only mutation APIs,
 including RxJS subjects, React setters, Angular signals, and StateAdapt stores, do not
 need built-in fallback recognizers.
 Programmatic consumers can supply `CommandRecognizer` objects. JSON and ESLint

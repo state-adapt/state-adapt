@@ -181,7 +181,6 @@ state-adapt
 react
 angular
 rxjs
-redux
 ```
 
 Each recognizer only answers:
@@ -291,7 +290,7 @@ And I have committed the work done up to now.
 
 - Known APIs produce a single `api-command` carrying stable API and recognizer names; resolved project functions still expand to their downstream commands instead.
 - Recognizers only identify the API and resource expression. Shared analysis owns declarations, remoteness, distance, propagation, recursion handling, and score.
-- Three built-in recognizer families are enabled by default and can be selected individually. Programmatic recognizers run first, followed by JSON-friendly custom patterns and built-ins.
+- The JavaScript and DOM recognizer families are enabled by default and can be selected individually. Programmatic recognizers run first, followed by JSON-friendly custom patterns and built-ins.
 - Custom patterns support method or function calls, optional receiver/import constraints, and receiver- or argument-based resources. The same shape is accepted by ESLint and report CLI configuration.
 - V3 adds one configurable `api-command` base score; richer per-API scoring remains V4 work.
 
@@ -311,7 +310,7 @@ And I have committed the work done up to now.
 
 - General syntax detection takes precedence over API-specific recognition. Bare call statements, including awaited or syntax-wrapped calls, are `discarded-call` commands without consulting recognizers.
 - API-specific, custom, and programmatic recognizers are fallbacks only for imperative calls embedded in value-producing contexts that the general statement rule would otherwise miss.
-- Built-in fallbacks are limited to mutation APIs with usable return values. JavaScript, DOM, and Redux remain; the StateAdapt, React, Angular, and RxJS families are removed because their recognized mutations return `void`.
+- Built-in fallbacks are limited to JavaScript and DOM mutation APIs with usable return values.
 
 ---
 
@@ -320,8 +319,6 @@ And I have committed the work done up to now.
 - A built-in API recognizer exists only when a mutation returns a value that can realistically participate in an initializer, return, argument, condition, or other value context. Bare calls are already covered by general discarded-call detection.
 - JavaScript retains mutating Array methods and the value-returning Map/Set methods `add`, `delete`, and `set`. `clear` is omitted because it returns `void`.
 - DOM retains `appendChild`, `insertAdjacentElement`, `removeChild`, `replaceChild`, and `toggleAttribute`, plus `DOMTokenList.replace` and `DOMTokenList.toggle`. Other previously listed DOM mutations return `void`.
-- Redux retains `dispatch` because Redux returns the dispatched action, a contract commonly used by middleware and callers.
-- StateAdapt store reactions, React setters and reducer dispatchers, Angular signal writes, and RxJS subject emissions return `void`, so those built-in recognizer families are removed.
 
 ---
 
@@ -338,8 +335,18 @@ And I have committed the work done up to now.
 
 - Aggregate function, file, and project scores remain analyzer concerns. ESLint reports individual command or caller lines.
 - The ESLint plugin exposes one primary `no-spaghetti` rule instead of independently enforcing maximum score, command count, command distance, and remote mutation.
-- `no-spaghetti` assesses each command using configurable declaration, same-function, scope, call, file, and folder distance weights. It does not use aggregate function scores or function-size penalties.
+- `no-spaghetti` assesses each command using configurable declaration-line, scope, file, and folder weights. `maxScore` is the maximum aggregate command score allowed and defaults to `6`. It does not use aggregate function scores, fixed call penalties, or function-size penalties.
 - Generic method calls use their receiver as the resource when possible. Calls without a resolvable implementation or resource receive a configurable external-call penalty.
-- External calls use the maximum penalty by default. Consumers may configure a numeric penalty or ignore them; explicit API and call allowlists take precedence.
+- Unresolved external commands receive a numeric penalty of `200` by default; explicit API and call allowlists take precedence.
 - JSX event handlers receive one command allowance, applied to the command with the highest ESLint policy score. Other commands in the handler are assessed normally.
 - API-specific and consumer-configured recognizers only improve command and resource detection; they do not create separate lint policies.
+
+---
+
+## Trace-based ESLint scoring defaults
+
+- Command scores model the effort required to trace cause and effect: declaration-line distance and lexical scope crossings default to `1`, file crossings to `30`, directory edges to `10`, and unresolved external commands to `200`.
+- Resolved calls extend the trace. Same-file calls accumulate call-to-declaration line distance; cross-file calls accumulate file and folder crossings. Calls have no fixed score merely for existing.
+- Direct references to resources in other analyzed files use the same file and folder units as resolved calls. Only unresolved targets and resources outside the analyzed program receive the external penalty.
+- `maxScore` defaults to `6`; equal scores are allowed and higher scores are reported.
+- JavaScript and DOM are the only built-in API recognizer families. Redux support belongs outside this plugin.

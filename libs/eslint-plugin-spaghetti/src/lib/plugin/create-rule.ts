@@ -14,7 +14,7 @@ export function createRule(
       schema,
       messages: {
         spaghetti:
-          '{{kind}} command has policy distance {{actual}}, above the configured maximum of {{max}}.{{reason}}',
+          '{{kind}} command has score {{actual}}, above the configured maximum score of {{maxScore}}.{{reason}}',
         analysisTruncated:
           '{{name}} has incomplete analysis because a configured graph limit was reached.',
       },

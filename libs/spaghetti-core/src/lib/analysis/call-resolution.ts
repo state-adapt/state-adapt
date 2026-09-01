@@ -142,7 +142,9 @@ export function hopDistance(
     caller.scopes.get(call.node),
   );
   return {
-    declarationLine: 0,
+    declarationLine: sameFile
+      ? Math.abs(call.location.start.line - callee.location.start.line)
+      : 0,
     sameFunction: Math.max(0, call.location.start.line - caller.location.start.line),
     scope: resolution?.scopeDistance ?? 0,
     functionCall: 1,
@@ -151,7 +153,7 @@ export function hopDistance(
   };
 }
 
-function folderDistance(left: string, right: string): number {
+export function folderDistance(left: string, right: string): number {
   const leftParts = left.split(path.sep).filter(Boolean);
   const rightParts = right.split(path.sep).filter(Boolean);
   let shared = 0;
