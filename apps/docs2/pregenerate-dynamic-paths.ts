@@ -2,8 +2,10 @@ import { writeFileSync } from 'fs';
 import angularConfig from './docs/api/angular/index/symbol.paths';
 import adaptersConfig from './docs/api/core/adapters/symbol.paths';
 import coreConfig from './docs/api/core/src/symbol.paths';
+import eslintSpaghettiConfig from './docs/api/eslint-plugin-spaghetti/index/symbol.paths';
 import reactConfig from './docs/api/react/index/symbol.paths';
 import rxjsConfig from './docs/api/rxjs/index/symbol.paths';
+import spaghettiAnalyzerConfig from './docs/api/spaghetti-analyzer/index/symbol.paths';
 import { join } from 'path';
 
 function getFrontmatter(url: string) {
@@ -32,5 +34,13 @@ function createMdFromContent(dir: string, paths: ReturnType<typeof angularConfig
 createMdFromContent('./docs/api/angular/index', angularConfig.paths());
 createMdFromContent('./docs/api/core/adapters', adaptersConfig.paths());
 createMdFromContent('./docs/api/core/src', coreConfig.paths());
+createMdFromContent(
+  './docs/api/eslint-plugin-spaghetti/index',
+  eslintSpaghettiConfig.paths(),
+);
 createMdFromContent('./docs/api/react/index', reactConfig.paths());
 createMdFromContent('./docs/api/rxjs/index', rxjsConfig.paths());
+createMdFromContent(
+  './docs/api/spaghetti-analyzer/index',
+  spaghettiAnalyzerConfig.paths(),
+);

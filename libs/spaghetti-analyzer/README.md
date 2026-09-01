@@ -1,16 +1,24 @@
 # @state-adapt/spaghetti-analyzer
 
-Human-readable and JSON project reports, including downstream command chains, powered by `@state-adapt/spaghetti-core`.
+Analyze a TypeScript project for spaghetti code and produce human-readable or JSON reports.
 
-Both formats include visualization-ready rankings for hotspots, functions,
-files, chains, and distances. Use `--top`, `--history`, and `--label` to control
-rankings and supply caller-owned score snapshots; the report never persists
-history implicitly.
+## Setup
 
-## Building
+```sh
+npm install --save-dev @state-adapt/spaghetti-analyzer @state-adapt/spaghetti-core
+```
 
-Run `nx build spaghetti-analyzer` to build the library.
+Analyze the current project:
 
-## Running unit tests
+```sh
+npx spaghetti-analyzer .
+```
 
-Run `nx test spaghetti-analyzer` to execute the unit tests via [Jest](https://jestjs.io).
+Use `--json` for machine-readable output, `--compact` for compact JSON, and
+`--top` to control the number of ranked results. Run
+`npx spaghetti-analyzer --help` for all CLI options.
+
+The package also exports functions for creating, formatting, and visualizing
+reports programmatically.
+
+See the [API reference](https://state-adapt.github.io/api/spaghetti-analyzer/index/) for the programmatic API.

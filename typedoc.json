@@ -7,7 +7,9 @@
     // "libs/core/adapters",
     "libs/rxjs",
     "libs/angular",
-    "libs/react"
+    "libs/react",
+    "libs/eslint-plugin-spaghetti",
+    "libs/spaghetti-analyzer"
   ],
   "sortEntryPoints": false,
   "packageOptions": {

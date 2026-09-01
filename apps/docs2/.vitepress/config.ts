@@ -8,7 +8,9 @@ import { version } from '../../../libs/core/package.json';
 import typedocSidebar from '../docs/api/typedoc/typedoc-sidebar.json';
 import adapterPaths from '../docs/api/core/adapters/symbol.paths';
 import corePaths from '../docs/api/core/src/symbol.paths';
+import eslintSpaghettiPaths from '../docs/api/eslint-plugin-spaghetti/index/symbol.paths';
 import rxjsPaths from '../docs/api/rxjs/index/symbol.paths';
+import spaghettiAnalyzerPaths from '../docs/api/spaghetti-analyzer/index/symbol.paths';
 import angularPaths from '../docs/api/angular/index/symbol.paths';
 import reactPaths from '../docs/api/react/index/symbol.paths';
 import apiPackages from '../docs/api/packages.json';
@@ -286,6 +288,24 @@ function getApiSidebar(): DefaultTheme.SidebarItem[] {
       link: packageLink('@state-adapt/react'),
       collapsed: true,
       items: [...getLibSectionItems(reactPaths.sections())],
+    },
+    {
+      text: '@state-adapt/eslint-plugin-spaghetti',
+      link: packageLink('@state-adapt/eslint-plugin-spaghetti'),
+      collapsed: true,
+      items: [
+        {
+          text: 'no-spaghetti',
+          link: '/api/eslint-plugin-spaghetti/rules/no-spaghetti',
+        },
+        ...getLibSectionItems(eslintSpaghettiPaths.sections()),
+      ],
+    },
+    {
+      text: '@state-adapt/spaghetti-analyzer',
+      link: packageLink('@state-adapt/spaghetti-analyzer'),
+      collapsed: true,
+      items: [...getLibSectionItems(spaghettiAnalyzerPaths.sections())],
     },
     // { text: '@state-adapt/solid', link: `/api/solid` },
     // { text: '@state-adapt/svelte', link: `/api/svelte` },
