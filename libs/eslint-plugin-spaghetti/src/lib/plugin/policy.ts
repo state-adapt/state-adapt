@@ -37,15 +37,21 @@ export function isAllowlisted(command: Command, policy: CommandPolicy): boolean 
   );
 }
 
-export function policyScore(command: Command, policy: CommandPolicy): number {
+export function policyScore(
+  command: Command,
+  policy: CommandPolicy,
+): { score: number; exceedsLimit: boolean } {
   const distance = command.distance;
-  const weighted =
-    distance.declarationLine * policy.weights.declarationLine +
-    distance.scope * policy.weights.scope +
-    distance.file * policy.weights.file +
-    distance.folder * policy.weights.folder;
-  if (!command.external) return weighted;
-  return weighted + policy.externalPenalty;
+  let score = distance.declarationLine * policy.weights.declarationLine;
+  if (score > policy.maxScore) return { score, exceedsLimit: true };
+  score += distance.scope * policy.weights.scope;
+  if (score > policy.maxScore) return { score, exceedsLimit: true };
+  score += distance.file * policy.weights.file;
+  if (score > policy.maxScore) return { score, exceedsLimit: true };
+  score += distance.folder * policy.weights.folder;
+  if (score > policy.maxScore) return { score, exceedsLimit: true };
+  if (command.external) score += policy.externalPenalty;
+  return { score, exceedsLimit: score > policy.maxScore };
 }
 
 function stringArray(value: unknown): string[] {

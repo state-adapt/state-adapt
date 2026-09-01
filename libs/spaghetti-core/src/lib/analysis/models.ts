@@ -154,6 +154,8 @@ export interface AnalysisOptions {
   maxCommandsPerFunction?: number;
   /** Disable propagation across files while retaining checker-backed local analysis. */
   crossFileAnalysis?: boolean;
+  /** Stop expanding a resolved call once its weighted call-boundary distance exceeds this limit. */
+  maxCallBoundaryScore?: number;
 }
 
 export const defaultScoring: ScoringConfig = {

@@ -120,6 +120,51 @@ function root() { middle(); }`,
     expect(result.functions.find(fn => fn.name === 'root')?.commands).toEqual([]);
   });
 
+  it('stops call expansion after a weighted call boundary exceeds a limit', () => {
+    const result = analyzeFile(
+      `function leaf(value: { current: number }) { value.current = 1; }
+function root(value: { current: number }) { leaf(value); }`,
+      'direct-calls.ts',
+      {
+        maxCallBoundaryScore: 0,
+        scoring: { declarationLineDistanceWeight: 1 },
+      },
+    );
+
+    expect(result.functions.find(fn => fn.name === 'root')?.commands).toMatchObject([
+      { kind: 'discarded-call', call: 'leaf', callPath: [] },
+    ]);
+
+    const concise = analyzeFile(
+      `function leaf(): void { globalThis.value = 1; }
+const root = () => leaf();`,
+      'concise-call.ts',
+      {
+        maxCallBoundaryScore: 0,
+        scoring: { declarationLineDistanceWeight: 1 },
+      },
+    );
+    expect(concise.functions.find(fn => fn.name === 'root')?.commands).toMatchObject([
+      { kind: 'discarded-call', call: 'leaf', callPath: [] },
+    ]);
+  });
+
+  it('expands a value-used call even when its boundary exceeds the limit', () => {
+    const result = analyzeFile(
+      `function leaf(value: { current: number }) { value.current = 1; return value.current; }
+function root(value: { current: number }) { return leaf(value); }`,
+      'value-used-call.ts',
+      {
+        maxCallBoundaryScore: 0,
+        scoring: { declarationLineDistanceWeight: 1 },
+      },
+    );
+
+    expect(result.functions.find(fn => fn.name === 'root')?.commands).toMatchObject([
+      { kind: 'property-assignment', callPath: [{ distance: { declarationLine: 1 } }] },
+    ]);
+  });
+
   it('bounds materialized commands per function', () => {
     const result = analyzeFile(
       `function leaf() { globalThis.one = 1; globalThis.two = 2; globalThis.three = 3; }

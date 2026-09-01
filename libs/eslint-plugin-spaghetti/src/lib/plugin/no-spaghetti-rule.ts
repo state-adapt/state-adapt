@@ -1,4 +1,3 @@
-import { Command } from '@state-adapt/spaghetti-core';
 import { createRule } from './create-rule';
 import { commandPolicy, isAllowlisted, policyScore } from './policy';
 import { format, reportCommand } from './reporting';
@@ -10,29 +9,21 @@ export const noSpaghetti = createRule(
   (context, options, functions) => {
     const policy = commandPolicy(options);
     functions.forEach(fn => {
-      const assessed = fn.commands
-        .filter(command => !isAllowlisted(command, policy))
-        .map(command => ({ command, score: policyScore(command, policy) }));
-      const eventAllowance = fn.jsxEventHandler ? highestCommand(assessed) : undefined;
-      assessed
-        .filter(entry => entry !== eventAllowance && entry.score > policy.maxScore)
-        .forEach(({ command, score }) =>
-          reportCommand(context, command, {
-            kind: command.kind,
-            actual: format(score),
-            maxScore: format(policy.maxScore),
-            reason: command.external ? ' External target.' : '',
-          }),
-        );
+      let eventAllowance = fn.jsxEventHandler;
+      fn.commands.forEach(command => {
+        if (isAllowlisted(command, policy)) return;
+        const assessment = policyScore(command, policy);
+        if (!assessment.exceedsLimit) return;
+        if (eventAllowance) {
+          eventAllowance = false;
+          return;
+        }
+        reportCommand(context, command, {
+          kind: command.kind,
+          maxScore: format(policy.maxScore),
+          reason: command.external ? ' External target.' : '',
+        });
+      });
     });
   },
 );
-
-function highestCommand<T extends { command: Command; score: number }>(
-  commands: T[],
-): T | undefined {
-  return commands.reduce<T | undefined>(
-    (highest, current) => (!highest || current.score > highest.score ? current : highest),
-    undefined,
-  );
-}

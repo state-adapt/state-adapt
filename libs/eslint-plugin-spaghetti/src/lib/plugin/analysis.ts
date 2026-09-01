@@ -5,12 +5,19 @@ import {
 } from '@state-adapt/spaghetti-core';
 import { Rule } from 'eslint';
 import { RuleOptions } from './types';
+import { commandPolicy } from './policy';
 
 const cacheByProgram = new WeakMap<object, Map<string, FileAnalysis[]>>();
 
 function analysisOptions(options: RuleOptions): AnalysisOptions {
   const apiPatterns = options['apiPatterns'];
   const builtIns = options['builtInRecognizers'];
+  const allowedCalls = options['allowedCalls'];
+  const allowedApis = options['allowedApis'];
+  const hasAllowlists =
+    (Array.isArray(allowedCalls) && allowedCalls.length > 0) ||
+    (Array.isArray(allowedApis) && allowedApis.length > 0);
+  const policy = commandPolicy(options);
   return {
     ...(Array.isArray(apiPatterns)
       ? { apiPatterns: apiPatterns as AnalysisOptions['apiPatterns'] }
@@ -25,6 +32,29 @@ function analysisOptions(options: RuleOptions): AnalysisOptions {
       ? { maxCommandsPerFunction: options['maxCommandsPerFunction'] }
       : {}),
     crossFileAnalysis: options['crossFileAnalysis'] !== false,
+    ...(!hasAllowlists
+      ? {
+          maxCallBoundaryScore: policy.maxScore,
+          scoring: {
+            baseScores: {
+              'discarded-call': 0,
+              assignment: 0,
+              'property-assignment': 0,
+              increment: 0,
+              decrement: 0,
+              delete: 0,
+              'api-command': 0,
+            },
+            declarationLineDistanceWeight: policy.weights.declarationLine,
+            sameFunctionDistanceWeight: 0,
+            scopeCrossingWeight: policy.weights.scope,
+            fileCrossingWeight: policy.weights.file,
+            folderCrossingWeight: policy.weights.folder,
+            functionCallDistanceWeight: 0,
+            functionSizeWeight: 0,
+          },
+        }
+      : {}),
   };
 }
 

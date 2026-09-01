@@ -133,6 +133,7 @@ function analyzeSourceFiles(
   const fileBySource = new Map(drafts.map(file => [file.sourceFile, file]));
   const edges = new Map<string, Array<{ callee: FunctionDraft; hop: CommandHop }>>();
   const resolvedCallStarts = new Map<string, Set<string>>();
+  const scoring = scoringConfig(options);
   allFunctions.forEach(caller => {
     const callerFile = fileBySource.get(caller.sourceFile);
     if (!callerFile) return;
@@ -142,6 +143,12 @@ function analyzeSourceFiles(
       if (options.crossFileAnalysis === false && callee.sourceFile !== caller.sourceFile)
         return;
       const distance = hopDistance(call, caller, callee);
+      if (
+        options.maxCallBoundaryScore !== undefined &&
+        hasDirectDiscardedCall(caller, call) &&
+        weightedCallBoundary(distance, scoring) > options.maxCallBoundaryScore
+      )
+        return;
       const hop: CommandHop = {
         caller: caller.functionId,
         callee: callee.functionId,
@@ -159,7 +166,6 @@ function analyzeSourceFiles(
       resolvedCallStarts.set(caller.functionId, starts);
     });
   });
-  const scoring = scoringConfig(options);
   const cyclicOrReachable = functionsReachingCycles(edges, allFunctions);
   const expansionCache = new Map<string, { commands: Command[]; truncated: boolean }>();
   allFunctions.forEach(fn => {
@@ -198,4 +204,29 @@ function analyzeSourceFiles(
       ...(truncated ? { truncated: true } : {}),
     };
   });
+}
+
+function hasDirectDiscardedCall(
+  caller: FunctionDraft,
+  call: FunctionDraft['calls'][number],
+): boolean {
+  const starts = new Set([locationStartKey(call.location)]);
+  if (call.directCommandLocation)
+    starts.add(locationStartKey(call.directCommandLocation));
+  return caller.directCommands.some(
+    command =>
+      command.kind === 'discarded-call' && starts.has(locationStartKey(command.location)),
+  );
+}
+
+function weightedCallBoundary(
+  distance: CommandHop['distance'],
+  scoring: ReturnType<typeof scoringConfig>,
+): number {
+  return (
+    distance.declarationLine * scoring.declarationLineDistanceWeight +
+    distance.scope * scoring.scopeCrossingWeight +
+    distance.file * scoring.fileCrossingWeight +
+    distance.folder * scoring.folderCrossingWeight
+  );
 }

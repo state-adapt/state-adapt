@@ -23,6 +23,6 @@ Unresolved external commands receive a score penalty of `200`. Use `allowedCalls
 
 For project-specific command APIs, see the complete [`apiPatterns` example](/api/eslint-plugin-spaghetti/index/NoSpaghettiApiPattern).
 
-In a JSX event handler, the command with the highest score is exempt. Remaining commands are evaluated normally.
+In a JSX event handler, one command over `maxScore` is allowed. Additional over-threshold commands are reported; allowlisted commands do not consume the allowance.
 
 See [`NoSpaghettiOptions`](/api/eslint-plugin-spaghetti/index/NoSpaghettiOptions) for the default policy, a worked example, and the complete option reference.

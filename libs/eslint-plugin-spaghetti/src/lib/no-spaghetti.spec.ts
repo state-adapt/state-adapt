@@ -252,6 +252,19 @@ function caller(value: { current: number }) { leaf(value); }`,
     },
     {
       filename: typedScratch,
+      code: `function leaf(value: { current: number }) { value.current = 1; return value.current; }
+function caller(value: { current: number }) { return leaf(value); }`,
+      options: [{ ...zeroWeights, declarationLineDistanceWeight: 1, maxScore: 0 }],
+      errors: [
+        {
+          messageId: 'spaghetti',
+          line: 2,
+          data: { kind: 'property-assignment', maxScore: '0', reason: '' },
+        },
+      ],
+    },
+    {
+      filename: typedScratch,
       code: 'declare function external(): void; function run() { external(); }',
       options: [{ ...zeroWeights }],
       errors: [
@@ -322,12 +335,12 @@ const view = <button onClick={event => {
       errors: [
         {
           messageId: 'spaghetti',
-          line: 4,
+          line: 5,
           data: {
             kind: 'discarded-call',
-            actual: '1',
+            actual: '3',
             maxScore: '0',
-            reason: '',
+            reason: ' External target.',
           },
         },
       ],
@@ -338,20 +351,20 @@ const view = <button onClick={event => {
 declare function first(): void;
 declare function second(): void;
 const view = <button onClick={event => {
-  event.preventDefault();
   first();
+  event.preventDefault();
   second();
 }} />;`,
       options: [{ maxScore: 0, allowedCalls: ['first'] }],
       errors: [
         {
           messageId: 'spaghetti',
-          line: 5,
+          line: 7,
           data: {
             kind: 'discarded-call',
-            actual: '1',
+            actual: '4',
             maxScore: '0',
-            reason: '',
+            reason: ' External target.',
           },
         },
       ],
@@ -395,7 +408,7 @@ export function mutateNestedResource(): void {
         {
           messageId: 'spaghetti',
           line: 4,
-          data: { kind: 'increment', actual: '51', maxScore: '6', reason: '' },
+          data: { kind: 'increment', actual: '31', maxScore: '6', reason: '' },
         },
       ],
     },
@@ -411,6 +424,30 @@ export function run(): void {
           scopeWeight: 0,
           folderWeight: 0,
           maxScore: 29,
+        },
+      ],
+      errors: [
+        {
+          messageId: 'spaghetti',
+          line: 3,
+          column: 3,
+          data: { kind: 'discarded-call', maxScore: '29', reason: '' },
+        },
+      ],
+    },
+    {
+      filename: typedCaller,
+      code: `import { mutate } from './effect';
+export function run(): void {
+  mutate();
+}`,
+      options: [
+        {
+          declarationLineDistanceWeight: 0,
+          scopeWeight: 0,
+          folderWeight: 0,
+          maxScore: 29,
+          allowedCalls: ['unrelated'],
         },
       ],
       errors: [

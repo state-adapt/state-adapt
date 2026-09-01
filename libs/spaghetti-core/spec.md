@@ -327,7 +327,7 @@ And I have committed the work done up to now.
 - Type-aware analysis is required. Analysis uses a reusable TypeScript program and checker, and a concise arrow body whose expression is definitely `void` is a command.
 - Cross-file analysis is enabled by default with an explicit opt-out. It resolves the project graph and accumulates call, scope, file, and folder crossings without rebuilding the program per file. Folder distance counts directory edges between caller and callee; file- and folder-crossing weights are independently configurable.
 - ESLint reuses and caches the parser's TypeScript program and project graph. Call-path expansion is bounded, and incomplete results are surfaced rather than silently treated as complete.
-- JSX attributes named like events (`on` followed by an uppercase letter) receive an allowance for one imperative command. Handlers may be concise, multiline, or block-bodied; the allowance applies to the highest-scoring command.
+- JSX attributes named like events (`on` followed by an uppercase letter) receive an allowance for one over-threshold imperative command. Handlers may be concise, multiline, or block-bodied.
 
 ---
 
@@ -338,7 +338,7 @@ And I have committed the work done up to now.
 - `no-spaghetti` assesses each command using configurable declaration-line, scope, file, and folder weights. `maxScore` is the maximum aggregate command score allowed and defaults to `6`. It does not use aggregate function scores, fixed call penalties, or function-size penalties.
 - Generic method calls use their receiver as the resource when possible. Calls without a resolvable implementation or resource receive a configurable external-call penalty.
 - Unresolved external commands receive a numeric penalty of `200` by default; explicit API and call allowlists take precedence.
-- JSX event handlers receive one command allowance, applied to the command with the highest ESLint policy score. Other commands in the handler are assessed normally.
+- JSX event handlers receive one allowance for an over-threshold command. Subsequent over-threshold commands are reported normally; allowlisted commands do not consume the allowance.
 - API-specific and consumer-configured recognizers only improve command and resource detection; they do not create separate lint policies.
 
 ---
@@ -349,4 +349,5 @@ And I have committed the work done up to now.
 - Resolved calls extend the trace. Same-file calls accumulate call-to-declaration line distance; cross-file calls accumulate file and folder crossings. Calls have no fixed score merely for existing.
 - Direct references to resources in other analyzed files use the same file and folder units as resolved calls. Only unresolved targets and resources outside the analyzed program receive the external penalty.
 - `maxScore` defaults to `6`; equal scores are allowed and higher scores are reported.
+- ESLint scoring stops once a command is known to exceed `maxScore`. Without configured allowlists, call-chain expansion stops at any call boundary that already exceeds the limit; full call-chain scoring remains available to the analyzer.
 - JavaScript and DOM are the only built-in API recognizer families. Redux support belongs outside this plugin.
