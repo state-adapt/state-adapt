@@ -1,12 +1,13 @@
 ---
-definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/eslint-plugin-spaghetti/src/lib/no-spaghetti-options.ts#L19
+definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/eslint-plugin-spaghetti/src/lib/no-spaghetti-options.ts#L25
 ---
 
 # Interface: NoSpaghettiFunctionApiPattern
 
-Defined in: [lib/no-spaghetti-options.ts:19](https://github.com/state-adapt/state-adapt/blob/main/libs/eslint-plugin-spaghetti/src/lib/no-spaghetti-options.ts#L19)
+Defined in: [lib/no-spaghetti-options.ts:25](https://github.com/state-adapt/state-adapt/blob/main/libs/eslint-plugin-spaghetti/src/lib/no-spaghetti-options.ts#L25)
 
-Configures recognition for a project-specific function API.
+Use this pattern for standalone command functions, such as `writeCache(cache)`.
+One of the function arguments is treated as the affected resource.
 
 ## Properties
 
@@ -14,7 +15,7 @@ Configures recognition for a project-specific function API.
 
 > `optional` **argumentIndex**: `number`
 
-Defined in: [lib/no-spaghetti-options.ts:30](https://github.com/state-adapt/state-adapt/blob/main/libs/eslint-plugin-spaghetti/src/lib/no-spaghetti-options.ts#L30)
+Defined in: [lib/no-spaghetti-options.ts:36](https://github.com/state-adapt/state-adapt/blob/main/libs/eslint-plugin-spaghetti/src/lib/no-spaghetti-options.ts#L36)
 
 Selects the argument used to calculate the command score. `0` means the first argument.
 
@@ -24,7 +25,7 @@ Selects the argument used to calculate the command score. `0` means the first ar
 
 > **functions**: `string`[]
 
-Defined in: [lib/no-spaghetti-options.ts:23](https://github.com/state-adapt/state-adapt/blob/main/libs/eslint-plugin-spaghetti/src/lib/no-spaghetti-options.ts#L23)
+Defined in: [lib/no-spaghetti-options.ts:29](https://github.com/state-adapt/state-adapt/blob/main/libs/eslint-plugin-spaghetti/src/lib/no-spaghetti-options.ts#L29)
 
 Lists command function names, such as `writeCache` in `writeCache(cache)`.
 
@@ -34,7 +35,7 @@ Lists command function names, such as `writeCache` in `writeCache(cache)`.
 
 > `optional` **importSources**: `string`[]
 
-Defined in: [lib/no-spaghetti-options.ts:26](https://github.com/state-adapt/state-adapt/blob/main/libs/eslint-plugin-spaghetti/src/lib/no-spaghetti-options.ts#L26)
+Defined in: [lib/no-spaghetti-options.ts:32](https://github.com/state-adapt/state-adapt/blob/main/libs/eslint-plugin-spaghetti/src/lib/no-spaghetti-options.ts#L32)
 
 Restricts recognition to APIs imported from these module specifiers.
 
@@ -44,7 +45,7 @@ Restricts recognition to APIs imported from these module specifiers.
 
 > **name**: `string`
 
-Defined in: [lib/no-spaghetti-options.ts:21](https://github.com/state-adapt/state-adapt/blob/main/libs/eslint-plugin-spaghetti/src/lib/no-spaghetti-options.ts#L21)
+Defined in: [lib/no-spaghetti-options.ts:27](https://github.com/state-adapt/state-adapt/blob/main/libs/eslint-plugin-spaghetti/src/lib/no-spaghetti-options.ts#L27)
 
 Names the pattern so it can be referenced by `allowedApis`.
 
@@ -54,6 +55,6 @@ Names the pattern so it can be referenced by `allowedApis`.
 
 > `optional` **resource**: `"argument"`
 
-Defined in: [lib/no-spaghetti-options.ts:28](https://github.com/state-adapt/state-adapt/blob/main/libs/eslint-plugin-spaghetti/src/lib/no-spaghetti-options.ts#L28)
+Defined in: [lib/no-spaghetti-options.ts:34](https://github.com/state-adapt/state-adapt/blob/main/libs/eslint-plugin-spaghetti/src/lib/no-spaghetti-options.ts#L34)
 
 Uses the argument selected by `argumentIndex` to calculate the command score.

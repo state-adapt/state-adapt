@@ -1,10 +1,10 @@
 ---
-definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/eslint-plugin-spaghetti/src/lib/no-spaghetti-options.ts#L122
+definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/eslint-plugin-spaghetti/src/lib/no-spaghetti-options.ts#L136
 ---
 
 # Interface: NoSpaghettiOptions
 
-Defined in: [lib/no-spaghetti-options.ts:122](https://github.com/state-adapt/state-adapt/blob/main/libs/eslint-plugin-spaghetti/src/lib/no-spaghetti-options.ts#L122)
+Defined in: [lib/no-spaghetti-options.ts:136](https://github.com/state-adapt/state-adapt/blob/main/libs/eslint-plugin-spaghetti/src/lib/no-spaghetti-options.ts#L136)
 
 Configures which commands the `@state-adapt/spaghetti/no-spaghetti` rule reports
 and how it calculates each command's score.
@@ -53,7 +53,7 @@ or a direct reference to a resource in another file receives at least
 
 > `optional` **allowedApis**: `string`[]
 
-Defined in: [lib/no-spaghetti-options.ts:173](https://github.com/state-adapt/state-adapt/blob/main/libs/eslint-plugin-spaghetti/src/lib/no-spaghetti-options.ts#L173)
+Defined in: [lib/no-spaghetti-options.ts:187](https://github.com/state-adapt/state-adapt/blob/main/libs/eslint-plugin-spaghetti/src/lib/no-spaghetti-options.ts#L187)
 
 Lists recognized API names that never produce warnings, regardless of score.
 These are built-in names such as `"Array.push"` or the `name` of a custom
@@ -65,7 +65,7 @@ These are built-in names such as `"Array.push"` or the `name` of a custom
 
 > `optional` **allowedCalls**: `string`[]
 
-Defined in: [lib/no-spaghetti-options.ts:167](https://github.com/state-adapt/state-adapt/blob/main/libs/eslint-plugin-spaghetti/src/lib/no-spaghetti-options.ts#L167)
+Defined in: [lib/no-spaghetti-options.ts:181](https://github.com/state-adapt/state-adapt/blob/main/libs/eslint-plugin-spaghetti/src/lib/no-spaghetti-options.ts#L181)
 
 Lists exact source-level call names that never produce warnings, regardless of
 score. For example, `"console.log"` matches `console.log()`. Defaults to an
@@ -77,7 +77,7 @@ empty list.
 
 > `optional` **apiPatterns**: [`NoSpaghettiApiPattern`](NoSpaghettiApiPattern.md)[]
 
-Defined in: [lib/no-spaghetti-options.ts:198](https://github.com/state-adapt/state-adapt/blob/main/libs/eslint-plugin-spaghetti/src/lib/no-spaghetti-options.ts#L198)
+Defined in: [lib/no-spaghetti-options.ts:212](https://github.com/state-adapt/state-adapt/blob/main/libs/eslint-plugin-spaghetti/src/lib/no-spaghetti-options.ts#L212)
 
 Defines project-specific call patterns that should be recognized as commands
 when general command detection would otherwise miss them. Each pattern also
@@ -90,7 +90,7 @@ empty list.
 
 > `optional` **builtInRecognizers**: (`"javascript"` \| `"dom"`)[]
 
-Defined in: [lib/no-spaghetti-options.ts:204](https://github.com/state-adapt/state-adapt/blob/main/libs/eslint-plugin-spaghetti/src/lib/no-spaghetti-options.ts#L204)
+Defined in: [lib/no-spaghetti-options.ts:218](https://github.com/state-adapt/state-adapt/blob/main/libs/eslint-plugin-spaghetti/src/lib/no-spaghetti-options.ts#L218)
 
 Selects the API-specific recognizer families used in addition to general
 command detection. JavaScript collection and DOM mutation recognizers are
@@ -102,7 +102,7 @@ enabled by default; an empty list disables both.
 
 > `optional` **crossFileAnalysis**: `boolean`
 
-Defined in: [lib/no-spaghetti-options.ts:179](https://github.com/state-adapt/state-adapt/blob/main/libs/eslint-plugin-spaghetti/src/lib/no-spaghetti-options.ts#L179)
+Defined in: [lib/no-spaghetti-options.ts:193](https://github.com/state-adapt/state-adapt/blob/main/libs/eslint-plugin-spaghetti/src/lib/no-spaghetti-options.ts#L193)
 
 Determines whether a command found in another file is propagated back
 through a resolved call and assessed at the caller. Setting this to `false`
@@ -114,7 +114,7 @@ retains direct-command and same-file analysis. Defaults to `true`.
 
 > `optional` **declarationLineDistanceWeight**: `number`
 
-Defined in: [lib/no-spaghetti-options.ts:134](https://github.com/state-adapt/state-adapt/blob/main/libs/eslint-plugin-spaghetti/src/lib/no-spaghetti-options.ts#L134)
+Defined in: [lib/no-spaghetti-options.ts:148](https://github.com/state-adapt/state-adapt/blob/main/libs/eslint-plugin-spaghetti/src/lib/no-spaghetti-options.ts#L148)
 
 Multiplies the source-line distance from a command to the declaration it
 mutates. For resolved calls in the same file, it also multiplies the line
@@ -127,7 +127,7 @@ distance from each call site to the called function's declaration. Lines 1 and
 
 > `optional` **externalPenalty**: `number`
 
-Defined in: [lib/no-spaghetti-options.ts:161](https://github.com/state-adapt/state-adapt/blob/main/libs/eslint-plugin-spaghetti/src/lib/no-spaghetti-options.ts#L161)
+Defined in: [lib/no-spaghetti-options.ts:175](https://github.com/state-adapt/state-adapt/blob/main/libs/eslint-plugin-spaghetti/src/lib/no-spaghetti-options.ts#L175)
 
 Sets the penalty added when a command's affected resource or implementation
 cannot be resolved inside the analyzed TypeScript program. Imports resolved to
@@ -141,7 +141,7 @@ Intentional exceptions should use `allowedCalls` or `allowedApis`. Defaults to
 
 > `optional` **fileWeight**: `number`
 
-Defined in: [lib/no-spaghetti-options.ts:146](https://github.com/state-adapt/state-adapt/blob/main/libs/eslint-plugin-spaghetti/src/lib/no-spaghetti-options.ts#L146)
+Defined in: [lib/no-spaghetti-options.ts:160](https://github.com/state-adapt/state-adapt/blob/main/libs/eslint-plugin-spaghetti/src/lib/no-spaghetti-options.ts#L160)
 
 Multiplies the number of trace edges that cross file boundaries. A resolved
 call or imported resource in another analyzed file counts once, regardless of
@@ -153,7 +153,7 @@ directory depth. Defaults to `30` points per crossing.
 
 > `optional` **folderWeight**: `number`
 
-Defined in: [lib/no-spaghetti-options.ts:153](https://github.com/state-adapt/state-adapt/blob/main/libs/eslint-plugin-spaghetti/src/lib/no-spaghetti-options.ts#L153)
+Defined in: [lib/no-spaghetti-options.ts:167](https://github.com/state-adapt/state-adapt/blob/main/libs/eslint-plugin-spaghetti/src/lib/no-spaghetti-options.ts#L167)
 
 Multiplies the number of directory edges between caller and callee files on a
 cross-file trace edge. A call or resource reference from
@@ -166,7 +166,7 @@ then one down to `b`. Defaults to `15` points per edge.
 
 > `optional` **maxCallDepth**: `number`
 
-Defined in: [lib/no-spaghetti-options.ts:185](https://github.com/state-adapt/state-adapt/blob/main/libs/eslint-plugin-spaghetti/src/lib/no-spaghetti-options.ts#L185)
+Defined in: [lib/no-spaghetti-options.ts:199](https://github.com/state-adapt/state-adapt/blob/main/libs/eslint-plugin-spaghetti/src/lib/no-spaghetti-options.ts#L199)
 
 Prevents recursive or cyclic call analysis from expanding without bound. Sets
 the maximum number of resolved call hops followed from each function; longer
@@ -178,7 +178,7 @@ paths are omitted and reported as truncated. Defaults to `50` hops.
 
 > `optional` **maxCommandsPerFunction**: `number`
 
-Defined in: [lib/no-spaghetti-options.ts:191](https://github.com/state-adapt/state-adapt/blob/main/libs/eslint-plugin-spaghetti/src/lib/no-spaghetti-options.ts#L191)
+Defined in: [lib/no-spaghetti-options.ts:205](https://github.com/state-adapt/state-adapt/blob/main/libs/eslint-plugin-spaghetti/src/lib/no-spaghetti-options.ts#L205)
 
 Prevents unbounded or combinatorial command-path expansion. Sets the maximum
 number of direct and inherited command paths retained for each function;
@@ -190,7 +190,7 @@ additional paths are omitted and reported as truncated. Defaults to `10,000`.
 
 > `optional` **maxScore**: `number`
 
-Defined in: [lib/no-spaghetti-options.ts:127](https://github.com/state-adapt/state-adapt/blob/main/libs/eslint-plugin-spaghetti/src/lib/no-spaghetti-options.ts#L127)
+Defined in: [lib/no-spaghetti-options.ts:141](https://github.com/state-adapt/state-adapt/blob/main/libs/eslint-plugin-spaghetti/src/lib/no-spaghetti-options.ts#L141)
 
 Sets the greatest aggregate command score allowed without a warning. A score
 equal to this value is allowed; a higher score is reported. Defaults to `6`.
@@ -201,7 +201,7 @@ equal to this value is allowed; a higher score is reported. Defaults to `6`.
 
 > `optional` **scopeWeight**: `number`
 
-Defined in: [lib/no-spaghetti-options.ts:140](https://github.com/state-adapt/state-adapt/blob/main/libs/eslint-plugin-spaghetti/src/lib/no-spaghetti-options.ts#L140)
+Defined in: [lib/no-spaghetti-options.ts:154](https://github.com/state-adapt/state-adapt/blob/main/libs/eslint-plugin-spaghetti/src/lib/no-spaghetti-options.ts#L154)
 
 Multiplies the number of lexical scope boundaries crossed while tracing a
 command to the declaration it mutates or a call to the function it resolves.

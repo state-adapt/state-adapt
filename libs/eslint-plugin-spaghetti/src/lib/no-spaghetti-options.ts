@@ -1,4 +1,7 @@
-/** Configures recognition for a project-specific method API. */
+/**
+ * Use this pattern for commands called as methods, such as `cache.write()`.
+ * The method receiver can be treated as the affected resource.
+ */
 export interface NoSpaghettiMethodApiPattern {
   /** Names the pattern so it can be referenced by `allowedApis`. */
   name: string;
@@ -15,7 +18,10 @@ export interface NoSpaghettiMethodApiPattern {
   argumentIndex?: number;
 }
 
-/** Configures recognition for a project-specific function API. */
+/**
+ * Use this pattern for standalone command functions, such as `writeCache(cache)`.
+ * One of the function arguments is treated as the affected resource.
+ */
 export interface NoSpaghettiFunctionApiPattern {
   /** Names the pattern so it can be referenced by `allowedApis`. */
   name: string;
@@ -32,6 +38,14 @@ export interface NoSpaghettiFunctionApiPattern {
 
 /**
  * Configures how the rule recognizes commands from a project-specific API.
+ *
+ * This is a union because method calls and standalone function calls identify
+ * their affected resources differently. Choose the shape that matches the API:
+ *
+ * - For `receiver.method()` calls, use {@link NoSpaghettiMethodApiPattern}.
+ * - For standalone `function()` calls, use {@link NoSpaghettiFunctionApiPattern}.
+ *
+ * A pattern never uses both `methods` and `functions`.
  *
  * @example Receiver and argument resources
  * Both calls below modify `cache`, but they pass it to the API differently:
