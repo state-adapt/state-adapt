@@ -1,5 +1,6 @@
 import { Linter } from 'eslint';
 import { NoSpaghettiApiPattern } from './no-spaghetti-options';
+import { commandPolicy } from './plugin/policy';
 import { configs, rules } from './rules';
 
 describe('typed configuration', () => {
@@ -28,6 +29,20 @@ describe('typed configuration', () => {
         .enum,
     ).toEqual(['javascript', 'dom']);
     expect(schema[0].additionalProperties).toBe(false);
+  });
+
+  it('uses the documented default scoring policy', () => {
+    const policy = commandPolicy({});
+    expect(policy).toMatchObject({
+      maxScore: 6,
+      externalPenalty: 100,
+      weights: {
+        declarationLine: 1,
+        scope: 1,
+        file: 30,
+        folder: 15,
+      },
+    });
   });
 
   it('requires exclusive method or function API patterns', () => {

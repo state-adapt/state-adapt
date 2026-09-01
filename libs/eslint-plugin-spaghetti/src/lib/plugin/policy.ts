@@ -18,14 +18,14 @@ export interface CommandPolicy {
 export function commandPolicy(options: RuleOptions): CommandPolicy {
   return {
     maxScore: numberOption(options, 'maxScore', 6),
-    externalPenalty: numberOption(options, 'externalPenalty', 200),
+    externalPenalty: numberOption(options, 'externalPenalty', 100),
     allowedCalls: new Set(stringArray(options['allowedCalls'])),
     allowedApis: new Set(stringArray(options['allowedApis'])),
     weights: {
       declarationLine: numberOption(options, 'declarationLineDistanceWeight', 1),
       scope: numberOption(options, 'scopeWeight', 1),
       file: numberOption(options, 'fileWeight', 30),
-      folder: numberOption(options, 'folderWeight', 10),
+      folder: numberOption(options, 'folderWeight', 15),
     },
   };
 }

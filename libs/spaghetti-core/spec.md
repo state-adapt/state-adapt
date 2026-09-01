@@ -337,7 +337,7 @@ And I have committed the work done up to now.
 - The ESLint plugin exposes one primary `no-spaghetti` rule instead of independently enforcing maximum score, command count, command distance, and remote mutation.
 - `no-spaghetti` assesses each command using configurable declaration-line, scope, file, and folder weights. `maxScore` is the maximum aggregate command score allowed and defaults to `6`. It does not use aggregate function scores, fixed call penalties, or function-size penalties.
 - Generic method calls use their receiver as the resource when possible. Calls without a resolvable implementation or resource receive a configurable external-call penalty.
-- Unresolved external commands receive a numeric penalty of `200` by default; explicit API and call allowlists take precedence.
+- Unresolved external commands receive a numeric penalty of `100` by default; explicit API and call allowlists take precedence.
 - JSX event handlers receive one allowance for an over-threshold command. Subsequent over-threshold commands are reported normally; allowlisted commands do not consume the allowance.
 - API-specific and consumer-configured recognizers only improve command and resource detection; they do not create separate lint policies.
 
@@ -345,7 +345,7 @@ And I have committed the work done up to now.
 
 ## Trace-based ESLint scoring defaults
 
-- Command scores model the effort required to trace cause and effect: declaration-line distance and lexical scope crossings default to `1`, file crossings to `30`, directory edges to `10`, and unresolved external commands to `200`.
+- Command scores model the effort required to trace cause and effect: declaration-line distance and lexical scope crossings default to `1`, file crossings to `30`, directory edges to `15`, and unresolved external commands to `100`.
 - Resolved calls extend the trace. Same-file calls accumulate call-to-declaration line distance; cross-file calls accumulate file and folder crossings. Calls have no fixed score merely for existing.
 - Direct references to resources in other analyzed files use the same file and folder units as resolved calls. Only unresolved targets and resources outside the analyzed program receive the external penalty.
 - `maxScore` defaults to `6`; equal scores are allowed and higher scores are reported.

@@ -43,8 +43,8 @@ export interface NoSpaghettiFunctionApiPattern {
  * writeCache(cache, value); // `cache` is the first argument.
  * ```
  *
- * This configuration tells the rule to use `cache` when calculating the
- * score of either command:
+ * This configuration in `.eslintrc.json` tells the rule to use `cache` when
+ * calculating the score of either command:
  *
  * ```json
  * {
@@ -84,7 +84,7 @@ export type NoSpaghettiApiPattern =
  *
  * @example Apply a command policy
  * A command is allowed when its aggregate score is at most `maxScore`; a higher
- * score produces a warning. The default policy is:
+ * score produces a warning. In `.eslintrc.json`, the default policy is:
  *
  * ```json
  * {
@@ -96,8 +96,8 @@ export type NoSpaghettiApiPattern =
  *         "declarationLineDistanceWeight": 1,
  *         "scopeWeight": 1,
  *         "fileWeight": 30,
- *         "folderWeight": 10,
- *         "externalPenalty": 200
+ *         "folderWeight": 15,
+ *         "externalPenalty": 100
  *       }
  *     ]
  *   }
@@ -148,7 +148,7 @@ export interface NoSpaghettiOptions {
    * Multiplies the number of directory edges between caller and callee files on a
    * cross-file trace edge. A call or resource reference from
    * `src/a/example.ts` to `src/b/example.ts` crosses two edges: one up to `src`,
-   * then one down to `b`. Defaults to `10` points per edge.
+   * then one down to `b`. Defaults to `15` points per edge.
    */
   folderWeight?: number;
   /**
@@ -156,7 +156,7 @@ export interface NoSpaghettiOptions {
    * cannot be resolved inside the analyzed TypeScript program. Imports resolved to
    * another analyzed file use file and folder weights instead.
    * Intentional exceptions should use `allowedCalls` or `allowedApis`. Defaults to
-   * `200`.
+   * `100`.
    */
   externalPenalty?: number;
   /**
