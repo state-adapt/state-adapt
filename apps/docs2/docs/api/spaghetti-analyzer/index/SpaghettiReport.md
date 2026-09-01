@@ -18,7 +18,7 @@ Defined in: [lib/report-models.ts:30](https://github.com/state-adapt/state-adapt
 
 Aggregate scores for directories containing analyzed files.
 
----
+***
 
 ### functionScores
 
@@ -28,7 +28,7 @@ Defined in: [lib/report-models.ts:32](https://github.com/state-adapt/state-adapt
 
 Functions ordered from highest to lowest score.
 
----
+***
 
 ### project
 
@@ -38,7 +38,7 @@ Defined in: [lib/report-models.ts:28](https://github.com/state-adapt/state-adapt
 
 Complete project analysis used to create the report.
 
----
+***
 
 ### visualizations
 

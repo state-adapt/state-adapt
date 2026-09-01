@@ -18,7 +18,7 @@ Defined in: [lib/report-models.ts:74](https://github.com/state-adapt/state-adapt
 
 Number of calls between the reported function and the command.
 
----
+***
 
 ### distance
 
@@ -28,7 +28,7 @@ Defined in: [lib/report-models.ts:72](https://github.com/state-adapt/state-adapt
 
 Sum of the command's unweighted distance dimensions.
 
----
+***
 
 ### filePath
 
@@ -38,7 +38,7 @@ Defined in: [lib/report-models.ts:66](https://github.com/state-adapt/state-adapt
 
 Source file containing the command.
 
----
+***
 
 ### functionId
 
@@ -48,7 +48,7 @@ Defined in: [lib/report-models.ts:62](https://github.com/state-adapt/state-adapt
 
 Stable identifier of the function containing the command.
 
----
+***
 
 ### functionName
 
@@ -58,7 +58,7 @@ Defined in: [lib/report-models.ts:64](https://github.com/state-adapt/state-adapt
 
 Display name of the function containing the command.
 
----
+***
 
 ### kind
 
@@ -68,7 +68,7 @@ Defined in: [lib/report-models.ts:68](https://github.com/state-adapt/state-adapt
 
 Detected command kind.
 
----
+***
 
 ### originFunction
 
@@ -78,7 +78,7 @@ Defined in: [lib/report-models.ts:76](https://github.com/state-adapt/state-adapt
 
 Function where the command originates.
 
----
+***
 
 ### score
 

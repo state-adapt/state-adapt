@@ -18,7 +18,7 @@ Defined in: [lib/report-models.ts:54](https://github.com/state-adapt/state-adapt
 
 Label for the current project score. Defaults to `"current"`.
 
----
+***
 
 ### currentTimestamp?
 
@@ -28,7 +28,7 @@ Defined in: [lib/report-models.ts:56](https://github.com/state-adapt/state-adapt
 
 Optional timestamp for the current project score.
 
----
+***
 
 ### history?
 
@@ -38,7 +38,7 @@ Defined in: [lib/report-models.ts:52](https://github.com/state-adapt/state-adapt
 
 Caller-owned history. Reporting never writes snapshots implicitly.
 
----
+***
 
 ### top?
 

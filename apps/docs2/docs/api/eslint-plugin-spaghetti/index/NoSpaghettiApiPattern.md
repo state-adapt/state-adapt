@@ -1,12 +1,12 @@
 ---
-definedIn:
+definedIn: https://github.com/state-adapt/state-adapt/blob/main/libs/eslint-plugin-spaghetti/src/lib/no-spaghetti-options.ts#L77
 ---
 
 # Type Alias: NoSpaghettiApiPattern
 
 > **NoSpaghettiApiPattern** = [`NoSpaghettiMethodApiPattern`](NoSpaghettiMethodApiPattern.md) \| [`NoSpaghettiFunctionApiPattern`](NoSpaghettiFunctionApiPattern.md)
 
-Defined in: lib/no-spaghetti-options.ts:77
+Defined in: [lib/no-spaghetti-options.ts:77](https://github.com/state-adapt/state-adapt/blob/main/libs/eslint-plugin-spaghetti/src/lib/no-spaghetti-options.ts#L77)
 
 Configures how the rule recognizes commands from a project-specific API.
 

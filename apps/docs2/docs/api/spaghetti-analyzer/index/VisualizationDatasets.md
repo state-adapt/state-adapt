@@ -30,7 +30,7 @@ Files with the highest aggregate scores.
 
 > **score**: `number`
 
----
+***
 
 ### highestScoringFunctions
 
@@ -60,7 +60,7 @@ Functions with the highest aggregate scores.
 
 > **score**: `number`
 
----
+***
 
 ### hotspots
 
@@ -70,7 +70,7 @@ Defined in: [lib/report-models.ts:82](https://github.com/state-adapt/state-adapt
 
 Commands with the highest spaghetti scores.
 
----
+***
 
 ### largestCommandDistances
 
@@ -80,7 +80,7 @@ Defined in: [lib/report-models.ts:96](https://github.com/state-adapt/state-adapt
 
 Commands with the largest total distance.
 
----
+***
 
 ### longestCommandChains
 
@@ -90,7 +90,7 @@ Defined in: [lib/report-models.ts:94](https://github.com/state-adapt/state-adapt
 
 Commands with the longest propagated call chains.
 
----
+***
 
 ### scoreTrend
 

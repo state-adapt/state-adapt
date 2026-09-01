@@ -18,7 +18,7 @@ Defined in: [lib/report-models.ts:40](https://github.com/state-adapt/state-adapt
 
 Display name for this snapshot.
 
----
+***
 
 ### score
 
@@ -28,7 +28,7 @@ Defined in: [lib/report-models.ts:42](https://github.com/state-adapt/state-adapt
 
 Project score captured by the caller.
 
----
+***
 
 ### timestamp?
 

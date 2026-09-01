@@ -18,7 +18,7 @@ Defined in: [lib/report-models.ts:22](https://github.com/state-adapt/state-adapt
 
 Number of commands found in the directory.
 
----
+***
 
 ### directory
 
@@ -28,7 +28,7 @@ Defined in: [lib/report-models.ts:16](https://github.com/state-adapt/state-adapt
 
 Directory path relative to the analyzed project root.
 
----
+***
 
 ### files
 
@@ -38,7 +38,7 @@ Defined in: [lib/report-models.ts:20](https://github.com/state-adapt/state-adapt
 
 Number of analyzed files in the directory.
 
----
+***
 
 ### score
 
