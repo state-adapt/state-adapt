@@ -1,9 +1,9 @@
-import { AnalysisOptions } from '@state-adapt/spaghetti-core';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 
 import {
   createReport,
+  AnalysisOptions,
   formatHumanReport,
   formatJsonReport,
   HistoricalSnapshot,

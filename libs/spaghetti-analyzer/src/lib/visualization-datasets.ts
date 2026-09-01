@@ -1,7 +1,12 @@
-import { ProjectAnalysis } from '@state-adapt/spaghetti-core';
-import { RankedCommand, ReportOptions, VisualizationDatasets } from './report-models';
+import {
+  ProjectAnalysis,
+  RankedCommand,
+  ReportOptions,
+  VisualizationDatasets,
+} from './report-models';
 import { scoreThenId } from './ranking';
 
+/** Build ranked, visualization-ready datasets from a project analysis. */
 export function createVisualizationDatasets(
   project: ProjectAnalysis,
   options: ReportOptions = {},

@@ -1,13 +1,16 @@
 import * as path from 'node:path';
+import { analyzeProject } from '@state-adapt/spaghetti-core';
 import {
-  analyzeProject,
   AnalysisOptions,
+  DirectoryScore,
   ProjectAnalysis,
-} from '@state-adapt/spaghetti-core';
-import { DirectoryScore, ReportOptions, SpaghettiReport } from './report-models';
+  ReportOptions,
+  SpaghettiReport,
+} from './report-models';
 import { createVisualizationDatasets } from './visualization-datasets';
 import { scoreThenId } from './ranking';
 
+/** Analyze a TypeScript project and create a report from its results. */
 export function createReport(
   rootDir: string,
   options: AnalysisOptions = {},
@@ -16,6 +19,7 @@ export function createReport(
   return reportFromAnalysis(analyzeProject(rootDir, options), reportOptions);
 }
 
+/** Create a report from an existing project analysis without analyzing source again. */
 export function reportFromAnalysis(
   project: ProjectAnalysis,
   options: ReportOptions = {},

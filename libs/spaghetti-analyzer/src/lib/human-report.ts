@@ -3,6 +3,7 @@ import { FunctionAnalysis } from '@state-adapt/spaghetti-core';
 import { RankedCommand, SpaghettiReport } from './report-models';
 import { formatNumber as format } from './format-number';
 
+/** Format a report for terminals and text logs. */
 export function formatHumanReport(report: SpaghettiReport): string {
   const lines = [
     'Spaghetti analyzer report',
