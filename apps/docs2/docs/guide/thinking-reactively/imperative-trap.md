@@ -1,10 +1,14 @@
 # The Imperative Trap
 
-Imperative code doesn't scale with complexity.
+## TLDR
 
-Reactive code is the polar opposite of imperative code; it's extremely difficult to refactor imperative code to reactive code.
+1. Imperative code is code that modifies things described elsewhere.
 
-This means that the only way to flexibly adapt with complexity and change is to manage state reactively from the very start of every feature.
+2. Imperative code doesn't scale with complexity, because it scatters and tangles contexts.
+
+3. Reactive code is the polar opposite of imperative code, so it's extremely difficult to refactor from imperative to reactive code.
+
+**Conclusion:** To scale with complexity, you have to code reactively from the start.
 
 ## Definition
 
@@ -207,6 +211,10 @@ function waitAndPushToSquaredSum() {
 }
 ```
 
+That's almost completely irrelevant context, which is expensive and confusing for both humans and AI.
+
+Imperative code is spaghetti code.
+
 ## Declarative Code Groups Context
 
 The opposite of imperative programming is declarative programming.
@@ -215,7 +223,7 @@ Declarative programming is when every declaration is complete from the start, no
 
 With declarative code, you can understand _what_ something is from its initial description. It isn't broken up into pieces describing _how_ it should be assembled later and elsewhere.
 
-Humans and AI can both understand declarative code more easily, thanks to descriptions being contained and having more limited context.
+Humans and AI can both understand declarative code more easily, thanks to descriptions being contained and having more limited context. Instead of spaghetti code, it's more like... ravioli code.
 
 In this diagram of an imperative Angular codebase, the only change was converting it to declarative code:
 
