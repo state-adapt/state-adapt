@@ -8,7 +8,7 @@
 
 This ESLint plugin helps minimize spaghetti code. It warns when imperative code reaches too far across functions, scopes, files, or folders.
 
-See the [`no-spaghetti` rule guide](/api/eslint-plugin-spaghetti/rules/no-spaghetti) for behavior, examples, and configuration.
+See the [`no-spaghetti` rule](/api/eslint-plugin-spaghetti/rules/no-spaghetti) for behavior and configuration.
 
 <template v-for="(section, index) in sections">
 

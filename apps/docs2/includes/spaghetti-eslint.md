@@ -12,7 +12,7 @@ Install the plugin and its peer dependencies:
 npm install --save-dev @state-adapt/eslint-plugin-spaghetti @state-adapt/spaghetti-core @typescript-eslint/parser eslint
 ```
 
-Then extend its recommended configuration in your ESLint config:
+Then extend its recommended configuration in `.eslintrc.json`:
 
 ```json
 {

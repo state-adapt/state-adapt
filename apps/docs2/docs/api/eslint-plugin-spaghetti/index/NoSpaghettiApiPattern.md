@@ -21,8 +21,8 @@ cache.write(value); // `cache` is the method receiver.
 writeCache(cache, value); // `cache` is the first argument.
 ```
 
-This configuration tells the rule to use `cache` when calculating the
-score of either command:
+This configuration in `.eslintrc.json` tells the rule to use `cache` when
+calculating the score of either command:
 
 ```json
 {

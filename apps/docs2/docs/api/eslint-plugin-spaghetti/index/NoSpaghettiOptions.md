@@ -12,7 +12,7 @@ and how it calculates each command's score.
 ## Example
 
 A command is allowed when its aggregate score is at most `maxScore`; a higher
-score produces a warning. The default policy is:
+score produces a warning. In `.eslintrc.json`, the default policy is:
 
 ```json
 {
@@ -24,8 +24,8 @@ score produces a warning. The default policy is:
         "declarationLineDistanceWeight": 1,
         "scopeWeight": 1,
         "fileWeight": 30,
-        "folderWeight": 10,
-        "externalPenalty": 200
+        "folderWeight": 15,
+        "externalPenalty": 100
       }
     ]
   }
@@ -133,7 +133,7 @@ Sets the penalty added when a command's affected resource or implementation
 cannot be resolved inside the analyzed TypeScript program. Imports resolved to
 another analyzed file use file and folder weights instead.
 Intentional exceptions should use `allowedCalls` or `allowedApis`. Defaults to
-`200`.
+`100`.
 
 ***
 
@@ -158,7 +158,7 @@ Defined in: [lib/no-spaghetti-options.ts:153](https://github.com/state-adapt/sta
 Multiplies the number of directory edges between caller and callee files on a
 cross-file trace edge. A call or resource reference from
 `src/a/example.ts` to `src/b/example.ts` crosses two edges: one up to `src`,
-then one down to `b`. Defaults to `10` points per edge.
+then one down to `b`. Defaults to `15` points per edge.
 
 ***
 
