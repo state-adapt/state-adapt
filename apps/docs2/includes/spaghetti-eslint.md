@@ -19,6 +19,7 @@ Then extend its recommended configuration for TypeScript files in `.eslintrc.jso
   "overrides": [
     {
       "files": ["*.ts", "*.tsx"],
+      "excludedFiles": ["*.spec.ts", "*.spec.tsx", "*.test.ts", "*.test.tsx"],
       "extends": ["plugin:@state-adapt/spaghetti/recommended"]
     }
   ]
