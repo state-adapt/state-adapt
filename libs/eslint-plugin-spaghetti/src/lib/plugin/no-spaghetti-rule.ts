@@ -3,6 +3,16 @@ import { commandPolicy, isAllowlisted, policyScore } from './policy';
 import { format, reportCommand } from './reporting';
 import { noSpaghettiSchema } from './schemas';
 
+const commandLabels = {
+  'discarded-call': 'Discarded call',
+  assignment: 'Assignment',
+  'property-assignment': 'Property assignment',
+  increment: 'Increment',
+  decrement: 'Decrement',
+  delete: 'Delete',
+  'api-command': 'API command',
+} as const;
+
 export const noSpaghetti = createRule(
   'report individual commands whose aggregate policy score is too high',
   noSpaghettiSchema,
@@ -19,9 +29,10 @@ export const noSpaghetti = createRule(
           return;
         }
         reportCommand(context, command, {
-          kind: command.kind,
+          kind: commandLabels[command.kind],
+          score: format(assessment.score),
           maxScore: format(policy.maxScore),
-          reason: command.external ? ' External target.' : '',
+          reason: command.external ? ': external target.' : '.',
         });
       });
     });

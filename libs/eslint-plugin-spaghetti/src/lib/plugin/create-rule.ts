@@ -14,7 +14,7 @@ export function createRule(
       schema,
       messages: {
         spaghetti:
-          '{{kind}} command exceeds the configured maximum score of {{maxScore}}.{{reason}}',
+          '{{kind}} is classified as spaghetti (score {{score}}; maximum {{maxScore}}){{reason}}',
         analysisTruncated:
           '{{name}} has incomplete analysis because a configured graph limit was reached.',
       },
