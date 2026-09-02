@@ -11,7 +11,7 @@ export const configs = {
     parserOptions: { project: true },
     plugins: ['@state-adapt/spaghetti'],
     rules: {
-      '@state-adapt/spaghetti/no-spaghetti': 'warn',
+      '@state-adapt/spaghetti/no-spaghetti': 'error',
     },
   },
 };

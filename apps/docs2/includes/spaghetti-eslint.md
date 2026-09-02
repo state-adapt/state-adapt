@@ -3,7 +3,7 @@
 > **Experimental:** The rule and its configuration may change as we learn from real-world use.
 
 `@state-adapt/eslint-plugin-spaghetti` helps minimize spaghetti code. It analyzes
-imperative commands and warns when they reach too far across functions, scopes,
+imperative commands and reports an error when they reach too far across functions, scopes,
 files, or folders.
 
 Install the plugin and its peer dependencies:
