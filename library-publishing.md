@@ -96,22 +96,28 @@ Add to the test application's `.npmrc`:
 Angular:
 
 ```bash
-VERSION=$(npm view @state-adapt/core version --registry http://127.0.0.1:4873)
-npm install --save-exact \
+VERSION=$(npm view @state-adapt/core version --registry http://127.0.0.1:4873 --prefer-online) &&
+npm install --save-exact --prefer-online \
   "@state-adapt/core@$VERSION" \
   "@state-adapt/rxjs@$VERSION" \
   "@state-adapt/angular@$VERSION" \
-  "@state-adapt/angular-router@$VERSION"
+  "@state-adapt/angular-router@$VERSION" &&
+npm install --save-dev --save-exact --prefer-online \
+  "@state-adapt/spaghetti-core@$VERSION" \
+  "@state-adapt/eslint-plugin-spaghetti@$VERSION"
 ```
 
 React:
 
 ```bash
-VERSION=$(npm view @state-adapt/core version --registry http://127.0.0.1:4873)
-npm install --save-exact \
+VERSION=$(npm view @state-adapt/core version --registry http://127.0.0.1:4873 --prefer-online) &&
+npm install --save-exact --prefer-online \
   "@state-adapt/core@$VERSION" \
   "@state-adapt/rxjs@$VERSION" \
-  "@state-adapt/react@$VERSION"
+  "@state-adapt/react@$VERSION" &&
+npm install --save-dev --save-exact --prefer-online \
+  "@state-adapt/spaghetti-core@$VERSION" \
+  "@state-adapt/eslint-plugin-spaghetti@$VERSION"
 ```
 
 - Test the application.
