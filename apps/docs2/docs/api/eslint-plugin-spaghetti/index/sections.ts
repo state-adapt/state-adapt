@@ -6,9 +6,11 @@ export const sections: Section[] = [
     name: 'Configuration',
     items: [
       'NoSpaghettiOptions',
-      'NoSpaghettiApiPattern',
-      'NoSpaghettiMethodApiPattern',
-      'NoSpaghettiFunctionApiPattern',
+      'NoSpaghettiApi',
+      'NoSpaghettiMethodApi',
+      'NoSpaghettiFunctionApi',
+      'NoSpaghettiCallApi',
+      'NoSpaghettiRecognizedApi',
     ],
   },
 ].map(({ name, items }) => ({

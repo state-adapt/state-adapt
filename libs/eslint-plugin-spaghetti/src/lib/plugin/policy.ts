@@ -5,8 +5,7 @@ import { RuleOptions } from './types';
 export interface CommandPolicy {
   maxScore: number;
   externalPenalty: number;
-  allowedCalls: ReadonlySet<string>;
-  allowedApis: ReadonlySet<string>;
+  apiPenalties: ReadonlyMap<string, number>;
   weights: {
     declarationLine: number;
     scope: number;
@@ -16,11 +15,14 @@ export interface CommandPolicy {
 }
 
 export function commandPolicy(options: RuleOptions): CommandPolicy {
+  const apiPenalties = new Map<string, number>(frameworkApiNames.map(name => [name, 0]));
+  for (const api of options.apis ?? []) {
+    if (api.penalty !== undefined) apiPenalties.set(api.name, api.penalty);
+  }
   return {
     maxScore: numberOption(options, 'maxScore', 6),
     externalPenalty: numberOption(options, 'externalPenalty', 100),
-    allowedCalls: new Set(stringArray(options['allowedCalls'])),
-    allowedApis: new Set([...frameworkApiNames, ...stringArray(options['allowedApis'])]),
+    apiPenalties,
     weights: {
       declarationLine: numberOption(options, 'declarationLineDistanceWeight', 1),
       scope: numberOption(options, 'scopeWeight', 1),
@@ -30,11 +32,8 @@ export function commandPolicy(options: RuleOptions): CommandPolicy {
   };
 }
 
-export function isAllowlisted(command: Command, policy: CommandPolicy): boolean {
-  return Boolean(
-    (command.call && policy.allowedCalls.has(command.call)) ||
-      (command.api && policy.allowedApis.has(command.api)),
-  );
+export function isIgnored(command: Command, policy: CommandPolicy): boolean {
+  return command.api !== undefined && policy.apiPenalties.get(command.api) === 0;
 }
 
 export function policyScore(
@@ -42,7 +41,11 @@ export function policyScore(
   policy: CommandPolicy,
 ): { score: number; exceedsLimit: boolean } {
   const distance = command.distance;
-  let score = distance.declarationLine * policy.weights.declarationLine;
+  const configuredPenalty = command.api
+    ? policy.apiPenalties.get(command.api)
+    : undefined;
+  let score = configuredPenalty ?? 0;
+  score += distance.declarationLine * policy.weights.declarationLine;
   if (score > policy.maxScore) return { score, exceedsLimit: true };
   score += distance.scope * policy.weights.scope;
   if (score > policy.maxScore) return { score, exceedsLimit: true };
@@ -50,12 +53,7 @@ export function policyScore(
   if (score > policy.maxScore) return { score, exceedsLimit: true };
   score += distance.folder * policy.weights.folder;
   if (score > policy.maxScore) return { score, exceedsLimit: true };
-  if (command.external) score += policy.externalPenalty;
+  if (configuredPenalty === undefined && command.external)
+    score += policy.externalPenalty;
   return { score, exceedsLimit: score > policy.maxScore };
-}
-
-function stringArray(value: unknown): string[] {
-  return Array.isArray(value)
-    ? value.filter((item): item is string => typeof item === 'string')
-    : [];
 }

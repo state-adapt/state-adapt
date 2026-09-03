@@ -14,6 +14,23 @@ export function identifierCall(call: ts.CallExpression): string | undefined {
   return ts.isIdentifier(call.expression) ? call.expression.text : undefined;
 }
 
+function sourceCallName(expression: ts.Expression): string | undefined {
+  if (ts.isIdentifier(expression)) return expression.text;
+  if (ts.isPropertyAccessExpression(expression)) {
+    const receiver = sourceCallName(expression.expression);
+    return receiver ? `${receiver}.${expression.name.text}` : undefined;
+  }
+  if (
+    ts.isElementAccessExpression(expression) &&
+    expression.argumentExpression &&
+    ts.isStringLiteralLike(expression.argumentExpression)
+  ) {
+    const receiver = sourceCallName(expression.expression);
+    return receiver ? `${receiver}.${expression.argumentExpression.text}` : undefined;
+  }
+  return undefined;
+}
+
 export function rootIdentifier(expression: ts.Expression): string | undefined {
   if (ts.isIdentifier(expression)) return expression.text;
   if (ts.isPropertyAccessExpression(expression))
@@ -51,6 +68,13 @@ export function patternRecognizer(pattern: ApiCommandPattern): CommandRecognizer
   return {
     name: `custom:${pattern.name}`,
     recognize(call, context) {
+      if (pattern.calls?.includes(sourceCallName(call.expression) ?? '')) {
+        const method = methodCall(call);
+        return {
+          api: pattern.name,
+          resource: method?.receiver ?? call.expression,
+        };
+      }
       const method = methodCall(call);
       const fn = identifierCall(call);
       let resource: ts.Expression | undefined;

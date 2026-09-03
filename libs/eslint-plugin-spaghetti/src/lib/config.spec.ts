@@ -1,5 +1,5 @@
 import { Linter } from 'eslint';
-import { NoSpaghettiApiPattern } from './no-spaghetti-options';
+import { NoSpaghettiApi } from './no-spaghetti-options';
 import { commandPolicy } from './plugin/policy';
 import { configs, rules } from './rules';
 
@@ -43,17 +43,17 @@ describe('typed configuration', () => {
         folder: 15,
       },
     });
-    expect(policy.allowedApis).toEqual(
-      new Set([
-        'Angular.enableProdMode',
-        'Angular.bootstrapApplication',
-        'Angular.platformBrowserDynamic',
-        'React.createRoot',
-        'React.hydrateRoot',
-        'Vue.createApp',
-        'Svelte.mount',
-        'Solid.render',
-        'Preact.render',
+    expect(policy.apiPenalties).toEqual(
+      new Map([
+        ['Angular.enableProdMode', 0],
+        ['Angular.bootstrapApplication', 0],
+        ['Angular.platformBrowserDynamic', 0],
+        ['React.createRoot', 0],
+        ['React.hydrateRoot', 0],
+        ['Vue.createApp', 0],
+        ['Svelte.mount', 0],
+        ['Solid.render', 0],
+        ['Preact.render', 0],
       ]),
     );
   });
@@ -62,40 +62,56 @@ describe('typed configuration', () => {
     const schema = rules['no-spaghetti'].meta?.schema as Array<{
       properties: Record<string, { items?: { oneOf?: Array<Record<string, unknown>> } }>;
     }>;
-    expect(schema[0].properties['apiPatterns'].items?.oneOf).toEqual([
-      { required: ['methods'], not: { required: ['functions'] } },
-      {
-        required: ['functions'],
-        not: {
-          anyOf: [{ required: ['methods'] }, { required: ['receiverNames'] }],
-        },
-        properties: { resource: { enum: ['argument', 'callee'] } },
-      },
-    ]);
+    expect(schema[0].properties['apis'].items?.oneOf).toHaveLength(4);
 
-    const valid: NoSpaghettiApiPattern = {
+    const valid: NoSpaghettiApi = {
       name: 'cache.write',
       functions: ['writeCache'],
       resource: 'argument',
     };
-    const validCallee: NoSpaghettiApiPattern = {
+    const validCallee: NoSpaghettiApi = {
       name: 'app.start',
       functions: ['start'],
       resource: 'callee',
     };
+    const validCall: NoSpaghettiApi = {
+      name: 'Console.log',
+      calls: ['console.log'],
+      penalty: 0,
+    };
+    const validBuiltIn: NoSpaghettiApi = {
+      name: 'Angular.bootstrapApplication',
+      penalty: 5,
+    };
     // @ts-expect-error Function patterns cannot use a method receiver.
-    const invalidReceiver: NoSpaghettiApiPattern = {
+    const invalidReceiver: NoSpaghettiApi = {
       name: 'cache.write',
       functions: ['writeCache'],
       resource: 'receiver',
     };
-    // @ts-expect-error A pattern cannot define both methods and functions.
-    const invalidMixed: NoSpaghettiApiPattern = {
+    // @ts-expect-error An API cannot define both methods and functions.
+    const invalidMixed: NoSpaghettiApi = {
       name: 'cache.write',
       methods: ['write'],
       functions: ['writeCache'],
     };
-    expect([valid, validCallee, invalidReceiver, invalidMixed]).toHaveLength(4);
+    expect([
+      valid,
+      validCallee,
+      validCall,
+      validBuiltIn,
+      invalidReceiver,
+      invalidMixed,
+    ]).toHaveLength(6);
+  });
+
+  it('rejects the removed split API options', () => {
+    const schema = rules['no-spaghetti'].meta?.schema as Array<{
+      properties: Record<string, unknown>;
+    }>;
+    expect(schema[0].properties).not.toHaveProperty('apiPatterns');
+    expect(schema[0].properties).not.toHaveProperty('allowedApis');
+    expect(schema[0].properties).not.toHaveProperty('allowedCalls');
   });
 
   it('fails clearly when parser services are missing', () => {

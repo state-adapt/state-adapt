@@ -30,9 +30,9 @@ export interface CommandRecognizer {
 export type ApiPatternResource = 'receiver' | 'argument' | 'callee';
 
 /**
- * JSON-friendly custom recognition. `methods` matches property calls and
- * `functions` matches identifier calls. Optional receiver/import constraints
- * reduce false positives. Exactly one of `methods` or `functions` is required.
+ * JSON-friendly custom recognition. `methods` matches property calls,
+ * `functions` matches identifier calls, and `calls` matches exact source-level
+ * names. Optional receiver/import constraints reduce false positives.
  */
 interface ApiCommandPatternBase {
   name: string;
@@ -44,11 +44,22 @@ export type ApiCommandPattern =
   | (ApiCommandPatternBase & {
       methods: string[];
       functions?: never;
+      calls?: never;
       receiverNames?: string[];
       resource?: ApiPatternResource;
     })
   | (ApiCommandPatternBase & {
       functions: string[];
       methods?: never;
+      calls?: never;
       resource?: 'argument' | 'callee';
+    })
+  | (ApiCommandPatternBase & {
+      calls: string[];
+      methods?: never;
+      functions?: never;
+      receiverNames?: never;
+      importSources?: never;
+      argumentIndex?: never;
+      resource?: never;
     });

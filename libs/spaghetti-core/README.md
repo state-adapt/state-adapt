@@ -6,13 +6,13 @@ Known mutation APIs are represented as `api-command` commands only when general 
 does not already identify the operation as imperative and the API returns a usable
 value. For example, bare calls are general `discarded-call` commands, while a nested
 `values.push(value)` needs API recognition because `push` returns the new length.
-JavaScript and DOM recognizers are enabled by default. Void-only mutation APIs,
-including RxJS subjects, React setters, Angular signals, and StateAdapt stores, do not
-need built-in fallback recognizers.
-Programmatic consumers can supply `CommandRecognizer` objects. JSON and ESLint
-configurations can use `apiPatterns` and can select families with
-`builtInRecognizers`. Recognizers identify only the API and resource; the shared
-analyzer remains responsible for resolution, distance, propagation, and scoring.
+JavaScript, DOM, and framework recognizers are enabled by default. Void-only
+mutation APIs, including RxJS subjects, React setters, Angular signals, and
+StateAdapt stores, do not need built-in fallback recognizers. Programmatic core
+consumers can supply `CommandRecognizer` objects or `apiPatterns`. The ESLint
+plugin's unified `apis` option compiles custom recognition entries into those
+patterns. Recognizers identify only the API and resource; the shared analyzer
+remains responsible for resolution, distance, propagation, and scoring.
 
 Scores have an additive `scoreBreakdown`. Configure command-kind bases,
 API-specific bases, declaration-line distance, function-call distance, scope,

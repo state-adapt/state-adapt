@@ -144,6 +144,8 @@ export interface AnalysisOptions {
   recognizers?: CommandRecognizer[];
   /** JSON-friendly custom API command definitions, suitable for config files. */
   apiPatterns?: ApiCommandPattern[];
+  /** Recognized API commands to discard before call-chain propagation. */
+  ignoredApis?: string[];
   /** Select built-in families. All families are enabled by default. */
   builtInRecognizers?: BuiltInRecognizerName[];
   /** Reuse an existing compiler program, such as the one supplied by typescript-eslint. */

@@ -1,13 +1,22 @@
+interface NoSpaghettiApiBase {
+  /** Stable name used to identify the API. */
+  name: string;
+  /**
+   * Sets the command leaf's starting penalty. Distance costs remain additive.
+   * Zero discards the command immediately; omit this to use ordinary scoring.
+   */
+  penalty?: number;
+}
+
 /**
- * Use this pattern for commands called as methods, such as `cache.write()`.
+ * Use this definition for commands called as methods, such as `cache.write()`.
  * The method receiver can be treated as the affected resource.
  */
-export interface NoSpaghettiMethodApiPattern {
-  /** Names the pattern so it can be referenced by `allowedApis`. */
-  name: string;
+export interface NoSpaghettiMethodApi extends NoSpaghettiApiBase {
   /** Lists command method names, such as `write` in `cache.write()`. */
   methods: string[];
   functions?: never;
+  calls?: never;
   /** Restricts method calls by receiver name, such as `cache` in `cache.write()`. */
   receiverNames?: string[];
   /** Restricts recognition to APIs imported from these module specifiers. */
@@ -19,15 +28,14 @@ export interface NoSpaghettiMethodApiPattern {
 }
 
 /**
- * Use this pattern for standalone command functions, such as `writeCache(cache)`.
+ * Use this definition for standalone command functions, such as `writeCache(cache)`.
  * One of the function arguments is treated as the affected resource.
  */
-export interface NoSpaghettiFunctionApiPattern {
-  /** Names the pattern so it can be referenced by `allowedApis`. */
-  name: string;
+export interface NoSpaghettiFunctionApi extends NoSpaghettiApiBase {
   /** Lists command function names, such as `writeCache` in `writeCache(cache)`. */
   functions: string[];
   methods?: never;
+  calls?: never;
   /** Restricts recognition to APIs imported from these module specifiers. */
   importSources?: string[];
   /** Uses the selected argument or imported callee to calculate the command score. */
@@ -36,16 +44,47 @@ export interface NoSpaghettiFunctionApiPattern {
   argumentIndex?: number;
 }
 
+/** Recognizes an API by its exact source-level call name. */
+export interface NoSpaghettiCallApi extends NoSpaghettiApiBase {
+  /** Exact source-level call names, such as `console.log`. */
+  calls: string[];
+  methods?: never;
+  functions?: never;
+  receiverNames?: never;
+  importSources?: never;
+  resource?: never;
+  argumentIndex?: never;
+}
+
+/** Assigns a penalty to an API recognized by a built-in recognizer. */
+export interface NoSpaghettiRecognizedApi extends NoSpaghettiApiBase {
+  /**
+   * Sets the command leaf's starting penalty. Distance costs remain additive.
+   * Zero discards the command immediately.
+   */
+  penalty: number;
+  methods?: never;
+  functions?: never;
+  calls?: never;
+  receiverNames?: never;
+  importSources?: never;
+  resource?: never;
+  argumentIndex?: never;
+}
+
 /**
- * Configures how the rule recognizes commands from a project-specific API.
+ * Configures how the rule recognizes, names, and optionally assigns a starting
+ * penalty to an API command.
  *
- * This is a union because method calls and standalone function calls identify
- * their affected resources differently. Choose the shape that matches the API:
+ * API definitions may recognize method calls, standalone functions, or exact
+ * source-level call names. A name-only entry configures a built-in API.
  *
- * - For `receiver.method()` calls, use {@link NoSpaghettiMethodApiPattern}.
- * - For standalone `function()` calls, use {@link NoSpaghettiFunctionApiPattern}.
+ * - For `receiver.method()` calls, use {@link NoSpaghettiMethodApi}.
+ * - For standalone `function()` calls, use {@link NoSpaghettiFunctionApi}.
+ * - For an exact source-level call name, use {@link NoSpaghettiCallApi}.
+ * - To change a built-in API's penalty, use {@link NoSpaghettiRecognizedApi}.
  *
- * A pattern never uses both `methods` and `functions`.
+ * A definition never combines `methods`, `functions`, or `calls`.
  *
  * @example Receiver and argument resources
  * Both calls below modify `cache`, but they pass it to the API differently:
@@ -66,7 +105,7 @@ export interface NoSpaghettiFunctionApiPattern {
  *     "@state-adapt/spaghetti/no-spaghetti": [
  *       "warn",
  *       {
- *         "apiPatterns": [
+ *         "apis": [
  *           {
  *             "name": "cache.methodWrite",
  *             "methods": ["write"],
@@ -88,9 +127,11 @@ export interface NoSpaghettiFunctionApiPattern {
  * }
  * ```
  */
-export type NoSpaghettiApiPattern =
-  | NoSpaghettiMethodApiPattern
-  | NoSpaghettiFunctionApiPattern;
+export type NoSpaghettiApi =
+  | NoSpaghettiMethodApi
+  | NoSpaghettiFunctionApi
+  | NoSpaghettiCallApi
+  | NoSpaghettiRecognizedApi;
 
 /**
  * Configures which commands the `@state-adapt/spaghetti/no-spaghetti` rule reports
@@ -131,7 +172,7 @@ export type NoSpaghettiApiPattern =
  * Here the resource declaration is one line from the command, so its score is
  * `1 × 1 = 1` and it is allowed. A resolved call to a command in another file
  * or a direct reference to a resource in another file receives at least
- * `1 × 30 = 30`, so it is reported unless explicitly allowlisted.
+ * `1 × 30 = 30`, so it is reported unless its API has a zero penalty.
  */
 export interface NoSpaghettiOptions {
   /**
@@ -169,26 +210,9 @@ export interface NoSpaghettiOptions {
    * Sets the penalty added when a command's affected resource or implementation
    * cannot be resolved inside the analyzed TypeScript program. Imports resolved to
    * another analyzed file use file and folder weights instead.
-   * Intentional exceptions should use `allowedCalls` or `allowedApis`. Defaults to
-   * `100`.
+   * API-specific penalties can be configured with `apis`. Defaults to `100`.
    */
   externalPenalty?: number;
-  /**
-   * Lists exact source-level call names that never produce warnings, regardless of
-   * score. For example, `"console.log"` matches `console.log()`. Defaults to an
-   * empty list.
-   */
-  allowedCalls?: string[];
-  /**
-   * Lists additional recognized API names that never produce warnings, regardless
-   * of score. The rule includes import-aware defaults for common Angular, React,
-   * Vue, Svelte, Solid, and Preact application entry points.
-   *
-   * A call chain retains the name of the recognized API that started it. For
-   * example, calling `.catch()` on the result of `bootstrapApplication()` is still
-   * identified as `Angular.bootstrapApplication`.
-   */
-  allowedApis?: string[];
   /**
    * Determines whether a command found in another file is propagated back
    * through a resolved call and assessed at the caller. Setting this to `false`
@@ -208,12 +232,16 @@ export interface NoSpaghettiOptions {
    */
   maxCommandsPerFunction?: number;
   /**
-   * Defines project-specific call patterns that should be recognized as commands
-   * when general command detection would otherwise miss them. Each pattern also
-   * identifies the affected resource used to calculate the score. Defaults to an
-   * empty list.
+   * Recognizes, names, and optionally assigns leaf penalties to APIs. An entry with
+   * only a name and penalty configures an already-recognized built-in API. A zero
+   * penalty discards that command before propagation. Defaults include zero
+   * penalties for common framework application entry points.
+   *
+   * A call chain retains the name of the recognized API that started it. For
+   * example, calling `.catch()` on the result of `bootstrapApplication()` is still
+   * identified as `Angular.bootstrapApplication`.
    */
-  apiPatterns?: NoSpaghettiApiPattern[];
+  apis?: NoSpaghettiApi[];
   /**
    * Selects the API-specific recognizer families used in addition to general
    * command detection. JavaScript collection, DOM mutation, and framework entry

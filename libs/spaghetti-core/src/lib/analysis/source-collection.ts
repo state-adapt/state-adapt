@@ -185,7 +185,7 @@ function collectFunctionBody(
   const ownerBody = ts.isSourceFile(owner) ? owner : owner.body;
   if (node !== ownerBody && isFunction(node)) return;
   const detected = detectCommand(node, recognizers, recognitionContext, checker, owner);
-  if (detected)
+  if (detected && (!detected.api || !options.ignoredApis?.includes(detected.api)))
     commands.push(
       createDirectCommand(
         detected,

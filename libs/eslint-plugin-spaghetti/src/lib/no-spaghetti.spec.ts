@@ -52,20 +52,61 @@ ruleTester.run('no-spaghetti command policy', rules['no-spaghetti'], {
     {
       filename: typedScratch,
       code: 'declare function external(): void; function run() { external(); }',
-      options: [{ allowedCalls: ['external'] }],
+      options: [{ apis: [{ name: 'External.call', calls: ['external'], penalty: 0 }] }],
+    },
+    {
+      filename: typedScratch,
+      code: 'declare function start(): void; function run() { start(); }',
+      options: [
+        {
+          apis: [
+            {
+              name: 'App.start',
+              functions: ['start'],
+              resource: 'callee',
+              penalty: 0,
+            },
+          ],
+        },
+      ],
+    },
+    {
+      filename: typedScratch,
+      code: `declare function external(): void;
+function leaf() { external(); }
+function wrapper() { leaf(); }`,
+      options: [
+        {
+          ...zeroWeights,
+          maxScore: 0,
+          apis: [{ name: 'External.call', calls: ['external'], penalty: 0 }],
+        },
+      ],
+    },
+    {
+      filename: typedScratch,
+      code: 'declare function external(): void; function run() { external(); }',
+      options: [
+        {
+          ...zeroWeights,
+          externalPenalty: 100,
+          maxScore: 5,
+          apis: [{ name: 'External.call', calls: ['external'], penalty: 5 }],
+        },
+      ],
     },
     {
       filename: typedScratch,
       code: 'const cache = makeCache(); function flush() { cache.flush(); }',
       options: [
         {
-          allowedApis: ['Cache.flush'],
-          apiPatterns: [
+          apis: [
             {
               name: 'Cache.flush',
               methods: ['flush'],
               receiverNames: ['cache'],
               resource: 'receiver',
+              penalty: 0,
             },
           ],
         },
@@ -138,6 +179,59 @@ hydratePreact({}, {});`,
     },
   ],
   invalid: [
+    {
+      filename: typedScratch,
+      code: `declare module '@angular/core' {
+  export function enableProdMode(): void;
+}
+import { enableProdMode } from '@angular/core';
+enableProdMode();`,
+      options: [
+        {
+          ...zeroWeights,
+          maxScore: 0,
+          apis: [{ name: 'Angular.enableProdMode', penalty: 5 }],
+        },
+      ],
+      errors: [
+        {
+          messageId: 'spaghetti',
+          line: 5,
+          data: {
+            kind: 'Discarded call',
+            score: '5',
+            maxScore: '0',
+            reason: ': external target.',
+          },
+        },
+      ],
+    },
+    {
+      filename: typedScratch,
+      code: `declare function external(): void; function leaf() { external(); }
+function wrapper() { leaf(); }`,
+      options: [
+        {
+          scopeWeight: 0,
+          fileWeight: 0,
+          folderWeight: 0,
+          maxScore: 5,
+          apis: [{ name: 'External.call', calls: ['external'], penalty: 5 }],
+        },
+      ],
+      errors: [
+        {
+          messageId: 'spaghetti',
+          line: 2,
+          data: {
+            kind: 'Discarded call',
+            score: '6',
+            maxScore: '5',
+            reason: ': external target.',
+          },
+        },
+      ],
+    },
     {
       filename: typedScratch,
       code: `declare function render(): void;
@@ -390,11 +484,34 @@ function caller(value: { current: number }) { return leaf(value); }`,
     },
     {
       filename: typedScratch,
+      code: 'declare function external(): void; function run() { external(); }',
+      options: [
+        {
+          ...zeroWeights,
+          externalPenalty: 100,
+          maxScore: 4,
+          apis: [{ name: 'External.call', calls: ['external'], penalty: 5 }],
+        },
+      ],
+      errors: [
+        {
+          messageId: 'spaghetti',
+          data: {
+            kind: 'Discarded call',
+            score: '5',
+            maxScore: '4',
+            reason: ': external target.',
+          },
+        },
+      ],
+    },
+    {
+      filename: typedScratch,
       code: 'const cache = makeCache(); function flush() { return cache.flush(); }',
       options: [
         {
           maxScore: 0,
-          apiPatterns: [
+          apis: [
             {
               name: 'Cache.flush',
               methods: ['flush'],
@@ -448,7 +565,12 @@ const view = <button onClick={event => {
   event.preventDefault();
   second();
 }} />;`,
-      options: [{ maxScore: 0, allowedCalls: ['first'] }],
+      options: [
+        {
+          maxScore: 0,
+          apis: [{ name: 'First.call', calls: ['first'], penalty: 0 }],
+        },
+      ],
       errors: [
         {
           messageId: 'spaghetti',
@@ -545,13 +667,10 @@ export function run(): void {
           scopeWeight: 0,
           folderWeight: 0,
           maxScore: 29,
-          allowedCalls: ['unrelated'],
+          apis: [{ name: 'Unrelated.call', calls: ['unrelated'], penalty: 0 }],
         },
       ],
-      errors: [
-        { messageId: 'spaghetti', line: 3, column: 3 },
-        { messageId: 'spaghetti', line: 3, column: 3 },
-      ],
+      errors: [{ messageId: 'spaghetti', line: 3, column: 3 }],
     },
     {
       filename: nestedCaller,

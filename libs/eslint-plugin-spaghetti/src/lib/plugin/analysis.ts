@@ -10,18 +10,22 @@ import { commandPolicy } from './policy';
 const cacheByProgram = new WeakMap<object, Map<string, FileAnalysis[]>>();
 
 function analysisOptions(options: RuleOptions): AnalysisOptions {
-  const apiPatterns = options['apiPatterns'];
+  const apis = options.apis ?? [];
   const builtIns = options['builtInRecognizers'];
-  const allowedCalls = options['allowedCalls'];
-  const allowedApis = options['allowedApis'];
-  const hasAllowlists =
-    (Array.isArray(allowedCalls) && allowedCalls.length > 0) ||
-    (Array.isArray(allowedApis) && allowedApis.length > 0);
   const policy = commandPolicy(options);
+  const apiPatterns = apis.filter(
+    api =>
+      api.methods !== undefined || api.functions !== undefined || api.calls !== undefined,
+  ) as NonNullable<AnalysisOptions['apiPatterns']>;
+  const ignoredApis = [...policy.apiPenalties]
+    .filter(([, penalty]) => penalty === 0)
+    .map(([name]) => name);
+  const apiBaseScores = Object.fromEntries(
+    [...policy.apiPenalties].filter(([, penalty]) => penalty > 0),
+  );
   return {
-    ...(Array.isArray(apiPatterns)
-      ? { apiPatterns: apiPatterns as AnalysisOptions['apiPatterns'] }
-      : {}),
+    ...(apiPatterns.length > 0 ? { apiPatterns } : {}),
+    ...(ignoredApis.length > 0 ? { ignoredApis } : {}),
     ...(Array.isArray(builtIns)
       ? { builtInRecognizers: builtIns as AnalysisOptions['builtInRecognizers'] }
       : {}),
@@ -32,29 +36,26 @@ function analysisOptions(options: RuleOptions): AnalysisOptions {
       ? { maxCommandsPerFunction: options['maxCommandsPerFunction'] }
       : {}),
     crossFileAnalysis: options['crossFileAnalysis'] !== false,
-    ...(!hasAllowlists
-      ? {
-          maxCallBoundaryScore: policy.maxScore,
-          scoring: {
-            baseScores: {
-              'discarded-call': 0,
-              assignment: 0,
-              'property-assignment': 0,
-              increment: 0,
-              decrement: 0,
-              delete: 0,
-              'api-command': 0,
-            },
-            declarationLineDistanceWeight: policy.weights.declarationLine,
-            sameFunctionDistanceWeight: 0,
-            scopeCrossingWeight: policy.weights.scope,
-            fileCrossingWeight: policy.weights.file,
-            folderCrossingWeight: policy.weights.folder,
-            functionCallDistanceWeight: 0,
-            functionSizeWeight: 0,
-          },
-        }
-      : {}),
+    maxCallBoundaryScore: policy.maxScore,
+    scoring: {
+      baseScores: {
+        'discarded-call': 0,
+        assignment: 0,
+        'property-assignment': 0,
+        increment: 0,
+        decrement: 0,
+        delete: 0,
+        'api-command': 0,
+      },
+      apiBaseScores,
+      declarationLineDistanceWeight: policy.weights.declarationLine,
+      sameFunctionDistanceWeight: 0,
+      scopeCrossingWeight: policy.weights.scope,
+      fileCrossingWeight: policy.weights.file,
+      folderCrossingWeight: policy.weights.folder,
+      functionCallDistanceWeight: 0,
+      functionSizeWeight: 0,
+    },
   };
 }
 

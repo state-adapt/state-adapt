@@ -144,6 +144,26 @@ function work() { return [cache.flush(), publish(event)]; }`,
     );
   });
 
+  it('recognizes exact source call patterns and can discard APIs before propagation', () => {
+    const analysis = analyzeFile(
+      `declare const console: { log(value: string): void };
+function leaf() { console.log('ready'); }
+function wrapper() { leaf(); }`,
+      'custom.ts',
+      {
+        builtInRecognizers: [],
+        apiPatterns: [{ name: 'Console.log', calls: ['console.log'] }],
+        ignoredApis: ['Console.log'],
+      },
+    );
+
+    expect(
+      analysis.functions
+        .filter(fn => fn.name === 'leaf' || fn.name === 'wrapper')
+        .flatMap(fn => fn.commands),
+    ).toEqual([]);
+  });
+
   it('supports programmatic recognizers with stable AST context', () => {
     const recognizer: CommandRecognizer = {
       name: 'transactions',
