@@ -1,6 +1,6 @@
 import * as ts from 'typescript';
 
-export type BuiltInRecognizerName = 'javascript' | 'dom';
+export type BuiltInRecognizerName = 'javascript' | 'dom' | 'framework';
 
 export interface RecognizedApiCommand {
   /** A stable, human-readable API identifier, such as `Array.push`. */

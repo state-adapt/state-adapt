@@ -27,7 +27,7 @@ describe('typed configuration', () => {
     expect(
       (schema[0].properties['builtInRecognizers'] as { items: { enum: string[] } }).items
         .enum,
-    ).toEqual(['javascript', 'dom']);
+    ).toEqual(['javascript', 'dom', 'framework']);
     expect(schema[0].additionalProperties).toBe(false);
   });
 

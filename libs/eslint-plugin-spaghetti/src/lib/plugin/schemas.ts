@@ -29,7 +29,7 @@ const recognitionProperties: Record<string, unknown> = {
   builtInRecognizers: {
     type: 'array',
     uniqueItems: true,
-    items: { enum: ['javascript', 'dom'] },
+    items: { enum: ['javascript', 'dom', 'framework'] },
   },
 };
 

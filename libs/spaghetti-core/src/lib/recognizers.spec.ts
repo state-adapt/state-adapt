@@ -7,6 +7,38 @@ import { analyzeFile, analyzeProject } from './spaghetti-analysis';
 import { CommandRecognizer } from './recognizers';
 
 describe('spaghetti recognizers', () => {
+  it('recognizes framework entry points through aliased and namespace imports', () => {
+    const commands = analyzeFile(
+      `import { bootstrapApplication as bootstrap } from '@angular/platform-browser';
+import * as Vue from 'vue';
+function start() {
+  bootstrap({}).catch(() => {});
+  const app = Vue.createApp({});
+  app.mount('#app');
+}`,
+      'framework.ts',
+    ).functions.find(fn => fn.name === 'start')?.commands;
+
+    expect(commands?.map(command => [command.kind, command.api])).toEqual([
+      ['discarded-call', 'Angular.bootstrapApplication'],
+      ['api-command', 'Vue.createApp'],
+      ['discarded-call', 'Vue.createApp'],
+    ]);
+    expect(commands?.every(command => command.recognizer === 'framework')).toBe(true);
+  });
+
+  it('can disable framework recognition with the other built-in recognizers', () => {
+    const commands = analyzeFile(
+      `import { mount } from 'svelte';
+function start() { mount({}); }`,
+      'framework.ts',
+      { builtInRecognizers: ['javascript', 'dom'] },
+    ).functions.find(fn => fn.name === 'start')?.commands;
+
+    expect(commands).toMatchObject([{ kind: 'discarded-call', call: 'mount' }]);
+    expect(commands?.[0].api).toBeUndefined();
+  });
+
   it('annotates discarded calls and their receiver chains with recognized APIs', () => {
     const commands = analyzeFile(
       `import { start as boot } from 'app-runtime';

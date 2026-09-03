@@ -183,6 +183,10 @@ export interface NoSpaghettiOptions {
    * Lists additional recognized API names that never produce warnings, regardless
    * of score. The rule includes import-aware defaults for common Angular, React,
    * Vue, Svelte, Solid, and Preact application entry points.
+   *
+   * A call chain retains the name of the recognized API that started it. For
+   * example, calling `.catch()` on the result of `bootstrapApplication()` is still
+   * identified as `Angular.bootstrapApplication`.
    */
   allowedApis?: string[];
   /**
@@ -212,8 +216,8 @@ export interface NoSpaghettiOptions {
   apiPatterns?: NoSpaghettiApiPattern[];
   /**
    * Selects the API-specific recognizer families used in addition to general
-   * command detection. JavaScript collection and DOM mutation recognizers are
-   * enabled by default; an empty list disables both.
+   * command detection. JavaScript collection, DOM mutation, and framework entry
+   * point recognizers are enabled by default; an empty list disables all three.
    */
-  builtInRecognizers?: Array<'javascript' | 'dom'>;
+  builtInRecognizers?: Array<'javascript' | 'dom' | 'framework'>;
 }
