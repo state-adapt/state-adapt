@@ -1,17 +1,34 @@
 import * as ts from 'typescript';
 import { isFunction } from './ast';
 
-export function discardedCall(call: ts.CallExpression, checker: ts.TypeChecker) {
-  const receiver = callReceiver(call.expression);
+export function discardedCall(
+  call: ts.CallExpression,
+  checker: ts.TypeChecker,
+  recognizedApi: boolean,
+) {
   const expression = unwrapExpression(call.expression as ts.Expression);
+  const externalImplementation = hasExternalImplementation(call, checker);
+  const callTarget = callReceiver(call.expression);
+  const externalMethod =
+    !ts.isIdentifier(expression) &&
+    externalImplementation &&
+    !recognizedApi &&
+    callTarget !== undefined &&
+    isThisMember(callTarget);
+  const receiver = externalMethod ? undefined : callTarget;
   return {
     kind: 'discarded-call' as const,
     ...(receiver ? { target: receiver } : {}),
     call: callName(call.expression),
-    external: ts.isIdentifier(expression)
-      ? hasExternalImplementation(call, checker)
-      : false,
+    external: ts.isIdentifier(expression) ? externalImplementation : externalMethod,
   };
+}
+
+function isThisMember(expression: ts.Expression): boolean {
+  let current = unwrapExpression(expression);
+  while (ts.isPropertyAccessExpression(current) || ts.isElementAccessExpression(current))
+    current = unwrapExpression(current.expression);
+  return current.kind === ts.SyntaxKind.ThisKeyword;
 }
 
 function callReceiver(expression: ts.LeftHandSideExpression): ts.Expression | undefined {

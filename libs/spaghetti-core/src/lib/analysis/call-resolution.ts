@@ -34,6 +34,7 @@ export function resolveCall(
           fn.location.start.column === start.column,
       );
     if (resolved) return resolved;
+    if (declarationFile.isDeclarationFile || !declarationFunction.body) return undefined;
   }
   if (call.namespace) {
     const binding = callerFile.imports.get(call.namespace);

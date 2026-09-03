@@ -62,6 +62,39 @@ write();`);
     });
   });
 
+  it('traces injected project services and treats unavailable methods as external', () => {
+    const result = analyzeFile(`declare class ExternalService { mutate(): void; }
+class LocalService { mutate() { globalThis.value = 1; } }
+class Component {
+  constructor(
+    private local: LocalService,
+    private external: ExternalService,
+  ) {}
+  run() {
+    this.local.mutate();
+    this.external.mutate();
+  }
+}`);
+    const commands = result.functions.find(fn => fn.name === 'run')?.commands;
+    const local = commands?.find(command => command.kind === 'property-assignment');
+    const external = commands?.find(command => command.kind === 'discarded-call');
+
+    expect(commands).toHaveLength(2);
+    expect(local).toMatchObject({
+      kind: 'property-assignment',
+      resource: 'globalThis',
+      external: true,
+      callPath: [expect.objectContaining({ callee: 'source.ts:mutate@2' })],
+    });
+    expect(external).toMatchObject({
+      kind: 'discarded-call',
+      call: 'this.external.mutate',
+      external: true,
+      distance: { declarationLine: 0, scope: 0, file: 0, folder: 0 },
+    });
+    expect(external?.resource).toBeUndefined();
+  });
+
   it('detects every command kind without traversing into nested functions', () => {
     const result = analyzeFile(`
 let distant = 0;

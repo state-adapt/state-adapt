@@ -468,6 +468,26 @@ function caller(value: { current: number }) { return leaf(value); }`,
     },
     {
       filename: typedScratch,
+      code: `declare class ExternalService { mutate(): void; }
+class Component {
+  constructor(private service: ExternalService) {}
+  run() { this.service.mutate(); }
+}`,
+      options: [{ ...zeroWeights }],
+      errors: [
+        {
+          messageId: 'spaghetti',
+          data: {
+            kind: 'Discarded call',
+            score: '100',
+            maxScore: '6',
+            reason: ': external target.',
+          },
+        },
+      ],
+    },
+    {
+      filename: typedScratch,
       code: 'declare function external(): void; function run() { external(); }',
       options: [{ ...zeroWeights, externalPenalty: 2, maxScore: 1 }],
       errors: [

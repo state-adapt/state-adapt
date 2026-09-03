@@ -82,8 +82,8 @@ function recognizedDiscardedCall(
   context: CommandRecognitionContext,
   checker: ts.TypeChecker,
 ) {
-  const command = discardedCall(call, checker);
   const recognized = recognizeApiInReceiverChain(call, recognizers, context);
+  const command = discardedCall(call, checker, Boolean(recognized));
   return recognized
     ? {
         ...command,
