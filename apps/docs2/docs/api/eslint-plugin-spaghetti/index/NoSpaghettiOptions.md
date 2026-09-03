@@ -64,7 +64,7 @@ A call chain retains the name of the recognized API that started it. For
 example, calling `.catch()` on the result of `bootstrapApplication()` is still
 identified as `Angular.bootstrapApplication`.
 
----
+***
 
 ### builtInRecognizers?
 
@@ -76,7 +76,7 @@ Selects the API-specific recognizer families used in addition to general
 command detection. JavaScript collection, DOM mutation, and framework entry
 point recognizers are enabled by default; an empty list disables all three.
 
----
+***
 
 ### crossFileAnalysis?
 
@@ -88,7 +88,7 @@ Determines whether a command found in another file is propagated back
 through a resolved call and assessed at the caller. Setting this to `false`
 retains direct-command and same-file analysis. Defaults to `true`.
 
----
+***
 
 ### declarationLineDistanceWeight?
 
@@ -101,7 +101,7 @@ mutates. For resolved calls in the same file, it also multiplies the line
 distance from each call site to the called function's declaration. Lines 1 and
 7 are six line-distance units. Defaults to `1` point per unit.
 
----
+***
 
 ### externalPenalty?
 
@@ -114,7 +114,7 @@ cannot be resolved inside the analyzed TypeScript program. Imports resolved to
 another analyzed file use file and folder weights instead.
 API-specific penalties can be configured with `apis`. Defaults to `100`.
 
----
+***
 
 ### fileWeight?
 
@@ -126,7 +126,7 @@ Multiplies the number of trace edges that cross file boundaries. A resolved
 call or imported resource in another analyzed file counts once, regardless of
 directory depth. Defaults to `30` points per crossing.
 
----
+***
 
 ### folderWeight?
 
@@ -139,7 +139,7 @@ cross-file trace edge. A call or resource reference from
 `src/a/example.ts` to `src/b/example.ts` crosses two edges: one up to `src`,
 then one down to `b`. Defaults to `15` points per edge.
 
----
+***
 
 ### maxCallDepth?
 
@@ -151,7 +151,7 @@ Prevents recursive or cyclic call analysis from expanding without bound. Sets
 the maximum number of resolved call hops followed from each function; longer
 paths are omitted and reported as truncated. Defaults to `50` hops.
 
----
+***
 
 ### maxCommandsPerFunction?
 
@@ -163,7 +163,7 @@ Prevents unbounded or combinatorial command-path expansion. Sets the maximum
 number of direct and inherited command paths retained for each function;
 additional paths are omitted and reported as truncated. Defaults to `10,000`.
 
----
+***
 
 ### maxScore?
 
@@ -174,7 +174,7 @@ Defined in: [lib/no-spaghetti-options.ts:182](https://github.com/state-adapt/sta
 Sets the greatest aggregate command score allowed without a warning. A score
 equal to this value is allowed; a higher score is reported. Defaults to `6`.
 
----
+***
 
 ### scopeWeight?
 

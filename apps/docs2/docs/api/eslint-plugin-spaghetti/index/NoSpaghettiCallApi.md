@@ -22,7 +22,7 @@ Defined in: [lib/no-spaghetti-options.ts:50](https://github.com/state-adapt/stat
 
 Exact source-level call names, such as `console.log`.
 
----
+***
 
 ### name
 
@@ -36,7 +36,7 @@ Stable name used to identify the API.
 
 `NoSpaghettiApiBase.name`
 
----
+***
 
 ### penalty?
 

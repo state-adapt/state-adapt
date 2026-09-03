@@ -26,7 +26,7 @@ Stable name used to identify the API.
 
 `NoSpaghettiApiBase.name`
 
----
+***
 
 ### penalty
 

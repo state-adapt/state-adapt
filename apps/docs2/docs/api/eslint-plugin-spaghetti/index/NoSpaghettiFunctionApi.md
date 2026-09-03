@@ -23,7 +23,7 @@ Defined in: [lib/no-spaghetti-options.ts:44](https://github.com/state-adapt/stat
 
 Selects the argument used to calculate the command score. `0` means the first argument.
 
----
+***
 
 ### functions
 
@@ -33,7 +33,7 @@ Defined in: [lib/no-spaghetti-options.ts:36](https://github.com/state-adapt/stat
 
 Lists command function names, such as `writeCache` in `writeCache(cache)`.
 
----
+***
 
 ### importSources?
 
@@ -43,7 +43,7 @@ Defined in: [lib/no-spaghetti-options.ts:40](https://github.com/state-adapt/stat
 
 Restricts recognition to APIs imported from these module specifiers.
 
----
+***
 
 ### name
 
@@ -57,7 +57,7 @@ Stable name used to identify the API.
 
 `NoSpaghettiApiBase.name`
 
----
+***
 
 ### penalty?
 
@@ -72,7 +72,7 @@ Zero discards the command immediately; omit this to use ordinary scoring.
 
 `NoSpaghettiApiBase.penalty`
 
----
+***
 
 ### resource?
 
