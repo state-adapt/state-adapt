@@ -7,6 +7,38 @@ import { analyzeFile, analyzeProject } from './spaghetti-analysis';
 import { CommandRecognizer } from './recognizers';
 
 describe('spaghetti command-detection', () => {
+  it('analyzes commands executed at module scope without absorbing nested functions', () => {
+    const result = analyzeFile(`declare function enableProdMode(): void;
+declare function bootstrapApplication(): Promise<void>;
+if (true) {
+  enableProdMode();
+}
+bootstrapApplication().catch(() => {});`);
+    const module = result.functions.find(fn => fn.name === '<module>');
+
+    expect(module?.commands).toMatchObject([
+      { kind: 'discarded-call', call: 'enableProdMode', external: true },
+      {
+        kind: 'discarded-call',
+        call: 'bootstrapApplication().catch',
+        external: true,
+      },
+    ]);
+  });
+
+  it('propagates commands from top-level calls through the existing call graph', () => {
+    const result = analyzeFile(`function write() { globalThis.value = 1; }
+write();`);
+    const module = result.functions.find(fn => fn.name === '<module>');
+
+    expect(module?.commands).toMatchObject([
+      {
+        kind: 'property-assignment',
+        callPath: [{ caller: module?.functionId, callee: 'source.ts:write@1' }],
+      },
+    ]);
+  });
+
   it('resolves class fields and marks call-produced targets external', () => {
     const result = analyzeFile(`class Counter {
   state = { value: 0 };

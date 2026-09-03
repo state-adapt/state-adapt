@@ -1,7 +1,13 @@
 import * as path from 'node:path';
 import * as ts from 'typescript';
 import { Distance } from './models';
-import { CallSite, FileDraft, FunctionDraft, ImportBinding } from './internal-types';
+import {
+  CallSite,
+  FileDraft,
+  FunctionDraft,
+  ImportBinding,
+  MODULE_FUNCTION_NAME,
+} from './internal-types';
 import { isFunction, locationOf } from './ast';
 import { defaultExportName, exportedName } from './recognizer-config';
 import { resolveDeclaration } from './scopes';
@@ -23,6 +29,7 @@ export function resolveCall(
       .find(file => file.sourceFile === declarationFile)
       ?.functions.find(
         fn =>
+          fn.name !== MODULE_FUNCTION_NAME &&
           fn.location.start.line === start.line &&
           fn.location.start.column === start.column,
       );
@@ -65,7 +72,10 @@ function resolveImportedFunction(
   if (importedName === 'default') {
     const defaultName = defaultExportName(target.sourceFile);
     if (defaultName) return target.functions.find(fn => fn.name === defaultName);
-    return target.functions.length === 1 ? target.functions[0] : undefined;
+    const callableFunctions = target.functions.filter(
+      fn => fn.name !== MODULE_FUNCTION_NAME,
+    );
+    return callableFunctions.length === 1 ? callableFunctions[0] : undefined;
   }
   return target.functions.find(
     fn => fn.name === exportedName(target.sourceFile, importedName),

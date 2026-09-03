@@ -1,6 +1,11 @@
 import * as ts from 'typescript';
 import { AnalysisOptions, Command, CommandKind, Distance } from './models';
-import { FileDraft, FunctionDraft, CallSite } from './internal-types';
+import {
+  FileDraft,
+  FunctionDraft,
+  CallSite,
+  MODULE_FUNCTION_NAME,
+} from './internal-types';
 import { buildScopes, Scope } from './scopes';
 import { configuredRecognizers, createRecognitionContext } from './recognizer-config';
 import { CommandRecognitionContext, CommandRecognizer } from '../recognizers';
@@ -28,6 +33,16 @@ export function createFileDraft(
   const recognitionContext = createRecognitionContext(sourceFile, imports, scopes);
   const functions: FunctionDraft[] = [];
   const jsxEventHandlers = referencedJsxEventHandlers(sourceFile, checker);
+  const module = createModuleDraft(
+    sourceFile,
+    scopes,
+    options,
+    recognizers,
+    recognitionContext,
+    checker,
+    analyzedFiles,
+  );
+  if (module) functions.push(module);
   visitFunctions(
     sourceFile,
     sourceFile,
@@ -41,6 +56,51 @@ export function createFileDraft(
     functions,
   );
   return { sourceFile, functions, imports };
+}
+
+function createModuleDraft(
+  sourceFile: ts.SourceFile,
+  scopes: Map<ts.Node, Scope>,
+  options: AnalysisOptions,
+  recognizers: readonly CommandRecognizer[],
+  recognitionContext: CommandRecognitionContext,
+  checker: ts.TypeChecker,
+  analyzedFiles: ReadonlySet<ts.SourceFile>,
+): FunctionDraft | undefined {
+  const name = MODULE_FUNCTION_NAME;
+  const location = locationOf(sourceFile, sourceFile);
+  const functionId = `${sourceFile.fileName}:${name}@1`;
+  const directCommands: Command[] = [];
+  const calls: CallSite[] = [];
+  collectFunctionBody(
+    sourceFile,
+    sourceFile,
+    sourceFile,
+    scopes,
+    options,
+    recognizers,
+    recognitionContext,
+    checker,
+    analyzedFiles,
+    functionId,
+    location.end.line,
+    directCommands,
+    calls,
+  );
+  if (directCommands.length === 0 && calls.length === 0) return undefined;
+  return {
+    functionId,
+    name,
+    location,
+    size: location.end.line,
+    commands: directCommands,
+    score: directCommands.reduce((sum, command) => sum + command.score, 0),
+    sourceFile,
+    scopes,
+    directCommands,
+    calls,
+    jsxEventHandler: false,
+  };
 }
 
 function visitFunctions(
@@ -109,7 +169,7 @@ function visitFunctions(
 
 function collectFunctionBody(
   node: ts.Node,
-  owner: ts.FunctionLikeDeclaration,
+  owner: ts.FunctionLikeDeclaration | ts.SourceFile,
   sourceFile: ts.SourceFile,
   scopes: Map<ts.Node, Scope>,
   options: AnalysisOptions,
@@ -122,7 +182,8 @@ function collectFunctionBody(
   commands: Command[],
   calls: CallSite[],
 ): void {
-  if (node !== owner.body && isFunction(node)) return;
+  const ownerBody = ts.isSourceFile(owner) ? owner : owner.body;
+  if (node !== ownerBody && isFunction(node)) return;
   const detected = detectCommand(node, recognizers, recognitionContext, checker, owner);
   if (detected)
     commands.push(

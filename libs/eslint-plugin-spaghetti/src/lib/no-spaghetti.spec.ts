@@ -100,6 +100,36 @@ const view = <button onClick={() => onEvent()} />;`,
   invalid: [
     {
       filename: typedScratch,
+      code: `declare function enableProdMode(): void;
+declare function bootstrapApplication(): Promise<void>;
+if (true) enableProdMode();
+bootstrapApplication().catch(() => {});`,
+      options: [{ ...zeroWeights }],
+      errors: [
+        {
+          messageId: 'spaghetti',
+          line: 3,
+          data: {
+            kind: 'Discarded call',
+            score: '100',
+            maxScore: '6',
+            reason: ': external target.',
+          },
+        },
+        {
+          messageId: 'spaghetti',
+          line: 4,
+          data: {
+            kind: 'Discarded call',
+            score: '100',
+            maxScore: '6',
+            reason: ': external target.',
+          },
+        },
+      ],
+    },
+    {
+      filename: typedScratch,
       code: `function component(onEvent: () => void) {
   return () => { onEvent(); };
 }`,

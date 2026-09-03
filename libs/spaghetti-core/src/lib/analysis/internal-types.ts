@@ -1,6 +1,9 @@
 import * as ts from 'typescript';
 import { Command, FunctionAnalysis, SourceLocation } from './models';
 import { Scope } from './scopes';
+
+export const MODULE_FUNCTION_NAME = '<module>';
+
 export interface ImportBinding {
   moduleName: string;
   importedName: string;

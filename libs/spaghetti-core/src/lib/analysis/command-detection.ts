@@ -10,7 +10,7 @@ export function detectCommand(
   recognizers: readonly CommandRecognizer[],
   context: CommandRecognitionContext,
   checker: ts.TypeChecker,
-  owner: ts.FunctionLikeDeclaration,
+  owner: ts.FunctionLikeDeclaration | ts.SourceFile,
 ):
   | {
       kind: CommandKind;
