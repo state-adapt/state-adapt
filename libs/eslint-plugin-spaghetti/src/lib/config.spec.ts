@@ -43,6 +43,19 @@ describe('typed configuration', () => {
         folder: 15,
       },
     });
+    expect(policy.allowedApis).toEqual(
+      new Set([
+        'Angular.enableProdMode',
+        'Angular.bootstrapApplication',
+        'Angular.platformBrowserDynamic',
+        'React.createRoot',
+        'React.hydrateRoot',
+        'Vue.createApp',
+        'Svelte.mount',
+        'Solid.render',
+        'Preact.render',
+      ]),
+    );
   });
 
   it('requires exclusive method or function API patterns', () => {
@@ -56,7 +69,7 @@ describe('typed configuration', () => {
         not: {
           anyOf: [{ required: ['methods'] }, { required: ['receiverNames'] }],
         },
-        properties: { resource: { enum: ['argument'] } },
+        properties: { resource: { enum: ['argument', 'callee'] } },
       },
     ]);
 
@@ -64,6 +77,11 @@ describe('typed configuration', () => {
       name: 'cache.write',
       functions: ['writeCache'],
       resource: 'argument',
+    };
+    const validCallee: NoSpaghettiApiPattern = {
+      name: 'app.start',
+      functions: ['start'],
+      resource: 'callee',
     };
     // @ts-expect-error Function patterns cannot use a method receiver.
     const invalidReceiver: NoSpaghettiApiPattern = {
@@ -77,7 +95,7 @@ describe('typed configuration', () => {
       methods: ['write'],
       functions: ['writeCache'],
     };
-    expect([valid, invalidReceiver, invalidMixed]).toHaveLength(3);
+    expect([valid, validCallee, invalidReceiver, invalidMixed]).toHaveLength(4);
   });
 
   it('fails clearly when parser services are missing', () => {

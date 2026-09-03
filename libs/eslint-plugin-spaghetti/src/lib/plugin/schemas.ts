@@ -20,7 +20,7 @@ const recognitionProperties: Record<string, unknown> = {
           not: {
             anyOf: [{ required: ['methods'] }, { required: ['receiverNames'] }],
           },
-          properties: { resource: { enum: ['argument'] } },
+          properties: { resource: { enum: ['argument', 'callee'] } },
         },
       ],
       additionalProperties: false,

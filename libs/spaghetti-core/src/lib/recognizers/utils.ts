@@ -64,9 +64,12 @@ export function patternRecognizer(pattern: ApiCommandPattern): CommandRecognizer
           return undefined;
         resource = method.receiver;
         importedName = receiverName;
-      } else if (fn && pattern.functions?.includes(fn)) {
+      } else if (fn && pattern.functions?.includes(context.importedName(fn) ?? fn)) {
         importedName = fn;
-        resource = call.arguments[pattern.argumentIndex ?? 0];
+        resource =
+          pattern.resource === 'callee'
+            ? call.expression
+            : call.arguments[pattern.argumentIndex ?? 0];
       } else return undefined;
       if (
         pattern.importSources &&
@@ -76,6 +79,7 @@ export function patternRecognizer(pattern: ApiCommandPattern): CommandRecognizer
         return undefined;
       if (pattern.resource === 'argument')
         resource = call.arguments[pattern.argumentIndex ?? 0];
+      else if (pattern.resource === 'callee') resource = call.expression;
       else if (pattern.resource === 'receiver' && method) resource = method.receiver;
       return resource ? { api: pattern.name, resource } : undefined;
     },

@@ -48,7 +48,7 @@ function right() { window.right = 1; left(); }`);
     ]);
   });
 
-  it('uses general discarded-call detection before API-specific recognizers', () => {
+  it('retains discarded-call classification while attaching recognized API names', () => {
     const result = analyzeFile(`
 import { store } from '@state-adapt/core';
 import { signal } from '@angular/core';
@@ -76,7 +76,13 @@ function mutate() {
 
     expect(commands).toHaveLength(9);
     expect(commands.every(command => command.kind === 'discarded-call')).toBe(true);
-    expect(commands.every(command => !command.recognizer && !command.api)).toBe(true);
+    expect(commands.slice(0, 2).map(command => command.api)).toEqual([
+      'Array.push',
+      'Map/Set.set',
+    ]);
+    expect(commands.slice(2).every(command => !command.recognizer && !command.api)).toBe(
+      true,
+    );
   });
 
   it('uses general detection for awaited and syntax-wrapped discarded calls', () => {

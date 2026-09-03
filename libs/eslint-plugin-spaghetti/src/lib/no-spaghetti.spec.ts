@@ -56,7 +56,7 @@ ruleTester.run('no-spaghetti command policy', rules['no-spaghetti'], {
     },
     {
       filename: typedScratch,
-      code: 'const cache = makeCache(); function flush() { return cache.flush(); }',
+      code: 'const cache = makeCache(); function flush() { cache.flush(); }',
       options: [
         {
           allowedApis: ['Cache.flush'],
@@ -96,8 +96,66 @@ const view = <button onClick={handler} />;`,
 declare function onEvent(): void;
 const view = <button onClick={() => onEvent()} />;`,
     },
+    {
+      filename: typedScratch,
+      code: `declare module '@angular/core' {
+  export function enableProdMode(): void;
+}
+declare module '@angular/platform-browser' {
+  export function bootstrapApplication(component: unknown): Promise<void>;
+}
+declare module 'react-dom/client' {
+  export function createRoot(element: unknown): { render(value: unknown): void };
+}
+declare module 'vue' {
+  export function createApp(component: unknown): { mount(target: string): void };
+}
+declare module 'svelte' {
+  export function mount(component: unknown): void;
+}
+declare module 'solid-js/web' {
+  export function render(view: unknown, target: unknown): void;
+}
+declare module 'preact' {
+  export function hydrate(view: unknown, target: unknown): void;
+}
+import { enableProdMode } from '@angular/core';
+import { bootstrapApplication } from '@angular/platform-browser';
+import { createRoot as createReactRoot } from 'react-dom/client';
+import { createApp as createVueApp } from 'vue';
+import { mount as mountSvelte } from 'svelte';
+import { render as renderSolid } from 'solid-js/web';
+import { hydrate as hydratePreact } from 'preact';
+enableProdMode();
+bootstrapApplication({}).catch(() => {});
+const reactRoot = createReactRoot({});
+reactRoot.render({});
+const vueApp = createVueApp({});
+vueApp.mount('#app');
+mountSvelte({});
+renderSolid({}, {});
+hydratePreact({}, {});`,
+    },
   ],
   invalid: [
+    {
+      filename: typedScratch,
+      code: `declare function render(): void;
+render();`,
+      options: [{ ...zeroWeights }],
+      errors: [
+        {
+          messageId: 'spaghetti',
+          line: 2,
+          data: {
+            kind: 'Discarded call',
+            score: '100',
+            maxScore: '6',
+            reason: ': external target.',
+          },
+        },
+      ],
+    },
     {
       filename: typedScratch,
       code: `declare function enableProdMode(): void;

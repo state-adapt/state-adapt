@@ -6,6 +6,7 @@ import {
 import { Rule } from 'eslint';
 import { RuleOptions } from './types';
 import { commandPolicy } from './policy';
+import { frameworkApiPatterns } from './framework-defaults';
 
 const cacheByProgram = new WeakMap<object, Map<string, FileAnalysis[]>>();
 
@@ -19,9 +20,12 @@ function analysisOptions(options: RuleOptions): AnalysisOptions {
     (Array.isArray(allowedApis) && allowedApis.length > 0);
   const policy = commandPolicy(options);
   return {
-    ...(Array.isArray(apiPatterns)
-      ? { apiPatterns: apiPatterns as AnalysisOptions['apiPatterns'] }
-      : {}),
+    apiPatterns: [
+      ...frameworkApiPatterns,
+      ...(Array.isArray(apiPatterns)
+        ? (apiPatterns as NonNullable<AnalysisOptions['apiPatterns']>)
+        : []),
+    ],
     ...(Array.isArray(builtIns)
       ? { builtInRecognizers: builtIns as AnalysisOptions['builtInRecognizers'] }
       : {}),

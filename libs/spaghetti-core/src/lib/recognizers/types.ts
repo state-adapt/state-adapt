@@ -13,6 +13,8 @@ export interface CommandRecognitionContext {
   sourceFile: ts.SourceFile;
   /** Returns the module specifier for an imported local identifier. */
   importSource(localName: string): string | undefined;
+  /** Returns the original exported name for an imported local identifier. */
+  importedName(localName: string): string | undefined;
   /** Finds a visible syntactic initializer without requiring a type checker. */
   declarationInitializer(name: string, from: ts.Node): ts.Expression | undefined;
 }
@@ -25,7 +27,7 @@ export interface CommandRecognizer {
   ): RecognizedApiCommand | undefined;
 }
 
-export type ApiPatternResource = 'receiver' | 'argument';
+export type ApiPatternResource = 'receiver' | 'argument' | 'callee';
 
 /**
  * JSON-friendly custom recognition. `methods` matches property calls and
@@ -48,5 +50,5 @@ export type ApiCommandPattern =
   | (ApiCommandPatternBase & {
       functions: string[];
       methods?: never;
-      resource?: 'argument';
+      resource?: 'argument' | 'callee';
     });

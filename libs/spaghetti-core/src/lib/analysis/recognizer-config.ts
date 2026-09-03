@@ -37,6 +37,9 @@ export function createRecognitionContext(
     importSource(localName) {
       return imports.get(localName)?.moduleName;
     },
+    importedName(localName) {
+      return imports.get(localName)?.importedName;
+    },
     declarationInitializer(name, from) {
       const resolution = resolveDeclaration(name, scopes.get(from));
       if (!resolution) return undefined;

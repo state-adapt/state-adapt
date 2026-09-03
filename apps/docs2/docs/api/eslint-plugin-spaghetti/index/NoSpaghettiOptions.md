@@ -55,11 +55,11 @@ or a direct reference to a resource in another file receives at least
 
 Defined in: [lib/no-spaghetti-options.ts:187](https://github.com/state-adapt/state-adapt/blob/main/libs/eslint-plugin-spaghetti/src/lib/no-spaghetti-options.ts#L187)
 
-Lists recognized API names that never produce warnings, regardless of score.
-These are built-in names such as `"Array.push"` or the `name` of a custom
-`apiPatterns` entry. Defaults to an empty list.
+Lists additional recognized API names that never produce warnings, regardless
+of score. The rule includes import-aware defaults for common Angular, React,
+Vue, Svelte, Solid, and Preact application entry points.
 
-***
+---
 
 ### allowedCalls?
 
@@ -71,7 +71,7 @@ Lists exact source-level call names that never produce warnings, regardless of
 score. For example, `"console.log"` matches `console.log()`. Defaults to an
 empty list.
 
-***
+---
 
 ### apiPatterns?
 
@@ -84,7 +84,7 @@ when general command detection would otherwise miss them. Each pattern also
 identifies the affected resource used to calculate the score. Defaults to an
 empty list.
 
-***
+---
 
 ### builtInRecognizers?
 
@@ -96,7 +96,7 @@ Selects the API-specific recognizer families used in addition to general
 command detection. JavaScript collection and DOM mutation recognizers are
 enabled by default; an empty list disables both.
 
-***
+---
 
 ### crossFileAnalysis?
 
@@ -108,7 +108,7 @@ Determines whether a command found in another file is propagated back
 through a resolved call and assessed at the caller. Setting this to `false`
 retains direct-command and same-file analysis. Defaults to `true`.
 
-***
+---
 
 ### declarationLineDistanceWeight?
 
@@ -121,7 +121,7 @@ mutates. For resolved calls in the same file, it also multiplies the line
 distance from each call site to the called function's declaration. Lines 1 and
 7 are six line-distance units. Defaults to `1` point per unit.
 
-***
+---
 
 ### externalPenalty?
 
@@ -135,7 +135,7 @@ another analyzed file use file and folder weights instead.
 Intentional exceptions should use `allowedCalls` or `allowedApis`. Defaults to
 `100`.
 
-***
+---
 
 ### fileWeight?
 
@@ -147,7 +147,7 @@ Multiplies the number of trace edges that cross file boundaries. A resolved
 call or imported resource in another analyzed file counts once, regardless of
 directory depth. Defaults to `30` points per crossing.
 
-***
+---
 
 ### folderWeight?
 
@@ -160,7 +160,7 @@ cross-file trace edge. A call or resource reference from
 `src/a/example.ts` to `src/b/example.ts` crosses two edges: one up to `src`,
 then one down to `b`. Defaults to `15` points per edge.
 
-***
+---
 
 ### maxCallDepth?
 
@@ -172,7 +172,7 @@ Prevents recursive or cyclic call analysis from expanding without bound. Sets
 the maximum number of resolved call hops followed from each function; longer
 paths are omitted and reported as truncated. Defaults to `50` hops.
 
-***
+---
 
 ### maxCommandsPerFunction?
 
@@ -184,7 +184,7 @@ Prevents unbounded or combinatorial command-path expansion. Sets the maximum
 number of direct and inherited command paths retained for each function;
 additional paths are omitted and reported as truncated. Defaults to `10,000`.
 
-***
+---
 
 ### maxScore?
 
@@ -195,7 +195,7 @@ Defined in: [lib/no-spaghetti-options.ts:141](https://github.com/state-adapt/sta
 Sets the greatest aggregate command score allowed without a warning. A score
 equal to this value is allowed; a higher score is reported. Defaults to `6`.
 
-***
+---
 
 ### scopeWeight?
 

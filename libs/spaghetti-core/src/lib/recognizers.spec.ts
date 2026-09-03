@@ -7,6 +7,75 @@ import { analyzeFile, analyzeProject } from './spaghetti-analysis';
 import { CommandRecognizer } from './recognizers';
 
 describe('spaghetti recognizers', () => {
+  it('annotates discarded calls and their receiver chains with recognized APIs', () => {
+    const commands = analyzeFile(
+      `import { start as boot } from 'app-runtime';
+const cache = createCache();
+function work() {
+  cache.flush();
+  boot().catch(() => {});
+}`,
+      'custom.ts',
+      {
+        builtInRecognizers: [],
+        apiPatterns: [
+          {
+            name: 'Cache.flush',
+            methods: ['flush'],
+            receiverNames: ['cache'],
+            resource: 'receiver',
+          },
+          {
+            name: 'App.start',
+            functions: ['start'],
+            importSources: ['app-runtime'],
+            resource: 'callee',
+          },
+        ],
+      },
+    ).functions.find(fn => fn.name === 'work')?.commands;
+
+    expect(commands).toMatchObject([
+      {
+        kind: 'discarded-call',
+        call: 'cache.flush',
+        api: 'Cache.flush',
+        recognizer: 'custom:Cache.flush',
+      },
+      {
+        kind: 'discarded-call',
+        call: 'boot().catch',
+        api: 'App.start',
+        recognizer: 'custom:App.start',
+      },
+    ]);
+  });
+
+  it('annotates definitely-void calls in concise arrow functions', () => {
+    const command = analyzeFile(
+      `declare const logger: { log(): void };
+const run = () => logger.log();`,
+      'custom.ts',
+      {
+        builtInRecognizers: [],
+        apiPatterns: [
+          {
+            name: 'Logger.log',
+            methods: ['log'],
+            receiverNames: ['logger'],
+            resource: 'receiver',
+          },
+        ],
+      },
+    ).functions.find(fn => fn.name === 'run')?.commands[0];
+
+    expect(command).toMatchObject({
+      kind: 'discarded-call',
+      call: 'logger.log',
+      api: 'Logger.log',
+    });
+  });
+
   it('supports JSON-friendly custom method and imported function patterns', () => {
     const commands = analyzeFile(
       `import { publish } from 'events-api';

@@ -29,15 +29,20 @@ export function detectCommand(
     ts.isCallExpression(node) &&
     isDefinitelyVoid(checker.getTypeAtLocation(node))
   )
-    return discardedCall(node, checker);
+    return recognizedDiscardedCall(node, recognizers, context, checker);
   if (ts.isExpressionStatement(node)) {
     const outerExpression = unwrapOuterExpression(node.expression);
     const expression = ts.isAwaitExpression(outerExpression)
       ? unwrapOuterExpression(outerExpression.expression)
       : outerExpression;
-    if (ts.isCallExpression(expression)) return discardedCall(expression, checker);
+    if (ts.isCallExpression(expression))
+      return recognizedDiscardedCall(expression, recognizers, context, checker);
   }
-  if (ts.isCallExpression(node) && !isDiscardedCall(node)) {
+  if (
+    ts.isCallExpression(node) &&
+    !isDiscardedCall(node) &&
+    !isInDiscardedReceiverChain(node)
+  ) {
     const recognized = recognizeApiCommand(node, recognizers, context);
     if (recognized)
       return {
@@ -71,6 +76,53 @@ export function detectCommand(
   return undefined;
 }
 
+function recognizedDiscardedCall(
+  call: ts.CallExpression,
+  recognizers: readonly CommandRecognizer[],
+  context: CommandRecognitionContext,
+  checker: ts.TypeChecker,
+) {
+  const command = discardedCall(call, checker);
+  const recognized = recognizeApiInReceiverChain(call, recognizers, context);
+  return recognized
+    ? {
+        ...command,
+        api: recognized.command.api,
+        recognizer: recognized.recognizer,
+      }
+    : command;
+}
+
+function recognizeApiInReceiverChain(
+  call: ts.CallExpression,
+  recognizers: readonly CommandRecognizer[],
+  context: CommandRecognitionContext,
+): { recognizer: string; command: { api: string; resource: ts.Expression } } | undefined {
+  const visited = new Set<ts.Node>();
+  let current: ts.CallExpression | undefined = call;
+  while (current && !visited.has(current)) {
+    visited.add(current);
+    const recognized = recognizeApiCommand(current, recognizers, context);
+    if (recognized) return recognized;
+    const expression = unwrapOuterExpression(current.expression as ts.Expression);
+    if (
+      !ts.isPropertyAccessExpression(expression) &&
+      !ts.isElementAccessExpression(expression)
+    )
+      return undefined;
+    const receiver = unwrapOuterExpression(expression.expression);
+    if (ts.isCallExpression(receiver)) {
+      current = receiver;
+      continue;
+    }
+    if (!ts.isIdentifier(receiver)) return undefined;
+    const initializer = context.declarationInitializer(receiver.text, current);
+    const unwrapped = initializer && unwrapOuterExpression(initializer);
+    current = unwrapped && ts.isCallExpression(unwrapped) ? unwrapped : undefined;
+  }
+  return undefined;
+}
+
 function isDiscardedCall(call: ts.CallExpression): boolean {
   let expression: ts.Expression = call;
   while (
@@ -87,6 +139,40 @@ function isDiscardedCall(call: ts.CallExpression): boolean {
       expression = expression.parent;
   }
   return ts.isExpressionStatement(expression.parent);
+}
+
+function isInDiscardedReceiverChain(call: ts.CallExpression): boolean {
+  let expression: ts.Expression = call;
+  let foundOuterCall = false;
+  let parent: ts.Node | undefined = expression.parent;
+  while (parent) {
+    if (
+      (ts.isPropertyAccessExpression(parent) || ts.isElementAccessExpression(parent)) &&
+      parent.expression === expression
+    ) {
+      expression = parent;
+      parent = expression.parent;
+      continue;
+    }
+    if (ts.isCallExpression(parent) && parent.expression === expression) {
+      expression = parent;
+      foundOuterCall = true;
+      parent = expression.parent;
+      continue;
+    }
+    if (isOuterExpression(parent) && parent.expression === expression) {
+      expression = parent;
+      parent = expression.parent;
+      continue;
+    }
+    if (ts.isAwaitExpression(parent) && parent.expression === expression) {
+      expression = parent;
+      parent = expression.parent;
+      continue;
+    }
+    return foundOuterCall && ts.isExpressionStatement(parent);
+  }
+  return false;
 }
 
 function isDefinitelyVoid(type: ts.Type): boolean {

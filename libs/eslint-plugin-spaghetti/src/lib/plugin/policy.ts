@@ -1,6 +1,7 @@
 import { Command } from '@state-adapt/spaghetti-core';
 import { numberOption } from './reporting';
 import { RuleOptions } from './types';
+import { defaultAllowedApis } from './framework-defaults';
 
 export interface CommandPolicy {
   maxScore: number;
@@ -20,7 +21,7 @@ export function commandPolicy(options: RuleOptions): CommandPolicy {
     maxScore: numberOption(options, 'maxScore', 6),
     externalPenalty: numberOption(options, 'externalPenalty', 100),
     allowedCalls: new Set(stringArray(options['allowedCalls'])),
-    allowedApis: new Set(stringArray(options['allowedApis'])),
+    allowedApis: new Set([...defaultAllowedApis, ...stringArray(options['allowedApis'])]),
     weights: {
       declarationLine: numberOption(options, 'declarationLineDistanceWeight', 1),
       scope: numberOption(options, 'scopeWeight', 1),

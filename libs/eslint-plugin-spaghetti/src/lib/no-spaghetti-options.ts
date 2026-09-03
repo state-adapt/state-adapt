@@ -30,8 +30,8 @@ export interface NoSpaghettiFunctionApiPattern {
   methods?: never;
   /** Restricts recognition to APIs imported from these module specifiers. */
   importSources?: string[];
-  /** Uses the argument selected by `argumentIndex` to calculate the command score. */
-  resource?: 'argument';
+  /** Uses the selected argument or imported callee to calculate the command score. */
+  resource?: 'argument' | 'callee';
   /** Selects the argument used to calculate the command score. `0` means the first argument. */
   argumentIndex?: number;
 }
@@ -180,9 +180,9 @@ export interface NoSpaghettiOptions {
    */
   allowedCalls?: string[];
   /**
-   * Lists recognized API names that never produce warnings, regardless of score.
-   * These are built-in names such as `"Array.push"` or the `name` of a custom
-   * `apiPatterns` entry. Defaults to an empty list.
+   * Lists additional recognized API names that never produce warnings, regardless
+   * of score. The rule includes import-aware defaults for common Angular, React,
+   * Vue, Svelte, Solid, and Preact application entry points.
    */
   allowedApis?: string[];
   /**

@@ -53,8 +53,8 @@ Names the pattern so it can be referenced by `allowedApis`.
 
 ### resource?
 
-> `optional` **resource**: `"argument"`
+> `optional` **resource**: `"argument"` \| `"callee"`
 
 Defined in: [lib/no-spaghetti-options.ts:34](https://github.com/state-adapt/state-adapt/blob/main/libs/eslint-plugin-spaghetti/src/lib/no-spaghetti-options.ts#L34)
 
-Uses the argument selected by `argumentIndex` to calculate the command score.
+Uses the selected argument or imported callee to calculate the command score.
