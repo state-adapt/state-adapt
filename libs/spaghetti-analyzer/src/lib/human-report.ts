@@ -103,15 +103,15 @@ function bar(value: number): string {
 function formatScoreBreakdown(
   breakdown: FunctionAnalysis['commands'][number]['scoreBreakdown'],
 ): string {
-  return ` [base=${format(breakdown.base)}, declaration=${format(
-    breakdown.declarationLineDistance,
-  )}, calls=${format(breakdown.functionCallDistance)}, scope=${format(
-    breakdown.scopeCrossings,
-  )}, files=${format(breakdown.fileCrossings)}, folders=${format(
-    breakdown.folderCrossings,
-  )}, local=${format(breakdown.sameFunctionDistance)}, size=${format(
-    breakdown.functionSize,
-  )}]`;
+  return ` [base=${format(breakdown.base)}, external=${format(
+    breakdown.external,
+  )}, declaration=${format(breakdown.declarationLineDistance)}, calls=${format(
+    breakdown.functionCallDistance,
+  )}, scope=${format(breakdown.scopeCrossings)}, files=${format(
+    breakdown.fileCrossings,
+  )}, folders=${format(breakdown.folderCrossings)}, local=${format(
+    breakdown.sameFunctionDistance,
+  )}, size=${format(breakdown.functionSize)}]`;
 }
 
 function formatCallPath(

@@ -21,4 +21,25 @@ Use `--json` for machine-readable output, `--compact` for compact JSON, and
 The package also exports functions for creating, formatting, and visualizing
 reports programmatically.
 
+## API Configuration
+
+Use a JSON config to recognize a project API and assign its starting penalty:
+
+```json
+{
+  "apis": [
+    {
+      "name": "Router.navigate",
+      "methods": ["navigate"],
+      "importSources": ["@app/router"],
+      "penalty": 5
+    }
+  ]
+}
+```
+
+```sh
+npx spaghetti-analyzer . --config spaghetti.json
+```
+
 See the [API reference](https://state-adapt.github.io/api/spaghetti-analyzer/index/) for the programmatic API.

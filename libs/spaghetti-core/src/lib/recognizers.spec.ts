@@ -3,10 +3,25 @@ import * as os from 'node:os';
 import * as path from 'node:path';
 import * as ts from 'typescript';
 
-import { analyzeFile, analyzeProject } from './spaghetti-analysis';
+import { AnalysisOptions, analyzeFile, analyzeProject } from './spaghetti-analysis';
 import { CommandRecognizer } from './recognizers';
 
 describe('spaghetti recognizers', () => {
+  it('exposes one declarative API configuration surface', () => {
+    const options: AnalysisOptions = {
+      apis: [{ name: 'Console.log', calls: ['console.log'], penalty: 0 }],
+    };
+    // @ts-expect-error apiPatterns was replaced by apis.
+    const patterns: AnalysisOptions = { apiPatterns: [] };
+    // @ts-expect-error ignoredApis was replaced by zero API penalties.
+    const ignored: AnalysisOptions = { ignoredApis: [] };
+    // @ts-expect-error API base scores are configured on apis.
+    const bases: AnalysisOptions = { scoring: { apiBaseScores: {} } };
+
+    expect(options.apis).toHaveLength(1);
+    expect([patterns, ignored, bases]).toHaveLength(3);
+  });
+
   it('recognizes framework entry points through aliased and namespace imports', () => {
     const commands = analyzeFile(
       `import { bootstrapApplication as bootstrap } from '@angular/platform-browser';
@@ -15,8 +30,14 @@ function start() {
   bootstrap({}).catch(() => {});
   const app = Vue.createApp({});
   app.mount('#app');
-}`,
+      }`,
       'framework.ts',
+      {
+        apis: [
+          { name: 'Angular.bootstrapApplication', penalty: 3 },
+          { name: 'Vue.createApp', penalty: 3 },
+        ],
+      },
     ).functions.find(fn => fn.name === 'start')?.commands;
 
     expect(commands?.map(command => [command.kind, command.api])).toEqual([
@@ -50,7 +71,7 @@ function work() {
       'custom.ts',
       {
         builtInRecognizers: [],
-        apiPatterns: [
+        apis: [
           {
             name: 'Cache.flush',
             methods: ['flush'],
@@ -90,7 +111,7 @@ const run = () => logger.log();`,
       'custom.ts',
       {
         builtInRecognizers: [],
-        apiPatterns: [
+        apis: [
           {
             name: 'Logger.log',
             methods: ['log'],
@@ -117,7 +138,7 @@ function work() { return [cache.flush(), publish(event)]; }`,
       'custom.ts',
       {
         builtInRecognizers: [],
-        apiPatterns: [
+        apis: [
           {
             name: 'Cache.flush',
             methods: ['flush'],
@@ -152,8 +173,7 @@ function wrapper() { leaf(); }`,
       'custom.ts',
       {
         builtInRecognizers: [],
-        apiPatterns: [{ name: 'Console.log', calls: ['console.log'] }],
-        ignoredApis: ['Console.log'],
+        apis: [{ name: 'Console.log', calls: ['console.log'], penalty: 0 }],
       },
     );
 

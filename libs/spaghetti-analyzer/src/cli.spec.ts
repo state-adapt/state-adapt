@@ -9,7 +9,7 @@ describe('report CLI', () => {
     expect(runCli(['--help']).output).toContain('Usage: spaghetti-analyzer');
   });
 
-  it('accepts declarative API patterns from JSON config', () => {
+  it('accepts unified API recognition and penalties from JSON config', () => {
     const root = fs.mkdtempSync(path.join(os.tmpdir(), 'spaghetti-cli-v3-'));
     try {
       fs.writeFileSync(
@@ -20,11 +20,12 @@ describe('report CLI', () => {
         path.join(root, 'spaghetti.json'),
         JSON.stringify({
           builtInRecognizers: [],
-          apiPatterns: [
+          apis: [
             {
               name: 'Cache.flush',
               methods: ['flush'],
               receiverNames: ['cache'],
+              penalty: 5,
             },
           ],
         }),
@@ -37,7 +38,59 @@ describe('report CLI', () => {
         kind: 'api-command',
         api: 'Cache.flush',
         recognizer: 'custom:Cache.flush',
+        score: 7,
+        scoreBreakdown: { base: 5, scopeCrossings: 2 },
       });
+    } finally {
+      fs.rmSync(root, { recursive: true, force: true });
+    }
+  });
+
+  it('applies framework defaults, overrides, and external penalties in reports', () => {
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), 'spaghetti-cli-policy-'));
+    try {
+      fs.writeFileSync(
+        path.join(root, 'source.ts'),
+        `import { bootstrapApplication } from '@angular/platform-browser';
+declare function external(): void;
+export function start() { bootstrapApplication({}); }
+export function run() { external(); }`,
+      );
+      fs.writeFileSync(
+        path.join(root, 'spaghetti.json'),
+        JSON.stringify({
+          scoring: {
+            declarationLineDistanceWeight: 0,
+            scopeCrossingWeight: 0,
+          },
+        }),
+      );
+
+      const defaults = JSON.parse(
+        runCli(['.', '--json', '--config', 'spaghetti.json'], root).output,
+      );
+      expect(defaults.project.files[0].commands).toMatchObject([
+        { call: 'external', scoreBreakdown: { external: 100 }, score: 101 },
+      ]);
+
+      fs.writeFileSync(
+        path.join(root, 'spaghetti.json'),
+        JSON.stringify({
+          apis: [{ name: 'Angular.bootstrapApplication', penalty: 4 }],
+          scoring: {
+            declarationLineDistanceWeight: 0,
+            scopeCrossingWeight: 0,
+          },
+        }),
+      );
+      const overridden = JSON.parse(
+        runCli(['.', '--json', '--config', 'spaghetti.json'], root).output,
+      );
+      expect(
+        overridden.project.files[0].commands.find(
+          (command: { api?: string }) => command.api === 'Angular.bootstrapApplication',
+        ),
+      ).toMatchObject({ score: 4, scoreBreakdown: { base: 4, external: 0 } });
     } finally {
       fs.rmSync(root, { recursive: true, force: true });
     }

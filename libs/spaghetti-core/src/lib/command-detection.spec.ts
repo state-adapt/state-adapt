@@ -196,7 +196,7 @@ function root() { middle(); }`,
       ['chain.ts:middle@2', 'chain.ts:leaf@1'],
     ]);
     expect(command?.distance).toMatchObject({ functionCall: 2, file: 0 });
-    expect(command?.score).toBe(9);
+    expect(command?.score).toBe(109);
   });
 
   it('resolves aliased, namespace and default relative imports across project files', () => {
@@ -229,7 +229,7 @@ export function run() { change(); remove(); effects.mutate(); }`,
       expect(
         run?.commands.every(command => command.callPath[0].distance.file === 1),
       ).toBe(true);
-      expect(run?.commands[0].score).toBe(8);
+      expect(run?.commands[0].score).toBe(108);
     } finally {
       fs.rmSync(root, { recursive: true, force: true });
     }

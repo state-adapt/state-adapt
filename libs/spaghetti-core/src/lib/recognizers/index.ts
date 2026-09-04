@@ -2,7 +2,6 @@ export * from './types';
 export { domRecognizer } from './dom';
 export { javascriptRecognizer } from './javascript';
 export { frameworkApiNames, frameworkRecognizer } from './framework';
-export { patternRecognizer } from './utils';
 
 import { domRecognizer } from './dom';
 import { frameworkRecognizer } from './framework';

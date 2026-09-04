@@ -9,15 +9,16 @@ value. For example, bare calls are general `discarded-call` commands, while a ne
 JavaScript, DOM, and framework recognizers are enabled by default. Void-only
 mutation APIs, including RxJS subjects, React setters, Angular signals, and
 StateAdapt stores, do not need built-in fallback recognizers. Programmatic core
-consumers can supply `CommandRecognizer` objects or `apiPatterns`. The ESLint
-plugin's unified `apis` option compiles custom recognition entries into those
-patterns. Recognizers identify only the API and resource; the shared analyzer
-remains responsible for resolution, distance, propagation, and scoring.
+consumers can supply `CommandRecognizer` objects or JSON-friendly `apis`
+definitions. An API definition can recognize a call and assign its leaf penalty;
+zero-penalty commands are discarded before propagation. Framework entry points
+have zero penalties by default and can be overridden by name.
 
-Scores have an additive `scoreBreakdown`. Configure command-kind bases,
-API-specific bases, declaration-line distance, function-call distance, scope,
-file and folder crossings, same-function distance, and function size through
-`AnalysisOptions.scoring`.
+Scores have an additive `scoreBreakdown`. Configure command-kind bases, external
+penalties, declaration-line distance, function-call distance, scope, file and
+folder crossings, same-function distance, and function size through
+`AnalysisOptions.scoring`. Commands whose target or implementation is outside the
+analyzed program receive an external penalty of `100` by default.
 
 Analysis is type-aware. `analyzeFile` creates a reusable in-memory TypeScript
 program, `analyzeProject` loads project compiler settings, and `analyzeProgram`

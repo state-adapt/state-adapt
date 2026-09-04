@@ -42,13 +42,13 @@ function update() {
     expect(command.score).toBe(57);
   });
 
-  it('uses API-specific bases and retains the command-kind fallback', () => {
+  it('uses API penalties and retains the command-kind fallback', () => {
     const commands = analyzeFile(
       'const values = []; const map = new Map(); function work() { return [values.push(1), map.set("x", 1)]; }',
       'apis.ts',
       {
+        apis: [{ name: 'Array.push', penalty: 40 }],
         scoring: {
-          apiBaseScores: { 'Array.push': 40 },
           baseScores: { 'api-command': 7 },
           declarationLineDistanceWeight: 0,
           scopeCrossingWeight: 0,
@@ -57,6 +57,25 @@ function update() {
     ).commands;
 
     expect(commands.map(command => command.scoreBreakdown.base)).toEqual([40, 7]);
+  });
+
+  it('adds the default external penalty unless an API penalty replaces it', () => {
+    const source = 'declare function send(): void; function run() { send(); }';
+    const external = analyzeFile(source, 'external.ts', {
+      scoring: {
+        declarationLineDistanceWeight: 0,
+        scopeCrossingWeight: 0,
+      },
+    }).functions.find(fn => fn.name === 'run')?.commands[0];
+    const configured = analyzeFile(source, 'external.ts', {
+      apis: [{ name: 'App.send', calls: ['send'], penalty: 5 }],
+      scoring: { declarationLineDistanceWeight: 0, scopeCrossingWeight: 0 },
+    }).functions.find(fn => fn.name === 'run')?.commands[0];
+
+    expect(external?.scoreBreakdown).toMatchObject({ base: 1, external: 100 });
+    expect(external?.score).toBe(101);
+    expect(configured?.scoreBreakdown).toMatchObject({ base: 5, external: 0 });
+    expect(configured?.score).toBe(5);
   });
 
   it('adds an immutable score layer for every inherited call', () => {
@@ -84,7 +103,7 @@ function root() {
     const middle = result.functions.find(fn => fn.name === 'middle')?.commands[0];
     const root = result.functions.find(fn => fn.name === 'root')?.commands[0];
 
-    expect([leaf?.score, middle?.score, root?.score]).toEqual([100, 109, 123]);
+    expect([leaf?.score, middle?.score, root?.score]).toEqual([200, 209, 223]);
     expect(root?.distance.sameFunction).toBe(3);
     expect(
       root?.scoreBreakdown.contributions.filter(
@@ -93,7 +112,7 @@ function root() {
     ).toHaveLength(2);
     expect(root?.scoreBreakdown.total).toBe(root?.score);
     expect(leaf?.callPath).toEqual([]);
-    expect(leaf?.scoreBreakdown.total).toBe(100);
+    expect(leaf?.scoreBreakdown.total).toBe(200);
   });
 
   it('detects only definitely-void concise arrow bodies as commands', () => {

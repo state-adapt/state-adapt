@@ -1,5 +1,5 @@
 import { createRule } from './create-rule';
-import { commandPolicy, isIgnored, policyScore } from './policy';
+import { commandPolicy, policyScore } from './policy';
 import { format, reportCommand } from './reporting';
 import { noSpaghettiSchema } from './schemas';
 
@@ -21,7 +21,6 @@ export const noSpaghetti = createRule(
     functions.forEach(fn => {
       let eventAllowance = fn.jsxEventHandler;
       fn.commands.forEach(command => {
-        if (isIgnored(command, policy)) return;
         const assessment = policyScore(command, policy);
         if (!assessment.exceedsLimit) return;
         if (eventAllowance) {

@@ -33,29 +33,7 @@ describe('typed configuration', () => {
 
   it('uses the documented default scoring policy', () => {
     const policy = commandPolicy({});
-    expect(policy).toMatchObject({
-      maxScore: 6,
-      externalPenalty: 100,
-      weights: {
-        declarationLine: 1,
-        scope: 1,
-        file: 30,
-        folder: 15,
-      },
-    });
-    expect(policy.apiPenalties).toEqual(
-      new Map([
-        ['Angular.enableProdMode', 0],
-        ['Angular.bootstrapApplication', 0],
-        ['Angular.platformBrowserDynamic', 0],
-        ['React.createRoot', 0],
-        ['React.hydrateRoot', 0],
-        ['Vue.createApp', 0],
-        ['Svelte.mount', 0],
-        ['Solid.render', 0],
-        ['Preact.render', 0],
-      ]),
-    );
+    expect(policy).toEqual({ maxScore: 6 });
   });
 
   it('requires exclusive method or function API patterns', () => {

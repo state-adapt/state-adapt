@@ -37,14 +37,13 @@ function contribution(
 
 export function directScoreBreakdown(
   kind: CommandKind,
-  api: string | undefined,
+  apiPenalty: number | undefined,
+  external: boolean,
   distance: Distance,
   functionSize: number,
   scoring: ScoringConfig,
 ): ScoreBreakdown {
-  const base = api
-    ? scoring.apiBaseScores[api] ?? scoring.baseScores[kind]
-    : scoring.baseScores[kind];
+  const base = apiPenalty ?? scoring.baseScores[kind];
   const contributions: ScoreContribution[] = [
     { factor: 'base', layer: 'origin', value: base },
     contribution(
@@ -73,6 +72,11 @@ export function directScoreBreakdown(
       scoring.sameFunctionDistanceWeight,
     ),
     contribution('function-size', 'origin', functionSize, scoring.functionSizeWeight),
+    {
+      factor: 'external',
+      layer: 'origin',
+      value: external && apiPenalty === undefined ? scoring.externalPenalty : 0,
+    },
   ];
   return breakdownFrom(contributions);
 }
@@ -134,6 +138,7 @@ function breakdownFrom(contributions: ScoreContribution[]): ScoreBreakdown {
       .reduce((total, item) => total + item.value, 0);
   return {
     base: sum('base'),
+    external: sum('external'),
     declarationLineDistance: sum('declaration-line-distance'),
     functionCallDistance: sum('function-call-distance'),
     scopeCrossings: sum('scope-crossings'),
@@ -152,6 +157,5 @@ export function scoringConfig(options: AnalysisOptions): ScoringConfig {
     ...defaultScoring,
     ...supplied,
     baseScores: { ...defaultScoring.baseScores, ...supplied.baseScores },
-    apiBaseScores: { ...defaultScoring.apiBaseScores, ...supplied.apiBaseScores },
   };
 }

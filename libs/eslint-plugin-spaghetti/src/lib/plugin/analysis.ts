@@ -6,26 +6,15 @@ import {
 import { Rule } from 'eslint';
 import { RuleOptions } from './types';
 import { commandPolicy } from './policy';
+import { numberOption } from './reporting';
 
 const cacheByProgram = new WeakMap<object, Map<string, FileAnalysis[]>>();
 
 function analysisOptions(options: RuleOptions): AnalysisOptions {
-  const apis = options.apis ?? [];
   const builtIns = options['builtInRecognizers'];
   const policy = commandPolicy(options);
-  const apiPatterns = apis.filter(
-    api =>
-      api.methods !== undefined || api.functions !== undefined || api.calls !== undefined,
-  ) as NonNullable<AnalysisOptions['apiPatterns']>;
-  const ignoredApis = [...policy.apiPenalties]
-    .filter(([, penalty]) => penalty === 0)
-    .map(([name]) => name);
-  const apiBaseScores = Object.fromEntries(
-    [...policy.apiPenalties].filter(([, penalty]) => penalty > 0),
-  );
   return {
-    ...(apiPatterns.length > 0 ? { apiPatterns } : {}),
-    ...(ignoredApis.length > 0 ? { ignoredApis } : {}),
+    ...(options.apis ? { apis: options.apis } : {}),
     ...(Array.isArray(builtIns)
       ? { builtInRecognizers: builtIns as AnalysisOptions['builtInRecognizers'] }
       : {}),
@@ -47,12 +36,16 @@ function analysisOptions(options: RuleOptions): AnalysisOptions {
         delete: 0,
         'api-command': 0,
       },
-      apiBaseScores,
-      declarationLineDistanceWeight: policy.weights.declarationLine,
+      externalPenalty: numberOption(options, 'externalPenalty', 100),
+      declarationLineDistanceWeight: numberOption(
+        options,
+        'declarationLineDistanceWeight',
+        1,
+      ),
       sameFunctionDistanceWeight: 0,
-      scopeCrossingWeight: policy.weights.scope,
-      fileCrossingWeight: policy.weights.file,
-      folderCrossingWeight: policy.weights.folder,
+      scopeCrossingWeight: numberOption(options, 'scopeWeight', 1),
+      fileCrossingWeight: numberOption(options, 'fileWeight', 30),
+      folderCrossingWeight: numberOption(options, 'folderWeight', 15),
       functionCallDistanceWeight: 0,
       functionSizeWeight: 0,
     },

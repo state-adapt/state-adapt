@@ -7,7 +7,11 @@ import {
   MODULE_FUNCTION_NAME,
 } from './internal-types';
 import { buildScopes, Scope } from './scopes';
-import { configuredRecognizers, createRecognitionContext } from './recognizer-config';
+import {
+  apiConfiguration,
+  configuredRecognizers,
+  createRecognitionContext,
+} from './recognizer-config';
 import { CommandRecognitionContext, CommandRecognizer } from '../recognizers';
 import {
   callTarget,
@@ -185,7 +189,10 @@ function collectFunctionBody(
   const ownerBody = ts.isSourceFile(owner) ? owner : owner.body;
   if (node !== ownerBody && isFunction(node)) return;
   const detected = detectCommand(node, recognizers, recognitionContext, checker, owner);
-  if (detected && (!detected.api || !options.ignoredApis?.includes(detected.api)))
+  const apiPenalty = detected?.api
+    ? apiConfiguration(options).penalties.get(detected.api)
+    : undefined;
+  if (detected && apiPenalty !== 0)
     commands.push(
       createDirectCommand(
         detected,
@@ -262,9 +269,14 @@ function createDirectCommand(
     folder: resolution?.distance.folder ?? 0,
   };
   const scoring = scoringConfig(options);
+  const external = Boolean(detected.external || resolution?.external);
+  const apiPenalty = detected.api
+    ? apiConfiguration(options).penalties.get(detected.api)
+    : undefined;
   const scoreBreakdown = directScoreBreakdown(
     detected.kind,
-    detected.api,
+    apiPenalty,
+    external,
     distance,
     functionSize,
     scoring,
@@ -281,7 +293,7 @@ function createDirectCommand(
     ...(detected.api ? { api: detected.api } : {}),
     ...(detected.recognizer ? { recognizer: detected.recognizer } : {}),
     ...(detected.call ? { call: detected.call } : {}),
-    ...(detected.external || resolution?.external ? { external: true } : {}),
+    ...(external ? { external: true } : {}),
     ...(resolution?.declaration ? { declaration: resolution.declaration } : {}),
     remote: Boolean(
       resolution &&

@@ -9,8 +9,32 @@ import {
   CommandRecognitionContext,
   CommandRecognizer,
   builtInRecognizers,
-  patternRecognizer,
+  frameworkApiNames,
 } from '../recognizers';
+import { ApiPatternDefinition, patternRecognizer } from '../recognizers/utils';
+
+export interface NormalizedApiConfiguration {
+  patterns: ApiPatternDefinition[];
+  penalties: ReadonlyMap<string, number>;
+}
+
+const configurations = new WeakMap<AnalysisOptions, NormalizedApiConfiguration>();
+
+export function apiConfiguration(options: AnalysisOptions): NormalizedApiConfiguration {
+  const cached = configurations.get(options);
+  if (cached) return cached;
+  const penalties = new Map<string, number>(
+    frameworkApiNames.map(name => [name, 0] as const),
+  );
+  const patterns: ApiPatternDefinition[] = [];
+  for (const api of options.apis ?? []) {
+    if (api.penalty !== undefined) penalties.set(api.name, api.penalty);
+    if (api.methods || api.functions || api.calls) patterns.push(api);
+  }
+  const configuration = { patterns, penalties };
+  configurations.set(options, configuration);
+  return configuration;
+}
 
 export function configuredRecognizers(
   options: AnalysisOptions,
@@ -20,7 +44,7 @@ export function configuredRecognizers(
     : undefined;
   return [
     ...(options.recognizers ?? []),
-    ...(options.apiPatterns ?? []).map(patternRecognizer),
+    ...apiConfiguration(options).patterns.map(patternRecognizer),
     ...builtInRecognizers.filter(
       recognizer => !enabled || enabled.has(recognizer.name as BuiltInRecognizerName),
     ),

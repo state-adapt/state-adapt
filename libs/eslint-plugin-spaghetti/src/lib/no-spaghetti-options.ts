@@ -1,137 +1,16 @@
-interface NoSpaghettiApiBase {
-  /** Stable name used to identify the API. */
-  name: string;
-  /**
-   * Sets the command leaf's starting penalty. Distance costs remain additive.
-   * Zero discards the command immediately; omit this to use ordinary scoring.
-   */
-  penalty?: number;
-}
+import type {
+  ApiDefinition,
+  CallApiDefinition,
+  FunctionApiDefinition,
+  MethodApiDefinition,
+  RecognizedApiDefinition,
+} from '@state-adapt/spaghetti-core';
 
-/**
- * Use this definition for commands called as methods, such as `cache.write()`.
- * The method receiver can be treated as the affected resource.
- */
-export interface NoSpaghettiMethodApi extends NoSpaghettiApiBase {
-  /** Lists command method names, such as `write` in `cache.write()`. */
-  methods: string[];
-  functions?: never;
-  calls?: never;
-  /** Restricts method calls by receiver name, such as `cache` in `cache.write()`. */
-  receiverNames?: string[];
-  /** Restricts recognition to APIs imported from these module specifiers. */
-  importSources?: string[];
-  /** Selects the receiver or argument used to calculate the command score. */
-  resource?: 'receiver' | 'argument';
-  /** Selects the argument used to calculate the command score. `0` means the first argument. */
-  argumentIndex?: number;
-}
-
-/**
- * Use this definition for standalone command functions, such as `writeCache(cache)`.
- * One of the function arguments is treated as the affected resource.
- */
-export interface NoSpaghettiFunctionApi extends NoSpaghettiApiBase {
-  /** Lists command function names, such as `writeCache` in `writeCache(cache)`. */
-  functions: string[];
-  methods?: never;
-  calls?: never;
-  /** Restricts recognition to APIs imported from these module specifiers. */
-  importSources?: string[];
-  /** Uses the selected argument or imported callee to calculate the command score. */
-  resource?: 'argument' | 'callee';
-  /** Selects the argument used to calculate the command score. `0` means the first argument. */
-  argumentIndex?: number;
-}
-
-/** Recognizes an API by its exact source-level call name. */
-export interface NoSpaghettiCallApi extends NoSpaghettiApiBase {
-  /** Exact source-level call names, such as `console.log`. */
-  calls: string[];
-  methods?: never;
-  functions?: never;
-  receiverNames?: never;
-  importSources?: never;
-  resource?: never;
-  argumentIndex?: never;
-}
-
-/** Assigns a penalty to an API recognized by a built-in recognizer. */
-export interface NoSpaghettiRecognizedApi extends NoSpaghettiApiBase {
-  /**
-   * Sets the command leaf's starting penalty. Distance costs remain additive.
-   * Zero discards the command immediately.
-   */
-  penalty: number;
-  methods?: never;
-  functions?: never;
-  calls?: never;
-  receiverNames?: never;
-  importSources?: never;
-  resource?: never;
-  argumentIndex?: never;
-}
-
-/**
- * Configures how the rule recognizes, names, and optionally assigns a starting
- * penalty to an API command.
- *
- * API definitions may recognize method calls, standalone functions, or exact
- * source-level call names. A name-only entry configures a built-in API.
- *
- * - For `receiver.method()` calls, use {@link NoSpaghettiMethodApi}.
- * - For standalone `function()` calls, use {@link NoSpaghettiFunctionApi}.
- * - For an exact source-level call name, use {@link NoSpaghettiCallApi}.
- * - To change a built-in API's penalty, use {@link NoSpaghettiRecognizedApi}.
- *
- * A definition never combines `methods`, `functions`, or `calls`.
- *
- * @example Receiver and argument resources
- * Both calls below modify `cache`, but they pass it to the API differently:
- *
- * ```ts
- * import { cache, writeCache } from 'cache-library';
- *
- * cache.write(value); // `cache` is the method receiver.
- * writeCache(cache, value); // `cache` is the first argument.
- * ```
- *
- * This configuration in `.eslintrc.json` tells the rule to use `cache` when
- * calculating the score of either command:
- *
- * ```json
- * {
- *   "rules": {
- *     "@state-adapt/spaghetti/no-spaghetti": [
- *       "warn",
- *       {
- *         "apis": [
- *           {
- *             "name": "cache.methodWrite",
- *             "methods": ["write"],
- *             "receiverNames": ["cache"],
- *             "importSources": ["cache-library"],
- *             "resource": "receiver"
- *           },
- *           {
- *             "name": "cache.functionWrite",
- *             "functions": ["writeCache"],
- *             "importSources": ["cache-library"],
- *             "resource": "argument",
- *             "argumentIndex": 0
- *           }
- *         ]
- *       }
- *     ]
- *   }
- * }
- * ```
- */
-export type NoSpaghettiApi =
-  | NoSpaghettiMethodApi
-  | NoSpaghettiFunctionApi
-  | NoSpaghettiCallApi
-  | NoSpaghettiRecognizedApi;
+export type NoSpaghettiApi = ApiDefinition;
+export type NoSpaghettiMethodApi = MethodApiDefinition;
+export type NoSpaghettiFunctionApi = FunctionApiDefinition;
+export type NoSpaghettiCallApi = CallApiDefinition;
+export type NoSpaghettiRecognizedApi = RecognizedApiDefinition;
 
 /**
  * Configures which commands the `@state-adapt/spaghetti/no-spaghetti` rule reports

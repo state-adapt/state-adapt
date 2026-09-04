@@ -1,10 +1,6 @@
 import * as ts from 'typescript';
 
-import {
-  ApiCommandPattern,
-  BuiltInRecognizerName,
-  CommandRecognizer,
-} from '../recognizers';
+import { ApiDefinition, BuiltInRecognizerName, CommandRecognizer } from '../recognizers';
 
 export type CommandKind =
   | 'discarded-call'
@@ -32,6 +28,7 @@ export interface Distance {
 }
 export type ScoreFactor =
   | 'base'
+  | 'external'
   | 'declaration-line-distance'
   | 'function-call-distance'
   | 'scope-crossings'
@@ -49,6 +46,7 @@ export interface ScoreContribution {
 }
 export interface ScoreBreakdown {
   base: number;
+  external: number;
   declarationLineDistance: number;
   functionCallDistance: number;
   scopeCrossings: number;
@@ -122,8 +120,8 @@ export interface ProjectAnalysis {
 
 export interface ScoringConfig {
   baseScores: Record<CommandKind, number>;
-  /** Optional exact API-name overrides for api-command base scores. */
-  apiBaseScores: Record<string, number>;
+  /** Penalty added when the command target or implementation is outside the program. */
+  externalPenalty: number;
   declarationLineDistanceWeight: number;
   sameFunctionDistanceWeight: number;
   scopeCrossingWeight: number;
@@ -134,18 +132,15 @@ export interface ScoringConfig {
 }
 
 export interface AnalysisOptions {
-  scoring?: Partial<Omit<ScoringConfig, 'baseScores' | 'apiBaseScores'>> & {
+  scoring?: Partial<Omit<ScoringConfig, 'baseScores'>> & {
     baseScores?: Partial<Record<CommandKind, number>>;
-    apiBaseScores?: Record<string, number>;
   };
   extensions?: string[];
   exclude?: (string | RegExp)[];
   /** Programmatic extension point. These run before declarative and built-in recognizers. */
   recognizers?: CommandRecognizer[];
-  /** JSON-friendly custom API command definitions, suitable for config files. */
-  apiPatterns?: ApiCommandPattern[];
-  /** Recognized API commands to discard before call-chain propagation. */
-  ignoredApis?: string[];
+  /** JSON-friendly API recognition and leaf-penalty configuration. */
+  apis?: ApiDefinition[];
   /** Select built-in families. All families are enabled by default. */
   builtInRecognizers?: BuiltInRecognizerName[];
   /** Reuse an existing compiler program, such as the one supplied by typescript-eslint. */
@@ -170,7 +165,7 @@ export const defaultScoring: ScoringConfig = {
     delete: 4,
     'api-command': 3,
   },
-  apiBaseScores: {},
+  externalPenalty: 100,
   declarationLineDistanceWeight: 0.1,
   sameFunctionDistanceWeight: 0,
   scopeCrossingWeight: 2,

@@ -28,7 +28,7 @@ describe('spaghetti reporting', () => {
       'distance(declarationLine=1, scope=1, calls=0, files=0, folders=0)',
     );
     expect(formatHumanReport(report)).toContain('Directories');
-    expect(formatHumanReport(report)).toContain('[base=2, declaration=0.10');
+    expect(formatHumanReport(report)).toContain('[base=2, external=0, declaration=0.10');
   });
 
   it('renders inherited command chains', () => {

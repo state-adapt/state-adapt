@@ -1,6 +1,17 @@
 import * as ts from 'typescript';
 
-import { ApiCommandPattern, CommandRecognitionContext, CommandRecognizer } from './types';
+import {
+  CallApiDefinition,
+  CommandRecognitionContext,
+  CommandRecognizer,
+  FunctionApiDefinition,
+  MethodApiDefinition,
+} from './types';
+
+export type ApiPatternDefinition =
+  | MethodApiDefinition
+  | FunctionApiDefinition
+  | CallApiDefinition;
 
 export function methodCall(
   call: ts.CallExpression,
@@ -64,7 +75,7 @@ export function initializedBy(
   return names.includes('Array') && ts.isArrayLiteralExpression(initializer);
 }
 
-export function patternRecognizer(pattern: ApiCommandPattern): CommandRecognizer {
+export function patternRecognizer(pattern: ApiPatternDefinition): CommandRecognizer {
   return {
     name: `custom:${pattern.name}`,
     recognize(call, context) {
