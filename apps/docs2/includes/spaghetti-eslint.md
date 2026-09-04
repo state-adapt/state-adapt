@@ -1,4 +1,4 @@
-## Optional: Minimize spaghetti code
+## ESLint Plugin: No Spaghetti
 
 > **Experimental:** The rule and its configuration may change as we learn from real-world use.
 

@@ -12,7 +12,6 @@ First, install:
 npm i -s rxjs
 npm i -s @state-adapt/core
 npm i -s @state-adapt/rxjs
-npx skills experimental_sync # Optional (for coding agents)
 ```
 
 Create a file named `state-adapt.ts` and export `watch` and `adapt`:
@@ -53,5 +52,7 @@ For now, refer to [`configureStateAdapt`](/api/rxjs/index/configureStateAdapt) f
 :::
 
 [StackBlitz demo](https://stackblitz.com/edit/solidjs-templates-oc7ivf?file=src%2Fadapt.function.ts)
+
+<!--@include: ../../../includes/agents.md-->
 
 <!--@include: ../../../includes/spaghetti-eslint.md-->

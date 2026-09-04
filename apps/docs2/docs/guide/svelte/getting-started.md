@@ -12,7 +12,6 @@ First, install:
 npm i -s rxjs
 npm i -s @state-adapt/core
 npm i -s @state-adapt/rxjs
-npx skills experimental_sync # Optional (for coding agents)
 ```
 
 Create a file named `state-adapt.ts` and export `watch` and `adapt`:
@@ -57,5 +56,7 @@ We are considering two options to add support for runes. Please [check progress 
 <!-- For more configuration options, see [@state-adapt/svelte](/docs/svelte). -->
 
 [StackBlitz demo](https://stackblitz.com/edit/vitejs-vite-szsd3d?file=src%2Fadapt.function.ts,src%2Flib%2FCounter.svelte&terminal=dev)
+
+<!--@include: ../../../includes/agents.md-->
 
 <!--@include: ../../../includes/spaghetti-eslint.md-->

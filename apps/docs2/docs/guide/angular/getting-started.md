@@ -12,7 +12,6 @@ Install these libraries:
 npm i -s @state-adapt/core
 npm i -s @state-adapt/rxjs
 npm i -s @state-adapt/angular
-npx skills experimental_sync # Optional (for coding agents)
 ```
 
 [StackBlitz](https://stackblitz.com/edit/state-adapt-angular?file=src%2Fapp%2Fapp.module.ts)
@@ -21,5 +20,7 @@ npx skills experimental_sync # Optional (for coding agents)
 
 For advanced configuration, see [`provideStore`](/api/angular/index/provideStore.html)
 and [`IS_STORE_LOCAL`](/api/angular/index/IS_STORE_LOCAL.html).
+
+<!--@include: ../../../includes/agents.md-->
 
 <!--@include: ../../../includes/spaghetti-eslint.md-->
