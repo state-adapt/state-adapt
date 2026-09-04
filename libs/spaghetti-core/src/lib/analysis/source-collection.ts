@@ -295,6 +295,7 @@ function createDirectCommand(
     ...(detected.call ? { call: detected.call } : {}),
     ...(external ? { external: true } : {}),
     ...(resolution?.declaration ? { declaration: resolution.declaration } : {}),
+    ...(resolution ? { resourceProvenance: resolution.provenance } : {}),
     remote: Boolean(
       resolution &&
         (resolution.external ||

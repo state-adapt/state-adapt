@@ -35,6 +35,28 @@ ruleTester.run('no-spaghetti command policy', rules['no-spaghetti'], {
     },
     {
       filename: typedScratch,
+      code: `declare function getState(): { value: number };
+function update() {
+  getState().value++;
+}`,
+    },
+    {
+      filename: typedScratch,
+      code: `type BookSortOrder = 'asc' | 'desc';
+type BookSortProp = 'name' | 'earnings';
+interface BookModel { name: string; earnings: string; }
+function sortBooks(order: BookSortOrder, prop: BookSortProp, books: BookModel[]) {
+  const direction = order === 'asc' ? 1 : -1;
+  if (prop === 'name') {
+    return [...books].sort((a, b) => direction * a.name.localeCompare(b.name));
+  }
+  return [...books].sort((a, b) =>
+    direction * (parseFloat(a.earnings) - parseFloat(b.earnings))
+  );
+}`,
+    },
+    {
+      filename: typedScratch,
       code: `function atDefaultLimit(value: number) {
 
 
@@ -268,16 +290,6 @@ bootstrapApplication().catch(() => {});`,
             reason: ': external target.',
           },
         },
-        {
-          messageId: 'spaghetti',
-          line: 4,
-          data: {
-            kind: 'Discarded call',
-            score: '100',
-            maxScore: '6',
-            reason: ': external target.',
-          },
-        },
       ],
     },
     {
@@ -385,25 +397,6 @@ function update() {
           messageId: 'spaghetti',
           line: 4,
           data: { kind: 'Increment', score: '2', maxScore: '1', reason: '.' },
-        },
-      ],
-    },
-    {
-      filename: typedScratch,
-      code: `declare function getState(): { value: number };
-function update() {
-  getState().value++;
-}`,
-      errors: [
-        {
-          messageId: 'spaghetti',
-          line: 3,
-          data: {
-            kind: 'Increment',
-            score: '100',
-            maxScore: '6',
-            reason: ': external target.',
-          },
         },
       ],
     },

@@ -70,6 +70,23 @@ export interface Declaration {
   kind: 'variable' | 'parameter' | 'function' | 'import' | 'class' | 'unknown';
   location: SourceLocation;
 }
+export type ResourceOriginKind = 'allocation' | 'declaration' | 'external' | 'unknown';
+export interface ResourceOrigin {
+  /** What the analyzer could prove about the value targeted by the command. */
+  kind: ResourceOriginKind;
+  /** The value definition or best-known fallback location. */
+  location?: SourceLocation;
+  /** Present for declaration-backed origins and unknown declaration fallbacks. */
+  declaration?: Declaration;
+  /** Parameter position when the value originates at a function boundary. */
+  parameterIndex?: number;
+}
+export interface ResourceProvenance {
+  /** `partial` means at least one path is known and at least one remains unknown. */
+  confidence: 'proven' | 'partial' | 'unknown';
+  /** All distinct origins reachable through the supported value-flow constructs. */
+  origins: ResourceOrigin[];
+}
 export interface Command {
   kind: CommandKind;
   location: SourceLocation;
@@ -88,6 +105,8 @@ export interface Command {
   /** The command targets a resource or implementation outside the analyzed program. */
   external?: boolean;
   declaration?: Declaration;
+  /** Value-flow evidence used to resolve the command target. */
+  resourceProvenance?: ResourceProvenance;
   remote: boolean;
 }
 export interface FunctionAnalysis {

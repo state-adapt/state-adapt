@@ -87,8 +87,9 @@ export interface NoSpaghettiOptions {
   folderWeight?: number;
   /**
    * Sets the penalty added when a command's affected resource or implementation
-   * cannot be resolved inside the analyzed TypeScript program. Imports resolved to
-   * another analyzed file use file and folder weights instead.
+   * is proven to be outside the analyzed TypeScript program. Unknown value origins
+   * do not receive this penalty. Imports resolved to another analyzed file use file
+   * and folder weights instead.
    * API-specific penalties can be configured with `apis`. Defaults to `100`.
    */
   externalPenalty?: number;

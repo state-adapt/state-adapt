@@ -18,11 +18,7 @@ bootstrapApplication().catch(() => {});`);
 
     expect(module?.commands).toMatchObject([
       { kind: 'discarded-call', call: 'enableProdMode', external: true },
-      {
-        kind: 'discarded-call',
-        call: 'bootstrapApplication().catch',
-        external: true,
-      },
+      { kind: 'discarded-call', call: 'bootstrapApplication().catch' },
     ]);
   });
 
@@ -39,7 +35,7 @@ write();`);
     ]);
   });
 
-  it('resolves class fields and marks call-produced targets external', () => {
+  it('resolves class fields and leaves call-produced targets unknown', () => {
     const result = analyzeFile(`class Counter {
   state = { value: 0 };
   update() {
@@ -57,9 +53,10 @@ write();`);
     expect(commands?.[0].external).toBeUndefined();
     expect(commands?.[1]).toMatchObject({
       resource: 'getState().value',
-      external: true,
       distance: { declarationLine: 0, scope: 0, file: 0, folder: 0 },
+      resourceProvenance: { confidence: 'unknown' },
     });
+    expect(commands?.[1].external).toBeUndefined();
   });
 
   it('traces injected project services and treats unavailable methods as external', () => {
