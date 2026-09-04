@@ -93,6 +93,7 @@ function createModuleDraft(
   );
   if (directCommands.length === 0 && calls.length === 0) return undefined;
   return {
+    node: sourceFile,
     functionId,
     name,
     location,
@@ -142,6 +143,7 @@ function visitFunctions(
       calls,
     );
     output.push({
+      node,
       functionId,
       name,
       location,

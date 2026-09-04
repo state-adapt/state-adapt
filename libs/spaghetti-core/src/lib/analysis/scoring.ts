@@ -131,6 +131,58 @@ export function inheritScoreBreakdown(
   return breakdownFrom([...hopContributions(hop, scoring), ...breakdown.contributions]);
 }
 
+/** Replace command-origin resource evidence after binding a callee parameter. */
+export function rebaseResourceScoreBreakdown(
+  breakdown: ScoreBreakdown,
+  distance: Pick<Distance, 'declarationLine' | 'scope' | 'file' | 'folder'>,
+  external: boolean,
+  applyExternalPenalty: boolean,
+  scoring: ScoringConfig,
+): ScoreBreakdown {
+  const contributions = breakdown.contributions.map(item => {
+    if (item.layer !== 'origin') return item;
+    switch (item.factor) {
+      case 'declaration-line-distance':
+        return contribution(
+          item.factor,
+          item.layer,
+          distance.declarationLine,
+          scoring.declarationLineDistanceWeight,
+        );
+      case 'scope-crossings':
+        return contribution(
+          item.factor,
+          item.layer,
+          distance.scope,
+          scoring.scopeCrossingWeight,
+        );
+      case 'file-crossings':
+        return contribution(
+          item.factor,
+          item.layer,
+          distance.file,
+          scoring.fileCrossingWeight,
+        );
+      case 'folder-crossings':
+        return contribution(
+          item.factor,
+          item.layer,
+          distance.folder,
+          scoring.folderCrossingWeight,
+        );
+      case 'external':
+        return {
+          factor: item.factor,
+          layer: item.layer,
+          value: external && applyExternalPenalty ? scoring.externalPenalty : 0,
+        };
+      default:
+        return item;
+    }
+  });
+  return breakdownFrom(contributions);
+}
+
 function breakdownFrom(contributions: ScoreContribution[]): ScoreBreakdown {
   const sum = (factor: ScoreFactor): number =>
     contributions

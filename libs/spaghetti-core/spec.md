@@ -283,6 +283,7 @@ And I have committed the work done up to now.
 - Project analysis resolves lexical same-file calls and named, aliased, default, and namespace calls through relative TypeScript/JavaScript imports. Single-file analysis applies the same propagation to functions available in that file.
 - Recursive expansion is bounded by the functions already visited on the current path. Distinct acyclic call paths remain distinct because they represent distinct ways a caller can cause a command.
 - Call-chain distance is accumulated onto the command. Function-call and file scoring weights are available with zero defaults, while the broader scoring model remains reserved for V4.
+- Call-graph propagation exports effects rather than every implementation command. A mutation of an allocation owned by the callee does not cross that callee's boundary. Parameter-derived effects do cross and are rebound to caller argument provenance before further propagation; shared, captured, class, module, proven-external, and unresolved effects remain exportable.
 
 ---
 

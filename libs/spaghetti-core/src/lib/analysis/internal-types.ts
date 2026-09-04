@@ -1,5 +1,6 @@
 import * as ts from 'typescript';
-import { Command, FunctionAnalysis, SourceLocation } from './models';
+import { Command, CommandHop, FunctionAnalysis, SourceLocation } from './models';
+import { ResolvedResource } from './resource-resolution';
 import { Scope } from './scopes';
 
 export const MODULE_FUNCTION_NAME = '<module>';
@@ -17,11 +18,18 @@ export interface CallSite {
   namespace?: string;
 }
 export interface FunctionDraft extends FunctionAnalysis {
+  node: ts.FunctionLikeDeclaration | ts.SourceFile;
   sourceFile: ts.SourceFile;
   scopes: Map<ts.Node, Scope>;
   directCommands: Command[];
   calls: CallSite[];
   jsxEventHandler: boolean;
+}
+export interface CallEdge {
+  callee: FunctionDraft;
+  hop: CommandHop;
+  /** Caller-side value origins for the callee's parameters. */
+  arguments: Array<ResolvedResource | undefined>;
 }
 export interface FileDraft {
   sourceFile: ts.SourceFile;

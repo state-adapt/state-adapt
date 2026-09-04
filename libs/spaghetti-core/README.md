@@ -25,6 +25,12 @@ program, `analyzeProject` loads project compiler settings, and `analyzeProgram`
 reuses an existing program. Project call paths are bounded by
 `maxCallDepth` and `maxCommandsPerFunction`.
 
+Propagation follows resource ownership across function boundaries. Mutations of
+allocations owned by a callee remain implementation details of that callee, while
+parameter mutations are rebound to caller arguments and shared, captured, class,
+module, external, and unknown effects continue through the call graph. Unknown
+origins remain conservative effects without being mislabeled as external.
+
 Functions used as JSX event handlers expose neutral `jsxEventHandler` context.
 Core never removes a handler command from aggregate scores; consumer-specific
 allowances belong to the consumer.
