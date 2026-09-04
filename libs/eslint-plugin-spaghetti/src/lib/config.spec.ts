@@ -1,5 +1,5 @@
 import { Linter } from 'eslint';
-import { NoSpaghettiApi } from './no-spaghetti-options';
+import { ApiDefinition } from '@state-adapt/spaghetti-core';
 import { commandPolicy } from './plugin/policy';
 import { configs, rules } from './rules';
 
@@ -42,33 +42,33 @@ describe('typed configuration', () => {
     }>;
     expect(schema[0].properties['apis'].items?.oneOf).toHaveLength(4);
 
-    const valid: NoSpaghettiApi = {
+    const valid: ApiDefinition = {
       name: 'cache.write',
       functions: ['writeCache'],
       resource: 'argument',
     };
-    const validCallee: NoSpaghettiApi = {
+    const validCallee: ApiDefinition = {
       name: 'app.start',
       functions: ['start'],
       resource: 'callee',
     };
-    const validCall: NoSpaghettiApi = {
+    const validCall: ApiDefinition = {
       name: 'Console.log',
       calls: ['console.log'],
       penalty: 0,
     };
-    const validBuiltIn: NoSpaghettiApi = {
+    const validBuiltIn: ApiDefinition = {
       name: 'Angular.bootstrapApplication',
       penalty: 5,
     };
     // @ts-expect-error Function patterns cannot use a method receiver.
-    const invalidReceiver: NoSpaghettiApi = {
+    const invalidReceiver: ApiDefinition = {
       name: 'cache.write',
       functions: ['writeCache'],
       resource: 'receiver',
     };
     // @ts-expect-error An API cannot define both methods and functions.
-    const invalidMixed: NoSpaghettiApi = {
+    const invalidMixed: ApiDefinition = {
       name: 'cache.write',
       methods: ['write'],
       functions: ['writeCache'],

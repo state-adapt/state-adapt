@@ -10,6 +10,7 @@ import adapterPaths from '../docs/api/core/adapters/symbol.paths';
 import corePaths from '../docs/api/core/src/symbol.paths';
 import eslintSpaghettiPaths from '../docs/api/eslint-plugin-spaghetti/index/symbol.paths';
 import rxjsPaths from '../docs/api/rxjs/index/symbol.paths';
+import spaghettiCorePaths from '../docs/api/spaghetti-core/index/symbol.paths';
 import spaghettiAnalyzerPaths from '../docs/api/spaghetti-analyzer/index/symbol.paths';
 import angularPaths from '../docs/api/angular/index/symbol.paths';
 import reactPaths from '../docs/api/react/index/symbol.paths';
@@ -288,6 +289,12 @@ function getApiSidebar(): DefaultTheme.SidebarItem[] {
       link: packageLink('@state-adapt/react'),
       collapsed: true,
       items: [...getLibSectionItems(reactPaths.sections())],
+    },
+    {
+      text: '@state-adapt/spaghetti-core',
+      link: packageLink('@state-adapt/spaghetti-core'),
+      collapsed: true,
+      items: [...getLibSectionItems(spaghettiCorePaths.sections())],
     },
     {
       text: '@state-adapt/eslint-plugin-spaghetti',

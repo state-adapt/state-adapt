@@ -5,6 +5,7 @@ import coreConfig from './docs/api/core/src/symbol.paths';
 import eslintSpaghettiConfig from './docs/api/eslint-plugin-spaghetti/index/symbol.paths';
 import reactConfig from './docs/api/react/index/symbol.paths';
 import rxjsConfig from './docs/api/rxjs/index/symbol.paths';
+import spaghettiCoreConfig from './docs/api/spaghetti-core/index/symbol.paths';
 import spaghettiAnalyzerConfig from './docs/api/spaghetti-analyzer/index/symbol.paths';
 import { join } from 'path';
 
@@ -40,6 +41,7 @@ createMdFromContent(
 );
 createMdFromContent('./docs/api/react/index', reactConfig.paths());
 createMdFromContent('./docs/api/rxjs/index', rxjsConfig.paths());
+createMdFromContent('./docs/api/spaghetti-core/index', spaghettiCoreConfig.paths());
 createMdFromContent(
   './docs/api/spaghetti-analyzer/index',
   spaghettiAnalyzerConfig.paths(),

@@ -8,6 +8,7 @@
     "libs/rxjs",
     "libs/angular",
     "libs/react",
+    "libs/spaghetti-core",
     "libs/eslint-plugin-spaghetti",
     "libs/spaghetti-analyzer"
   ],

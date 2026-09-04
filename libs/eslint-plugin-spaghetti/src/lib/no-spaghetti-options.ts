@@ -1,16 +1,4 @@
-import type {
-  ApiDefinition,
-  CallApiDefinition,
-  FunctionApiDefinition,
-  MethodApiDefinition,
-  RecognizedApiDefinition,
-} from '@state-adapt/spaghetti-core';
-
-export type NoSpaghettiApi = ApiDefinition;
-export type NoSpaghettiMethodApi = MethodApiDefinition;
-export type NoSpaghettiFunctionApi = FunctionApiDefinition;
-export type NoSpaghettiCallApi = CallApiDefinition;
-export type NoSpaghettiRecognizedApi = RecognizedApiDefinition;
+import type { ApiDefinition } from '@state-adapt/spaghetti-core';
 
 /**
  * Configures which commands the `@state-adapt/spaghetti/no-spaghetti` rule reports
@@ -119,9 +107,10 @@ export interface NoSpaghettiOptions {
    *
    * A call chain retains the name of the recognized API that started it. For
    * example, calling `.catch()` on the result of `bootstrapApplication()` is still
-   * identified as `Angular.bootstrapApplication`.
+   * identified as `Angular.bootstrapApplication`. See {@link ApiDefinition} for
+   * the supported definition shapes and examples.
    */
-  apis?: NoSpaghettiApi[];
+  apis?: ApiDefinition[];
   /**
    * Selects the API-specific recognizer families used in addition to general
    * command detection. JavaScript collection, DOM mutation, and framework entry

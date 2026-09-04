@@ -4,14 +4,7 @@ import { Section } from '../../../../section-paths';
 export const sections: Section[] = [
   {
     name: 'Configuration',
-    items: [
-      'NoSpaghettiOptions',
-      'NoSpaghettiApi',
-      'NoSpaghettiMethodApi',
-      'NoSpaghettiFunctionApi',
-      'NoSpaghettiCallApi',
-      'NoSpaghettiRecognizedApi',
-    ],
+    items: ['NoSpaghettiOptions'],
   },
 ].map(({ name, items }) => ({
   name,

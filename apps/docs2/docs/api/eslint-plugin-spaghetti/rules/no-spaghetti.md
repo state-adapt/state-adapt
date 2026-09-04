@@ -87,7 +87,7 @@ Each command moves through the following pipeline:
 See [`NoSpaghettiOptions`](/api/eslint-plugin-spaghetti/index/NoSpaghettiOptions)
 for scoring defaults and all configuration options. For project-specific API
 recognition, see the
-[`apis` example](/api/eslint-plugin-spaghetti/index/NoSpaghettiApi).
+[`ApiDefinition` reference](/api/spaghetti-core/index/ApiDefinition).
 
 ## JSX event handlers
 
