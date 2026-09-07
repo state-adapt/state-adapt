@@ -1,7 +1,7 @@
 {
   "name": "@state-adapt/spaghetti-core",
   "description": "TypeScript utilities for detecting and scoring spaghetti code.",
-  "version": "3.1.0",
+  "version": "4.0.0",
   "private": false,
   "homepage": "https://github.com/state-adapt/state-adapt",
   "author": "Mike Pearson",

@@ -1,7 +1,7 @@
 {
   "name": "@state-adapt/angular",
   "description": "Angular integration for StateAdapt state management.",
-  "version": "3.1.0",
+  "version": "4.0.0",
   "private": false,
   "homepage": "https://github.com/state-adapt/state-adapt",
   "author": "Mike Pearson",
@@ -21,7 +21,7 @@
   },
   "peerDependencies": {
     "@angular/core": ">=19.0.0",
-    "@state-adapt/rxjs": "3.1.0"
+    "@state-adapt/rxjs": "4.0.0"
   },
   "dependencies": {
     "tslib": "^2.3.0"
@@ -33,7 +33,10 @@
       "@state-adapt/rxjs",
       "@state-adapt/angular",
       "@state-adapt/angular-router",
-      "@state-adapt/react"
+      "@state-adapt/spaghetti-core",
+      "@state-adapt/eslint-plugin-spaghetti",
+      "@state-adapt/react",
+      "@state-adapt/spaghetti-analyzer"
     ]
   },
   "nx": {
