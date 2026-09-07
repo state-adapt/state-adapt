@@ -104,7 +104,8 @@ npm install --save-exact --prefer-online \
   "@state-adapt/angular-router@$VERSION" &&
 npm install --save-dev --save-exact --prefer-online \
   "@state-adapt/spaghetti-core@$VERSION" \
-  "@state-adapt/eslint-plugin-spaghetti@$VERSION"
+  "@state-adapt/eslint-plugin-spaghetti@$VERSION" &&
+npx skills experimental_sync -y # Optional (for coding agents)
 ```
 
 React:
