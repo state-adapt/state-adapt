@@ -1,3 +1,7 @@
+## 4.0.1
+
+- Bugfix(spaghetti): Reduce project analysis time by 21x
+
 ## 4.0.0
 
 - Bugfix(angular): Run toSignal appRef.tick in ngZone
