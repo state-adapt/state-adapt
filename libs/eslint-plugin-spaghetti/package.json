@@ -1,7 +1,7 @@
 {
   "name": "@state-adapt/eslint-plugin-spaghetti",
   "description": "ESLint rules for detecting spaghetti code.",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "private": false,
   "homepage": "https://github.com/state-adapt/state-adapt",
   "author": "Mike Pearson",
@@ -71,7 +71,7 @@
     }
   },
   "peerDependencies": {
-    "@state-adapt/spaghetti-core": "4.0.0",
+    "@state-adapt/spaghetti-core": "4.0.1",
     "@typescript-eslint/parser": ">=7.0.0",
     "eslint": ">=8.0.0"
   },

@@ -1,7 +1,7 @@
 {
   "name": "@state-adapt/spaghetti-analyzer",
   "description": "CLI and JSON reports for spaghetti analysis.",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "private": false,
   "homepage": "https://github.com/state-adapt/state-adapt",
   "author": "Mike Pearson",
@@ -76,7 +76,7 @@
     "spaghetti-analyzer": "./src/cli.js"
   },
   "peerDependencies": {
-    "@state-adapt/spaghetti-core": "4.0.0"
+    "@state-adapt/spaghetti-core": "4.0.1"
   },
   "dependencies": {
     "tslib": "^2.3.0"
