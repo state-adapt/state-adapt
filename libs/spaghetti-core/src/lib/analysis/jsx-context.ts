@@ -10,7 +10,11 @@ export function stripFunctionDraft(fn: FunctionDraft): FunctionAnalysis {
     name: fn.name,
     location: fn.location,
     size: fn.size,
-    commands: fn.commands,
+    commands: fn.commands.map(command => {
+      const { resourceDistance, ...publicCommand } = command;
+      void resourceDistance;
+      return publicCommand;
+    }),
     score: fn.score,
     ...(fn.jsxEventHandler ? { jsxEventHandler: true } : {}),
     ...(fn.truncated ? { truncated: true } : {}),

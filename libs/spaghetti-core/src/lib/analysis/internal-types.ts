@@ -1,5 +1,11 @@
 import * as ts from 'typescript';
-import { Command, CommandHop, FunctionAnalysis, SourceLocation } from './models';
+import {
+  Command,
+  CommandHop,
+  Distance,
+  FunctionAnalysis,
+  SourceLocation,
+} from './models';
 import { ResolvedResource } from './resource-resolution';
 import { Scope } from './scopes';
 
@@ -17,11 +23,16 @@ export interface CallSite {
   name: string;
   namespace?: string;
 }
+export interface CommandDraft extends Command {
+  /** Resource-only distance at the command origin, before call-hop distances. */
+  resourceDistance: Pick<Distance, 'declarationLine' | 'scope' | 'file' | 'folder'>;
+}
 export interface FunctionDraft extends FunctionAnalysis {
   node: ts.FunctionLikeDeclaration | ts.SourceFile;
   sourceFile: ts.SourceFile;
   scopes: Map<ts.Node, Scope>;
-  directCommands: Command[];
+  commands: CommandDraft[];
+  directCommands: CommandDraft[];
   calls: CallSite[];
   jsxEventHandler: boolean;
 }

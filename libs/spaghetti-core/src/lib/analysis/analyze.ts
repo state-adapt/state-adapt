@@ -2,13 +2,12 @@ import * as path from 'node:path';
 import * as ts from 'typescript';
 import {
   AnalysisOptions,
-  Command,
   CommandHop,
   FileAnalysis,
   FunctionAnalysis,
   ProjectAnalysis,
 } from './models';
-import { CallEdge, FunctionDraft } from './internal-types';
+import { CallEdge, CommandDraft, FunctionDraft } from './internal-types';
 import {
   collectFiles,
   createMemoryProgram,
@@ -174,7 +173,10 @@ function analyzeSourceFiles(
     });
   });
   const cyclicOrReachable = functionsReachingCycles(edges, allFunctions);
-  const expansionCache = new Map<string, { commands: Command[]; truncated: boolean }>();
+  const expansionCache = new Map<
+    string,
+    { commands: CommandDraft[]; truncated: boolean }
+  >();
   allFunctions.forEach(fn => {
     const resolved = resolvedCallStarts.get(fn.functionId);
     if (resolved)

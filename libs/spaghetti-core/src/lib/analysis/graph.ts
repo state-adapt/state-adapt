@@ -1,5 +1,4 @@
 import {
-  Command,
   CommandHop,
   Distance,
   ResourceOrigin,
@@ -7,7 +6,12 @@ import {
   ScoringConfig,
   SourceLocation,
 } from './models';
-import { CallEdge, FunctionDraft, MODULE_FUNCTION_NAME } from './internal-types';
+import {
+  CallEdge,
+  CommandDraft,
+  FunctionDraft,
+  MODULE_FUNCTION_NAME,
+} from './internal-types';
 import {
   addDistance,
   inheritScoreBreakdown,
@@ -25,9 +29,9 @@ export function expandCommands(
   maxDepth: number,
   maxCommands: number,
   cyclicOrReachable: Set<string>,
-  cache: Map<string, { commands: Command[]; truncated: boolean }>,
+  cache: Map<string, { commands: CommandDraft[]; truncated: boolean }>,
   apiPenalties: ReadonlyMap<string, number>,
-): { commands: Command[]; truncated: boolean } {
+): { commands: CommandDraft[]; truncated: boolean } {
   if (ancestors.has(fn.functionId)) return { commands: [], truncated: false };
   if (depth > maxDepth) return { commands: [], truncated: true };
   const cacheKey = `${fn.functionId}\0${maxDepth - depth}\0${maxCommands}`;
@@ -106,10 +110,10 @@ export function functionsReachingCycles(
 }
 
 function inheritCommand(
-  command: Command,
+  command: CommandDraft,
   hop: CommandHop,
   scoring: ScoringConfig,
-): Command {
+): CommandDraft {
   const scoreBreakdown = inheritScoreBreakdown(command.scoreBreakdown, hop, scoring);
   return {
     ...command,
@@ -121,7 +125,7 @@ function inheritCommand(
 }
 
 function isPrivateToBoundary(
-  command: Command,
+  command: CommandDraft,
   boundary: FunctionDraft,
   functions: Map<string, FunctionDraft>,
 ): boolean {
@@ -174,11 +178,11 @@ function locationSize(location: SourceLocation): number {
 }
 
 function bindParameterOrigins(
-  command: Command,
+  command: CommandDraft,
   argumentAt: CallEdge['argument'],
   scoring: ScoringConfig,
   apiPenalties: ReadonlyMap<string, number>,
-): Command {
+): CommandDraft {
   const provenance = command.resourceProvenance;
   if (!provenance?.origins.some(origin => origin.parameterIndex !== undefined))
     return command;
@@ -213,6 +217,7 @@ function bindParameterOrigins(
     external: external ? true : undefined,
     remote: external || distance.scope > 0 || distance.file > 0,
     distance: replaceResourceDistance(command, distance),
+    resourceDistance: distance,
     scoreBreakdown,
     score: scoreBreakdown.total,
   };
@@ -245,13 +250,12 @@ function distinctPublicOrigins(origins: ResourceOrigin[]): ResourceOrigin[] {
 }
 
 function combinedResourceDistance(
-  command: Command,
+  command: CommandDraft,
   resources: ResolvedResource[],
   includeCurrent: boolean,
 ): Pick<Distance, 'declarationLine' | 'scope' | 'file' | 'folder'> {
   const distances = resources.map(resource => resource.distance);
-  if (includeCurrent || distances.length === 0)
-    distances.push(currentOriginDistance(command));
+  if (includeCurrent || distances.length === 0) distances.push(command.resourceDistance);
   return distances.reduce((worst, distance) =>
     distanceRank(distance) > distanceRank(worst) ? distance : worst,
   );
@@ -263,26 +267,11 @@ function worstResource(resources: ResolvedResource[]): ResolvedResource | undefi
     .sort((left, right) => distanceRank(right.distance) - distanceRank(left.distance))[0];
 }
 
-function currentOriginDistance(
-  command: Command,
-): Pick<Distance, 'declarationLine' | 'scope' | 'file' | 'folder'> {
-  const distanceFor = (factor: string): number =>
-    command.scoreBreakdown.contributions.find(
-      item => item.layer === 'origin' && item.factor === factor,
-    )?.distance ?? 0;
-  return {
-    declarationLine: distanceFor('declaration-line-distance'),
-    scope: distanceFor('scope-crossings'),
-    file: distanceFor('file-crossings'),
-    folder: distanceFor('folder-crossings'),
-  };
-}
-
 function replaceResourceDistance(
-  command: Command,
+  command: CommandDraft,
   replacement: Pick<Distance, 'declarationLine' | 'scope' | 'file' | 'folder'>,
 ): Distance {
-  const current = currentOriginDistance(command);
+  const current = command.resourceDistance;
   return {
     ...command.distance,
     declarationLine:

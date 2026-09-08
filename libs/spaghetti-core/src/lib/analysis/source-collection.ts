@@ -1,6 +1,7 @@
 import * as ts from 'typescript';
-import { AnalysisOptions, Command, CommandKind, Distance } from './models';
+import { AnalysisOptions, CommandKind, Distance } from './models';
 import {
+  CommandDraft,
   FileDraft,
   FunctionDraft,
   CallSite,
@@ -74,7 +75,7 @@ function createModuleDraft(
   const name = MODULE_FUNCTION_NAME;
   const location = locationOf(sourceFile, sourceFile);
   const functionId = `${sourceFile.fileName}:${name}@1`;
-  const directCommands: Command[] = [];
+  const directCommands: CommandDraft[] = [];
   const calls: CallSite[] = [];
   collectFunctionBody(
     sourceFile,
@@ -125,7 +126,7 @@ function visitFunctions(
     const location = locationOf(node, sourceFile);
     const size = location.end.line - location.start.line + 1;
     const functionId = `${sourceFile.fileName}:${name}@${location.start.line}`;
-    const directCommands: Command[] = [];
+    const directCommands: CommandDraft[] = [];
     const calls: CallSite[] = [];
     collectFunctionBody(
       node.body,
@@ -185,7 +186,7 @@ function collectFunctionBody(
   analyzedFiles: ReadonlySet<ts.SourceFile>,
   functionId: string,
   functionSize: number,
-  commands: Command[],
+  commands: CommandDraft[],
   calls: CallSite[],
 ): void {
   const ownerBody = ts.isSourceFile(owner) ? owner : owner.body;
@@ -254,7 +255,7 @@ function createDirectCommand(
   options: AnalysisOptions,
   functionId: string,
   functionSize: number,
-): Command {
+): CommandDraft {
   const location = locationOf(node, sourceFile);
   const resolution = detected.target
     ? resolveResource(detected.target, node, sourceFile, scopes, checker, analyzedFiles)
@@ -269,6 +270,12 @@ function createDirectCommand(
     functionCall: 0,
     file: resolution?.distance.file ?? 0,
     folder: resolution?.distance.folder ?? 0,
+  };
+  const resourceDistance = {
+    declarationLine: distance.declarationLine,
+    scope: distance.scope,
+    file: distance.file,
+    folder: distance.folder,
   };
   const scoring = scoringConfig(options);
   const external = Boolean(detected.external || resolution?.external);
@@ -289,6 +296,7 @@ function createDirectCommand(
     originFunction: functionId,
     callPath: [],
     distance,
+    resourceDistance,
     score: scoreBreakdown.total,
     scoreBreakdown,
     ...(resolution?.name ? { resource: resolution.name } : {}),

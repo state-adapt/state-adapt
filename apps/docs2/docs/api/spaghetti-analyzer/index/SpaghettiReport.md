@@ -22,7 +22,7 @@ Aggregate scores for directories containing analyzed files.
 
 ### functionScores
 
-> **functionScores**: `Pick`\<`FunctionAnalysis`, `"name"` \| `"functionId"` \| `"size"` \| `"score"`\>[]
+> **functionScores**: `Pick`\<`FunctionAnalysis`, `"name"` \| `"score"` \| `"functionId"` \| `"size"`\>[]
 
 Defined in: [lib/report-models.ts:32](https://github.com/state-adapt/state-adapt/blob/main/libs/spaghetti-analyzer/src/lib/report-models.ts#L32)
 
