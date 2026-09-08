@@ -28,6 +28,8 @@ export interface CommandDraft extends Command {
   resourceDistance: Pick<Distance, 'declarationLine' | 'scope' | 'file' | 'folder'>;
   /** Internal rest-element flow metadata, removed from public results. */
   restElements: RestElementBinding[];
+  /** Internal signal that resource provenance reached its configured trace limit. */
+  resourceTraceTruncated?: boolean;
 }
 export interface AllocationEscape {
   allocation: SourceLocation;

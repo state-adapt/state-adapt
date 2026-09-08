@@ -463,7 +463,15 @@ function createDirectCommand(
 ): CommandDraft {
   const location = locationOf(node, sourceFile);
   const resolution = detected.target
-    ? resolveResource(detected.target, node, sourceFile, scopes, checker, analyzedFiles)
+    ? resolveResource(
+        detected.target,
+        node,
+        sourceFile,
+        scopes,
+        checker,
+        analyzedFiles,
+        options.maxResourceTraceDepth,
+      )
     : undefined;
   const distance: Distance = {
     declarationLine: resolution?.distance.declarationLine ?? 0,
@@ -503,6 +511,7 @@ function createDirectCommand(
     distance,
     resourceDistance,
     restElements: resolution?.restElements ?? [],
+    ...(resolution?.truncated ? { resourceTraceTruncated: true } : {}),
     score: scoreBreakdown.total,
     scoreBreakdown,
     ...(resolution?.name ? { resource: resolution.name } : {}),

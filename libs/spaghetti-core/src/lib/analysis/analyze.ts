@@ -162,7 +162,14 @@ function analyzeSourceFiles(
       callerEdges.push({
         callee,
         hop,
-        argument: argumentResolver(call.node, caller, callee, checker, analyzedFiles),
+        argument: argumentResolver(
+          call.node,
+          caller,
+          callee,
+          checker,
+          analyzedFiles,
+          options.maxResourceTraceDepth,
+        ),
       });
       edges.set(caller.functionId, callerEdges);
       const starts = resolvedCallStarts.get(caller.functionId) ?? new Set<string>();
@@ -199,7 +206,9 @@ function analyzeSourceFiles(
       apiConfiguration(options).penalties,
     );
     fn.commands = expansion.commands;
-    fn.truncated = expansion.truncated;
+    fn.truncated =
+      expansion.truncated ||
+      expansion.commands.some(command => command.resourceTraceTruncated);
     fn.score = fn.commands.reduce((sum, command) => sum + command.score, 0);
   });
   return drafts.map(draft => {
@@ -226,6 +235,7 @@ function argumentResolver(
   callee: FunctionDraft,
   checker: ts.TypeChecker,
   analyzedFiles: ReadonlySet<ts.SourceFile>,
+  maxResourceTraceDepth: number | undefined,
 ): CallEdge['argument'] {
   if (ts.isSourceFile(callee.node)) return () => undefined;
   const parameters = callee.node.parameters;
@@ -244,6 +254,7 @@ function argumentResolver(
       callee,
       checker,
       analyzedFiles,
+      maxResourceTraceDepth,
     );
     resolved.set(key, resource);
     return resource;
@@ -260,6 +271,7 @@ function resolveArgument(
   callee: FunctionDraft,
   checker: ts.TypeChecker,
   analyzedFiles: ReadonlySet<ts.SourceFile>,
+  maxResourceTraceDepth: number | undefined,
 ): ResolvedResource | undefined {
   if (!parameter) return undefined;
   if (parameter.dotDotDotToken && restElementIndex === undefined)
@@ -277,6 +289,7 @@ function resolveArgument(
       distance: { declarationLine: 0, scope: 0, file: 0, folder: 0 },
       external: false,
       restElements: [],
+      truncated: false,
     };
   if (parameter.dotDotDotToken && restElementIndex === null)
     return {
@@ -285,6 +298,7 @@ function resolveArgument(
       distance: { declarationLine: 0, scope: 0, file: 0, folder: 0 },
       external: false,
       restElements: [],
+      truncated: false,
     };
   const argumentIndex = parameterIndex + (restElementIndex ?? 0);
   if (firstSpreadArgumentIndex >= 0 && argumentIndex >= firstSpreadArgumentIndex)
@@ -298,6 +312,7 @@ function resolveArgument(
       caller.scopes,
       checker,
       analyzedFiles,
+      maxResourceTraceDepth,
     );
   if (parameter.initializer)
     return resolveResource(
@@ -307,6 +322,7 @@ function resolveArgument(
       callee.scopes,
       checker,
       analyzedFiles,
+      maxResourceTraceDepth,
     );
   return undefined;
 }

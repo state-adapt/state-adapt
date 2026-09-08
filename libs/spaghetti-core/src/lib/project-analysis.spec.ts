@@ -184,6 +184,80 @@ function root() { leaf(); }`,
     expect(result).toMatchObject({ truncated: true });
   });
 
+  it('bounds resource tracing with maxResourceTraceDepth and surfaces truncation', () => {
+    const source = `const resource = {};
+const alias = resource;
+function mutate() { alias.value = 1; }`;
+
+    const truncated = analyzeFile(source, 'bounded-resource.ts', {
+      maxResourceTraceDepth: 2,
+    });
+    expect(truncated.functions.find(fn => fn.name === 'mutate')).toMatchObject({
+      truncated: true,
+      commands: [
+        {
+          resourceProvenance: {
+            confidence: 'unknown',
+            origins: [{ kind: 'unknown' }],
+          },
+        },
+      ],
+    });
+    expect(truncated).toMatchObject({ truncated: true });
+
+    const complete = analyzeFile(source, 'bounded-resource.ts', {
+      maxResourceTraceDepth: 4,
+    });
+    expect(complete.truncated).toBeUndefined();
+    expect(complete.functions.find(fn => fn.name === 'mutate')).toMatchObject({
+      commands: [
+        {
+          resourceProvenance: {
+            confidence: 'proven',
+            origins: [{ kind: 'allocation' }],
+          },
+        },
+      ],
+    });
+
+    const rebound = analyzeFile(
+      `const resource = {};
+const alias = resource;
+function update(value: { current?: number }) { value.current = 1; }
+function mutate() { update(alias); }`,
+      'bounded-argument.ts',
+      { maxResourceTraceDepth: 1 },
+    );
+    expect(rebound.functions.find(fn => fn.name === 'mutate')).toMatchObject({
+      truncated: true,
+      commands: [
+        {
+          resourceProvenance: {
+            confidence: 'unknown',
+            origins: [{ kind: 'unknown' }],
+          },
+        },
+      ],
+    });
+  });
+
+  it('defaults maxResourceTraceDepth to 40', () => {
+    const sourceAtDepth = (aliasCount: number) => {
+      const aliases = Array.from(
+        { length: aliasCount },
+        (_, index) => `const value${index + 1} = value${index};`,
+      ).join('\n');
+      return `const value0 = {};
+${aliases}
+function mutate() { value${aliasCount}.current = 1; }`;
+    };
+
+    expect(analyzeFile(sourceAtDepth(37), 'default-depth.ts').truncated).toBeUndefined();
+    expect(analyzeFile(sourceAtDepth(38), 'default-depth.ts')).toMatchObject({
+      truncated: true,
+    });
+  });
+
   it('truncates wide diamond graphs deterministically', () => {
     const source = `
 function leaf() { globalThis.a = 1; globalThis.b = 2; }

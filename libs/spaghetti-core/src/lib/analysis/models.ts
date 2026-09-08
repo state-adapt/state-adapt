@@ -118,7 +118,7 @@ export interface FunctionAnalysis {
   score: number;
   /** Neutral context metadata; consumers decide whether event handlers get exceptions. */
   jsxEventHandler?: boolean;
-  /** True when maxCommandsPerFunction truncated materialized command paths. */
+  /** True when configured limits made this function's analysis incomplete. */
   truncated?: boolean;
 }
 export interface FileAnalysis {
@@ -168,6 +168,8 @@ export interface AnalysisOptions {
   maxCallDepth?: number;
   /** Predictable upper bound for materialized commands in each analyzed function. */
   maxCommandsPerFunction?: number;
+  /** Predictable upper bound for tracing a command target's value provenance. */
+  maxResourceTraceDepth?: number;
   /** Disable propagation across files while retaining checker-backed local analysis. */
   crossFileAnalysis?: boolean;
   /** Stop expanding a resolved call once its weighted call-boundary distance exceeds this limit. */

@@ -266,6 +266,10 @@ function bindParameterOrigins(
     scoreBreakdown,
     score: scoreBreakdown.total,
     restElements: boundResources.flatMap(resource => resource.restElements),
+    ...(command.resourceTraceTruncated ||
+    boundResources.some(resource => resource.truncated)
+      ? { resourceTraceTruncated: true }
+      : {}),
   };
 }
 

@@ -13,6 +13,8 @@ export interface ResolvedResource {
   external: boolean;
   /** Rest-parameter elements reached while tracing this value. */
   restElements: RestElementBinding[];
+  /** True when value tracing reached its configured depth limit. */
+  truncated: boolean;
 }
 
 export interface RestElementBinding {
@@ -38,6 +40,7 @@ interface Anchor {
 interface TraceResult {
   origins: OriginCandidate[];
   fallback?: Anchor;
+  truncated?: boolean;
 }
 
 interface TraceContext {
@@ -47,9 +50,10 @@ interface TraceContext {
   substitutions: ReadonlyMap<ts.ParameterDeclaration, ts.Expression>;
   active: Set<ts.Node>;
   depth: number;
+  maxDepth: number;
 }
 
-const maxTraceDepth = 40;
+const defaultMaxResourceTraceDepth = 40;
 
 export function resolveResource(
   target: ts.Expression,
@@ -58,6 +62,7 @@ export function resolveResource(
   scopes: Map<ts.Node, Scope>,
   checker: ts.TypeChecker,
   analyzedFiles: ReadonlySet<ts.SourceFile>,
+  maxDepth = defaultMaxResourceTraceDepth,
 ): ResolvedResource {
   const expression = unwrap(target);
   const identifier = displayIdentifier(expression);
@@ -69,6 +74,7 @@ export function resolveResource(
     substitutions: new Map(),
     active: new Set(),
     depth: 0,
+    maxDepth,
   });
   const origins = distinctOrigins(
     traced.origins.map(origin =>
@@ -107,6 +113,7 @@ export function resolveResource(
     provenance,
     distance: distanceOrigin?.distance ?? zeroDistance(),
     external,
+    truncated: Boolean(traced.truncated),
     restElements: origins.flatMap(origin =>
       origin.parameterIndex !== undefined && origin.restElementIndex !== undefined
         ? [
@@ -121,7 +128,8 @@ export function resolveResource(
 }
 
 function traceValue(expression: ts.Expression, context: TraceContext): TraceResult {
-  if (context.depth >= maxTraceDepth || context.active.has(expression)) return unknown();
+  if (context.depth >= context.maxDepth) return unknown(true);
+  if (context.active.has(expression)) return unknown();
   const unwrapped = unwrap(expression);
   if (unwrapped !== expression) return traceValue(unwrapped, context);
   const next = enter(context, expression);
@@ -384,11 +392,13 @@ function merge(results: TraceResult[]): TraceResult {
   return {
     origins: results.flatMap(result => result.origins),
     fallback: results.find(result => result.fallback)?.fallback,
+    ...(results.some(result => result.truncated) ? { truncated: true } : {}),
   };
 }
 
 function withMinimumScope(result: TraceResult, minimum: number): TraceResult {
   return {
+    ...result,
     origins: result.origins.map(origin => ({
       ...origin,
       scopeDistance: Math.max(origin.scopeDistance, minimum),
@@ -616,8 +626,11 @@ function declarationKind(node: ts.Declaration): Declaration['kind'] {
   return 'unknown';
 }
 
-function unknown(): TraceResult {
-  return { origins: [{ kind: 'unknown', scopeDistance: 0 }] };
+function unknown(truncated = false): TraceResult {
+  return {
+    origins: [{ kind: 'unknown', scopeDistance: 0 }],
+    ...(truncated ? { truncated: true } : {}),
+  };
 }
 
 function zeroDistance(): Pick<Distance, 'declarationLine' | 'scope' | 'file' | 'folder'> {

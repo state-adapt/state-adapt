@@ -23,7 +23,9 @@ analyzed program receive an external penalty of `100` by default.
 Analysis is type-aware. `analyzeFile` creates a reusable in-memory TypeScript
 program, `analyzeProject` loads project compiler settings, and `analyzeProgram`
 reuses an existing program. Project call paths are bounded by
-`maxCallDepth` and `maxCommandsPerFunction`.
+`maxCallDepth` and `maxCommandsPerFunction`. Resource value tracing is bounded by
+`maxResourceTraceDepth` (40 by default). Reaching any configured limit preserves
+conservative results and sets `truncated` on the affected function, file, and project.
 
 Propagation follows resource ownership across function boundaries. Mutations of
 allocations owned by a callee remain implementation details of that callee, while
