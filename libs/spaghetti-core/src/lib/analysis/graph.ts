@@ -130,14 +130,47 @@ function isPrivateToBoundary(
   functions: Map<string, FunctionDraft>,
 ): boolean {
   const origins = command.resourceProvenance?.origins;
+  const occurrence =
+    command.callPath.find(hop => hop.caller === boundary.functionId)?.callLocation ??
+    command.location;
   return Boolean(
     origins?.length &&
       origins.every(
         origin =>
           origin.kind === 'allocation' &&
-          allocationOwner(origin.location, functions)?.functionId === boundary.functionId,
+          allocationOwner(origin.location, functions)?.functionId ===
+            boundary.functionId &&
+          !escapedBefore(origin, occurrence, boundary),
       ),
   );
+}
+
+function escapedBefore(
+  origin: ResourceOrigin,
+  occurrence: SourceLocation,
+  boundary: FunctionDraft,
+): boolean {
+  if (!origin.location) return false;
+  const allocationLocation = origin.location;
+  return boundary.allocationEscapes.some(
+    escape =>
+      sameLocation(escape.allocation, allocationLocation) &&
+      compareLocation(escape.location, occurrence) <= 0,
+  );
+}
+
+function sameLocation(left: SourceLocation, right: SourceLocation): boolean {
+  return (
+    left.filePath === right.filePath &&
+    comparePosition(left.start, right.start) === 0 &&
+    comparePosition(left.end, right.end) === 0
+  );
+}
+
+function compareLocation(left: SourceLocation, right: SourceLocation): number {
+  if (left.filePath !== right.filePath)
+    return left.filePath.localeCompare(right.filePath);
+  return comparePosition(left.start, right.start);
 }
 
 function allocationOwner(

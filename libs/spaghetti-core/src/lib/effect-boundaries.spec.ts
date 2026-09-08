@@ -140,7 +140,117 @@ function caller(input: number[]) { return makeSorted(input); }`);
     });
   });
 
-  it('stops parameter effects after rebinding to a caller-owned allocation', () => {
+  it('exports mutations after a local allocation is stored in reachable state', () => {
+    const result = analyzeFile(`const registry: unknown[] = [];
+function makeThing() {
+  const thing = { id: 0 };
+  registry.push(thing);
+  thing.id = 1;
+  return thing;
+}
+function caller() { makeThing(); }`);
+
+    const command = result.functions
+      .find(fn => fn.name === 'caller')
+      ?.commands.find(item => item.resource === 'thing');
+
+    expect(command).toMatchObject({
+      kind: 'property-assignment',
+      resourceProvenance: { origins: [{ kind: 'allocation' }] },
+      callPath: [{ callee: 'source.ts:makeThing@2' }],
+    });
+  });
+
+  it('keeps construct-mutate-return effects private', () => {
+    const result = analyzeFile(`function create() {
+  const value = { x: 0 };
+  value.x = 1;
+  return value;
+}
+function caller() { return create(); }`);
+
+    expect(result.functions.find(fn => fn.name === 'caller')).toMatchObject({
+      commands: [],
+      score: 0,
+    });
+  });
+
+  it('only exports mutations after the allocation escapes', () => {
+    const result = analyzeFile(`const registry: unknown[] = [];
+function makeThing() {
+  const thing = { id: 0 };
+  thing.id = 1;
+  registry.push(thing);
+  thing.id = 2;
+}
+function caller() { makeThing(); }`);
+    const makeThing = result.functions.find(fn => fn.name === 'makeThing');
+    const caller = result.functions.find(fn => fn.name === 'caller');
+
+    expect(
+      makeThing?.commands.filter(command => command.resource === 'thing'),
+    ).toHaveLength(2);
+    expect(
+      caller?.commands.filter(command => command.resource === 'thing'),
+    ).toMatchObject([
+      {
+        kind: 'property-assignment',
+        location: { start: { line: 6 } },
+      },
+    ]);
+  });
+
+  it('recognizes outer bindings, shared properties, and this fields as storage escapes', () => {
+    const result = analyzeFile(`let outer: { x: number } | undefined;
+const shared: { value?: { x: number } } = {};
+function storeInOuter() {
+  const value = { x: 0 };
+  outer = value;
+  value.x = 1;
+}
+function storeOnShared() {
+  const value = { x: 0 };
+  shared.value = value;
+  value.x = 1;
+}
+class Holder {
+  value?: { x: number };
+  storeOnThis() {
+    const value = { x: 0 };
+    this.value = value;
+    value.x = 1;
+  }
+}
+function outerCaller() { storeInOuter(); }
+function sharedCaller() { storeOnShared(); }
+function thisCaller(holder: Holder) { holder.storeOnThis(); }`);
+
+    for (const name of ['outerCaller', 'sharedCaller', 'thisCaller'])
+      expect(
+        result.functions
+          .find(fn => fn.name === name)
+          ?.commands.some(command => command.resource === 'value'),
+      ).toBe(true);
+  });
+
+  it('does not treat storage in caller-owned local state as an escape', () => {
+    const result = analyzeFile(`function create() {
+  const container: { value?: { x: number } } = {};
+  const value = { x: 0 };
+  container.value = value;
+  value.x = 1;
+  return container;
+}
+function caller() { return create(); }`);
+
+    expect(
+      result.functions
+        .find(fn => fn.name === 'caller')
+        ?.commands.some(command => command.resource === 'value'),
+    ).toBe(false);
+  });
+
+  it('exports effects after a caller-owned allocation is handed to another function', () => {
     const result = analyzeFile(`function leaf(values: number[]) { values.sort(); }
 function middle(input: number[]) {
   const copy = [...input];
@@ -156,7 +266,7 @@ function root(input: number[]) { middle(input); }`);
         callPath: [{ callee: 'source.ts:leaf@1' }],
       },
     ]);
-    expect(result.functions.find(fn => fn.name === 'root')?.commands).toEqual([]);
+    expect(result.functions.find(fn => fn.name === 'root')?.commands).toHaveLength(1);
   });
 
   it('rebinds parameter effects through aliases and multiple call hops', () => {

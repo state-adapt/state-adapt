@@ -29,6 +29,10 @@ export interface CommandDraft extends Command {
   /** Internal rest-element flow metadata, removed from public results. */
   restElements: RestElementBinding[];
 }
+export interface AllocationEscape {
+  allocation: SourceLocation;
+  location: SourceLocation;
+}
 export interface FunctionDraft extends FunctionAnalysis {
   node: ts.FunctionLikeDeclaration | ts.SourceFile;
   sourceFile: ts.SourceFile;
@@ -36,6 +40,8 @@ export interface FunctionDraft extends FunctionAnalysis {
   commands: CommandDraft[];
   directCommands: CommandDraft[];
   calls: CallSite[];
+  /** Storage escapes for allocations owned by this function, in source order. */
+  allocationEscapes: AllocationEscape[];
   jsxEventHandler: boolean;
 }
 export interface CallEdge {
