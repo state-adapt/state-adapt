@@ -137,6 +137,12 @@ Dry run:
 npm run release:publish -- --dry-run
 ```
 
+Log in:
+
+```bash
+npm login
+```
+
 For past major versions:
 
 ```bash
