@@ -242,7 +242,8 @@ function bindParameterOrigins(
     boundResources,
     provenance.origins.some(origin => origin.parameterIndex === undefined),
   );
-  const external = origins.some(origin => origin.kind === 'external');
+  const external =
+    Boolean(command.external) || origins.some(origin => origin.kind === 'external');
   const scoreBreakdown = rebaseResourceScoreBreakdown(
     command.scoreBreakdown,
     distance,
@@ -254,9 +255,11 @@ function bindParameterOrigins(
   return {
     ...command,
     ...(primary?.name ? { resource: primary.name } : {}),
-    declaration: primary?.declaration,
+    ...(primary?.declaration || command.declaration
+      ? { declaration: primary?.declaration ?? command.declaration }
+      : {}),
     resourceProvenance: provenanceFrom(origins),
-    external: external ? true : undefined,
+    ...(external ? { external: true } : {}),
     remote: external || distance.scope > 0 || distance.file > 0,
     distance: replaceResourceDistance(command, distance),
     resourceDistance: distance,

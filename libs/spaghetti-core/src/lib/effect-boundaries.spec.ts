@@ -343,6 +343,8 @@ function root() { caller(); }`);
     expect(caller?.external).toBeUndefined();
     expect(root?.resourceProvenance).toEqual(caller?.resourceProvenance);
     expect(root?.external).toBeUndefined();
+    expect(caller).not.toHaveProperty('external');
+    expect(root).not.toHaveProperty('external');
   });
 
   it('treats allocation defaults and rest arrays as callee-owned values', () => {
@@ -416,6 +418,43 @@ function caller() { mutate(shared); }`).functions.find(fn => fn.name === 'caller
         confidence: 'proven',
         origins: [{ kind: 'external', declaration: { name: 'shared' } }],
       },
+    });
+  });
+
+  it('keeps a known non-parameter declaration when another origin cannot resolve', () => {
+    const command = analyzeFile(`declare function getValues(): number[];
+let shared: number[];
+function mutate(values: number[], useShared: boolean) {
+  const selected = useShared ? shared : values;
+  selected.sort();
+}
+function caller(useShared: boolean) { mutate(getValues(), useShared); }`).functions.find(
+      fn => fn.name === 'caller',
+    )?.commands[0];
+
+    expect(command).toMatchObject({
+      declaration: { name: 'shared', kind: 'variable' },
+      resourceProvenance: {
+        confidence: 'partial',
+        origins: [
+          { kind: 'declaration', declaration: { name: 'shared' } },
+          { kind: 'unknown' },
+        ],
+      },
+    });
+  });
+
+  it('keeps implementation-external evidence while rebinding a call target', () => {
+    const command = analyzeFile(`function invoke(callback: () => void) { callback(); }
+function localCallback() {}
+function caller() { invoke(localCallback); }`).functions.find(fn => fn.name === 'caller')
+      ?.commands[0];
+
+    expect(command).toMatchObject({
+      call: 'callback',
+      resource: 'localCallback',
+      external: true,
+      scoreBreakdown: { external: 100 },
     });
   });
 });
