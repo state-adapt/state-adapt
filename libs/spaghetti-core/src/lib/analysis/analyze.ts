@@ -20,7 +20,7 @@ import { hopDistance, resolveCall } from './call-resolution';
 import { expandCommands, functionsReachingCycles } from './graph';
 import { scoringConfig, locationStartKey } from './scoring';
 import { stripFunctionDraft } from './jsx-context';
-import { resolveResource } from './resource-resolution';
+import { ResolvedResource, resolveResource } from './resource-resolution';
 import { apiConfiguration } from './recognizer-config';
 import { locationOf } from './ast';
 
@@ -163,7 +163,7 @@ function analyzeSourceFiles(
       callerEdges.push({
         callee,
         hop,
-        arguments: resolveArguments(call.node, caller, callee, checker, analyzedFiles),
+        argument: argumentResolver(call.node, caller, callee, checker, analyzedFiles),
       });
       edges.set(caller.functionId, callerEdges);
       const starts = resolvedCallStarts.get(caller.functionId) ?? new Set<string>();
@@ -214,51 +214,81 @@ function analyzeSourceFiles(
   });
 }
 
-function resolveArguments(
+/**
+ * Value tracing an argument is expensive and most callee commands never carry a
+ * parameter origin, so each parameter is resolved on first use and remembered.
+ */
+function argumentResolver(
   call: ts.CallExpression,
   caller: FunctionDraft,
   callee: FunctionDraft,
   checker: ts.TypeChecker,
   analyzedFiles: ReadonlySet<ts.SourceFile>,
-): CallEdge['arguments'] {
-  if (ts.isSourceFile(callee.node)) return [];
-  return callee.node.parameters.map((parameter, index) => {
-    if (parameter.dotDotDotToken)
-      return {
-        name: parameter.name.getText(callee.sourceFile),
-        provenance: {
-          confidence: 'proven' as const,
-          origins: [
-            {
-              kind: 'allocation' as const,
-              location: locationOf(parameter, callee.sourceFile),
-            },
-          ],
-        },
-        distance: { declarationLine: 0, scope: 0, file: 0, folder: 0 },
-        external: false,
-      };
-    const argument = call.arguments[index];
-    if (argument && !ts.isSpreadElement(argument))
-      return resolveResource(
-        argument,
-        call,
-        caller.sourceFile,
-        caller.scopes,
-        checker,
-        analyzedFiles,
-      );
-    if (parameter.initializer)
-      return resolveResource(
-        parameter.initializer,
-        parameter.initializer,
-        callee.sourceFile,
-        callee.scopes,
-        checker,
-        analyzedFiles,
-      );
-    return undefined;
-  });
+): CallEdge['argument'] {
+  if (ts.isSourceFile(callee.node)) return () => undefined;
+  const parameters = callee.node.parameters;
+  const resolved = new Map<number, ResolvedResource | undefined>();
+  return parameterIndex => {
+    if (resolved.has(parameterIndex)) return resolved.get(parameterIndex);
+    const resource = resolveArgument(
+      parameters[parameterIndex],
+      parameterIndex,
+      call,
+      caller,
+      callee,
+      checker,
+      analyzedFiles,
+    );
+    resolved.set(parameterIndex, resource);
+    return resource;
+  };
+}
+
+function resolveArgument(
+  parameter: ts.ParameterDeclaration | undefined,
+  parameterIndex: number,
+  call: ts.CallExpression,
+  caller: FunctionDraft,
+  callee: FunctionDraft,
+  checker: ts.TypeChecker,
+  analyzedFiles: ReadonlySet<ts.SourceFile>,
+): ResolvedResource | undefined {
+  if (!parameter) return undefined;
+  if (parameter.dotDotDotToken)
+    return {
+      name: parameter.name.getText(callee.sourceFile),
+      provenance: {
+        confidence: 'proven' as const,
+        origins: [
+          {
+            kind: 'allocation' as const,
+            location: locationOf(parameter, callee.sourceFile),
+          },
+        ],
+      },
+      distance: { declarationLine: 0, scope: 0, file: 0, folder: 0 },
+      external: false,
+    };
+  const argument = call.arguments[parameterIndex];
+  if (argument && !ts.isSpreadElement(argument))
+    return resolveResource(
+      argument,
+      call,
+      caller.sourceFile,
+      caller.scopes,
+      checker,
+      analyzedFiles,
+    );
+  if (parameter.initializer)
+    return resolveResource(
+      parameter.initializer,
+      parameter.initializer,
+      callee.sourceFile,
+      callee.scopes,
+      checker,
+      analyzedFiles,
+    );
+  return undefined;
 }
 
 function hasDirectDiscardedCall(

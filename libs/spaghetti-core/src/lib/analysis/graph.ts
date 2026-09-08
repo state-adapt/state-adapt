@@ -66,7 +66,7 @@ export function expandCommands(
         truncated = true;
         break;
       }
-      const bound = bindParameterOrigins(command, edge.arguments, scoring, apiPenalties);
+      const bound = bindParameterOrigins(command, edge.argument, scoring, apiPenalties);
       if (isPrivateToBoundary(bound, target, functions)) continue;
       expanded.push(inheritCommand(bound, edge.hop, scoring));
     }
@@ -175,7 +175,7 @@ function locationSize(location: SourceLocation): number {
 
 function bindParameterOrigins(
   command: Command,
-  argumentsByParameter: Array<ResolvedResource | undefined>,
+  argumentAt: CallEdge['argument'],
   scoring: ScoringConfig,
   apiPenalties: ReadonlyMap<string, number>,
 ): Command {
@@ -185,13 +185,11 @@ function bindParameterOrigins(
 
   const origins = provenance.origins.flatMap(origin => {
     if (origin.parameterIndex === undefined) return [origin];
-    return (
-      argumentsByParameter[origin.parameterIndex]?.provenance.origins ?? [unknownOrigin()]
-    );
+    return argumentAt(origin.parameterIndex)?.provenance.origins ?? [unknownOrigin()];
   });
   const boundResources = provenance.origins
     .filter(origin => origin.parameterIndex !== undefined)
-    .map(origin => argumentsByParameter[origin.parameterIndex ?? -1])
+    .map(origin => argumentAt(origin.parameterIndex ?? -1))
     .filter((item): item is ResolvedResource => item !== undefined);
   const distance = combinedResourceDistance(
     command,

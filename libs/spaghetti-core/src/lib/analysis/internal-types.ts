@@ -28,8 +28,8 @@ export interface FunctionDraft extends FunctionAnalysis {
 export interface CallEdge {
   callee: FunctionDraft;
   hop: CommandHop;
-  /** Caller-side value origins for the callee's parameters. */
-  arguments: Array<ResolvedResource | undefined>;
+  /** Caller-side value origin for one callee parameter, resolved on first use. */
+  argument(parameterIndex: number): ResolvedResource | undefined;
 }
 export interface FileDraft {
   sourceFile: ts.SourceFile;
