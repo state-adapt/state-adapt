@@ -3,6 +3,7 @@ import * as ts from 'typescript';
 import { Declaration, Distance, ResourceOrigin, ResourceProvenance } from './models';
 import { isAssignmentOperator, isFunction, locationOf } from './ast';
 import { folderDistance } from './call-resolution';
+import { distinctResourceOrigins, resourceDistanceRank } from './resource-provenance';
 import { resolveDeclaration, Scope } from './scopes';
 
 export interface ResolvedResource {
@@ -94,7 +95,7 @@ export function resolveResource(
   const declaration = declarationNode
     ? declarationFrom(declarationNode, identifier?.text ?? name)
     : undefined;
-  const publicOrigins = distinctPublicOrigins(
+  const publicOrigins = distinctResourceOrigins(
     origins.map(origin => publicOrigin(origin, identifier?.text ?? name)),
   );
   const unknownCount = publicOrigins.filter(origin => origin.kind === 'unknown').length;
@@ -133,7 +134,6 @@ function traceValue(expression: ts.Expression, context: TraceContext): TraceResu
   const unwrapped = unwrap(expression);
   if (unwrapped !== expression) return traceValue(unwrapped, context);
   const next = enter(context, expression);
-  if (!next) return unknown();
 
   if (isAllocationExpression(expression))
     return { origins: [{ kind: 'allocation', node: expression, scopeDistance: 0 }] };
@@ -381,8 +381,7 @@ function unwrap(expression: ts.Expression): ts.Expression {
   return current;
 }
 
-function enter(context: TraceContext, node: ts.Node): TraceContext | undefined {
-  if (context.active.has(node)) return undefined;
+function enter(context: TraceContext, node: ts.Node): TraceContext {
   const active = new Set(context.active);
   active.add(node);
   return { ...context, active, depth: context.depth + 1 };
@@ -430,18 +429,6 @@ function distinctOrigins(origins: OriginCandidate[]): OriginCandidate[] {
   return [...unique.values()];
 }
 
-function distinctPublicOrigins(origins: ResourceOrigin[]): ResourceOrigin[] {
-  const unique = new Map<string, ResourceOrigin>();
-  for (const origin of origins) {
-    const location = origin.location;
-    const key = `${origin.kind}:${location?.filePath ?? ''}:${
-      location?.start.line ?? 0
-    }:${location?.start.column ?? 0}:${origin.parameterIndex ?? ''}`;
-    if (!unique.has(key)) unique.set(key, origin);
-  }
-  return [...unique.values()];
-}
-
 function worstOrigin(
   origins: OriginCandidate[],
   fallback: Anchor | undefined,
@@ -476,7 +463,10 @@ function worstOrigin(
     };
     candidates.push({ ...origin, distance: distanceFrom(origin, from, sourceFile) });
   }
-  return candidates.sort((left, right) => distanceRank(right) - distanceRank(left))[0];
+  return candidates.sort(
+    (left, right) =>
+      resourceDistanceRank(right.distance) - resourceDistanceRank(left.distance),
+  )[0];
 }
 
 function distanceFrom(
@@ -503,18 +493,6 @@ function distanceFrom(
           path.dirname(path.resolve(originFile.fileName)),
         ),
   };
-}
-
-function distanceRank(candidate: {
-  distance: Pick<Distance, 'declarationLine' | 'scope' | 'file' | 'folder'>;
-}): number {
-  const distance = candidate.distance;
-  return (
-    distance.file * 1_000_000_000 +
-    distance.folder * 1_000_000 +
-    distance.scope * 1_000 +
-    distance.declarationLine
-  );
 }
 
 function publicOrigin(origin: OriginCandidate, name: string): ResourceOrigin {

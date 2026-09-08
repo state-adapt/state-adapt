@@ -18,6 +18,7 @@ import {
   rebaseResourceScoreBreakdown,
 } from './scoring';
 import { ResolvedResource } from './resource-resolution';
+import { distinctResourceOrigins, resourceDistanceRank } from './resource-provenance';
 
 export function expandCommands(
   fn: FunctionDraft,
@@ -288,25 +289,13 @@ function unknownOrigin(): ResourceOrigin {
 }
 
 function provenanceFrom(origins: ResourceOrigin[]): ResourceProvenance {
-  const distinct = distinctPublicOrigins(origins);
+  const distinct = distinctResourceOrigins(origins);
   const unknown = distinct.filter(origin => origin.kind === 'unknown').length;
   return {
     confidence:
       unknown === distinct.length ? 'unknown' : unknown > 0 ? 'partial' : 'proven',
     origins: distinct,
   };
-}
-
-function distinctPublicOrigins(origins: ResourceOrigin[]): ResourceOrigin[] {
-  const unique = new Map<string, ResourceOrigin>();
-  for (const origin of origins) {
-    const location = origin.location;
-    const key = `${origin.kind}:${location?.filePath ?? ''}:${
-      location?.start.line ?? 0
-    }:${location?.start.column ?? 0}:${origin.parameterIndex ?? ''}`;
-    if (!unique.has(key)) unique.set(key, origin);
-  }
-  return [...unique.values()];
 }
 
 function combinedResourceDistance(
@@ -317,14 +306,17 @@ function combinedResourceDistance(
   const distances = resources.map(resource => resource.distance);
   if (includeCurrent || distances.length === 0) distances.push(command.resourceDistance);
   return distances.reduce((worst, distance) =>
-    distanceRank(distance) > distanceRank(worst) ? distance : worst,
+    resourceDistanceRank(distance) > resourceDistanceRank(worst) ? distance : worst,
   );
 }
 
 function worstResource(resources: ResolvedResource[]): ResolvedResource | undefined {
   return resources
     .slice()
-    .sort((left, right) => distanceRank(right.distance) - distanceRank(left.distance))[0];
+    .sort(
+      (left, right) =>
+        resourceDistanceRank(right.distance) - resourceDistanceRank(left.distance),
+    )[0];
 }
 
 function replaceResourceDistance(
@@ -342,15 +334,4 @@ function replaceResourceDistance(
     file: command.distance.file - current.file + replacement.file,
     folder: command.distance.folder - current.folder + replacement.folder,
   };
-}
-
-function distanceRank(
-  distance: Pick<Distance, 'declarationLine' | 'scope' | 'file' | 'folder'>,
-): number {
-  return (
-    distance.file * 1_000_000_000 +
-    distance.folder * 1_000_000 +
-    distance.scope * 1_000 +
-    distance.declarationLine
-  );
 }
