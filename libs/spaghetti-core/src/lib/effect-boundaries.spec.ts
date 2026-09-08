@@ -206,14 +206,53 @@ function root() { caller(); }`);
 function mutateRest(...values: number[]) {
   values.sort();
 }
+function replaceRestElement(...values: number[]) {
+  values[0] = 3;
+}
 function caller() {
   mutateDefault();
   mutateRest(2, 1);
+  replaceRestElement(1, 2);
 }`);
 
     expect(result.functions.find(fn => fn.name === 'caller')).toMatchObject({
       commands: [],
       score: 0,
+    });
+  });
+
+  it('propagates effects through rest parameter elements', () => {
+    const command = analyzeFile(`const shared = { x: 0 };
+function collect(...items: { x: number }[]) { items[0].x = 1; }
+function caller() { collect(shared); }`).functions.find(fn => fn.name === 'caller')
+      ?.commands[0];
+
+    expect(command).toMatchObject({
+      kind: 'property-assignment',
+      resource: 'shared',
+      declaration: { name: 'shared', kind: 'variable' },
+      resourceProvenance: {
+        confidence: 'proven',
+        origins: [{ kind: 'allocation' }],
+      },
+      callPath: [{ callee: 'source.ts:collect@2' }],
+    });
+  });
+
+  it('propagates dynamic rest element effects with unknown provenance', () => {
+    const command = analyzeFile(`const shared = { x: 0 };
+function collect(index: number, ...items: { x: number }[]) { items[index].x = 1; }
+function caller(index: number) { collect(index, shared); }`).functions.find(
+      fn => fn.name === 'caller',
+    )?.commands[0];
+
+    expect(command).toMatchObject({
+      kind: 'property-assignment',
+      resourceProvenance: {
+        confidence: 'unknown',
+        origins: [{ kind: 'unknown' }],
+      },
+      callPath: [{ callee: 'source.ts:collect@2' }],
     });
   });
 

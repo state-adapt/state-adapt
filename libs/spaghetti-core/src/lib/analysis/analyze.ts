@@ -229,19 +229,21 @@ function argumentResolver(
 ): CallEdge['argument'] {
   if (ts.isSourceFile(callee.node)) return () => undefined;
   const parameters = callee.node.parameters;
-  const resolved = new Map<number, ResolvedResource | undefined>();
-  return parameterIndex => {
-    if (resolved.has(parameterIndex)) return resolved.get(parameterIndex);
+  const resolved = new Map<string, ResolvedResource | undefined>();
+  return (parameterIndex, restElementIndex) => {
+    const key = `${parameterIndex}:${String(restElementIndex)}`;
+    if (resolved.has(key)) return resolved.get(key);
     const resource = resolveArgument(
       parameters[parameterIndex],
       parameterIndex,
+      restElementIndex,
       call,
       caller,
       callee,
       checker,
       analyzedFiles,
     );
-    resolved.set(parameterIndex, resource);
+    resolved.set(key, resource);
     return resource;
   };
 }
@@ -249,6 +251,7 @@ function argumentResolver(
 function resolveArgument(
   parameter: ts.ParameterDeclaration | undefined,
   parameterIndex: number,
+  restElementIndex: number | null | undefined,
   call: ts.CallExpression,
   caller: FunctionDraft,
   callee: FunctionDraft,
@@ -256,7 +259,7 @@ function resolveArgument(
   analyzedFiles: ReadonlySet<ts.SourceFile>,
 ): ResolvedResource | undefined {
   if (!parameter) return undefined;
-  if (parameter.dotDotDotToken)
+  if (parameter.dotDotDotToken && restElementIndex === undefined)
     return {
       name: parameter.name.getText(callee.sourceFile),
       provenance: {
@@ -270,8 +273,17 @@ function resolveArgument(
       },
       distance: { declarationLine: 0, scope: 0, file: 0, folder: 0 },
       external: false,
+      restElements: [],
     };
-  const argument = call.arguments[parameterIndex];
+  if (parameter.dotDotDotToken && restElementIndex === null)
+    return {
+      name: parameter.name.getText(callee.sourceFile),
+      provenance: { confidence: 'unknown', origins: [{ kind: 'unknown' }] },
+      distance: { declarationLine: 0, scope: 0, file: 0, folder: 0 },
+      external: false,
+      restElements: [],
+    };
+  const argument = call.arguments[parameterIndex + (restElementIndex ?? 0)];
   if (argument && !ts.isSpreadElement(argument))
     return resolveResource(
       argument,

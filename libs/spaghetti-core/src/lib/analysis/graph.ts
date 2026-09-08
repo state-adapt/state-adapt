@@ -189,11 +189,20 @@ function bindParameterOrigins(
 
   const origins = provenance.origins.flatMap(origin => {
     if (origin.parameterIndex === undefined) return [origin];
-    return argumentAt(origin.parameterIndex)?.provenance.origins ?? [unknownOrigin()];
+    return restElementIndexes(command, origin.parameterIndex).flatMap(
+      elementIndex =>
+        argumentAt(origin.parameterIndex ?? -1, elementIndex)?.provenance.origins ?? [
+          unknownOrigin(),
+        ],
+    );
   });
   const boundResources = provenance.origins
     .filter(origin => origin.parameterIndex !== undefined)
-    .map(origin => argumentAt(origin.parameterIndex ?? -1))
+    .flatMap(origin =>
+      restElementIndexes(command, origin.parameterIndex ?? -1).map(elementIndex =>
+        argumentAt(origin.parameterIndex ?? -1, elementIndex),
+      ),
+    )
     .filter((item): item is ResolvedResource => item !== undefined);
   const distance = combinedResourceDistance(
     command,
@@ -220,7 +229,18 @@ function bindParameterOrigins(
     resourceDistance: distance,
     scoreBreakdown,
     score: scoreBreakdown.total,
+    restElements: boundResources.flatMap(resource => resource.restElements),
   };
+}
+
+function restElementIndexes(
+  command: CommandDraft,
+  parameterIndex: number,
+): Array<number | null | undefined> {
+  const indexes = command.restElements
+    .filter(item => item.parameterIndex === parameterIndex)
+    .map(item => item.elementIndex);
+  return indexes.length > 0 ? indexes : [undefined];
 }
 
 function unknownOrigin(): ResourceOrigin {

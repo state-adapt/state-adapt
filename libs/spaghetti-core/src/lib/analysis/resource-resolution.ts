@@ -1,7 +1,7 @@
 import * as path from 'node:path';
 import * as ts from 'typescript';
 import { Declaration, Distance, ResourceOrigin, ResourceProvenance } from './models';
-import { isFunction, locationOf } from './ast';
+import { isAssignmentOperator, isFunction, locationOf } from './ast';
 import { folderDistance } from './call-resolution';
 import { resolveDeclaration, Scope } from './scopes';
 
@@ -11,6 +11,14 @@ export interface ResolvedResource {
   provenance: ResourceProvenance;
   distance: Pick<Distance, 'declarationLine' | 'scope' | 'file' | 'folder'>;
   external: boolean;
+  /** Rest-parameter elements reached while tracing this value. */
+  restElements: RestElementBinding[];
+}
+
+export interface RestElementBinding {
+  parameterIndex: number;
+  /** Null when the element cannot be selected statically. */
+  elementIndex: number | null;
 }
 
 interface OriginCandidate {
@@ -19,6 +27,7 @@ interface OriginCandidate {
   declarationNode?: ts.Declaration;
   scopeDistance: number;
   parameterIndex?: number;
+  restElementIndex?: number | null;
 }
 
 interface Anchor {
@@ -79,15 +88,18 @@ export function resolveResource(
   const declaration = declarationNode
     ? declarationFrom(declarationNode, identifier?.text ?? name)
     : undefined;
-  const unknownCount = origins.filter(origin => origin.kind === 'unknown').length;
+  const publicOrigins = distinctPublicOrigins(
+    origins.map(origin => publicOrigin(origin, identifier?.text ?? name)),
+  );
+  const unknownCount = publicOrigins.filter(origin => origin.kind === 'unknown').length;
   const provenance: ResourceProvenance = {
     confidence:
-      unknownCount === origins.length
+      unknownCount === publicOrigins.length
         ? 'unknown'
         : unknownCount > 0
         ? 'partial'
         : 'proven',
-    origins: origins.map(origin => publicOrigin(origin, identifier?.text ?? name)),
+    origins: publicOrigins,
   };
   return {
     name,
@@ -95,6 +107,16 @@ export function resolveResource(
     provenance,
     distance: distanceOrigin?.distance ?? zeroDistance(),
     external,
+    restElements: origins.flatMap(origin =>
+      origin.parameterIndex !== undefined && origin.restElementIndex !== undefined
+        ? [
+            {
+              parameterIndex: origin.parameterIndex,
+              elementIndex: origin.restElementIndex,
+            },
+          ]
+        : [],
+    ),
   };
 }
 
@@ -116,8 +138,23 @@ function traceValue(expression: ts.Expression, context: TraceContext): TraceResu
       return traceIdentifier(expression.name, next);
     return traceValue(expression.expression, next);
   }
-  if (ts.isElementAccessExpression(expression))
-    return traceValue(expression.expression, next);
+  if (ts.isElementAccessExpression(expression)) {
+    const traced = traceValue(expression.expression, next);
+    const elementIndex = numericElementIndex(expression.argumentExpression);
+    return {
+      ...traced,
+      origins: traced.origins.map(origin =>
+        origin.parameterIndex !== undefined &&
+        origin.declarationNode &&
+        ts.isParameter(origin.declarationNode) &&
+        origin.declarationNode.dotDotDotToken &&
+        !isDirectlyMutatedElement(expression) &&
+        origin.restElementIndex === undefined
+          ? { ...origin, restElementIndex: elementIndex }
+          : origin,
+      ),
+    };
+  }
   if (ts.isCallExpression(expression)) return traceCall(expression, next);
   if (ts.isConditionalExpression(expression))
     return merge([
@@ -304,6 +341,24 @@ function isAllocationExpression(expression: ts.Expression): boolean {
   );
 }
 
+function numericElementIndex(expression: ts.Expression | undefined): number | null {
+  if (!expression || !ts.isNumericLiteral(expression)) return null;
+  const index = Number(expression.text);
+  return Number.isSafeInteger(index) && index >= 0 ? index : null;
+}
+
+function isDirectlyMutatedElement(expression: ts.ElementAccessExpression): boolean {
+  const parent = expression.parent;
+  return (
+    (ts.isBinaryExpression(parent) &&
+      parent.left === expression &&
+      isAssignmentOperator(parent.operatorToken.kind)) ||
+    ((ts.isPrefixUnaryExpression(parent) || ts.isPostfixUnaryExpression(parent)) &&
+      parent.operand === expression) ||
+    (ts.isDeleteExpression(parent) && parent.expression === expression)
+  );
+}
+
 function unwrap(expression: ts.Expression): ts.Expression {
   let current = expression;
   while (
@@ -357,7 +412,21 @@ function distinctOrigins(origins: OriginCandidate[]): OriginCandidate[] {
       : undefined;
     const key = `${origin.kind}:${origin.node?.getSourceFile().fileName ?? ''}:${
       location?.line ?? 0
-    }:${location?.column ?? 0}:${origin.parameterIndex ?? ''}`;
+    }:${location?.column ?? 0}:${origin.parameterIndex ?? ''}:${String(
+      origin.restElementIndex,
+    )}`;
+    if (!unique.has(key)) unique.set(key, origin);
+  }
+  return [...unique.values()];
+}
+
+function distinctPublicOrigins(origins: ResourceOrigin[]): ResourceOrigin[] {
+  const unique = new Map<string, ResourceOrigin>();
+  for (const origin of origins) {
+    const location = origin.location;
+    const key = `${origin.kind}:${location?.filePath ?? ''}:${
+      location?.start.line ?? 0
+    }:${location?.start.column ?? 0}:${origin.parameterIndex ?? ''}`;
     if (!unique.has(key)) unique.set(key, origin);
   }
   return [...unique.values()];

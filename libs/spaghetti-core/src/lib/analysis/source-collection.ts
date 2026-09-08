@@ -297,6 +297,7 @@ function createDirectCommand(
     callPath: [],
     distance,
     resourceDistance,
+    restElements: resolution?.restElements ?? [],
     score: scoreBreakdown.total,
     scoreBreakdown,
     ...(resolution?.name ? { resource: resolution.name } : {}),

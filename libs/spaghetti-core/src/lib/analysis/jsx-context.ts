@@ -11,8 +11,9 @@ export function stripFunctionDraft(fn: FunctionDraft): FunctionAnalysis {
     location: fn.location,
     size: fn.size,
     commands: fn.commands.map(command => {
-      const { resourceDistance, ...publicCommand } = command;
+      const { resourceDistance, restElements, ...publicCommand } = command;
       void resourceDistance;
+      void restElements;
       return publicCommand;
     }),
     score: fn.score,

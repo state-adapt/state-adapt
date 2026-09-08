@@ -6,7 +6,7 @@ import {
   FunctionAnalysis,
   SourceLocation,
 } from './models';
-import { ResolvedResource } from './resource-resolution';
+import { ResolvedResource, RestElementBinding } from './resource-resolution';
 import { Scope } from './scopes';
 
 export const MODULE_FUNCTION_NAME = '<module>';
@@ -26,6 +26,8 @@ export interface CallSite {
 export interface CommandDraft extends Command {
   /** Resource-only distance at the command origin, before call-hop distances. */
   resourceDistance: Pick<Distance, 'declarationLine' | 'scope' | 'file' | 'folder'>;
+  /** Internal rest-element flow metadata, removed from public results. */
+  restElements: RestElementBinding[];
 }
 export interface FunctionDraft extends FunctionAnalysis {
   node: ts.FunctionLikeDeclaration | ts.SourceFile;
@@ -40,7 +42,10 @@ export interface CallEdge {
   callee: FunctionDraft;
   hop: CommandHop;
   /** Caller-side value origin for one callee parameter, resolved on first use. */
-  argument(parameterIndex: number): ResolvedResource | undefined;
+  argument(
+    parameterIndex: number,
+    restElementIndex?: number | null,
+  ): ResolvedResource | undefined;
 }
 export interface FileDraft {
   sourceFile: ts.SourceFile;
