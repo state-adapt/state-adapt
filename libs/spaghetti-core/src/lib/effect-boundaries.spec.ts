@@ -182,6 +182,42 @@ function root(input: number[]) { middle(input); }`);
     ]);
   });
 
+  it('stops positional argument binding at the first spread argument', () => {
+    const result = analyzeFile(`const shared = { x: 0 };
+function mutate(a: { x: number }, b: { x: number }, c: { x: number }) {
+  a.x = 1;
+  b.x = 2;
+  c.x = 3;
+}
+function caller(rest: [{ x: number }, { x: number }]) {
+  const tmp = { x: 0 };
+  mutate(shared, ...rest, tmp);
+}
+function top(rest: [{ x: number }, { x: number }]) { caller(rest); }`);
+    const caller = result.functions.find(fn => fn.name === 'caller');
+    const top = result.functions.find(fn => fn.name === 'top');
+
+    expect(caller?.commands).toHaveLength(3);
+    expect(caller?.commands[0]).toMatchObject({
+      resource: 'shared',
+      declaration: { name: 'shared', kind: 'variable' },
+      resourceProvenance: {
+        confidence: 'proven',
+        origins: [{ kind: 'allocation' }],
+      },
+    });
+    expect(caller?.commands.slice(1).map(command => command.resourceProvenance)).toEqual([
+      { confidence: 'unknown', origins: [{ kind: 'unknown' }] },
+      { confidence: 'unknown', origins: [{ kind: 'unknown' }] },
+    ]);
+    expect(caller?.commands.some(command => command.resource === 'tmp')).toBe(false);
+    expect(top?.commands).toHaveLength(3);
+    expect(top?.commands.slice(1).map(command => command.resourceProvenance)).toEqual([
+      { confidence: 'unknown', origins: [{ kind: 'unknown' }] },
+      { confidence: 'unknown', origins: [{ kind: 'unknown' }] },
+    ]);
+  });
+
   it('propagates unknown origins conservatively without making them external', () => {
     const result = analyzeFile(`declare function getValues(): number[];
 function mutate(values: number[]) { values.sort(); }

@@ -229,6 +229,7 @@ function argumentResolver(
 ): CallEdge['argument'] {
   if (ts.isSourceFile(callee.node)) return () => undefined;
   const parameters = callee.node.parameters;
+  const firstSpreadArgumentIndex = call.arguments.findIndex(ts.isSpreadElement);
   const resolved = new Map<string, ResolvedResource | undefined>();
   return (parameterIndex, restElementIndex) => {
     const key = `${parameterIndex}:${String(restElementIndex)}`;
@@ -237,6 +238,7 @@ function argumentResolver(
       parameters[parameterIndex],
       parameterIndex,
       restElementIndex,
+      firstSpreadArgumentIndex,
       call,
       caller,
       callee,
@@ -252,6 +254,7 @@ function resolveArgument(
   parameter: ts.ParameterDeclaration | undefined,
   parameterIndex: number,
   restElementIndex: number | null | undefined,
+  firstSpreadArgumentIndex: number,
   call: ts.CallExpression,
   caller: FunctionDraft,
   callee: FunctionDraft,
@@ -283,7 +286,10 @@ function resolveArgument(
       external: false,
       restElements: [],
     };
-  const argument = call.arguments[parameterIndex + (restElementIndex ?? 0)];
+  const argumentIndex = parameterIndex + (restElementIndex ?? 0);
+  if (firstSpreadArgumentIndex >= 0 && argumentIndex >= firstSpreadArgumentIndex)
+    return undefined;
+  const argument = call.arguments[argumentIndex];
   if (argument && !ts.isSpreadElement(argument))
     return resolveResource(
       argument,
