@@ -120,7 +120,7 @@ function root() { middle(); }`,
     expect(result.functions.find(fn => fn.name === 'root')?.commands).toEqual([]);
   });
 
-  it('stops call expansion after a weighted call boundary exceeds a limit', () => {
+  it('scores a discarded call from its resolved boundary before short-circuiting', () => {
     const result = analyzeFile(
       `function leaf(value: { current: number }) { value.current = 1; }
 function root(value: { current: number }) { leaf(value); }`,
@@ -132,7 +132,13 @@ function root(value: { current: number }) { leaf(value); }`,
     );
 
     expect(result.functions.find(fn => fn.name === 'root')?.commands).toMatchObject([
-      { kind: 'discarded-call', call: 'leaf', callPath: [] },
+      {
+        kind: 'discarded-call',
+        call: 'leaf',
+        callPath: [],
+        distance: { declarationLine: 1 },
+        scoreBreakdown: { declarationLineDistance: 1 },
+      },
     ]);
 
     const concise = analyzeFile(
@@ -145,11 +151,16 @@ const root = () => leaf();`,
       },
     );
     expect(concise.functions.find(fn => fn.name === 'root')?.commands).toMatchObject([
-      { kind: 'discarded-call', call: 'leaf', callPath: [] },
+      {
+        kind: 'discarded-call',
+        call: 'leaf',
+        distance: { declarationLine: 1 },
+        scoreBreakdown: { declarationLineDistance: 1 },
+      },
     ]);
   });
 
-  it('expands a value-used call even when its boundary exceeds the limit', () => {
+  it('still expands a value-used call when its boundary exceeds the limit', () => {
     const result = analyzeFile(
       `function leaf(value: { current: number }) { value.current = 1; return value.current; }
 function root(value: { current: number }) { return leaf(value); }`,

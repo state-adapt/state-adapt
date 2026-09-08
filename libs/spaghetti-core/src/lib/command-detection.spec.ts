@@ -35,6 +35,36 @@ write();`);
     ]);
   });
 
+  it('propagates commands through class-field function aliases regardless of distance', () => {
+    const result = analyzeFile(`function doThing() {
+  console.log('asdf');
+}
+
+class AppComponent {
+  doThing2 = doThing;
+  a = 1;
+
+  constructor() {
+    this.a = 4;
+  }
+
+  doStuff() {
+    this.doThing2();
+    this.a++;
+  }
+}`);
+    const command = result.functions
+      .find(fn => fn.name === 'doStuff')
+      ?.commands.find(item => item.callPath.length > 0);
+
+    expect(command).toMatchObject({
+      kind: 'discarded-call',
+      call: 'console.log',
+      external: true,
+      callPath: [{ callee: 'source.ts:doThing@1' }],
+    });
+  });
+
   it('resolves class fields and leaves call-produced targets unknown', () => {
     const result = analyzeFile(`class Counter {
   state = { value: 0 };

@@ -17,7 +17,12 @@ import {
 import { createFileDraft } from './source-collection';
 import { hopDistance, resolveCall } from './call-resolution';
 import { expandCommands, functionsReachingCycles } from './graph';
-import { scoringConfig, locationStartKey } from './scoring';
+import {
+  addDistance,
+  inheritScoreBreakdown,
+  locationStartKey,
+  scoringConfig,
+} from './scoring';
 import { stripFunctionDraft } from './jsx-context';
 import { ResolvedResource, resolveResource } from './resource-resolution';
 import { apiConfiguration } from './recognizer-config';
@@ -145,12 +150,6 @@ function analyzeSourceFiles(
       if (options.crossFileAnalysis === false && callee.sourceFile !== caller.sourceFile)
         return;
       const distance = hopDistance(call, caller, callee);
-      if (
-        options.maxCallBoundaryScore !== undefined &&
-        hasDirectDiscardedCall(caller, call) &&
-        weightedCallBoundary(distance, scoring) > options.maxCallBoundaryScore
-      )
-        return;
       const hop: CommandHop = {
         caller: caller.functionId,
         callee: callee.functionId,
@@ -158,6 +157,12 @@ function analyzeSourceFiles(
         definitionLocation: callee.location,
         distance,
       };
+      if (
+        options.maxCallBoundaryScore !== undefined &&
+        weightedCallBoundary(distance, scoring) > options.maxCallBoundaryScore &&
+        scoreDirectDiscardedCall(caller, call, hop, scoring)
+      )
+        return;
       const callerEdges = edges.get(caller.functionId) ?? [];
       callerEdges.push({
         callee,
@@ -223,6 +228,56 @@ function analyzeSourceFiles(
       ...(truncated ? { truncated: true } : {}),
     };
   });
+}
+
+function scoreDirectDiscardedCall(
+  caller: FunctionDraft,
+  call: FunctionDraft['calls'][number],
+  hop: CommandHop,
+  scoring: ReturnType<typeof scoringConfig>,
+): boolean {
+  const starts = new Set([locationStartKey(call.location)]);
+  if (call.directCommandLocation)
+    starts.add(locationStartKey(call.directCommandLocation));
+  const command = caller.directCommands.find(
+    item => item.kind === 'discarded-call' && starts.has(locationStartKey(item.location)),
+  );
+  if (!command) return false;
+  // The direct call may already include some of the same definition distance
+  // through its target (notably an imported identifier). Add only boundary
+  // distance that is not represented yet so the short circuit cannot hide or
+  // double-score the call.
+  const missingDistance = {
+    declarationLine: Math.max(
+      0,
+      hop.distance.declarationLine - command.distance.declarationLine,
+    ),
+    sameFunction: Math.max(0, hop.distance.sameFunction - command.distance.sameFunction),
+    scope: Math.max(0, hop.distance.scope - command.distance.scope),
+    functionCall: Math.max(0, hop.distance.functionCall - command.distance.functionCall),
+    file: Math.max(0, hop.distance.file - command.distance.file),
+    folder: Math.max(0, hop.distance.folder - command.distance.folder),
+  };
+  command.distance = addDistance(command.distance, missingDistance);
+  command.scoreBreakdown = inheritScoreBreakdown(
+    command.scoreBreakdown,
+    { ...hop, distance: missingDistance },
+    scoring,
+  );
+  command.score = command.scoreBreakdown.total;
+  return true;
+}
+
+function weightedCallBoundary(
+  distance: CommandHop['distance'],
+  scoring: ReturnType<typeof scoringConfig>,
+): number {
+  return (
+    distance.declarationLine * scoring.declarationLineDistanceWeight +
+    distance.scope * scoring.scopeCrossingWeight +
+    distance.file * scoring.fileCrossingWeight +
+    distance.folder * scoring.folderCrossingWeight
+  );
 }
 
 /**
@@ -325,29 +380,4 @@ function resolveArgument(
       maxResourceTraceDepth,
     );
   return undefined;
-}
-
-function hasDirectDiscardedCall(
-  caller: FunctionDraft,
-  call: FunctionDraft['calls'][number],
-): boolean {
-  const starts = new Set([locationStartKey(call.location)]);
-  if (call.directCommandLocation)
-    starts.add(locationStartKey(call.directCommandLocation));
-  return caller.directCommands.some(
-    command =>
-      command.kind === 'discarded-call' && starts.has(locationStartKey(command.location)),
-  );
-}
-
-function weightedCallBoundary(
-  distance: CommandHop['distance'],
-  scoring: ReturnType<typeof scoringConfig>,
-): number {
-  return (
-    distance.declarationLine * scoring.declarationLineDistanceWeight +
-    distance.scope * scoring.scopeCrossingWeight +
-    distance.file * scoring.fileCrossingWeight +
-    distance.folder * scoring.folderCrossingWeight
-  );
 }

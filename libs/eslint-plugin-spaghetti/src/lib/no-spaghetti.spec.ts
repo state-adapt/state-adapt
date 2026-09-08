@@ -203,6 +203,31 @@ hydratePreact({}, {});`,
   invalid: [
     {
       filename: typedScratch,
+      code: `function doThing() {
+  console.log('asdf');
+}
+
+class AppComponent {
+  doThing2 = doThing;
+  a = 1;
+
+  constructor() {
+    this.a = 4;
+  }
+
+  doStuff() {
+    this.doThing2();
+    this.a++;
+  }
+}`,
+      options: [{ maxScore: 10 }],
+      errors: [
+        { messageId: 'spaghetti', line: 2 },
+        { messageId: 'spaghetti', line: 14 },
+      ],
+    },
+    {
+      filename: typedScratch,
       code: `declare module '@angular/core' {
   export function enableProdMode(): void;
 }

@@ -350,5 +350,5 @@ And I have committed the work done up to now.
 - Resolved calls extend the trace. Same-file calls accumulate call-to-declaration line distance; cross-file calls accumulate file and folder crossings. Calls have no fixed score merely for existing.
 - Direct references to resources in other analyzed files use the same file and folder units as resolved calls. Only unresolved targets and resources outside the analyzed program receive the external penalty.
 - `maxScore` defaults to `6`; equal scores are allowed and higher scores are reported.
-- ESLint scoring stops once a command is known to exceed `maxScore`. Without configured allowlists, call-chain expansion stops at any call boundary that already exceeds the limit; full call-chain scoring remains available to the analyzer.
+- ESLint scoring stops once a command is known to exceed `maxScore`. A discarded call whose resolved boundary already exceeds the limit is retained and scored from that boundary; other calls retain full call-chain analysis.
 - JavaScript and DOM are the only built-in API recognizer families. Redux support belongs outside this plugin.
