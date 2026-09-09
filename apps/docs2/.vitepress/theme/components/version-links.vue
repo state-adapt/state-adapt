@@ -30,6 +30,7 @@ onMounted(async () => {
       class="version-link"
       :class="{ active: link === activeLink }"
       :href="link.link"
+      target="_self"
       :aria-current="link === activeLink ? 'page' : undefined"
     >
       {{ link.text }}
