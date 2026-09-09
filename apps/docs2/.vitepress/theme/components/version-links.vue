@@ -1,12 +1,26 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
+import { useRoute } from 'vitepress';
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
+
+interface VersionLink {
+  text: string;
+  link: string;
+  href: string;
+}
+
+let versionLinksRequest: Promise<VersionLink[]> | undefined;
+const pageExistsRequests = new Map<string, Promise<boolean>>();
 
 const props = defineProps<{ currentMajor: string; screenMenu?: boolean }>();
 
-const links = ref<{ text: string; link: string }[]>([]);
+const route = useRoute();
+const root = ref<HTMLElement>();
+const links = ref<VersionLink[]>([]);
 const isVersioned = ref(false);
+let menu: Element | null = null;
+let resolvedPath = '';
 
-const linkMajor = (link: { text: string; link: string }) =>
+const linkMajor = (link: VersionLink) =>
   link.link.match(/^\/v\/(\d+)\/$/)?.[1] ?? link.text.match(/^v(\d+)/)?.[1];
 
 const activeLink = computed(() =>
@@ -15,21 +29,88 @@ const activeLink = computed(() =>
     : links.value.find(link => link.link === '/'),
 );
 
+const getVersionLinks = () => {
+  versionLinksRequest ??= fetch('/versions.json').then(async response => {
+    if (!response.ok) return [];
+    const published = (await response.json()) as Omit<VersionLink, 'href'>[];
+    return published.map(link => ({ ...link, href: link.link }));
+  });
+  return versionLinksRequest;
+};
+
+const pageExists = (path: string) => {
+  let request = pageExistsRequests.get(path);
+  if (!request) {
+    request = fetch(path, { method: 'HEAD' })
+      .then(response => response.ok)
+      .catch(() => false);
+    pageExistsRequests.set(path, request);
+  }
+  return request;
+};
+
+const getRelativePath = (pathname: string) =>
+  pathname.replace(/^\/(?:v\/\d+|__check__)(?:\/|$)/, '/').replace(/^\//, '');
+
+async function resolveVersionPages() {
+  const pathname = location.pathname;
+  if (!links.value.length || resolvedPath === pathname) return;
+
+  resolvedPath = pathname;
+  const relativePath = getRelativePath(pathname);
+  const currentLink = activeLink.value?.link;
+  const suffix = location.search + location.hash;
+  const resolved = await Promise.all(
+    links.value.map(async link => {
+      if (!relativePath) return link;
+
+      const candidate = link.link + relativePath;
+      const exists = link.link === currentLink || (await pageExists(candidate));
+      return { ...link, href: (exists ? candidate : link.link) + suffix };
+    }),
+  );
+
+  if (location.pathname === pathname) links.value = resolved;
+  else resolvedPath = '';
+}
+
+const resolveOnInteraction = () => void resolveVersionPages();
+
 onMounted(async () => {
   isVersioned.value = /^\/(?:v\/\d+|__check__)\//.test(location.pathname);
-  const response = await fetch('/versions.json');
-  if (response.ok) links.value = await response.json();
+  menu = root.value?.closest('.VPFlyout, .VPNavScreenMenuGroup') ?? null;
+  menu?.addEventListener('mouseenter', resolveOnInteraction);
+  menu?.addEventListener('focusin', resolveOnInteraction);
+  menu?.addEventListener('click', resolveOnInteraction);
+
+  links.value = await getVersionLinks();
+  const menuButton = menu?.querySelector(':scope > button[aria-expanded="true"]');
+  if (menuButton || menu?.matches(':hover')) await resolveVersionPages();
 });
+
+onUnmounted(() => {
+  menu?.removeEventListener('mouseenter', resolveOnInteraction);
+  menu?.removeEventListener('focusin', resolveOnInteraction);
+  menu?.removeEventListener('click', resolveOnInteraction);
+});
+
+watch(
+  () => route.path,
+  () => {
+    resolvedPath = '';
+    links.value = links.value.map(link => ({ ...link, href: link.link }));
+  },
+);
 </script>
 
 <template>
-  <div class="VersionLinks" :class="{ screenMenu }">
+  <div ref="root" class="VersionLinks" :class="{ screenMenu }">
     <a
       v-for="link in links"
       :key="link.link"
       class="version-link"
       :class="{ active: link === activeLink }"
-      :href="link.link"
+      :href="link.href"
       target="_self"
       :aria-current="link === activeLink ? 'page' : undefined"
     >
