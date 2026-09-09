@@ -49,7 +49,7 @@ export default defineConfig({
     ['link', { rel: 'icon', href: '/sa3-3.svg', sizes: 'any', type: 'image/svg+xml' }],
     ['link', { rel: 'mask-icon', href: '/sa3-3.svg', color: '#ffffff' }],
     ['link', { rel: 'icon', href: '/favicon.ico' }],
-    // basic OG
+    // Social previews
     ['meta', { property: 'og:type', content: 'website' }],
     ['meta', { property: 'og:title', content: 'StateAdapt' }],
     [
@@ -59,10 +59,38 @@ export default defineConfig({
         content: 'State Management that adapts with complexity.',
       },
     ],
-    ['meta', { property: 'og:url', content: 'https://state-adapt.github.io/' }],
     [
       'meta',
       { property: 'og:image', content: 'https://state-adapt.github.io/sa-cover2.png' },
+    ],
+    ['meta', { property: 'og:image:width', content: '1200' }],
+    ['meta', { property: 'og:image:height', content: '600' }],
+    [
+      'meta',
+      {
+        property: 'og:image:alt',
+        content: 'StateAdapt — State Management that adapts with complexity.',
+      },
+    ],
+    ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
+    ['meta', { name: 'twitter:title', content: 'StateAdapt' }],
+    [
+      'meta',
+      {
+        name: 'twitter:description',
+        content: 'State Management that adapts with complexity.',
+      },
+    ],
+    [
+      'meta',
+      { name: 'twitter:image', content: 'https://state-adapt.github.io/sa-cover2.png' },
+    ],
+    [
+      'meta',
+      {
+        name: 'twitter:image:alt',
+        content: 'StateAdapt — State Management that adapts with complexity.',
+      },
     ],
   ],
   title: 'StateAdapt',
