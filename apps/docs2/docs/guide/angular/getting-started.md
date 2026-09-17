@@ -14,7 +14,7 @@ npm i -s @state-adapt/rxjs
 npm i -s @state-adapt/angular
 ```
 
-[StackBlitz](https://stackblitz.com/edit/state-adapt-angular?file=src%2Fapp%2Fapp.module.ts)
+[StackBlitz](https://stackblitz.com/edit/stackblitz-starters-cbqmmdaw?file=src%2Fapp%2Fcounter.component.ts)
 
 ---
 
