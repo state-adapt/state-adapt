@@ -8,20 +8,20 @@ next:
 
 Install the StateAdapt core and RxJS packages:
 
-<!--@include: ../../../../../libs/core/README.md#getting-started-->
+<!--@include-section: @state-adapt/core#Installation-->
 
-<!--@include: ../../../../../libs/rxjs/README.md#getting-started-->
+<!--@include-section: @state-adapt/rxjs#Installation-->
 
 ## Angular
 
-<!--@include: ../../../../../libs/angular/README.md#getting-started-->
+<!--@include-section: @state-adapt/angular#Getting Started-->
 
 ## Optional: Angular Router integration
 
-<!--@include: ../../../../../libs/angular-router/README.md#getting-started-->
+<!--@include-section: @state-adapt/angular-router#Getting Started-->
 
 <!--@include: ../../../includes/agents.md-->
 
 ## ESLint Plugin: No Spaghetti
 
-<!--@include: ../../../../../libs/eslint-plugin-spaghetti/README.md#getting-started-->
+<!--@include-section: @state-adapt/eslint-plugin-spaghetti#Getting Started-->
