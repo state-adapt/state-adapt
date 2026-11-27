@@ -6,26 +6,18 @@ next:
 
 # Getting Started
 
-Install the StateAdapt core and RxJS packages:
+<!--@include-section: @state-adapt/rxjs#Getting Started-->
 
-<!--@include-section: @state-adapt/core#Installation-->
-
-<!--@include-section: @state-adapt/rxjs#Installation-->
-
-## Create a StateAdapt instance
-
-<!--@include-section: @state-adapt/rxjs#Standalone setup-->
-
-Use the instance in your components:
+And now you can use it in your components:
 
 ```tsx
 import { from } from 'solid-js';
-import { adapt } from '../state-adapt';
+import { adapt } from '../state-adapt.function';
 
 function Name() {
   const nameStore = adapt('Bob');
   const name = from(nameStore.state$);
-  return <p>Hello {name()}!</p>;
+  // ...
 }
 ```
 
@@ -33,6 +25,8 @@ Solid's `from` function subscribes immediately, so it's good to use only in comp
 
 ::: info Library Coming Soon
 StateAdapt doesn't currently have a dedicated library for Solid.
+
+For now, refer to [`configureStateAdapt`](/api/rxjs/index/configureStateAdapt) for options.
 :::
 
 [StackBlitz demo](https://stackblitz.com/edit/solidjs-templates-oc7ivf?file=src%2Fadapt.function.ts)
