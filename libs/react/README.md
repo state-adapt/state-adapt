@@ -4,8 +4,6 @@ React integration with hooks for stores, sources, and derived state.
 
 ## Getting Started
 
-<!-- #region getting-started -->
-
 ```sh
 npm install @state-adapt/react
 ```
@@ -40,7 +38,7 @@ To customize StateAdapt, use the React package's
 
 [StackBlitz Starter](https://stackblitz.com/edit/vitejs-vite-qcthao?file=src%2Fmain.tsx,src%2FCounter.tsx&terminal=dev)
 
-<!-- #endregion getting-started -->
+## Peer dependencies
 
 If you install peer dependencies manually, also install `rxjs` and
 `@state-adapt/core` and `@state-adapt/rxjs` at the same version as this package.
