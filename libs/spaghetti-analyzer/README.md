@@ -2,7 +2,7 @@
 
 Analyze a TypeScript project for spaghetti code and produce human-readable or JSON reports.
 
-## Getting Started
+## Setup
 
 ```sh
 npm install --save-dev @state-adapt/spaghetti-analyzer @state-adapt/spaghetti-core
