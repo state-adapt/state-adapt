@@ -6,14 +6,6 @@ next:
 
 # Getting Started
 
-Install the StateAdapt core and RxJS packages:
-
-<!--@include-section: @state-adapt/core#Installation-->
-
-<!--@include-section: @state-adapt/rxjs#Installation-->
-
-## React
-
 <!--@include-section: @state-adapt/react#Getting Started-->
 
 <!--@include: ../../../includes/agents.md-->
