@@ -23,10 +23,18 @@ export function createRule(
       return {
         'Program:exit'() {
           const options = (context.options[0] ?? {}) as RuleOptions;
-          const source = context.getSourceCode();
-          const fileName =
-            context.getFilename() === '<input>' ? 'source.ts' : context.getFilename();
-          const analysis = analysisForLintFile(source, fileName, options);
+          // ESLint 10 removed these methods; keep them as fallbacks for early ESLint 8.
+          const legacyContext = context as Rule.RuleContext & {
+            getSourceCode(): Rule.RuleContext['sourceCode'];
+            getFilename(): string;
+          };
+          const source = context.sourceCode ?? legacyContext.getSourceCode();
+          const fileName = context.filename ?? legacyContext.getFilename();
+          const analysis = analysisForLintFile(
+            source,
+            fileName === '<input>' ? 'source.ts' : fileName,
+            options,
+          );
           analysis.functions
             .filter(fn => fn.truncated)
             .forEach(fn =>
