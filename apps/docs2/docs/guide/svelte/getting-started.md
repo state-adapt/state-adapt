@@ -8,13 +8,13 @@ next:
 
 Install the StateAdapt core and RxJS packages:
 
-<!--@include: ../../../../../libs/core/README.md#getting-started-->
+<!--@include-section: @state-adapt/core#Installation-->
 
-<!--@include: ../../../../../libs/rxjs/README.md#getting-started-->
+<!--@include-section: @state-adapt/rxjs#Installation-->
 
 ## Create a StateAdapt instance
 
-<!--@include: ../../../../../libs/rxjs/README.md#standalone-setup-->
+<!--@include-section: @state-adapt/rxjs#Standalone setup-->
 
 Use the instance in your components:
 
@@ -48,4 +48,4 @@ We are considering two options to add support for runes. Please [check progress 
 
 ## ESLint Plugin: No Spaghetti
 
-<!--@include: ../../../../../libs/eslint-plugin-spaghetti/README.md#getting-started-->
+<!--@include-section: @state-adapt/eslint-plugin-spaghetti#Getting Started-->
