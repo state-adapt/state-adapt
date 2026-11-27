@@ -39,4 +39,6 @@ We are considering two options to add support for runes. Please [check progress 
 
 ## ESLint Plugin: No Spaghetti
 
+<!--@include-section: @state-adapt/eslint-plugin-spaghetti-->
+
 <!--@include-section: @state-adapt/eslint-plugin-spaghetti#Getting Started-->
