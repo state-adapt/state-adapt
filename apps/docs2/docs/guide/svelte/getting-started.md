@@ -6,31 +6,22 @@ next:
 
 # Getting Started
 
-Install the StateAdapt core and RxJS packages:
+<!--@include-section: @state-adapt/rxjs#Getting Started-->
 
-<!--@include-section: @state-adapt/core#Installation-->
+And now you can use it in your components:
 
-<!--@include-section: @state-adapt/rxjs#Installation-->
+```ts
+import { adapt } from '../state-adapt';
 
-## Create a StateAdapt instance
-
-<!--@include-section: @state-adapt/rxjs#Standalone setup-->
-
-Use the instance in your components:
-
-```svelte
-<script lang="ts">
-  import { adapt } from '../state-adapt';
-
-  const nameStore = adapt('Bob');
-  const name$ = nameStore.state$;
-</script>
-
-<p>Hello {$name$}!</p>
+const nameStore = adapt('Bob');
+const name$ = nameStore.state$;
+const name = $name$;
 ```
 
 ::: info Library Coming Soon
 StateAdapt doesn't currently have a dedicated library for Svelte, but it will.
+
+For now, refer to [`configureStateAdapt`](/api/rxjs/index/configureStateAdapt) for options.
 
 ### Runes
 
