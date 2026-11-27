@@ -4,13 +4,13 @@ The framework-agnostic core API for creating adapters, selectors, and reactions.
 
 ## Getting Started
 
-<!-- #region getting-started -->
+### Installation
 
 ```sh
 npm install @state-adapt/core
 ```
 
-<!-- #endregion getting-started -->
+### Define an adapter
 
 Use `createAdapter` to define reusable state changes and selectors:
 
