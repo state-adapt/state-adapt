@@ -16,7 +16,7 @@ export function mdIncludeSection(md: MarkdownRenderer, librariesDir: string) {
     for (const token of tokens.reverse()) {
       if (token.type !== 'html_block' || token.level !== 0 || !token.map) continue;
       const directive =
-        /^<!--\s*@include-section:\s*@state-adapt\/([\w-]+)#([^\n]+?)\s*-->$/.exec(
+        /^<!--\s*@include-section:\s*@state-adapt\/([\w-]+)(?:#([^\n]+?))?\s*-->$/.exec(
           token.content.trim(),
         );
       if (!directive) continue;
@@ -38,15 +38,26 @@ export function mdIncludeSection(md: MarkdownRenderer, librariesDir: string) {
             ]
           : [],
       );
-      const matches = headings.filter(({ title }) => title === heading.trim());
-      if (matches.length !== 1) {
-        throw new Error(`Expected exactly one heading "${heading.trim()}" in ${file}`);
+      let sectionStart = 0;
+      let sectionEnd: number | undefined;
+      if (heading === undefined) {
+        // Skip an optional document title, not a later heading.
+        const [first, second] = headings;
+        const hasTitle = sectionTokens[0]?.type === 'heading_open' && first?.tag === 'h1';
+        sectionStart = hasTitle ? first.range[1] : 0;
+        sectionEnd = (hasTitle ? second : first)?.range[0];
+      } else {
+        const matches = headings.filter(({ title }) => title === heading.trim());
+        if (matches.length !== 1) {
+          throw new Error(`Expected exactly one heading "${heading.trim()}" in ${file}`);
+        }
+        const [match] = matches;
+        sectionStart = match.range[1];
+        sectionEnd = headings
+          .slice(headings.indexOf(match) + 1)
+          .find(h => h.tag <= match.tag)?.range[0];
       }
-      const [match] = matches;
-      const next = headings
-        .slice(headings.indexOf(match) + 1)
-        .find(h => h.tag <= match.tag);
-      const section = contents.split('\n').slice(match.range[1], next?.range[0]);
+      const section = contents.split('\n').slice(sectionStart, sectionEnd);
 
       // VitePress tracks these paths for dev-server invalidation.
       state.env.includes?.push(file);
