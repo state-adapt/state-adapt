@@ -4,28 +4,26 @@ The RxJS layer for defining stores, sources, and related state-management utilit
 
 ## Getting Started
 
-### Installation
+First, install:
 
 ```sh
-npm install rxjs @state-adapt/rxjs
+npm i -s rxjs
+npm i -s @state-adapt/core
+npm i -s @state-adapt/rxjs
 ```
 
-### Standalone setup
-
-To use StateAdapt without a dedicated framework integration, create a file named
-`state-adapt.ts`:
+Create a file named `state-adapt.ts` and export `watch` and `adapt`:
 
 ```ts
+import { actionSanitizer, stateSanitizer } from '@state-adapt/core';
 import { configureStateAdapt } from '@state-adapt/rxjs';
 
-export const { adapt, watch } = configureStateAdapt();
+const enableReduxDevTools = (window as any).__REDUX_DEVTOOLS_EXTENSION__?.({
+  actionSanitizer,
+  stateSanitizer,
+});
+
+export const { adapt, watch } = configureStateAdapt({
+  devtools: enableReduxDevTools,
+});
 ```
-
-The default configuration connects to Redux DevTools when the browser extension
-is available. See [`configureStateAdapt`](https://state-adapt.github.io/api/rxjs/index/configureStateAdapt)
-for customization options.
-
-## Peer dependencies
-
-Install [`@state-adapt/core`](https://www.npmjs.com/package/@state-adapt/core) at
-the same version as `@state-adapt/rxjs` if it is not already in your project.
