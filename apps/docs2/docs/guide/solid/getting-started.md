@@ -35,4 +35,6 @@ For now, refer to [`configureStateAdapt`](/api/rxjs/index/configureStateAdapt) f
 
 ## ESLint Plugin: No Spaghetti
 
+<!--@include-section: @state-adapt/eslint-plugin-spaghetti-->
+
 <!--@include-section: @state-adapt/eslint-plugin-spaghetti#Getting Started-->
