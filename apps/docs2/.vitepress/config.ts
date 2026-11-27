@@ -1,3 +1,4 @@
+import { resolve } from 'node:path';
 import { DefaultTheme, defineConfig } from 'vitepress';
 
 import saDark from './theme/code-snippets/sa-dark.json';
@@ -17,6 +18,7 @@ import reactPaths from '../docs/api/react/index/symbol.paths';
 import apiPackages from '../docs/api/packages.json';
 import { Section } from 'section-paths';
 import { mdAngularTemplatesPlugin } from '../md-angular-templates.plugin';
+import { mdIncludeSection } from '../md-include-section';
 
 function getLibSectionItems(sections: Section[]): DefaultTheme.SidebarItem[] {
   return sections.map(({ name, items }) => ({
@@ -155,6 +157,7 @@ export default defineConfig({
   },
 
   markdown: {
+    config: md => mdIncludeSection(md, resolve(__dirname, '../../../libs')),
     theme: {
       // dark: 'dark-plus',
       dark: {

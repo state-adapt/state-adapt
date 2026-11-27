@@ -6,29 +6,7 @@ next:
 
 # Getting Started
 
-First, install:
-
-```sh
-npm i -s rxjs
-npm i -s @state-adapt/core
-npm i -s @state-adapt/rxjs
-```
-
-Create a file named `state-adapt.ts` and export `watch` and `adapt`:
-
-```ts
-import { actionSanitizer, stateSanitizer } from '@state-adapt/core';
-import { configureStateAdapt } from '@state-adapt/rxjs';
-
-const enableReduxDevTools = (window as any).__REDUX_DEVTOOLS_EXTENSION__?.({
-  actionSanitizer,
-  stateSanitizer,
-});
-
-export const { adapt, watch } = configureStateAdapt({
-  devtools: enableReduxDevTools,
-});
-```
+<!--@include-section: @state-adapt/rxjs#Getting Started-->
 
 And now you can use it in your components:
 
@@ -59,4 +37,8 @@ We are considering two options to add support for runes. Please [check progress 
 
 <!--@include: ../../../includes/agents.md-->
 
-<!--@include: ../../../includes/spaghetti-eslint.md-->
+## ESLint Plugin: No Spaghetti
+
+<!--@include-section: @state-adapt/eslint-plugin-spaghetti-->
+
+<!--@include-section: @state-adapt/eslint-plugin-spaghetti#Getting Started-->

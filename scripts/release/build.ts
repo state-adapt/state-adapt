@@ -26,7 +26,7 @@ for (const pkg of packages.filter(pkg => pkg.schematics)) {
 }
 
 for (const pkg of packages) {
-  fs.copyFileSync(`${root}/README.md`, `${pkg.distDir}/README.md`);
+  fs.copyFileSync(`${pkg.sourceDir}/README.md`, `${pkg.distDir}/README.md`);
   fs.copyFileSync(`${root}/CHANGELOG.md`, `${pkg.distDir}/CHANGELOG.md`);
 }
 
