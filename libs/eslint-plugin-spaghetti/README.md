@@ -4,8 +4,6 @@ This ESLint plugin helps you minimize spaghetti code. It reports imperative code
 
 ## Getting Started
 
-<!-- #region getting-started -->
-
 > **Experimental:** The rule and its configuration may change as we learn from real-world use.
 
 Install the plugin and its peer dependencies:
@@ -45,5 +43,3 @@ Run `npx eslint .` from your project. With older ESLint versions that still use
 See the [typescript-eslint typed-linting guide](https://typescript-eslint.io/getting-started/typed-linting/)
 for general setup and the [`no-spaghetti` rule reference](https://state-adapt.github.io/api/eslint-plugin-spaghetti/rules/no-spaghetti)
 for its policy, options, and examples.
-
-<!-- #endregion getting-started -->
