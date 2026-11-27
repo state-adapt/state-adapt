@@ -39,6 +39,21 @@ Functions used as JSX event handlers expose neutral `jsxEventHandler` context.
 Core never removes a handler command from aggregate scores; consumer-specific
 allowances belong to the consumer.
 
+## Getting Started
+
+```sh
+npm install @state-adapt/spaghetti-core typescript
+```
+
+```ts
+import { analyzeFile } from '@state-adapt/spaghetti-core';
+
+const analysis = analyzeFile('export function example() {}', 'example.ts');
+```
+
+Use [`@state-adapt/spaghetti-analyzer`](https://www.npmjs.com/package/@state-adapt/spaghetti-analyzer)
+to analyze a project from the command line.
+
 ## Building
 
 Run `nx build spaghetti-core` to build the library.
