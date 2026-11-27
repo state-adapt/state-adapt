@@ -12,4 +12,6 @@ next:
 
 ## ESLint Plugin: No Spaghetti
 
+<!--@include-section: @state-adapt/eslint-plugin-spaghetti-->
+
 <!--@include-section: @state-adapt/eslint-plugin-spaghetti#Getting Started-->
