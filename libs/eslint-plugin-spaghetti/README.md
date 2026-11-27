@@ -6,40 +6,63 @@ This ESLint plugin helps you minimize spaghetti code. It reports imperative code
 
 > **Experimental:** The rule and its configuration may change as we learn from real-world use.
 
+`@state-adapt/eslint-plugin-spaghetti` helps minimize spaghetti code. It analyzes
+imperative commands and reports an error when they reach too far across functions, scopes,
+files, or folders.
+
 Install the plugin and its peer dependencies:
 
 ```sh
-npm install --save-dev @state-adapt/eslint-plugin-spaghetti @state-adapt/spaghetti-core @typescript-eslint/parser eslint typescript
+npm install --save-dev @state-adapt/eslint-plugin-spaghetti @state-adapt/spaghetti-core @typescript-eslint/parser eslint
 ```
 
-Add the rule to your flat ESLint config (for example, `eslint.config.mjs`).
-The TypeScript project service provides the type information the rule needs
-to resolve calls and resources across files:
+Then extend its recommended configuration for TypeScript files in `.eslintrc.json`:
 
-```js
-import spaghetti from '@state-adapt/eslint-plugin-spaghetti';
-import parser from '@typescript-eslint/parser';
-
-export default [
-  {
-    files: ['**/*.ts', '**/*.tsx'],
-    ignores: ['**/*.spec.ts', '**/*.spec.tsx', '**/*.test.ts', '**/*.test.tsx'],
-    languageOptions: {
-      parser,
-      parserOptions: { projectService: true },
-    },
-    plugins: { '@state-adapt/spaghetti': spaghetti },
-    rules: { '@state-adapt/spaghetti/no-spaghetti': 'error' },
-  },
-];
+```json
+{
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx"],
+      "excludedFiles": ["*.spec.ts", "*.spec.tsx", "*.test.ts", "*.test.tsx"],
+      "extends": ["plugin:@state-adapt/spaghetti/recommended"]
+    }
+  ]
+}
 ```
 
-Run `npx eslint .` from your project. With older ESLint versions that still use
-`.eslintrc`, add an override for your TypeScript files that extends
-`plugin:@state-adapt/spaghetti/recommended` and sets
-`parser: "@typescript-eslint/parser"` and `parserOptions.project`
-(for example, `["./tsconfig.json"]`).
+This rule requires type-aware linting to resolve calls and resources across the
+project. With `@typescript-eslint/parser` v8 or newer, enable the TypeScript
+project service in the configuration that applies to TypeScript files:
 
-See the [typescript-eslint typed-linting guide](https://typescript-eslint.io/getting-started/typed-linting/)
-for general setup and the [`no-spaghetti` rule reference](https://state-adapt.github.io/api/eslint-plugin-spaghetti/rules/no-spaghetti)
-for its policy, options, and examples.
+```json
+{
+  "languageOptions": {
+    "parserOptions": {
+      "projectService": true
+    }
+  }
+}
+```
+
+Legacy `.eslintrc` configurations and parser v7 use `parserOptions.project`:
+
+```json
+{
+  "parserOptions": {
+    "project": ["./tsconfig.json"]
+  }
+}
+```
+
+These examples show the underlying typescript-eslint settings. Tooling that
+manages ESLint configuration may require them elsewhere. See the
+[typescript-eslint typed-linting guide](https://typescript-eslint.io/getting-started/typed-linting/)
+for general setup, or
+[Configuring ESLint with TypeScript](https://nx.dev/docs/kb/configuring-eslint-with-typescript)
+for Nx workspaces, including flat and legacy configurations.
+
+For advanced configuration, see the [`no-spaghetti` rule reference](/api/eslint-plugin-spaghetti/rules/no-spaghetti).
+
+## Configuration
+
+The recommended configuration enables `@state-adapt/spaghetti/no-spaghetti` as an error. See the [`no-spaghetti` rule reference](https://state-adapt.github.io/api/eslint-plugin-spaghetti/rules/no-spaghetti) for its policy, options, and examples.
