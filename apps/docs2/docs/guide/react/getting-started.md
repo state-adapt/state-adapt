@@ -8,16 +8,16 @@ next:
 
 Install the StateAdapt core and RxJS packages:
 
-<!--@include: ../../../../../libs/core/README.md#getting-started-->
+<!--@include-section: @state-adapt/core#Installation-->
 
-<!--@include: ../../../../../libs/rxjs/README.md#getting-started-->
+<!--@include-section: @state-adapt/rxjs#Installation-->
 
 ## React
 
-<!--@include: ../../../../../libs/react/README.md#getting-started-->
+<!--@include-section: @state-adapt/react#Getting Started-->
 
 <!--@include: ../../../includes/agents.md-->
 
 ## ESLint Plugin: No Spaghetti
 
-<!--@include: ../../../../../libs/eslint-plugin-spaghetti/README.md#getting-started-->
+<!--@include-section: @state-adapt/eslint-plugin-spaghetti#Getting Started-->
