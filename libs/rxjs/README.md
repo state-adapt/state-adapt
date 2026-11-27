@@ -4,15 +4,13 @@ The RxJS layer for defining stores, sources, and related state-management utilit
 
 ## Getting Started
 
-<!-- #region getting-started -->
+### Installation
 
 ```sh
 npm install rxjs @state-adapt/rxjs
 ```
 
-<!-- #endregion getting-started -->
-
-<!-- #region standalone-setup -->
+### Standalone setup
 
 To use StateAdapt without a dedicated framework integration, create a file named
 `state-adapt.ts`:
@@ -27,7 +25,7 @@ The default configuration connects to Redux DevTools when the browser extension
 is available. See [`configureStateAdapt`](https://state-adapt.github.io/api/rxjs/index/configureStateAdapt)
 for customization options.
 
-<!-- #endregion standalone-setup -->
+## Peer dependencies
 
 Install [`@state-adapt/core`](https://www.npmjs.com/package/@state-adapt/core) at
 the same version as `@state-adapt/rxjs` if it is not already in your project.
