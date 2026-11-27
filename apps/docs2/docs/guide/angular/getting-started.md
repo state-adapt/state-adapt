@@ -6,21 +6,22 @@ next:
 
 # Getting Started
 
-Install these libraries:
+Install the StateAdapt core and RxJS packages:
 
-```sh
-npm i -s @state-adapt/core
-npm i -s @state-adapt/rxjs
-npm i -s @state-adapt/angular
-```
+<!--@include: ../../../../../libs/core/README.md#getting-started-->
 
-[StackBlitz](https://stackblitz.com/edit/stackblitz-starters-cbqmmdaw?file=src%2Fapp%2Fcounter.component.ts)
+<!--@include: ../../../../../libs/rxjs/README.md#getting-started-->
 
----
+## Angular
 
-For advanced configuration, see [`provideStore`](/api/angular/index/provideStore.html)
-and [`IS_STORE_LOCAL`](/api/angular/index/IS_STORE_LOCAL.html).
+<!--@include: ../../../../../libs/angular/README.md#getting-started-->
+
+## Optional: Angular Router integration
+
+<!--@include: ../../../../../libs/angular-router/README.md#getting-started-->
 
 <!--@include: ../../../includes/agents.md-->
 
-<!--@include: ../../../includes/spaghetti-eslint.md-->
+## ESLint Plugin: No Spaghetti
+
+<!--@include: ../../../../../libs/eslint-plugin-spaghetti/README.md#getting-started-->
