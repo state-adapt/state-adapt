@@ -4,8 +4,6 @@ Angular integration with signals, providers, and injectable adapters.
 
 ## Getting Started
 
-<!-- #region getting-started -->
-
 ```sh
 npm install @state-adapt/angular
 ```
@@ -33,7 +31,7 @@ and [`IS_STORE_LOCAL`](https://state-adapt.github.io/api/angular/index/IS_STORE_
 
 [StackBlitz Starter](https://stackblitz.com/edit/stackblitz-starters-cbqmmdaw?file=src%2Fapp%2Fcounter.component.ts)
 
-<!-- #endregion getting-started -->
+## Peer dependencies
 
 If you install peer dependencies manually, also install `rxjs` and
 `@state-adapt/core` and `@state-adapt/rxjs` at the same version as this package.
