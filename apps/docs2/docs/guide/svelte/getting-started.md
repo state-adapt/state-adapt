@@ -6,44 +6,31 @@ next:
 
 # Getting Started
 
-First, install:
+Install the StateAdapt core and RxJS packages:
 
-```sh
-npm i -s rxjs
-npm i -s @state-adapt/core
-npm i -s @state-adapt/rxjs
-```
+<!--@include: ../../../../../libs/core/README.md#getting-started-->
 
-Create a file named `state-adapt.ts` and export `watch` and `adapt`:
+<!--@include: ../../../../../libs/rxjs/README.md#getting-started-->
 
-```ts
-import { actionSanitizer, stateSanitizer } from '@state-adapt/core';
-import { configureStateAdapt } from '@state-adapt/rxjs';
+## Create a StateAdapt instance
 
-const enableReduxDevTools = (window as any).__REDUX_DEVTOOLS_EXTENSION__?.({
-  actionSanitizer,
-  stateSanitizer,
-});
+<!--@include: ../../../../../libs/rxjs/README.md#standalone-setup-->
 
-export const { adapt, watch } = configureStateAdapt({
-  devtools: enableReduxDevTools,
-});
-```
+Use the instance in your components:
 
-And now you can use it in your components:
+```svelte
+<script lang="ts">
+  import { adapt } from '../state-adapt';
 
-```ts
-import { adapt } from '../state-adapt';
+  const nameStore = adapt('Bob');
+  const name$ = nameStore.state$;
+</script>
 
-const nameStore = adapt('Bob');
-const name$ = nameStore.state$;
-const name = $name$;
+<p>Hello {$name$}!</p>
 ```
 
 ::: info Library Coming Soon
 StateAdapt doesn't currently have a dedicated library for Svelte, but it will.
-
-For now, refer to [`configureStateAdapt`](/api/rxjs/index/configureStateAdapt) for options.
 
 ### Runes
 
@@ -59,4 +46,6 @@ We are considering two options to add support for runes. Please [check progress 
 
 <!--@include: ../../../includes/agents.md-->
 
-<!--@include: ../../../includes/spaghetti-eslint.md-->
+## ESLint Plugin: No Spaghetti
+
+<!--@include: ../../../../../libs/eslint-plugin-spaghetti/README.md#getting-started-->
