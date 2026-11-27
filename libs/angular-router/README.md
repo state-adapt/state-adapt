@@ -4,8 +4,6 @@ Angular Router integration for StateAdapt.
 
 ## Getting Started
 
-<!-- #region getting-started -->
-
 With Angular Router already set up, install the optional navigation component:
 
 ```sh
@@ -21,5 +19,3 @@ component that will use it, then bind a URL in the template:
 
 When the input changes to a nonempty URL, the component asks Angular Router to
 navigate to it. A null input leaves the current route unchanged.
-
-<!-- #endregion getting-started -->
